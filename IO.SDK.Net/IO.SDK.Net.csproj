@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>disable</ImplicitUsings>
+        <Nullable>disable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <None Remove="resources\libIO.SDK.so" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="resources\libIO.SDK.so" />
+    </ItemGroup>
+
+</Project>
