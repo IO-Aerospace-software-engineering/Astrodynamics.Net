@@ -2,9 +2,9 @@ using System.Runtime.InteropServices;
 
 namespace IO.SDK.Net.DTO;
 
+[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
 public struct BodyVisibilityFromSite
 { 
-    public int SiteId;
     public int TargetBodyId;
     public string Aberration;
     

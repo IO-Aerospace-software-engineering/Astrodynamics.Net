@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 namespace IO.SDK.Net.DTO;
 
 [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
-public struct ApsidalAlignmentManeuver
+public struct PerigeeHeightChangingManeuver
 {
     public int ManeuverOrder;
 
@@ -13,11 +13,10 @@ public struct ApsidalAlignmentManeuver
     public double AttitudeHoldDuration;
     public double MinimumEpoch;
 
-    public StateVector TargetOrbit;
+    public double TargetHeight;
 
     public Window ManeuverWindow;
     public Window ThrustWindow;
     public Window AttitudeWindow;
     public Vector3D DeltaV;
-    double Theta;
 }

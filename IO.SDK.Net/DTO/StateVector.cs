@@ -1,7 +1,9 @@
 using System.Net.Http;
+using System.Runtime.InteropServices;
 
 namespace IO.SDK.Net.DTO;
 
+[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
 public struct StateVector
 {
     public double Epoch;

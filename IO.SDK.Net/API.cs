@@ -7,10 +7,13 @@ namespace IO.SDK.Net;
 
 public class API
 {
-    private bool _isresolverLoaded;
-    
-    [DllImport(@"IO.SDK.API", CallingConvention = CallingConvention.StdCall)]
+    private static bool _isresolverLoaded;
+
+    [DllImport(@"IO.SDK", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     public static extern IntPtr GetSpiceVersionProxy();
+
+    [DllImport(@"IO.SDK", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+    public static extern Scenario Execute(Scenario scenario);
 
     public API()
     {
@@ -20,11 +23,12 @@ public class API
             _isresolverLoaded = true;
         }
     }
+
     private static IntPtr Resolver(string libraryName, Assembly assembly, DllImportSearchPath? searchPath)
     {
         IntPtr libHandle = IntPtr.Zero;
 
-        if (libraryName == "IO.SDK.API")
+        if (libraryName == "IO.SDK")
         {
             string sharedLibName = null;
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
@@ -33,20 +37,20 @@ public class API
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
-                // var uri = new Uri("pack://application:,,,/resources/libIO.SDK.so");
                 sharedLibName = "resources/libIO.SDK.so";
-                // sharedLibName = (new URI("pack://application:,,,/resources/libIO.SDK.so")).;
             }
 
             if (!string.IsNullOrEmpty(sharedLibName))
             {
-                NativeLibrary.TryLoad(sharedLibName, typeof(API).Assembly, DllImportSearchPath.AssemblyDirectory, out libHandle);
+                NativeLibrary.TryLoad(sharedLibName, typeof(API).Assembly, DllImportSearchPath.AssemblyDirectory,
+                    out libHandle);
             }
             else
             {
                 throw new PlatformNotSupportedException();
             }
         }
+
         return libHandle;
     }
 
@@ -55,5 +59,10 @@ public class API
         IntPtr res = GetSpiceVersionProxy();
         var str = Marshal.PtrToStringAnsi(res);
         return str;
+    }
+
+    public Scenario ExecuteScenario(Scenario scenario)
+    {
+        return Execute(scenario);
     }
 }

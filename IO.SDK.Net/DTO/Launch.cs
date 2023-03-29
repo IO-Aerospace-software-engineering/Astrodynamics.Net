@@ -2,6 +2,7 @@ using System.Runtime.InteropServices;
 
 namespace IO.SDK.Net.DTO;
 
+[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
 public struct Launch
 {
     public int LaunchSiteId;
@@ -15,6 +16,6 @@ public struct Launch
     public double NonInertialInsertionVelocity;
     public double InertialInsertionVelocity;
 
-    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 1000)]
+    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 100)]
     Window[] Windows;
 }

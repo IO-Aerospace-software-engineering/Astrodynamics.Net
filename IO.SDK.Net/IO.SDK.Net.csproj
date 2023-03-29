@@ -11,7 +11,10 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Content Include="resources\libIO.SDK.so" />
+      <Content Include="..\..\SDK\cmake-build-release\IO.SDK\libIO.SDK.so">
+        <Link>resources/libIO.SDK.so</Link>
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
     </ItemGroup>
 
 </Project>
