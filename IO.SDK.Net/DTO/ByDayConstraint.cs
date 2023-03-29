@@ -7,6 +7,6 @@ public struct ByDay
 {
     public double TwilightDefinition;
 
-    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 100)]
+    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 1000)]
     public Window[] Windows;
 }

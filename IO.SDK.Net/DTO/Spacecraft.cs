@@ -24,14 +24,14 @@ public struct Spacecraft
      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
      public Payload[] Payloads;
 
-//Spacecraft attitudes
+    //Spacecraft attitudes
      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 50)]
      public Attitude[] Attitudes;
 
      [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
      public InstrumentPointingToAttitude[] PointingToAttitudes;
 
-//Spacecraft maneuvers
+    //Spacecraft maneuvers
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
     public PerigeeHeightChangingManeuver[] PerigeeHeightChangingManeuvers;
 

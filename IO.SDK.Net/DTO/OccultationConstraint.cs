@@ -11,6 +11,6 @@ public struct Occultation
     public string Type;
     public string AberrationId;
     public double InitialStepSize;
-    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 100)]
+    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 1000)]
     public Window[] Windows;
 }

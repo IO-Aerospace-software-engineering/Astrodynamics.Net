@@ -15,7 +15,5 @@ public struct InstrumentPointingToAttitude
 
     public double AttitudeHoldDuration;
     public double MinimumEpoch;
-    
-    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 100)]
-    public Window[] Windows;
+    public Window Window;
 }
