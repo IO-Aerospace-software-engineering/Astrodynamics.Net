@@ -18,7 +18,7 @@ public class APITest
     {
         API api = new API();
         var scenario = new Scenario();
-        scenario.Name = "titi\0";
+        scenario.Name = "titi";
         scenario.Window.Start = 10.0;
         scenario.Window.End = 20.0;
         var res = api.ExecuteScenario(scenario);
@@ -32,6 +32,6 @@ public class APITest
     {
         var scenario = new Scenario();
         var size = Marshal.SizeOf(scenario);
-        Assert.Equal(2237400,size);
+        Assert.Equal(2157224,size);
     }
 }

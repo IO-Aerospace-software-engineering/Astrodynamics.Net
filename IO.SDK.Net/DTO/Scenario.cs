@@ -15,4 +15,6 @@ public struct Scenario
     public Distance[] Distances;
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
     public Occultation[] Occultations;
+    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
+    public CelestialBody[] CelestialBodies;
 }

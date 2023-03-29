@@ -10,4 +10,5 @@ public struct StateVector
     public Vector3D Position;
     public Vector3D Velocity;
     public CelestialBody CenterOfMotion;
+    public string Frame;
 }
