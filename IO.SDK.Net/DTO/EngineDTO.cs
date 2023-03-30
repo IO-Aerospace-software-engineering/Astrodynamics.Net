@@ -6,6 +6,9 @@ namespace IO.SDK.Net.DTO;
 public struct EngineDTO
 {
     public int Id;
+    public string SerialNumber;
+    public string FuelTankSerialNumber;
+    public string Name;
     public double Isp;
     public double Fuelflow;
 }

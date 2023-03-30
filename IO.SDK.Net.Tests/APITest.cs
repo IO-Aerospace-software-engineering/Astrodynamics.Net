@@ -32,6 +32,6 @@ public class APITest
     {
         var scenario = new Scenario();
         var size = Marshal.SizeOf(scenario);
-        Assert.Equal(2157224,size);
+        Assert.Equal(2157464,size);
     }
 }
