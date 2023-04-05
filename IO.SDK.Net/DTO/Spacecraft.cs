@@ -12,24 +12,33 @@ public struct Spacecraft
     public double MaximumOperatingMass;
     public StateVector InitialOrbitalParameter;
 
-     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
-     public FuelTank[] FuelTank;
+    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
+    public FuelTank[] FuelTank;
 
-     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
-     public EngineDTO[] Engines;
+    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
+    public EngineDTO[] Engines;
 
-     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
-     public Instrument[] Instruments;
+    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
+    public Instrument[] Instruments;
 
-     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
-     public Payload[] Payloads;
+    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
+    public Payload[] Payloads;
 
     //Spacecraft attitudes
-     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 50)]
-     public Attitude[] Attitudes;
-
-     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
-     public InstrumentPointingToAttitude[] PointingToAttitudes;
+    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
+    public ProgradeAttitude[] progradeAttitudes;
+    
+    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
+    public RetrogradeAttitude[] retrogradeAttitudes;
+    
+    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
+    public ZenithAttitude[] zenithAttitudes;
+    
+    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
+    public NadirAttitude[] nadirAttitudes;
+    
+    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
+    public InstrumentPointingToAttitude[] PointingToAttitudes;
 
     //Spacecraft maneuvers
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
@@ -37,19 +46,19 @@ public struct Spacecraft
 
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
     public ApogeeHeightChangingManeuver[] ApogeeHeightChangingManeuvers;
-    
+
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
     public OrbitalPlaneChangingManeuver[] OrbitalPlaneChangingManeuvers;
 
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
     public CombinedManeuver[] CombinedManeuvers;
-    
+
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
     public ApsidalAlignmentManeuver[] ApsidalAlignmentManeuvers;
-    
+
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
     public PhasingManeuver[] PhasingManeuverDto;
-    
+
     public Launch launch;
 
 //Spacecraft states

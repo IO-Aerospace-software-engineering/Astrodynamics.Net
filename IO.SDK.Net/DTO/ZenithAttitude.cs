@@ -3,13 +3,12 @@ using System.Runtime.InteropServices;
 namespace IO.SDK.Net.DTO;
 
 [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
-public struct Attitude
+public struct ZenithAttitude
 {
-    string Name;
     int ManeuverOrder;
 
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
-    public int[] Engines;
+    public string[] Engines;
 
     double AttitudeHoldDuration;
     double MinimumEpoch;

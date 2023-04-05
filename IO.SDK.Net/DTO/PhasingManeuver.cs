@@ -8,7 +8,7 @@ public struct PhasingManeuver
     public int ManeuverOrder;
 
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
-    public int[] Engines;
+    public string[] Engines;
     public double AttitudeHoldDuration;
     public double MinimumEpoch;
 
