@@ -33,7 +33,7 @@ public class API
             string sharedLibName = null;
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                sharedLibName = "IO.SDK.dll";
+                sharedLibName = "resources/IO.SDK.dll";
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
