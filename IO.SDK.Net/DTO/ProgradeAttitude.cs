@@ -1,3 +1,4 @@
+using System;
 using System.Runtime.InteropServices;
 
 namespace IO.SDK.Net.DTO;
@@ -7,8 +8,8 @@ public struct ProgradeAttitude
 {
     int ManeuverOrder;
 
-    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 10)]
-    public string Engines;
+    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
+    public string[] Engines;
 
     double AttitudeHoldDuration;
     double MinimumEpoch;

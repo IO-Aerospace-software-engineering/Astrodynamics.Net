@@ -13,6 +13,6 @@ public struct Instrument
     public Vector3D FovRefVector;
     public double FieldOfView;
     public double CrossAngle;
-    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
-    public InFieldOfView[] InFieldOfViews;
+    // [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
+    // public InFieldOfView[] InFieldOfViews;
 }

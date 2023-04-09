@@ -14,10 +14,10 @@ public struct Site
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
     AzimuthRange[] Ranges;
     
-    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
-    public BodyVisibilityFromSite[] BodyVisibilityFromSites;
-    
-    public ByDay ByDay;
-    
-    public ByNight ByNight;
+    // [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
+    // public BodyVisibilityFromSite[] BodyVisibilityFromSites;
+    //
+    // public ByDay ByDay;
+    //
+    // public ByNight ByNight;
 }

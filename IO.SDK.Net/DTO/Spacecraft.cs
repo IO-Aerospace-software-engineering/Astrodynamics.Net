@@ -25,20 +25,20 @@ public struct Spacecraft
     public Payload[] Payloads;
 
     //Spacecraft attitudes
-    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
-    public ProgradeAttitude[] progradeAttitudes;
-    
-    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
-    public RetrogradeAttitude[] retrogradeAttitudes;
-    
-    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
-    public ZenithAttitude[] zenithAttitudes;
-    
-    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
-    public NadirAttitude[] nadirAttitudes;
-    
-    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
-    public InstrumentPointingToAttitude[] PointingToAttitudes;
+     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
+     public ProgradeAttitude[] progradeAttitudes;
+     
+     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
+     public RetrogradeAttitude[] retrogradeAttitudes;
+     
+     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
+     public ZenithAttitude[] zenithAttitudes;
+     
+     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
+     public NadirAttitude[] nadirAttitudes;
+     
+     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
+     public InstrumentPointingToAttitude[] PointingToAttitudes;
 
     //Spacecraft maneuvers
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]

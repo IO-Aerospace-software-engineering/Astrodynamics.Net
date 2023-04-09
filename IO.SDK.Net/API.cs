@@ -13,7 +13,10 @@ public class API
     public static extern IntPtr GetSpiceVersionProxy();
 
     [DllImport(@"IO.SDK", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-    public static extern Scenario Execute(Scenario scenario);
+    public static extern Scenario PropagateProxy(Scenario scenario);
+    
+    [DllImport(@"IO.SDK", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+    public static extern int GetValueProxy();
 
     public API()
     {
@@ -63,6 +66,11 @@ public class API
 
     public Scenario ExecuteScenario(Scenario scenario)
     {
-        return Execute(scenario);
+        return PropagateProxy(scenario);
+    }
+
+    public int GetValue()
+    {
+        return GetValueProxy();
     }
 }

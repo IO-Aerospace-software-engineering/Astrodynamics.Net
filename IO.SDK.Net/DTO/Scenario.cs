@@ -11,10 +11,10 @@ public struct Scenario
     public Spacecraft Spacecraft;
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
     public Site[] Sites;
-    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
-    public Distance[] Distances;
-    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
-    public Occultation[] Occultations;
+    // [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
+    // public Distance[] Distances;
+    // [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
+    // public Occultation[] Occultations;
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
     public CelestialBody[] CelestialBodies;
 }
