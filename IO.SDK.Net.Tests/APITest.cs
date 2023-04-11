@@ -22,9 +22,19 @@ public class APITest
         scenario.Name = "titi";
         scenario.Window.Start = 10.0;
         scenario.Window.End = 20.0;
+        scenario.CelestialBodies = new CelestialBody[10];
+        scenario.CelestialBodies[0].Id = 399;
+        scenario.CelestialBodies[0].CenterOfMotionId = 10;
+        scenario.CelestialBodies[1].Id = 10;
+        scenario.Spacecraft.FuelTanks = new FuelTank[5];
+        scenario.Spacecraft.FuelTanks[0] = new FuelTank
+            { Id = 1, Capacity = 1000.0, Quantity = 1000.0, SerialNumber = "ft1" };
+        scenario.Spacecraft.Engines = new EngineDTO[5];
+        scenario.Spacecraft.Engines[0] = new EngineDTO
+            { Id = 1, Name = "engine1", Fuelflow = 50, SerialNumber = "eng1", FuelTankSerialNumber = "ft1", Isp = 400 };
         scenario.Spacecraft.progradeAttitudes = new ProgradeAttitude[10];
-        scenario.Spacecraft.progradeAttitudes[0].Engines = new String[10];
-        scenario.Spacecraft.progradeAttitudes[0].Engines[0] = "Hello engine";
+        scenario.Spacecraft.progradeAttitudes[0].Engines = new string[10];
+        scenario.Spacecraft.progradeAttitudes[0].Engines[0] = "eng1";
         scenario.Spacecraft.InitialOrbitalParameter.CenterOfMotion.Id = 399;
         scenario.Spacecraft.InitialOrbitalParameter.CenterOfMotion.CenterOfMotionId = 10;
         scenario.Spacecraft.InitialOrbitalParameter.Epoch = 15.0;

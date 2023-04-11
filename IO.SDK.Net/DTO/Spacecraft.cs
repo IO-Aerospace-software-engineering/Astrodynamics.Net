@@ -13,7 +13,7 @@ public struct Spacecraft
     public StateVector InitialOrbitalParameter;
 
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
-    public FuelTank[] FuelTank;
+    public FuelTank[] FuelTanks;
 
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
     public EngineDTO[] Engines;
