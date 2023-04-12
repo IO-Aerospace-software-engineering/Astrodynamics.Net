@@ -6,12 +6,12 @@ namespace IO.SDK.Net.DTO;
 [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
 public struct ProgradeAttitude
 {
-    int ManeuverOrder;
+    public int ManeuverOrder;
 
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
     public string[] Engines;
 
-    double AttitudeHoldDuration;
-    double MinimumEpoch;
-    Window Window;
+    public double AttitudeHoldDuration;
+    public double MinimumEpoch;
+    public Window Window;
 }
