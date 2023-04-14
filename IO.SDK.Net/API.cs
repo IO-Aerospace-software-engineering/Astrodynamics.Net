@@ -16,7 +16,13 @@ public class API
     public static extern void PropagateProxy([In,Out]ref Scenario scenario);
     
     [DllImport(@"IO.SDK", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+    public static extern void LaunchProxy([In,Out]ref Launch launch);
+    
+    [DllImport(@"IO.SDK", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     public static extern int GetValueProxy();
+    
+    [DllImport(@"IO.SDK", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+    public static extern void LoadGenericKernelsProxy(string directoryPath);
 
     public API()
     {

@@ -5,15 +5,22 @@ namespace IO.SDK.Net.DTO;
 [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
 public struct Site
 {
-    int Id;
-    string Name;
-    int BodyId;
+    private const int AZIMUTHRANGESIZE = 10;
+    public int Id=0;
+    public string Name = null;
+    public int BodyId = 0;
     
-    Geodetic Coordinates;
+    public Geodetic Coordinates = default;
     
-    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
-    AzimuthRange[] Ranges;
-    
+    [MarshalAs(UnmanagedType.ByValArray, SizeConst = AZIMUTHRANGESIZE)]
+    public AzimuthRange[] Ranges = new AzimuthRange[AZIMUTHRANGESIZE];
+
+    public string DirectoryPath = null;
+
+    public Site()
+    {
+    }
+
     // [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
     // public BodyVisibilityFromSite[] BodyVisibilityFromSites;
     //

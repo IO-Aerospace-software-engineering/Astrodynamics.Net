@@ -6,15 +6,19 @@ namespace IO.SDK.Net.DTO;
 [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
 public struct InstrumentPointingToAttitude
 {
-    public int InstrumentId;
-    public int TargetBodyId;
-    public int TargetSiteId;
-    public int ManeuverOrder;
+    public int InstrumentId = 0;
+    public int TargetBodyId = -1;
+    public int TargetSiteId = -1;
+    public int ManeuverOrder=-1;
 
-    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
-    public IntPtr[] Engines;
+    [MarshalAs(UnmanagedType.ByValArray, SizeConst = Spacecraft.ENGINESIZE)]
+    public IntPtr[] Engines = new IntPtr[Spacecraft.ENGINESIZE];
 
-    public double AttitudeHoldDuration;
-    public double MinimumEpoch;
-    public Window Window;
+    public double AttitudeHoldDuration = 0;
+    public double MinimumEpoch = 0;
+    public Window Window = default;
+
+    public InstrumentPointingToAttitude()
+    {
+    }
 }

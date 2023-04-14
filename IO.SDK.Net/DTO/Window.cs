@@ -6,4 +6,10 @@ namespace IO.SDK.Net.DTO;
 public struct Window
 {
     public double Start, End;
+
+    public Window(double start, double end)
+    {
+        Start = start;
+        End = end;
+    }
 }

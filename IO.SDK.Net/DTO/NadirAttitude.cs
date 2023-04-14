@@ -6,12 +6,16 @@ namespace IO.SDK.Net.DTO;
 [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
 public struct NadirAttitude
 {
-    public int ManeuverOrder;
+    public int ManeuverOrder=-1;
 
-    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
-    public IntPtr[] Engines;
+    [MarshalAs(UnmanagedType.ByValArray, SizeConst = Spacecraft.ENGINESIZE)]
+    public IntPtr[] Engines = new IntPtr[Spacecraft.ENGINESIZE];
 
-    double AttitudeHoldDuration;
-    double MinimumEpoch;
-    Window Window;
+    double AttitudeHoldDuration = 0;
+    double MinimumEpoch = 0;
+    Window Window = default;
+
+    public NadirAttitude()
+    {
+    }
 }
