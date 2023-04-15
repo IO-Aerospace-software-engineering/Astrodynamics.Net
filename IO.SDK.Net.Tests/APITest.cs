@@ -2,6 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using IO.SDK.Net.DTO;
 using Xunit;
+using System.Linq;
 
 namespace IO.SDK.Net.Tests;
 
@@ -61,6 +62,9 @@ public class APITest
 
         Launch launch = new Launch(launchSite, recoverySite, true, 1, parkingOrbit, new Window(start, end));
         API.LaunchProxy(ref launch);
+        Assert.Equal(2, launch.Windows.Count(x => x.Start != 0 && x.End != 0));
+        Assert.Equal(new Window(668084955.97088385, 668084955.97088385), launch.Windows[0]);
+        Assert.Equal(new Window(668171119.44731534, 668171119.44731534) { }, launch.Windows[1]);
     }
 
     [Fact]
@@ -91,13 +95,13 @@ public class APITest
         Site launchSite = new Site()
         {
             Id = 3, BodyId = 399, Coordinates = new Geodetic(-81.0 * Constants.DEG_RAD, 28.5 * Constants.DEG_RAD, 0.0),
-            Name = "S3",DirectoryPath = SitePath
+            Name = "S3", DirectoryPath = SitePath
         };
 
         Site recoverySite = new Site()
         {
             Id = 4, BodyId = 399, Coordinates = new Geodetic(-81.0 * Constants.DEG_RAD, 28.5 * Constants.DEG_RAD, 0.0),
-            Name = "S4",DirectoryPath = SitePath
+            Name = "S4", DirectoryPath = SitePath
         };
 
 

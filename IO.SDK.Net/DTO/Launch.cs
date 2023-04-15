@@ -18,7 +18,7 @@ public struct Launch
     public double InertialInsertionVelocity;
 
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 100)]
-    Window[] Windows;
+    public Window[] Windows;
 
     public Launch(Site launchSite, Site recoverySite, bool launchByDay, double initialStepSize, StateVector targetOrbit,
         Window window) : this()
