@@ -6,19 +6,26 @@ namespace IO.SDK.Net.DTO;
 public struct Site
 {
     private const int AZIMUTHRANGESIZE = 10;
-    public int Id=0;
+    public int Id = 0;
     public string Name = null;
-    public int BodyId = 0;
-    
+    public int BodyId = -1;
+
     public Geodetic Coordinates = default;
-    
+
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = AZIMUTHRANGESIZE)]
-    public AzimuthRange[] Ranges = new AzimuthRange[AZIMUTHRANGESIZE];
+    public AzimuthRange[] Ranges;
 
     public string DirectoryPath = null;
 
-    public Site()
+
+    public Site(int id, int bodyId, Geodetic coordinates, string name, string directoryPath) : this()
     {
+        Id = id;
+        BodyId = bodyId;
+        Coordinates = coordinates;
+        Name = name;
+        DirectoryPath = directoryPath;
+        Ranges = ArrayBuilder.ArrayOf<AzimuthRange>(AZIMUTHRANGESIZE);
     }
 
     // [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]

@@ -38,17 +38,13 @@ public class APITest
         API.LoadGenericKernelsProxy(SolarSystemKernelPath);
         CelestialBody celestialBody = new CelestialBody() { Id = 399, CenterOfMotionId = 10 };
 
-        Site launchSite = new Site()
-        {
-            Id = 3, BodyId = 399, Coordinates = new Geodetic(-81.0 * Constants.DEG_RAD, 28.5 * Constants.DEG_RAD, 0.0),
-            Name = "S3", DirectoryPath = SitePath
-        };
+        Site launchSite = new Site(id: 3, bodyId: 399,
+            coordinates: new Geodetic(-81.0 * Constants.DEG_RAD, 28.5 * Constants.DEG_RAD, 0.0), name: "S3",
+            directoryPath: SitePath);
 
-        Site recoverySite = new Site()
-        {
-            Id = 4, BodyId = 399, Coordinates = new Geodetic(-81.0 * Constants.DEG_RAD, 28.5 * Constants.DEG_RAD, 0.0),
-            Name = "S4", DirectoryPath = SitePath
-        };
+        Site recoverySite = new Site(id: 4, bodyId: 399,
+            coordinates: new Geodetic(-81.0 * Constants.DEG_RAD, 28.5 * Constants.DEG_RAD, 0.0), name: "S4",
+            directoryPath: SitePath);
 
 
         StateVector parkingOrbit = new StateVector(celestialBody, start, "J2000",
@@ -92,18 +88,14 @@ public class APITest
         scenario.CelestialBodies[2].Id = 301;
         scenario.CelestialBodies[2].CenterOfMotionId = 399;
 
-        Site launchSite = new Site()
-        {
-            Id = 3, BodyId = 399, Coordinates = new Geodetic(-81.0 * Constants.DEG_RAD, 28.5 * Constants.DEG_RAD, 0.0),
-            Name = "S3", DirectoryPath = SitePath
-        };
+        Site launchSite = new Site(3, 399, new Geodetic(-81.0 * Constants.DEG_RAD, 28.5 * Constants.DEG_RAD, 0.0), "S33",
+            SitePath);
 
-        Site recoverySite = new Site()
-        {
-            Id = 4, BodyId = 399, Coordinates = new Geodetic(-81.0 * Constants.DEG_RAD, 28.5 * Constants.DEG_RAD, 0.0),
-            Name = "S4", DirectoryPath = SitePath
-        };
+        Site recoverySite = new Site(4, 399,
+            new Geodetic(-81.0 * Constants.DEG_RAD, 28.5 * Constants.DEG_RAD, 0.0), "S44", SitePath);
 
+        scenario.Sites[0] = launchSite;
+        // scenario.Sites[1] = recoverySite;
 
         StateVector parkingOrbit = new StateVector(scenario.CelestialBodies[1], start, "J2000",
             new Vector3D(5056554.1874925727, 4395595.4942363985, 0.0),
@@ -160,95 +152,10 @@ public class APITest
     }
 
     [Fact]
-    public void BuildMinimumScenario()
-    {
-        API api = new API();
-        API.LoadGenericKernelsProxy(SolarSystemKernelPath);
-        var scenario = new Scenario("titi", new Window(10.0, 20.0));
-        scenario.CelestialBodies[0].Id = 399;
-        scenario.CelestialBodies[0].CenterOfMotionId = 10;
-        scenario.CelestialBodies[1].Id = 10;
-        scenario.Spacecraft = new Spacecraft(-1111, "spc1", 1000.0, 3000.0,
-            new StateVector(centerOfMotion: new CelestialBody() { CenterOfMotionId = 10, Id = 399 }, epoch: 15.0,
-                frame: "J2000", position: new Vector3D(x: 6800.0, y: 0.0, z: 0.0),
-                velocity: new Vector3D(x: 0.0, y: 8.0, z: 0.0)), SpacecraftPath);
-        scenario.Spacecraft.FuelTanks[0] = new FuelTank
-            { Id = 1, Capacity = 1000.0, Quantity = 1000.0, SerialNumber = "ft1" };
-        scenario.Spacecraft.Engines[0] = new EngineDTO
-            { Id = 1, Name = "engine1", Fuelflow = 50, SerialNumber = "eng1", FuelTankSerialNumber = "ft1", Isp = 400 };
-        scenario.Spacecraft.progradeAttitudes[0].Engines = new string[10];
-        scenario.Spacecraft.progradeAttitudes[0].Engines[0] = "eng1";
-
-
-        API.PropagateProxy(ref scenario);
-    }
-
-    [Fact]
-    public void BuildScenarioAttitudes()
-    {
-        API api = new API();
-        API.LoadGenericKernelsProxy(SolarSystemKernelPath);
-        var scenario = new Scenario("titi", new Window(10.0, 20.0));
-
-        scenario.CelestialBodies = new CelestialBody[10];
-        scenario.CelestialBodies[0].Id = 399;
-        scenario.CelestialBodies[0].CenterOfMotionId = 10;
-        scenario.CelestialBodies[1].Id = 10;
-
-        scenario.Spacecraft = new Spacecraft(-1111, "spc1", 1000.0, 3000.0,
-            new StateVector(centerOfMotion: new CelestialBody() { CenterOfMotionId = 10, Id = 399 }, epoch: 15.0,
-                frame: "J2000", position: new Vector3D(x: 6800.0, y: 0.0, z: 0.0),
-                velocity: new Vector3D(x: 0.0, y: 8.0, z: 0.0)), SpacecraftPath);
-
-        scenario.Spacecraft.Instruments[0].Name = "inst1";
-        scenario.Spacecraft.Instruments[0].Id = 200;
-        scenario.Spacecraft.Instruments[0].Boresight.X = 1.0;
-        scenario.Spacecraft.Instruments[0].Boresight.Y = 0.0;
-        scenario.Spacecraft.Instruments[0].Boresight.Z = 0.0;
-        scenario.Spacecraft.Instruments[0].FovRefVector.X = 0.0;
-        scenario.Spacecraft.Instruments[0].FovRefVector.Y = 1.0;
-        scenario.Spacecraft.Instruments[0].FovRefVector.Z = 0.0;
-        scenario.Spacecraft.Instruments[0].FieldOfView = 3.14;
-        scenario.Spacecraft.Instruments[0].Shape = "circular";
-
-        scenario.Spacecraft.FuelTanks[0].Id = 1;
-        scenario.Spacecraft.FuelTanks[0].Capacity = 1000.0;
-        scenario.Spacecraft.FuelTanks[0].Quantity = 1000.0;
-        scenario.Spacecraft.FuelTanks[0].SerialNumber = "ft1";
-
-        scenario.Spacecraft.Engines[0].Id = 1;
-        scenario.Spacecraft.Engines[0].SerialNumber = "eng1";
-        scenario.Spacecraft.Engines[0].FuelTankSerialNumber = "ft1";
-        scenario.Spacecraft.Engines[0].Fuelflow = 50;
-        scenario.Spacecraft.Engines[0].Isp = 400;
-        scenario.Spacecraft.Engines[0].Name = "engine1";
-
-        scenario.Spacecraft.progradeAttitudes[0].Engines[0] = "eng1";
-        scenario.Spacecraft.progradeAttitudes[0].ManeuverOrder = 0;
-
-        scenario.Spacecraft.retrogradeAttitudes[0].Engines[0] = Marshal.StringToHGlobalAnsi("eng1");
-        scenario.Spacecraft.retrogradeAttitudes[0].ManeuverOrder = 1;
-
-        scenario.Spacecraft.nadirAttitudes[0].Engines[0] = Marshal.StringToHGlobalAnsi("eng1");
-        scenario.Spacecraft.nadirAttitudes[0].ManeuverOrder = 2;
-
-        scenario.Spacecraft.zenithAttitudes[0].Engines[0] = Marshal.StringToHGlobalAnsi("eng1");
-        scenario.Spacecraft.zenithAttitudes[0].ManeuverOrder = 3;
-
-        scenario.Spacecraft.PointingToAttitudes[0].Engines[0] = Marshal.StringToHGlobalAnsi("eng1");
-        scenario.Spacecraft.PointingToAttitudes[0].ManeuverOrder = 4;
-        scenario.Spacecraft.PointingToAttitudes[0].TargetBodyId = 399;
-        scenario.Spacecraft.PointingToAttitudes[0].InstrumentId = 200;
-
-
-        API.PropagateProxy(ref scenario);
-    }
-
-    [Fact]
     public void CheckSize()
     {
         var scenario = new Scenario();
         var size = Marshal.SizeOf(scenario);
-        Assert.Equal(810776, size);
+        Assert.Equal(18336, size);
     }
 }

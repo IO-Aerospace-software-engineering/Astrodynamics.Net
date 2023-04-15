@@ -6,7 +6,7 @@ namespace IO.SDK.Net.DTO;
 [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
 public struct Scenario
 {
-    private const int SITESIZE = 2;
+    private const int SITESIZE = 10;
     private const int CELESTIALBODIESIZE = 10;
     public Scenario(string name, Window window) : this()
     {
@@ -18,7 +18,6 @@ public struct Scenario
 
     public string Name;
     public Window Window;
-    public Launch Launch;
     public Spacecraft Spacecraft;
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = SITESIZE)]
     public Site[] Sites;

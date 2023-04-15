@@ -11,8 +11,6 @@ public struct Spacecraft
     internal const int PAYLOADSIZE = 5;
     internal const int ATTITUDESIZE = 10;
     internal const int MANEUVERSIZE = 10;
-    internal const int STATEVECTORSIZE = 10000;
-    internal const int STATEORIENTTIONSIZE = 1000;
 
     public Spacecraft(int id, string name, double dryOperatingMass, double maximumOperatingMass,
         StateVector initialOrbitalParameter, string directoryPath)
@@ -42,8 +40,6 @@ public struct Spacecraft
         ApsidalAlignmentManeuvers = ArrayBuilder.ArrayOf<ApsidalAlignmentManeuver>(MANEUVERSIZE);
         PhasingManeuverDto = ArrayBuilder.ArrayOf<PhasingManeuver>(MANEUVERSIZE);
 
-        StateVectors = ArrayBuilder.ArrayOf<StateVector>(STATEVECTORSIZE);
-        StateOrientations = ArrayBuilder.ArrayOf<StateOrientation>(STATEORIENTTIONSIZE);
     }
 
     //Spacecraft structure
@@ -100,11 +96,4 @@ public struct Spacecraft
 
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
     public PhasingManeuver[] PhasingManeuverDto;
-
-//Spacecraft states
-    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10000)]
-    public StateVector[] StateVectors;
-
-    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 1000)]
-    public StateOrientation[] StateOrientations;
 }
