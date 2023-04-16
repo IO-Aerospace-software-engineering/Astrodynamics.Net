@@ -38,11 +38,11 @@ public class APITest
         API.LoadGenericKernelsProxy(SolarSystemKernelPath);
         CelestialBody celestialBody = new CelestialBody() { Id = 399, CenterOfMotionId = 10 };
 
-        Site launchSite = new Site(id: 3, bodyId: 399,
+        Site launchSite = new Site(id: 399303, bodyId: 399,
             coordinates: new Geodetic(-81.0 * Constants.DEG_RAD, 28.5 * Constants.DEG_RAD, 0.0), name: "S3",
             directoryPath: SitePath);
 
-        Site recoverySite = new Site(id: 4, bodyId: 399,
+        Site recoverySite = new Site(id: 399304, bodyId: 399,
             coordinates: new Geodetic(-81.0 * Constants.DEG_RAD, 28.5 * Constants.DEG_RAD, 0.0), name: "S4",
             directoryPath: SitePath);
 
@@ -61,6 +61,10 @@ public class APITest
         Assert.Equal(2, launch.Windows.Count(x => x.Start != 0 && x.End != 0));
         Assert.Equal(new Window(668084955.97088385, 668084955.97088385), launch.Windows[0]);
         Assert.Equal(new Window(668171119.44731534, 668171119.44731534) { }, launch.Windows[1]);
+        Assert.Equal(47.00587579161426, launch.InertialAzimuth * Constants.RAD_DEG);
+        Assert.Equal(45.125224583051406, launch.NonInertialAzimuth * Constants.RAD_DEG);
+        Assert.Equal(8794.33812148836,launch.InertialInsertionVelocity);
+        Assert.Equal(8499.727158006212,launch.NonInertialInsertionVelocity);
     }
 
     [Fact]
@@ -76,9 +80,9 @@ public class APITest
         // 2021-03-05 00:00:00.000000 TDB
         //
         // 668174330.814560
-        double start = 667915130.814600;
+        double start = 667915269.18539762;
         double startPropagator = 668085625.01523638;
-        double end = 668174330.814560;
+        double end = 668174469.18544209;
         API api = new API();
         API.LoadGenericKernelsProxy(SolarSystemKernelPath);
         var scenario = new Scenario("titi", new Window(startPropagator, end));
@@ -88,14 +92,15 @@ public class APITest
         scenario.CelestialBodies[2].Id = 301;
         scenario.CelestialBodies[2].CenterOfMotionId = 399;
 
-        Site launchSite = new Site(3, 399, new Geodetic(-81.0 * Constants.DEG_RAD, 28.5 * Constants.DEG_RAD, 0.0), "S33",
+        Site launchSite = new Site(399303, 399, new Geodetic(-81.0 * Constants.DEG_RAD, 28.5 * Constants.DEG_RAD, 0.0),
+            "S33",
             SitePath);
 
-        Site recoverySite = new Site(4, 399,
+        Site recoverySite = new Site(399304, 399,
             new Geodetic(-81.0 * Constants.DEG_RAD, 28.5 * Constants.DEG_RAD, 0.0), "S44", SitePath);
 
         scenario.Sites[0] = launchSite;
-        // scenario.Sites[1] = recoverySite;
+        scenario.Sites[1] = recoverySite;
 
         StateVector parkingOrbit = new StateVector(scenario.CelestialBodies[1], start, "J2000",
             new Vector3D(5056554.1874925727, 4395595.4942363985, 0.0),
@@ -149,6 +154,11 @@ public class APITest
 
 
         API.PropagateProxy(ref scenario);
+        
+        Assert.Equal(668090004.950050,scenario.Spacecraft.OrbitalPlaneChangingManeuvers[0].ManeuverWindow.Start);
+        Assert.Equal(668090013.080420,scenario.Spacecraft.OrbitalPlaneChangingManeuvers[0].ManeuverWindow.End);
+        Assert.Equal(668090004.950050,scenario.Spacecraft.OrbitalPlaneChangingManeuvers[0].ThrustWindow.Start);
+        Assert.Equal(668090013.080420,scenario.Spacecraft.OrbitalPlaneChangingManeuvers[0].ThrustWindow.End);
     }
 
     [Fact]
@@ -156,6 +166,6 @@ public class APITest
     {
         var scenario = new Scenario();
         var size = Marshal.SizeOf(scenario);
-        Assert.Equal(18336, size);
+        Assert.Equal(18816, size);
     }
 }

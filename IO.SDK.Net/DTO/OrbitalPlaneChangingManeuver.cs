@@ -19,6 +19,7 @@ public struct OrbitalPlaneChangingManeuver
     public Window ThrustWindow = default;
     public Window AttitudeWindow = default;
     public Vector3D DeltaV = default;
+    public double FuelBurned = 0;
 
     public OrbitalPlaneChangingManeuver()
     {
