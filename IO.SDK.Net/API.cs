@@ -13,16 +13,22 @@ public class API
     public static extern IntPtr GetSpiceVersionProxy();
 
     [DllImport(@"IO.SDK", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-    public static extern void PropagateProxy([In,Out]ref Scenario scenario);
-    
+    public static extern void PropagateProxy([In, Out] ref Scenario scenario);
+
     [DllImport(@"IO.SDK", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-    public static extern void LaunchProxy([In,Out]ref Launch launch);
-    
+    public static extern void LaunchProxy([In, Out] ref Launch launch);
+
     [DllImport(@"IO.SDK", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     public static extern int GetValueProxy();
-    
+
     [DllImport(@"IO.SDK", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     public static extern void LoadGenericKernelsProxy(string directoryPath);
+
+    [DllImport(@"IO.SDK", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+    public static extern IntPtr TDBToStringProxy(double secondsFromJ2000);
+
+    [DllImport(@"IO.SDK", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+    public static extern IntPtr UTCToStringProxy(double secondsFromJ2000);
 
     public API()
     {
@@ -70,7 +76,21 @@ public class API
         return str;
     }
 
-    public void ExecuteScenario(Scenario scenario)
+    public string TDBToString(double secondsFromJ2000)
+    {
+        IntPtr res = TDBToStringProxy(secondsFromJ2000);
+        var str = Marshal.PtrToStringAnsi(res);
+        return str;
+    }
+
+    public string UTCToString(double secondsFromJ2000)
+    {
+        IntPtr res = UTCToStringProxy(secondsFromJ2000);
+        var str = Marshal.PtrToStringAnsi(res);
+        return str;
+    }
+
+    public void ExecuteScenario(ref Scenario scenario)
     {
         PropagateProxy(ref scenario);
     }
@@ -78,5 +98,10 @@ public class API
     public int GetValue()
     {
         return GetValueProxy();
+    }
+
+    public void LoadGenericKernel(string directoryPath)
+    {
+        LoadGenericKernelsProxy(directoryPath);
     }
 }
