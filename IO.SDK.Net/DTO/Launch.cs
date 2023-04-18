@@ -19,15 +19,20 @@ public struct Launch
 
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 100)]
     public Window[] Windows;
-
+    
     public Launch(Site launchSite, Site recoverySite, bool launchByDay, double initialStepSize, StateVector targetOrbit,
-        Window window) : this()
+        Window window)
     {
+        Windows = new Window[100];
         Window = window;
         LaunchSite = launchSite;
         RecoverySite = recoverySite;
         LaunchByDay = launchByDay;
         InitialStepSize = initialStepSize;
         TargetOrbit = targetOrbit;
+        InertialAzimuth = default;
+        InertialInsertionVelocity = default;
+        NonInertialAzimuth = default;
+        NonInertialInsertionVelocity = default;
     }
 }

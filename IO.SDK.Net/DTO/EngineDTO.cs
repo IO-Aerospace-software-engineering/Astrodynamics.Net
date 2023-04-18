@@ -10,5 +10,15 @@ public struct EngineDTO
     public string FuelTankSerialNumber;
     public string Name;
     public double Isp;
-    public double Fuelflow;
+    public double FuelFlow;
+
+    public EngineDTO(int id, string name, double fuelFlow, string serialNumber, string fuelTankSerialNumber, double isp)
+    {
+        Id = id;
+        Name = name;
+        FuelFlow = fuelFlow;
+        SerialNumber = serialNumber;
+        FuelTankSerialNumber = fuelTankSerialNumber;
+        Isp = isp;
+    }
 }

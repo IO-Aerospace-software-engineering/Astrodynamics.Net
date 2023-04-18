@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 namespace IO.SDK.Net.DTO;
 
 [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
-public struct Occultation
+public struct OccultationConstraint
 {
     public int ObserverId;
     public int BackBodyId;
@@ -13,4 +13,15 @@ public struct Occultation
     public double InitialStepSize;
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 1000)]
     public Window[] Windows;
+
+    public OccultationConstraint(int observerId, int backBodyId, int frontId, string type, string aberrationId, double initialStepSize)
+    {
+        ObserverId = observerId;
+        BackBodyId = backBodyId;
+        FrontId = frontId;
+        Type = type;
+        AberrationId = aberrationId;
+        InitialStepSize = initialStepSize;
+        Windows = new Window[1000];
+    }
 }

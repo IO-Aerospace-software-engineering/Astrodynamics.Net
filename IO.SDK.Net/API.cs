@@ -5,31 +5,37 @@ using IO.SDK.Net.DTO;
 
 namespace IO.SDK.Net;
 
+/// <summary>
+/// API to communicate with IO.SDK
+/// </summary>
 public class API
 {
     private static bool _isresolverLoaded;
 
     [DllImport(@"IO.SDK", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-    public static extern IntPtr GetSpiceVersionProxy();
+    private static extern string GetSpiceVersionProxy();
 
     [DllImport(@"IO.SDK", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-    public static extern void PropagateProxy([In, Out] ref Scenario scenario);
+    private static extern void PropagateProxy([In, Out] ref Scenario scenario);
 
     [DllImport(@"IO.SDK", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-    public static extern void LaunchProxy([In, Out] ref Launch launch);
+    private static extern void LaunchProxy([In, Out] ref Launch launch);
 
     [DllImport(@"IO.SDK", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-    public static extern int GetValueProxy();
+    private static extern int GetValueProxy();
 
     [DllImport(@"IO.SDK", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-    public static extern void LoadGenericKernelsProxy(string directoryPath);
+    private static extern void LoadGenericKernelsProxy(string directoryPath);
 
     [DllImport(@"IO.SDK", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-    public static extern IntPtr TDBToStringProxy(double secondsFromJ2000);
+    private static extern string TDBToStringProxy(double secondsFromJ2000);
 
     [DllImport(@"IO.SDK", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-    public static extern IntPtr UTCToStringProxy(double secondsFromJ2000);
+    private static extern string UTCToStringProxy(double secondsFromJ2000);
 
+    /// <summary>
+    /// Instanciate API
+    /// </summary>
     public API()
     {
         if (!_isresolverLoaded)
@@ -69,39 +75,59 @@ public class API
         return libHandle;
     }
 
+    /// <summary>
+    /// Get spice toolkit version number
+    /// </summary>
+    /// <returns></returns>
     public string GetSpiceVersion()
     {
-        IntPtr res = GetSpiceVersionProxy();
-        var str = Marshal.PtrToStringAnsi(res);
-        return str;
+        return GetSpiceVersionProxy();
     }
 
+    /// <summary>
+    /// Convert seconds from J2000 to formatted string
+    /// </summary>
+    /// <param name="secondsFromJ2000"></param>
+    /// <returns></returns>
     public string TDBToString(double secondsFromJ2000)
     {
-        IntPtr res = TDBToStringProxy(secondsFromJ2000);
-        var str = Marshal.PtrToStringAnsi(res);
-        return str;
+        return TDBToStringProxy(secondsFromJ2000);
     }
 
+    /// <summary>
+    /// Convert seconds from J2000 to formatted string
+    /// </summary>
+    /// <param name="secondsFromJ2000"></param>
+    /// <returns></returns>
     public string UTCToString(double secondsFromJ2000)
     {
-        IntPtr res = UTCToStringProxy(secondsFromJ2000);
-        var str = Marshal.PtrToStringAnsi(res);
-        return str;
+        return  UTCToStringProxy(secondsFromJ2000);
     }
 
+    /// <summary>
+    /// Execute the scenario
+    /// </summary>
+    /// <param name="scenario"></param>
     public void ExecuteScenario(ref Scenario scenario)
     {
         PropagateProxy(ref scenario);
     }
 
-    public int GetValue()
-    {
-        return GetValueProxy();
-    }
-
+    /// <summary>
+    /// Load generic kernel at given path
+    /// </summary>
+    /// <param name="directoryPath">Path where generic kernels are located</param>
     public void LoadGenericKernel(string directoryPath)
     {
         LoadGenericKernelsProxy(directoryPath);
+    }
+    
+    /// <summary>
+    /// Find launch windows
+    /// </summary>
+    /// <param name="launchDto"></param>
+    public void FindLaunchWindows(ref Launch launchDto)
+    {
+        LaunchProxy(ref launchDto);
     }
 }

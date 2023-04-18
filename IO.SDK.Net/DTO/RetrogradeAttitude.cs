@@ -6,16 +6,25 @@ namespace IO.SDK.Net.DTO;
 [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
 public struct RetrogradeAttitude
 {
-    public int ManeuverOrder=-1;
+    public int ManeuverOrder;
 
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = Spacecraft.ENGINESIZE)]
-    public IntPtr[] Engines = new IntPtr[Spacecraft.ENGINESIZE];
+    public string[] Engines ;
 
-    double AttitudeHoldDuration = 0;
-    double MinimumEpoch = 0;
-    Window Window = default;
+    double AttitudeHoldDuration ;
+    double MinimumEpoch ;
+    Window Window ;
 
-    public RetrogradeAttitude()
+    public RetrogradeAttitude() : this(-1, 0.0, double.MinValue)
     {
+    }
+
+    public RetrogradeAttitude(int maneuverOrder, double attitudeHoldDuration, double minimumEpoch)
+    {
+        Engines = new string[Spacecraft.ENGINESIZE];
+        ManeuverOrder = maneuverOrder;
+        AttitudeHoldDuration = attitudeHoldDuration;
+        MinimumEpoch = minimumEpoch;
+        Window = default;
     }
 }

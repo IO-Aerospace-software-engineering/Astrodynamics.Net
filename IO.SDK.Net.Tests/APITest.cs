@@ -35,8 +35,8 @@ public class APITest
         double start = 667915130.814600;
         double end = 668174330.814560;
         API api = new API();
-        API.LoadGenericKernelsProxy(SolarSystemKernelPath);
-        CelestialBody celestialBody = new CelestialBody() { Id = 399, CenterOfMotionId = 10 };
+        api.LoadGenericKernel(SolarSystemKernelPath);
+        CelestialBody celestialBody = new CelestialBody(id: 399, centerOfMotionId: 10);
 
         Site launchSite = new Site(id: 399303, bodyId: 399,
             coordinates: new Geodetic(-81.0 * Constants.DEG_RAD, 28.5 * Constants.DEG_RAD, 0.0), name: "S3",
@@ -51,16 +51,11 @@ public class APITest
             new Vector3D(5056554.1874925727, 4395595.4942363985, 0.0),
             new Vector3D(-3708.6305608890916, 4266.2914313011433, 6736.8538488755494));
 
-        StateVector target = new StateVector(celestialBody, start, "J2000",
-            new Vector3D(4390853.7278876612, 5110607.0005866792, 917659.86391987884),
-            new Vector3D(-4979.4693432656513, 3033.2639866911495, 6933.1803797017265));
-
-
         Launch launch = new Launch(launchSite, recoverySite, true, 1, parkingOrbit, new Window(start, end));
-        API.LaunchProxy(ref launch);
+        api.FindLaunchWindows(ref launch);
         Assert.Equal(2, launch.Windows.Count(x => x.Start != 0 && x.End != 0));
         Assert.Equal(new Window(668084955.97088385, 668084955.97088385), launch.Windows[0]);
-        Assert.Equal(new Window(668171119.44731534, 668171119.44731534) { }, launch.Windows[1]);
+        Assert.Equal(new Window(668171119.44731534, 668171119.44731534), launch.Windows[1]);
         Assert.Equal(47.00587579161426, launch.InertialAzimuth * Constants.RAD_DEG);
         Assert.Equal(45.125224583051406, launch.NonInertialAzimuth * Constants.RAD_DEG);
         Assert.Equal(8794.33812148836, launch.InertialInsertionVelocity);
@@ -112,45 +107,47 @@ public class APITest
 
 
         scenario.Spacecraft = new Spacecraft(-178, "DRAGONFLY", 1000.0, 10000.0, parkingOrbit, SpacecraftPath);
-        scenario.Spacecraft.FuelTanks[0] = new FuelTank
-            { Id = 1, Capacity = 9000.0, Quantity = 9000.0, SerialNumber = "fuelTank1" };
-        scenario.Spacecraft.Engines[0] = new EngineDTO
-        {
-            Id = 1, Name = "engine1", Fuelflow = 50, SerialNumber = "serialNumber1", FuelTankSerialNumber = "fuelTank1",
-            Isp = 450
-        };
+        scenario.Spacecraft.FuelTanks[0] =
+            new FuelTank(id: 1, capacity: 9000.0, quantity: 9000.0, serialNumber: "fuelTank1");
+        scenario.Spacecraft.Engines[0] = new EngineDTO(id: 1, name: "engine1", fuelFlow: 50,
+            serialNumber: "serialNumber1", fuelTankSerialNumber: "fuelTank1", isp: 450);
         scenario.Spacecraft.Payloads[0] = new Payload("PAY01", "Payload 01", 50.0);
+        scenario.Spacecraft.Instruments[0] = new Instrument(600, "CAM600", "circular", new Vector3D(1.0, 0.0, 0.0),
+            new Vector3D(0.0, 0.0, 1.0), new Vector3D(1.0, 0.0, 0.0), 80.0 * Constants.DEG_RAD, double.NaN);
 
-        scenario.Spacecraft.Instruments[0].Name = "CAM600";
-        scenario.Spacecraft.Instruments[0].Id = 600;
-        scenario.Spacecraft.Instruments[0].Boresight.X = 0.0;
-        scenario.Spacecraft.Instruments[0].Boresight.Y = 0.0;
-        scenario.Spacecraft.Instruments[0].Boresight.Z = 1.0;
-        scenario.Spacecraft.Instruments[0].FovRefVector.X = 1.0;
-        scenario.Spacecraft.Instruments[0].FovRefVector.Y = 0.0;
-        scenario.Spacecraft.Instruments[0].FovRefVector.Z = 0.0;
-        scenario.Spacecraft.Instruments[0].Orientation.X = 1.0;
-        scenario.Spacecraft.Instruments[0].Orientation.Y = 0.0;
-        scenario.Spacecraft.Instruments[0].Orientation.Z = 0.0;
-        scenario.Spacecraft.Instruments[0].FieldOfView = 80.0 * Constants.DEG_RAD;
-        scenario.Spacecraft.Instruments[0].Shape = "circular";
 
-        scenario.Spacecraft.OrbitalPlaneChangingManeuvers[0].ManeuverOrder = 0;
-        scenario.Spacecraft.OrbitalPlaneChangingManeuvers[0].Engines[0] = Marshal.StringToHGlobalAnsi("serialNumber1");
-        scenario.Spacecraft.OrbitalPlaneChangingManeuvers[0].TargetOrbit = target;
+        scenario.Spacecraft.OrbitalPlaneChangingManeuvers[0] = new OrbitalPlaneChangingManeuver(0, 0.0, 0.0, target)
+        {
+            Engines =
+            {
+                [0] = "serialNumber1"
+            }
+        };
 
-        scenario.Spacecraft.ApsidalAlignmentManeuvers[0].ManeuverOrder = 1;
-        scenario.Spacecraft.ApsidalAlignmentManeuvers[0].Engines[0] = Marshal.StringToHGlobalAnsi("serialNumber1");
-        scenario.Spacecraft.ApsidalAlignmentManeuvers[0].TargetOrbit = target;
+        scenario.Spacecraft.ApsidalAlignmentManeuvers[0] = new ApsidalAlignmentManeuver(1, 0.0, int.MinValue, target)
+        {
+            Engines =
+            {
+                [0] = "serialNumber1"
+            }
+        };
 
-        scenario.Spacecraft.PhasingManeuverDto[0].ManeuverOrder = 2;
-        scenario.Spacecraft.PhasingManeuverDto[0].Engines[0] = Marshal.StringToHGlobalAnsi("serialNumber1");
-        scenario.Spacecraft.PhasingManeuverDto[0].TargetOrbit = target;
-        scenario.Spacecraft.PhasingManeuverDto[0].NumberRevolutions = 1;
+        scenario.Spacecraft.PhasingManeuverDto[0] = new PhasingManeuver(2, 0.0, double.MinValue, 1, target)
+        {
+            Engines =
+            {
+                [0] = "serialNumber1"
+            }
+        };
 
-        scenario.Spacecraft.ApogeeHeightChangingManeuvers[0].ManeuverOrder = 3;
-        scenario.Spacecraft.ApogeeHeightChangingManeuvers[0].Engines[0] = Marshal.StringToHGlobalAnsi("serialNumber1");
-        scenario.Spacecraft.ApogeeHeightChangingManeuvers[0].TargetHeight = 15866666.666666666;
+        scenario.Spacecraft.ApogeeHeightChangingManeuvers[0] =
+            new ApogeeHeightChangingManeuver(3, 0.0, double.MinValue, 15866666.666666666)
+            {
+                Engines =
+                {
+                    [0] = "serialNumber1"
+                }
+            };
 
 
         api.ExecuteScenario(ref scenario);
@@ -164,32 +161,56 @@ public class APITest
         Assert.Equal("2021-03-04 00:31:44.178429 (TDB)",
             api.TDBToString(scenario.Spacecraft.OrbitalPlaneChangingManeuvers[0].ThrustWindow.End));
         Assert.Equal(8.326384663581848,
-            scenario.Spacecraft.OrbitalPlaneChangingManeuvers[0].ManeuverWindow.End -
-            scenario.Spacecraft.OrbitalPlaneChangingManeuvers[0].ManeuverWindow.Start);
-        Assert.Equal(new Vector3D(-96.310132502235291, 106.94716089267334, -118.92923688022945), scenario.Spacecraft.OrbitalPlaneChangingManeuvers[0].DeltaV);
-        Assert.Equal(416.3192335596316,scenario.Spacecraft.OrbitalPlaneChangingManeuvers[0].FuelBurned);
-        
-        // Assert.Equal("2021-03-04 01:14:45.072117 (TDB)",
-        //     api.TDBToString(scenario.Spacecraft.ApsidalAlignmentManeuvers[0].ManeuverWindow.Start));
-        //
-        // Assert.Equal("2021-03-04 04:35:18.811636 (TDB)",
-        //     api.TDBToString(scenario.Spacecraft.PhasingManeuverDto[0].ManeuverWindow.Start));
-        
-        Assert.Equal("2021-03-04 08:56:58.540624 (TDB)",
-            api.TDBToString(scenario.Spacecraft.ApogeeHeightChangingManeuvers[0].ManeuverWindow.Start));
+            scenario.Spacecraft.OrbitalPlaneChangingManeuvers[0].ThrustWindow.End -
+            scenario.Spacecraft.OrbitalPlaneChangingManeuvers[0].ThrustWindow.Start);
+        Assert.Equal(new Vector3D(-96.310132502235291, 106.94716089267334, -118.92923688022945),
+            scenario.Spacecraft.OrbitalPlaneChangingManeuvers[0].DeltaV);
+        Assert.Equal(416.3192335596316, scenario.Spacecraft.OrbitalPlaneChangingManeuvers[0].FuelBurned);
 
-        
-        Assert.Equal("2021-03-04 01:15:07.285342 (TDB)",
+        Assert.Equal("2021-03-04 01:14:35.908715 (TDB)",
+            api.TDBToString(scenario.Spacecraft.ApsidalAlignmentManeuvers[0].ManeuverWindow.Start));
+        Assert.Equal("2021-03-04 01:14:58.448143 (TDB)",
             api.TDBToString(scenario.Spacecraft.ApsidalAlignmentManeuvers[0].ManeuverWindow.End));
-        Assert.Equal("2021-03-04 01:14:45.072117 (TDB)",
+        Assert.Equal("2021-03-04 01:14:35.908715 (TDB)",
             api.TDBToString(scenario.Spacecraft.ApsidalAlignmentManeuvers[0].ThrustWindow.Start));
-        Assert.Equal("2021-03-04 01:15:07.285342 (TDB)",
+        Assert.Equal("2021-03-04 01:14:58.448143 (TDB)",
             api.TDBToString(scenario.Spacecraft.ApsidalAlignmentManeuvers[0].ThrustWindow.End));
-        Assert.Equal(22.2132,
-            scenario.Spacecraft.OrbitalPlaneChangingManeuvers[0].ManeuverWindow.End -
-            scenario.Spacecraft.OrbitalPlaneChangingManeuvers[0].ManeuverWindow.Start);
-        Assert.Equal(new Vector3D(-96.310132502235291, 106.94716089267334, -118.92923688022945), scenario.Spacecraft.OrbitalPlaneChangingManeuvers[0].DeltaV);
-        Assert.Equal(1110.66,scenario.Spacecraft.OrbitalPlaneChangingManeuvers[0].FuelBurned);
+        Assert.Equal(22.539427876472473,
+            scenario.Spacecraft.ApsidalAlignmentManeuvers[0].ThrustWindow.End -
+            scenario.Spacecraft.ApsidalAlignmentManeuvers[0].ThrustWindow.Start);
+        Assert.Equal(new Vector3D(-465.43237249809499, -170.79467001831654, 235.85199549814843),
+            scenario.Spacecraft.ApsidalAlignmentManeuvers[0].DeltaV);
+        Assert.Equal(1126.971395681102, scenario.Spacecraft.ApsidalAlignmentManeuvers[0].FuelBurned);
+
+        Assert.Equal("2021-03-04 01:15:06.675929 (TDB)",
+            api.TDBToString(scenario.Spacecraft.PhasingManeuverDto[0].ManeuverWindow.Start));
+        Assert.Equal("2021-03-04 04:58:19.564061 (TDB)",
+            api.TDBToString(scenario.Spacecraft.PhasingManeuverDto[0].ManeuverWindow.End));
+        Assert.Equal("2021-03-04 01:15:06.675929 (TDB)",
+            api.TDBToString(scenario.Spacecraft.PhasingManeuverDto[0].ThrustWindow.Start));
+        Assert.Equal("2021-03-04 01:15:16.220357 (TDB)",
+            api.TDBToString(scenario.Spacecraft.PhasingManeuverDto[0].ThrustWindow.End));
+        Assert.Equal(9.544427156448364,
+            scenario.Spacecraft.PhasingManeuverDto[0].ThrustWindow.End -
+            scenario.Spacecraft.PhasingManeuverDto[0].ThrustWindow.Start);
+        Assert.Equal(new Vector3D(-140.06591089740422, 85.292644161629369, 194.98809324843614),
+            scenario.Spacecraft.PhasingManeuverDto[0].DeltaV);
+        Assert.Equal(477.2213550574124, scenario.Spacecraft.PhasingManeuverDto[0].FuelBurned);
+
+        Assert.Equal("2021-03-04 05:23:34.930489 (TDB)",
+            api.TDBToString(scenario.Spacecraft.ApogeeHeightChangingManeuvers[0].ManeuverWindow.Start));
+        Assert.Equal("2021-03-04 05:23:43.510224 (TDB)",
+            api.TDBToString(scenario.Spacecraft.ApogeeHeightChangingManeuvers[0].ManeuverWindow.End));
+        Assert.Equal("2021-03-04 05:23:34.930489 (TDB)",
+            api.TDBToString(scenario.Spacecraft.ApogeeHeightChangingManeuvers[0].ThrustWindow.Start));
+        Assert.Equal("2021-03-04 05:23:43.510224 (TDB)",
+            api.TDBToString(scenario.Spacecraft.ApogeeHeightChangingManeuvers[0].ThrustWindow.End));
+        Assert.Equal(8.5797358751297,
+            scenario.Spacecraft.ApogeeHeightChangingManeuvers[0].ThrustWindow.End -
+            scenario.Spacecraft.ApogeeHeightChangingManeuvers[0].ThrustWindow.Start);
+        Assert.Equal(new Vector3D(134.75015047648623, -81.245837445793484, -184.26044152450118),
+            scenario.Spacecraft.ApogeeHeightChangingManeuvers[0].DeltaV);
+        Assert.Equal(428.98679499077326, scenario.Spacecraft.ApogeeHeightChangingManeuvers[0].FuelBurned);
     }
 
     [Fact]
@@ -207,7 +228,7 @@ public class APITest
         api.LoadGenericKernel(SolarSystemKernelPath);
         var res = api.TDBToString(0.0);
         Assert.Equal("2000-01-01 12:00:00.000000 (TDB)", res);
-        
+
         res = api.TDBToString(100.0);
         Assert.Equal("2000-01-01 12:01:40.000000 (TDB)", res);
     }

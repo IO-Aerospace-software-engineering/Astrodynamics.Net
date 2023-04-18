@@ -15,4 +15,15 @@ public struct Instrument
     public double CrossAngle;
     // [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
     // public InFieldOfView[] InFieldOfViews;
+    public Instrument(int id, string name, string shape, Vector3D orientation, Vector3D boresight, Vector3D fovRefVector, double fieldOfView, double crossAngle)
+    {
+        Id = id;
+        Name = name;
+        Shape = shape;
+        Orientation = orientation;
+        Boresight = boresight;
+        FovRefVector = fovRefVector;
+        FieldOfView = fieldOfView;
+        CrossAngle = crossAngle;
+    }
 }

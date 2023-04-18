@@ -6,4 +6,10 @@ namespace IO.SDK.Net.DTO;
 public struct AzimuthRange
 {
     public double Start, End;
+
+    public AzimuthRange(double start, double end)
+    {
+        Start = start;
+        End = end;
+    }
 }

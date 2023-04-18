@@ -6,24 +6,40 @@ namespace IO.SDK.Net.DTO;
 [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
 public struct ApsidalAlignmentManeuver
 {
-    public int ManeuverOrder=-1;
+    public int ManeuverOrder;
 
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = Spacecraft.ENGINESIZE)]
-    public IntPtr[] Engines = new IntPtr[Spacecraft.ENGINESIZE];
+    public string[] Engines;
 
-    public double AttitudeHoldDuration = 0;
-    public double MinimumEpoch = 0;
+    public double AttitudeHoldDuration;
+    public double MinimumEpoch;
 
-    public StateVector TargetOrbit = default;
+    public StateVector TargetOrbit;
 
-    public Window ManeuverWindow = default;
-    public Window ThrustWindow = default;
-    public Window AttitudeWindow = default;
-    public Vector3D DeltaV = default;
-    public double FuelBurned = 0;
-    double Theta = 0;
+    public Window ManeuverWindow;
+    public Window ThrustWindow;
+    public Window AttitudeWindow;
+    public Vector3D DeltaV ;
+    public double FuelBurned;
+    double Theta;
 
-    public ApsidalAlignmentManeuver()
+    public ApsidalAlignmentManeuver() : this(-1, 0.0, double.MinValue, default)
     {
+    }
+
+    public ApsidalAlignmentManeuver(int maneuverOrder, double attitudeHoldDuration, double minimumEpoch,
+        StateVector targetOrbit)
+    {
+        Engines = new string[Spacecraft.ENGINESIZE];
+        ManeuverOrder = maneuverOrder;
+        AttitudeHoldDuration = attitudeHoldDuration;
+        MinimumEpoch = minimumEpoch;
+        TargetOrbit = targetOrbit;
+        ManeuverWindow = default;
+        ThrustWindow = default;
+        AttitudeWindow = default;
+        DeltaV = default;
+        FuelBurned = default;
+        Theta = default;
     }
 }
