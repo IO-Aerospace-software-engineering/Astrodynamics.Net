@@ -33,6 +33,34 @@ public class API
     [DllImport(@"IO.SDK", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     private static extern string UTCToStringProxy(double secondsFromJ2000);
 
+    [DllImport(@"IO.SDK", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+    private static extern void FindWindowsOnDistanceConstraintProxy(Window searchWindow, int observerId,
+        int targetId, string constraint, double value, string aberration, double stepSize, [In, Out] Window[] windows);
+
+    [DllImport(@"IO.SDK", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+    private static extern void FindWindowsOnOccultationConstraintProxy(Window searchWindow, int observerId,
+        int targetId,
+        string targetFrame, string targetShape, int frontBodyId, string frontFrame, string frontShape,
+        string occultationType,
+        string aberration, double stepSize, [In, Out] Window[] windows);
+
+    [DllImport(@"IO.SDK", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+    private static extern void FindWindowsOnCoordinateConstraintProxy(Window searchWindow, int observerId, int targetId,
+        string frame, string coordinateSystem, string coordinate,
+        string relationalOperator, double value, double adjustValue, string aberration, double stepSize,
+        [In, Out] Window[] windows);
+
+    [DllImport(@"IO.SDK", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+    private static extern void FindWindowsOnIlluminationConstraintProxy(Window searchWindow, int observerId,
+        string illuminationSource, int targetBody, string fixedFrame,
+        Geodetic geodetic, string illuminationType, string relationalOperator, double value, double adjustValue,
+        string aberration, double stepSize, string method, [In, Out] Window[] windows);
+
+    [DllImport(@"IO.SDK", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+    private static extern void FindWindowsInFieldOfViewConstraintProxy(Window searchWindow, int observerId,
+        int instrumentId, int targetId, string targetFrame, string targetShape, string aberration, double stepSize,
+        [In, Out] Window[] windows);
+
     /// <summary>
     /// Instanciate API
     /// </summary>
@@ -101,7 +129,7 @@ public class API
     /// <returns></returns>
     public string UTCToString(double secondsFromJ2000)
     {
-        return  UTCToStringProxy(secondsFromJ2000);
+        return UTCToStringProxy(secondsFromJ2000);
     }
 
     /// <summary>
@@ -121,7 +149,7 @@ public class API
     {
         LoadGenericKernelsProxy(directoryPath);
     }
-    
+
     /// <summary>
     /// Find launch windows
     /// </summary>
@@ -129,5 +157,54 @@ public class API
     public void FindLaunchWindows(ref Launch launchDto)
     {
         LaunchProxy(ref launchDto);
+    }
+
+    public Window[] FindWindowsOnDistanceConstraint(Window searchWindow, int observerId,
+        int targetId, string constraint, double value, string aberration, double stepSize)
+    {
+        Window[] windows = new Window[1000];
+        FindWindowsOnDistanceConstraintProxy(searchWindow, observerId, targetId, constraint, value, aberration,
+            stepSize, windows);
+        return windows;
+    }
+
+    public Window[] FindWindowsOnOccultationConstraint(Window searchWindow, int observerId,
+        int targetId, string targetFrame, string targetShape, int frontBodyId, string frontFrame, string frontShape,
+        string occultationType, string aberration, double stepSize)
+    {
+        Window[] windows = new Window[1000];
+        FindWindowsOnOccultationConstraintProxy(searchWindow, observerId, targetId, targetFrame, targetShape,
+            frontBodyId, frontFrame, frontShape, occultationType, aberration, stepSize, windows);
+        return windows;
+    }
+
+    public Window[] FindWindowsOnCoordinateConstraint(Window searchWindow, int observerId, int targetId,
+        string frame, string coordinateSystem, string coordinate,
+        string relationalOperator, double value, double adjustValue, string aberration, double stepSize)
+    {
+        Window[] windows = new Window[1000];
+        FindWindowsOnCoordinateConstraintProxy(searchWindow, observerId, targetId, frame, coordinateSystem,
+            coordinate, relationalOperator, value, adjustValue, aberration, stepSize, windows);
+        return windows;
+    }
+
+    public Window[] FindWindowsOnIlluminationConstraint(Window searchWindow, int observerId,
+        string illuminationSource, int targetBody, string fixedFrame,
+        Geodetic geodetic, string illuminationType, string relationalOperator, double value, double adjustValue,
+        string aberration, double stepSize, string method)
+    {
+        Window[] windows = new Window[1000];
+        FindWindowsOnIlluminationConstraintProxy(searchWindow, observerId, illuminationSource, targetBody, fixedFrame,
+            geodetic, illuminationType, relationalOperator, value, adjustValue, aberration, stepSize, method, windows);
+        return windows;
+    }
+
+    public Window[] FindWindowsInFieldOfViewConstraint(Window searchWindow, int observerId,
+        int instrumentId, int targetId, string targetFrame, string targetShape, string aberration, double stepSize)
+    {
+        Window[] windows = new Window[1000];
+        FindWindowsInFieldOfViewConstraintProxy(searchWindow, observerId, instrumentId, targetId, targetFrame,
+            targetShape, aberration, stepSize, windows);
+        return windows;
     }
 }
