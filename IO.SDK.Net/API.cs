@@ -25,7 +25,7 @@ public class API
     private static extern int GetValueProxy();
 
     [DllImport(@"IO.SDK", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-    private static extern void LoadGenericKernelsProxy(string directoryPath);
+    private static extern void LoadKernelsProxy(string directoryPath);
 
     [DllImport(@"IO.SDK", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     private static extern string TDBToStringProxy(double secondsFromJ2000);
@@ -144,10 +144,10 @@ public class API
     /// <summary>
     /// Load generic kernel at given path
     /// </summary>
-    /// <param name="directoryPath">Path where generic kernels are located</param>
-    public void LoadGenericKernel(string directoryPath)
+    /// <param name="path">Path where kernels are located. This could be a file path or a directory path</param>
+    public void LoadGenericKernel(string path)
     {
-        LoadGenericKernelsProxy(directoryPath);
+        LoadKernelsProxy(path);
     }
 
     /// <summary>
