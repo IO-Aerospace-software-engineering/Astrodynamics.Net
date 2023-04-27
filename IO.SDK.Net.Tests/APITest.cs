@@ -265,9 +265,12 @@ public class APITest
     {
         API api = new API();
         api.LoadKernels(SolarSystemKernelPath);
-        var res = api.FindWindowsOnCoordinateConstraint(new Window(730036800.0, 730123200), 399113, 301, "FK_DSS-13_TOPO", "LATITUDINAL", "LATITUDE",
+        var res = api.FindWindowsOnCoordinateConstraint(new Window(730036800.0, 730123200), 399013, 301, "DSS-13_TOPO", "LATITUDINAL", "LATITUDE",
             ">",
             0.0, 0.0, "NONE", 60.0);
+        
+        Assert.Equal("2023-02-19 14:33:08.918098 (TDB)", api.TDBToString(res[0].Start));
+        Assert.Equal("2023-02-20 00:00:00.000000 (TDB)", api.TDBToString(res[0].End));
     }
     
     [Fact]
@@ -285,7 +288,7 @@ public class APITest
     {
         API api = new API();
         api.LoadKernels(SolarSystemKernelPath);
-        var res = api.FindWindowsInFieldOfViewConstraint(new Window(10.0, 20.0), 1, -179100,399, "IAU_EARTH", "Ellipsoid",
+        var res = api.FindWindowsInFieldOfViewConstraint(new Window(730036800.0, 730123200.0), 1, -179100,399, "IAU_EARTH", "Ellipsoid",
             "NONE", 60.0);
     }
 }
