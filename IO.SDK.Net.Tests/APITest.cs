@@ -35,7 +35,7 @@ public class APITest
         double start = 667915130.814600;
         double end = 668174330.814560;
         API api = new API();
-        api.LoadGenericKernel(SolarSystemKernelPath);
+        api.LoadKernels(SolarSystemKernelPath);
         CelestialBody celestialBody = new CelestialBody(id: 399, centerOfMotionId: 10);
 
         Site launchSite = new Site(id: 399303, bodyId: 399,
@@ -79,7 +79,7 @@ public class APITest
         double startPropagator = 668085555.829810;
         double end = 668174400.000000;
         API api = new API();
-        api.LoadGenericKernel(SolarSystemKernelPath);
+        api.LoadKernels(SolarSystemKernelPath);
         var scenario = new Scenario("titi", new Window(startPropagator, end));
         scenario.CelestialBodies[0].Id = 10;
         scenario.CelestialBodies[1].Id = 399;
@@ -225,7 +225,7 @@ public class APITest
     public void TDBToString()
     {
         API api = new API();
-        api.LoadGenericKernel(SolarSystemKernelPath);
+        api.LoadKernels(SolarSystemKernelPath);
         var res = api.TDBToString(0.0);
         Assert.Equal("2000-01-01 12:00:00.000000 (TDB)", res);
 
@@ -237,7 +237,7 @@ public class APITest
     public void UTCToString()
     {
         API api = new API();
-        api.LoadGenericKernel(SolarSystemKernelPath);
+        api.LoadKernels(SolarSystemKernelPath);
         var res = api.UTCToString(0.0);
         Assert.Equal("2000-01-01 12:00:00.000000 (UTC)", res);
     }
@@ -246,7 +246,7 @@ public class APITest
     public void FindWindowsOnDistanceConstraintProxy()
     {
         API api = new API();
-        api.LoadGenericKernel(SolarSystemKernelPath);
+        api.LoadKernels(SolarSystemKernelPath);
         var res = api.FindWindowsOnDistanceConstraint(new Window(10.0, 20.0), 1, 2, "myconstraint", 3, "myabe", 60.0);
     }
 
@@ -254,7 +254,7 @@ public class APITest
     public void FindWindowsOnOccultationConstraint()
     {
         API api = new API();
-        api.LoadGenericKernel(SolarSystemKernelPath);
+        api.LoadKernels(SolarSystemKernelPath);
         var res = api.FindWindowsOnOccultationConstraint(new Window(10.0, 20.0), 1, 2, "IAU_SUN", "Ellipsoid", 301,
             "IAU_MOON",
             "Ellipsoid", "ANY", "NONE", 60.0);
@@ -264,17 +264,17 @@ public class APITest
     public void FindWindowsOnCoordinateConstraint()
     {
         API api = new API();
-        api.LoadGenericKernel(SolarSystemKernelPath);
-        var res = api.FindWindowsOnCoordinateConstraint(new Window(10.0, 20.0), 1, 2, "ITRF93", "RECTANGULAR", "X",
+        api.LoadKernels(SolarSystemKernelPath);
+        var res = api.FindWindowsOnCoordinateConstraint(new Window(730036800.0, 730123200), 399113, 301, "FK_DSS-13_TOPO", "LATITUDINAL", "LATITUDE",
             ">",
-            300, 0.0, "NONE", 60.0);
+            0.0, 0.0, "NONE", 60.0);
     }
     
     [Fact]
     public void FindWindowsOnIlluminationConstraint()
     {
         API api = new API();
-        api.LoadGenericKernel(SolarSystemKernelPath);
+        api.LoadKernels(SolarSystemKernelPath);
         var res = api.FindWindowsOnIlluminationConstraint(new Window(10.0, 20.0), 1, "Sun",399, "IAU_EARTH", new Geodetic(1.0,2.0,3.0),
             "PHASE",
             ">", 0.0, 0.0, "NONE",60.0,"Ellipsoid");
@@ -284,7 +284,7 @@ public class APITest
     public void FindWindowsInFieldOfViewConstraint()
     {
         API api = new API();
-        api.LoadGenericKernel(SolarSystemKernelPath);
+        api.LoadKernels(SolarSystemKernelPath);
         var res = api.FindWindowsInFieldOfViewConstraint(new Window(10.0, 20.0), 1, -179100,399, "IAU_EARTH", "Ellipsoid",
             "NONE", 60.0);
     }

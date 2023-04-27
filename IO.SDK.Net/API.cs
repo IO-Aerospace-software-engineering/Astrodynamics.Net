@@ -145,7 +145,7 @@ public class API
     /// Load generic kernel at given path
     /// </summary>
     /// <param name="path">Path where kernels are located. This could be a file path or a directory path</param>
-    public void LoadGenericKernel(string path)
+    public void LoadKernels(string path)
     {
         LoadKernelsProxy(path);
     }
