@@ -247,7 +247,8 @@ public class APITest
     {
         API api = new API();
         api.LoadKernels(SolarSystemKernelPath);
-        var res = api.FindWindowsOnDistanceConstraint(new Window(10.0, 20.0), 1, 2, "myconstraint", 3, "myabe", 60.0);
+        var res = api.FindWindowsOnDistanceConstraint(new Window(220881665.18391809, 228657665.18565452), 399, 301, ">",
+            400000000, "NONE", 86400.0);
     }
 
     [Fact]
@@ -255,40 +256,70 @@ public class APITest
     {
         API api = new API();
         api.LoadKernels(SolarSystemKernelPath);
-        var res = api.FindWindowsOnOccultationConstraint(new Window(10.0, 20.0), 1, 2, "IAU_SUN", "Ellipsoid", 301,
+        var res = api.FindWindowsOnOccultationConstraint(new Window(61473664.183390938, 61646464.183445148), 399, 10,
+            "IAU_SUN", "Ellipsoid", 301,
             "IAU_MOON",
-            "Ellipsoid", "ANY", "NONE", 60.0);
+            "Ellipsoid", "ANY", "LT", 3600.0);
     }
-    
+
     [Fact]
     public void FindWindowsOnCoordinateConstraint()
     {
         API api = new API();
         api.LoadKernels(SolarSystemKernelPath);
-        var res = api.FindWindowsOnCoordinateConstraint(new Window(730036800.0, 730123200), 399013, 301, "DSS-13_TOPO", "LATITUDINAL", "LATITUDE",
+        var res = api.FindWindowsOnCoordinateConstraint(new Window(730036800.0, 730123200), 399013, 301, "DSS-13_TOPO",
+            "LATITUDINAL", "LATITUDE",
             ">",
             0.0, 0.0, "NONE", 60.0);
-        
+
         Assert.Equal("2023-02-19 14:33:08.918098 (TDB)", api.TDBToString(res[0].Start));
         Assert.Equal("2023-02-20 00:00:00.000000 (TDB)", api.TDBToString(res[0].End));
     }
-    
+
     [Fact]
     public void FindWindowsOnIlluminationConstraint()
     {
         API api = new API();
         api.LoadKernels(SolarSystemKernelPath);
-        var res = api.FindWindowsOnIlluminationConstraint(new Window(10.0, 20.0), 1, "Sun",399, "IAU_EARTH", new Geodetic(1.0,2.0,3.0),
+        var res = api.FindWindowsOnIlluminationConstraint(new Window(10.0, 20.0), 1, "Sun", 399, "IAU_EARTH",
+            new Geodetic(1.0, 2.0, 3.0),
             "PHASE",
-            ">", 0.0, 0.0, "NONE",60.0,"Ellipsoid");
+            ">", 0.0, 0.0, "NONE", 60.0, "Ellipsoid");
     }
-    
+
     [Fact]
     public void FindWindowsInFieldOfViewConstraint()
     {
         API api = new API();
         api.LoadKernels(SolarSystemKernelPath);
-        var res = api.FindWindowsInFieldOfViewConstraint(new Window(730036800.0, 730123200.0), 1, -179100,399, "IAU_EARTH", "Ellipsoid",
-            "NONE", 60.0);
+
+        double start = 676555200;
+        double end = start + 6447.0;
+        api.LoadKernels(SolarSystemKernelPath);
+        var scenario = new Scenario("titi", new Window(start, end));
+        scenario.CelestialBodies[0].Id = 10;
+        scenario.CelestialBodies[1].Id = 399;
+        scenario.CelestialBodies[1].CenterOfMotionId = 10;
+        scenario.CelestialBodies[2].Id = 301;
+        scenario.CelestialBodies[2].CenterOfMotionId = 399;
+
+        StateVector parkingOrbit = new StateVector(scenario.CelestialBodies[1], start, "J2000",
+            new Vector3D(6800000.0, 0.0, 0.0),
+            new Vector3D(0.0, 7656.2204182967143, 0.0));
+
+
+        scenario.Spacecraft = new Spacecraft(-178, "DRAGONFLY", 1000.0, 10000.0, parkingOrbit, SpacecraftPath);
+        scenario.Spacecraft.FuelTanks[0] =
+            new FuelTank(id: 1, capacity: 9000.0, quantity: 9000.0, serialNumber: "fuelTank1");
+        scenario.Spacecraft.Engines[0] = new EngineDTO(id: 1, name: "engine1", fuelFlow: 50,
+            serialNumber: "serialNumber1", fuelTankSerialNumber: "fuelTank1", isp: 450);
+        scenario.Spacecraft.Payloads[0] = new Payload("PAY01", "Payload 01", 50.0);
+        scenario.Spacecraft.Instruments[0] = new Instrument(600, "CAM600", "circular", new Vector3D(1.0, 0.0, 0.0),
+            new Vector3D(0.0, 0.0, 1.0), new Vector3D(1.0, 0.0, 0.0), 1.5, double.NaN);
+
+        api.ExecuteScenario(ref scenario);
+        var res = api.FindWindowsInFieldOfViewConstraint(new Window(start, end), -178, -178600, 399,
+            "IAU_EARTH", "Ellipsoid",
+            "LT", 3600.0);
     }
 }
