@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using IO.SDK.Net.DTO;
@@ -203,8 +204,14 @@ public class API
         int instrumentId, int targetId, string targetFrame, string targetShape, string aberration, double stepSize)
     {
         Window[] windows = new Window[1000];
+        for (int i = 0; i < 1000; i++)
+        {
+            windows[i].Start = Double.NaN;
+            windows[i].End = Double.NaN;
+        }
+
         FindWindowsInFieldOfViewConstraintProxy(searchWindow, observerId, instrumentId, targetId, targetFrame,
             targetShape, aberration, stepSize, windows);
-        return windows;
+        return windows.Where(x => !double.IsNaN(x.Start)).ToArray();
     }
 }
