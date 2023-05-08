@@ -164,9 +164,14 @@ public class API
         int targetId, string constraint, double value, string aberration, double stepSize)
     {
         Window[] windows = new Window[1000];
+        for (int i = 0; i < 1000; i++)
+        {
+            windows[i].Start = Double.NaN;
+            windows[i].End = Double.NaN;
+        }
         FindWindowsOnDistanceConstraintProxy(searchWindow, observerId, targetId, constraint, value, aberration,
             stepSize, windows);
-        return windows;
+        return windows.Where(x => !double.IsNaN(x.Start)).ToArray();
     }
 
     public Window[] FindWindowsOnOccultationConstraint(Window searchWindow, int observerId,
@@ -174,9 +179,14 @@ public class API
         string occultationType, string aberration, double stepSize)
     {
         Window[] windows = new Window[1000];
+        for (int i = 0; i < 1000; i++)
+        {
+            windows[i].Start = Double.NaN;
+            windows[i].End = Double.NaN;
+        }
         FindWindowsOnOccultationConstraintProxy(searchWindow, observerId, targetId, targetFrame, targetShape,
             frontBodyId, frontFrame, frontShape, occultationType, aberration, stepSize, windows);
-        return windows;
+        return windows.Where(x => !double.IsNaN(x.Start)).ToArray();
     }
 
     public Window[] FindWindowsOnCoordinateConstraint(Window searchWindow, int observerId, int targetId,
@@ -184,9 +194,14 @@ public class API
         string relationalOperator, double value, double adjustValue, string aberration, double stepSize)
     {
         Window[] windows = new Window[1000];
+        for (int i = 0; i < 1000; i++)
+        {
+            windows[i].Start = Double.NaN;
+            windows[i].End = Double.NaN;
+        }
         FindWindowsOnCoordinateConstraintProxy(searchWindow, observerId, targetId, frame, coordinateSystem,
             coordinate, relationalOperator, value, adjustValue, aberration, stepSize, windows);
-        return windows;
+        return windows.Where(x => !double.IsNaN(x.Start)).ToArray();
     }
 
     public Window[] FindWindowsOnIlluminationConstraint(Window searchWindow, int observerId,
@@ -195,9 +210,14 @@ public class API
         string aberration, double stepSize, string method)
     {
         Window[] windows = new Window[1000];
+        for (int i = 0; i < 1000; i++)
+        {
+            windows[i].Start = Double.NaN;
+            windows[i].End = Double.NaN;
+        }
         FindWindowsOnIlluminationConstraintProxy(searchWindow, observerId, illuminationSource, targetBody, fixedFrame,
             geodetic, illuminationType, relationalOperator, value, adjustValue, aberration, stepSize, method, windows);
-        return windows;
+        return windows.Where(x => !double.IsNaN(x.Start)).ToArray();
     }
 
     public Window[] FindWindowsInFieldOfViewConstraint(Window searchWindow, int observerId,

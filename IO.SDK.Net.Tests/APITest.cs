@@ -249,6 +249,11 @@ public class APITest
         api.LoadKernels(SolarSystemKernelPath);
         var res = api.FindWindowsOnDistanceConstraint(new Window(220881665.18391809, 228657665.18565452), 399, 301, ">",
             400000000, "NONE", 86400.0);
+        Assert.Equal(4, res.Length);
+        Assert.Equal("2007-01-08 00:11:07.628591 (TDB)", api.TDBToString(res[0].Start));
+        Assert.Equal("2007-01-13 06:37:47.948144 (TDB)", api.TDBToString(res[0].End));
+        Assert.Equal("2007-03-29 22:53:58.151896 (TDB)", api.TDBToString(res[3].Start));
+        Assert.Equal("2007-04-01 00:01:05.185654 (TDB)", api.TDBToString(res[3].End));
     }
 
     [Fact]
@@ -260,6 +265,9 @@ public class APITest
             "IAU_SUN", "Ellipsoid", 301,
             "IAU_MOON",
             "Ellipsoid", "ANY", "LT", 3600.0);
+        Assert.Single(res);
+        Assert.Equal("2001-12-14 20:10:15.410588 (TDB)", api.TDBToString(res[0].Start));
+        Assert.Equal("2001-12-14 21:35:49.100520 (TDB)", api.TDBToString(res[0].End));
     }
 
     [Fact]
@@ -272,6 +280,7 @@ public class APITest
             ">",
             0.0, 0.0, "NONE", 60.0);
 
+        Assert.Single(res);
         Assert.Equal("2023-02-19 14:33:08.918098 (TDB)", api.TDBToString(res[0].Start));
         Assert.Equal("2023-02-20 00:00:00.000000 (TDB)", api.TDBToString(res[0].End));
     }
@@ -281,10 +290,15 @@ public class APITest
     {
         API api = new API();
         api.LoadKernels(SolarSystemKernelPath);
-        var res = api.FindWindowsOnIlluminationConstraint(new Window(10.0, 20.0), 1, "Sun", 399, "IAU_EARTH",
-            new Geodetic(1.0, 2.0, 3.0),
-            "PHASE",
-            ">", 0.0, 0.0, "NONE", 60.0, "Ellipsoid");
+        var res = api.FindWindowsOnIlluminationConstraint(new Window(674524800, 674611200), 10, "Sun", 399, "IAU_EARTH",
+            new Geodetic(2.2 * Constants.DEG_RAD, 48.0 * Constants.DEG_RAD, 0.0),
+            "INCIDENCE",
+            "<", Math.PI * 0.5 - (-0.8 * Constants.DEG_RAD), 0.0, "CN+S", 60.0 * 60.0 * 4.5, "Ellipsoid");
+        Assert.Equal(2, res.Length);
+        Assert.Equal("2021-05-17 12:00:00.000000 (TDB)", api.TDBToString(res[0].Start));
+        Assert.Equal("2021-05-17 19:35:42.885022 (TDB)", api.TDBToString(res[0].End));
+        Assert.Equal("2021-05-18 04:18:50.060742 (TDB)", api.TDBToString(res[1].Start));
+        Assert.Equal("2021-05-18 12:00:00.000000 (TDB)", api.TDBToString(res[1].End));
     }
 
     [Fact]
