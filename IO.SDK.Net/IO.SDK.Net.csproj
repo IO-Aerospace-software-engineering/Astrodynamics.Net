@@ -11,18 +11,17 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Content Include="..\..\SDK\cmake-build-debug\IO.SDK\libIO.SDK.so">
-        <Link>resources/libIO.SDK.so</Link>
+      <None Remove="resources\IO.SDK.dll" />
+      <Content Include="resources\IO.SDK.dll">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
-      <Content Include="..\..\SDK\cmake-build-release\IO.SDK\IO.SDK.dll">
-        <Link>resources/IO.SDK.dll</Link>
+      <None Remove="resources\IO.SDK.exp" />
+      <Content Include="resources\IO.SDK.exp">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
-      <Content Include="..\..\SDK\cmake-build-release\IO.SDK\IO.SDK.exp">
-        <Link>resources/IO.SDK.exp</Link>
-      </Content>
-      <Content Include="..\..\SDK\cmake-build-release\IO.SDK\IO.SDK.lib">
-        <Link>resources/IO.SDK.lib</Link>
+      <None Remove="resources\IO.SDK.lib" />
+      <Content Include="resources\IO.SDK.lib">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
     </ItemGroup>
 

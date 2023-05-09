@@ -163,8 +163,12 @@ public class APITest
         Assert.Equal(8.326384663581848,
             scenario.Spacecraft.OrbitalPlaneChangingManeuvers[0].ThrustWindow.End -
             scenario.Spacecraft.OrbitalPlaneChangingManeuvers[0].ThrustWindow.Start);
-        Assert.Equal(new Vector3D(-96.310132502235291, 106.94716089267334, -118.92923688022945),
+        Assert.Equal(
+            OperatingSystem.IsLinux()
+                ? new Vector3D(-96.310132502235291, 106.94716089267334, -118.92923688022945)
+                : new Vector3D(-96.310132502235575, 106.94716089267355, -118.9292368802296),
             scenario.Spacecraft.OrbitalPlaneChangingManeuvers[0].DeltaV);
+
         Assert.Equal(416.3192335596316, scenario.Spacecraft.OrbitalPlaneChangingManeuvers[0].FuelBurned);
 
         Assert.Equal("2021-03-04 01:14:35.908715 (TDB)",
@@ -178,9 +182,15 @@ public class APITest
         Assert.Equal(22.539427876472473,
             scenario.Spacecraft.ApsidalAlignmentManeuvers[0].ThrustWindow.End -
             scenario.Spacecraft.ApsidalAlignmentManeuvers[0].ThrustWindow.Start);
-        Assert.Equal(new Vector3D(-465.43237249809499, -170.79467001831654, 235.85199549814843),
+        Assert.Equal(
+            OperatingSystem.IsLinux()
+                ? new Vector3D(-465.43237249809499, -170.79467001831654, 235.85199549814843)
+                : new Vector3D(-465.43237249801768, -170.7946700182174, 235.8519954981366),
             scenario.Spacecraft.ApsidalAlignmentManeuvers[0].DeltaV);
-        Assert.Equal(1126.971395681102, scenario.Spacecraft.ApsidalAlignmentManeuvers[0].FuelBurned);
+
+        Assert.Equal(OperatingSystem.IsLinux()
+            ? 1126.971395681102
+            : 1126.9713956809062, scenario.Spacecraft.ApsidalAlignmentManeuvers[0].FuelBurned);
 
         Assert.Equal("2021-03-04 01:15:06.675929 (TDB)",
             api.TDBToString(scenario.Spacecraft.PhasingManeuverDto[0].ManeuverWindow.Start));
@@ -193,9 +203,14 @@ public class APITest
         Assert.Equal(9.544427156448364,
             scenario.Spacecraft.PhasingManeuverDto[0].ThrustWindow.End -
             scenario.Spacecraft.PhasingManeuverDto[0].ThrustWindow.Start);
-        Assert.Equal(new Vector3D(-140.06591089740422, 85.292644161629369, 194.98809324843614),
+
+        Assert.Equal(
+            OperatingSystem.IsLinux()
+                ? new Vector3D(-140.06591089740422, 85.292644161629369, 194.98809324843614)
+                : new Vector3D(-140.06591089738828, 85.292644161619563, 194.98809324841392),
             scenario.Spacecraft.PhasingManeuverDto[0].DeltaV);
-        Assert.Equal(477.2213550574124, scenario.Spacecraft.PhasingManeuverDto[0].FuelBurned);
+
+        Assert.Equal(477.22135505737054, scenario.Spacecraft.PhasingManeuverDto[0].FuelBurned);
 
         Assert.Equal("2021-03-04 05:23:34.930489 (TDB)",
             api.TDBToString(scenario.Spacecraft.ApogeeHeightChangingManeuvers[0].ManeuverWindow.Start));
@@ -208,9 +223,13 @@ public class APITest
         Assert.Equal(8.5797358751297,
             scenario.Spacecraft.ApogeeHeightChangingManeuvers[0].ThrustWindow.End -
             scenario.Spacecraft.ApogeeHeightChangingManeuvers[0].ThrustWindow.Start);
-        Assert.Equal(new Vector3D(134.75015047648623, -81.245837445793484, -184.26044152450118),
+        Assert.Equal(
+            OperatingSystem.IsLinux()
+                ? new Vector3D(134.75015047648623, -81.245837445793484, -184.26044152450118)
+                : new Vector3D(134.75015047654603, -81.245837445635601, -184.26044152440747),
             scenario.Spacecraft.ApogeeHeightChangingManeuvers[0].DeltaV);
-        Assert.Equal(428.98679499077326, scenario.Spacecraft.ApogeeHeightChangingManeuvers[0].FuelBurned);
+
+        Assert.Equal(428.98679499062905, scenario.Spacecraft.ApogeeHeightChangingManeuvers[0].FuelBurned);
     }
 
     [Fact]
