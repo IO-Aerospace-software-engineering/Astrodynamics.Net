@@ -1,0 +1,50 @@
+# This workflow will build a .NET project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+
+name: CD
+
+on:
+  push:
+    push:
+      tags:
+        - 'v*'
+  workflow_dispatch:
+    inputs:
+          logLevel:
+            description: 'Log level'
+            required: true
+            default: 'warning'
+            type: choice
+            options:
+            - info
+            - warning
+            - debug
+          environment:
+            description: 'Environment to run tests against'
+            type: environment
+            required: true
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [windows-latest]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 6.0.x
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --no-restore
+    - name: Test
+      run: dotnet test --no-build --verbosity 
+    - name: Package
+      run: dotnet pack -p:NuspecFile=IO.SDK.Net/sdk_net.nuspec --no-build --configuration Release 
+    - name: Publish package
+      run: dotnet nuget push "**/*.nupkg" --api-key ${{secrets.NUGET_TOKEN}} --source https://api.nuget.org/v3/index.json
