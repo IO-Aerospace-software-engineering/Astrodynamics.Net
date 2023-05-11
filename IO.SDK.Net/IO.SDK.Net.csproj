@@ -13,6 +13,9 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Content Include="resources\libIO.SDK.so">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
       <None Remove="resources\IO.SDK.dll" />
       <Content Include="resources\IO.SDK.dll">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>

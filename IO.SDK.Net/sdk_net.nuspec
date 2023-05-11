@@ -6,7 +6,7 @@
         <version>0.0.1-alpha</version>
         <title>.Net proxy to IO Framework</title>
         <projectUrl>https://github.com/IO-Aerospace-software-engineering/SDK.Net</projectUrl>
-        <licenseUrl>https://www.gnu.org/licenses/old-licenses/lgpl-2.1.en.html</licenseUrl>
+        <licenseUrl>https://www.gnu.org/licenses/lgpl-3.0.en.html</licenseUrl>
     </metadata>
     <files>
         <!-- binding libraries -->
@@ -15,7 +15,7 @@
         <file src="resources/IO.SDK.dll" target="runtimes/windows10-x64"/>
         <file src="resources/IO.SDK.lib" target="runtimes/windows10-x64"/>
         <file src="resources/IO.SDK.exp" target="runtimes/windows10-x64"/>
-        <file src="resources/linIO.SDK.so" target="runtimes/linux-x64"/>
+        <file src="resources/libIO.SDK.so" target="runtimes/linux-x64"/>
         <!-- targets file -->
         <file src="sdk_net.targets" target="build/"/>
     </files>
