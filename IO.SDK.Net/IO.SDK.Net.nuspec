@@ -10,8 +10,9 @@
         <license type="expression">LGPL-3.0-or-later</license>
         <description>This package provides a .Net connector to IO.SDK library</description>
         <dependencies>
-            <group targetFramework="net6.0" />
+            <group targetFramework="net6.0"/>
         </dependencies>
+        <icon>images\dragonfly-dark-trans.png</icon>
     </metadata>
     <files>
         <!-- binding libraries -->
@@ -23,5 +24,6 @@
         <file src="resources/libIO.SDK.so" target="runtimes/linux-x64"/>
         <!-- targets file -->
         <file src="IO.SDK.Net.targets" target="build/"/>
+        <file src="resources\dragonfly-dark-trans.png" target="images\"/>
     </files>
 </package>
