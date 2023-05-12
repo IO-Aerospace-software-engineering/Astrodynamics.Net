@@ -4,15 +4,17 @@
         <id>IO.SDK.Net</id>
         <authors>Sylvain Guillet</authors>
         <copyright>Sylvain Guillet</copyright>
-        <version>0.0.3-alpha</version>
+        <version>0.0.4-alpha</version>
         <title>.Net proxy to IO Framework</title>
+        <icon>images\dragonfly-dark-trans.png</icon>
+        <readme>docs\README.md</readme>
         <projectUrl>https://github.com/IO-Aerospace-software-engineering/SDK.Net</projectUrl>
         <license type="expression">LGPL-3.0-or-later</license>
         <description>This package provides a .Net connector to IO.SDK library</description>
         <dependencies>
             <group targetFramework="net6.0"/>
         </dependencies>
-        <icon>images\dragonfly-dark-trans.png</icon>
+        
     </metadata>
     <files>
         <!-- binding libraries -->
@@ -25,6 +27,6 @@
         <!-- targets file -->
         <file src="IO.SDK.Net.targets" target="build/"/>
         <file src="resources/dragonfly-dark-trans.png" target="images/"/>
-        <file src="../README.md" target="/"/>
+        <file src="../README.md" target="docs/"/>
     </files>
 </package>
