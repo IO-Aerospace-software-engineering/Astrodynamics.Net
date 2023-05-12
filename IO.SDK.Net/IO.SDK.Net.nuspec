@@ -4,7 +4,7 @@
         <id>IO.SDK.Net</id>
         <authors>Sylvain Guillet</authors>
         <copyright>Sylvain Guillet</copyright>
-        <version>0.0.1-alpha</version>
+        <version>0.0.2-alpha</version>
         <title>.Net proxy to IO Framework</title>
         <projectUrl>https://github.com/IO-Aerospace-software-engineering/SDK.Net</projectUrl>
         <license type="expression">LGPL-3.0-or-later</license>
