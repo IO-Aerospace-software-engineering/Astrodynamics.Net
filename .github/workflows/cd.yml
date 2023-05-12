@@ -44,6 +44,6 @@ jobs:
     - name: Test
       run: dotnet test --no-build --verbosity normal
     - name: Package
-      run: dotnet pack -p:NuspecFile=IO.SDK.Net/sdk_net.nuspec --no-build --configuration Release 
+      run: dotnet pack -p:NuspecFile=IO.SDK.Net.nuspec --no-build --configuration Release 
     - name: Publish package
       run: dotnet nuget push "**/*.nupkg" --api-key ${{secrets.NUGET_TOKEN}} --source https://api.nuget.org/v3/index.json
