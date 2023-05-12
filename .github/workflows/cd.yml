@@ -32,7 +32,7 @@ jobs:
     - name: Build
       run: dotnet build --no-restore --configuration Release
     - name: Test
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet test --no-build --verbosity normal --configuration Release
     - name: Package
       run: dotnet pack -p:NuspecFile=IO.SDK.Net.nuspec --no-build --configuration Release 
     - name: Publish package
