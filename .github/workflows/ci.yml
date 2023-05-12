@@ -19,11 +19,6 @@ on:
             - info
             - warning
             - debug
-          environment:
-            description: 'Environment to run tests against'
-            type: environment
-            required: true
-
 jobs:
   build:
     strategy:
