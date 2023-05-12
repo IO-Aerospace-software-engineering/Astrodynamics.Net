@@ -23,9 +23,6 @@ public class API
     private static extern void LaunchProxy([In, Out] ref Launch launch);
 
     [DllImport(@"IO.SDK", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-    private static extern int GetValueProxy();
-
-    [DllImport(@"IO.SDK", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     private static extern void LoadKernelsProxy(string directoryPath);
 
     [DllImport(@"IO.SDK", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
