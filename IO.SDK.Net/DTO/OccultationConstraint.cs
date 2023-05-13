@@ -14,6 +14,7 @@ public struct OccultationConstraint
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 1000)]
     public Window[] Windows;
 
+    //Occultation
     public OccultationConstraint(int observerId, int backBodyId, int frontId, string type, string aberrationId, double initialStepSize)
     {
         ObserverId = observerId;

@@ -11,7 +11,7 @@ namespace IO.SDK.Net;
 /// </summary>
 public class API
 {
-    private static bool _isresolverLoaded;
+    private static bool _isResolverLoaded;
 
     [DllImport(@"IO.SDK", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     private static extern string GetSpiceVersionProxy();
@@ -60,42 +60,38 @@ public class API
         [In, Out] Window[] windows);
 
     /// <summary>
-    /// Instanciate API
+    /// Instantiate API
     /// </summary>
     public API()
     {
-        if (!_isresolverLoaded)
-        {
-            NativeLibrary.SetDllImportResolver(typeof(API).Assembly, Resolver);
-            _isresolverLoaded = true;
-        }
+        if (_isResolverLoaded) return;
+        NativeLibrary.SetDllImportResolver(typeof(API).Assembly, Resolver);
+        _isResolverLoaded = true;
     }
 
     private static IntPtr Resolver(string libraryName, Assembly assembly, DllImportSearchPath? searchPath)
     {
         IntPtr libHandle = IntPtr.Zero;
 
-        if (libraryName == "IO.SDK")
+        if (libraryName != "IO.SDK") return libHandle;
+        string sharedLibName = null;
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
-            string sharedLibName = null;
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                sharedLibName = "resources/IO.SDK.dll";
-            }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            {
-                sharedLibName = "resources/libIO.SDK.so";
-            }
+            sharedLibName = "resources/IO.SDK.dll";
+        }
+        else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+        {
+            sharedLibName = "resources/libIO.SDK.so";
+        }
 
-            if (!string.IsNullOrEmpty(sharedLibName))
-            {
-                NativeLibrary.TryLoad(sharedLibName, typeof(API).Assembly, DllImportSearchPath.AssemblyDirectory,
-                    out libHandle);
-            }
-            else
-            {
-                throw new PlatformNotSupportedException();
-            }
+        if (!string.IsNullOrEmpty(sharedLibName))
+        {
+            NativeLibrary.TryLoad(sharedLibName, typeof(API).Assembly, DllImportSearchPath.AssemblyDirectory,
+                out libHandle);
+        }
+        else
+        {
+            throw new PlatformNotSupportedException();
         }
 
         return libHandle;
@@ -157,20 +153,46 @@ public class API
         LaunchProxy(ref launchDto);
     }
 
+    /// <summary>
+    /// Find time windows based on distance constraint
+    /// </summary>
+    /// <param name="searchWindow"></param>
+    /// <param name="observerId"></param>
+    /// <param name="targetId"></param>
+    /// <param name="constraint"></param>
+    /// <param name="value"></param>
+    /// <param name="aberration"></param>
+    /// <param name="stepSize"></param>
+    /// <returns></returns>
     public Window[] FindWindowsOnDistanceConstraint(Window searchWindow, int observerId,
         int targetId, string constraint, double value, string aberration, double stepSize)
     {
         Window[] windows = new Window[1000];
         for (int i = 0; i < 1000; i++)
         {
-            windows[i].Start = Double.NaN;
-            windows[i].End = Double.NaN;
+            windows[i].Start = double.NaN;
+            windows[i].End = double.NaN;
         }
         FindWindowsOnDistanceConstraintProxy(searchWindow, observerId, targetId, constraint, value, aberration,
             stepSize, windows);
         return windows.Where(x => !double.IsNaN(x.Start)).ToArray();
     }
 
+    /// <summary>
+    /// Find time windows based on occultation constraint
+    /// </summary>
+    /// <param name="searchWindow"></param>
+    /// <param name="observerId"></param>
+    /// <param name="targetId"></param>
+    /// <param name="targetFrame"></param>
+    /// <param name="targetShape"></param>
+    /// <param name="frontBodyId"></param>
+    /// <param name="frontFrame"></param>
+    /// <param name="frontShape"></param>
+    /// <param name="occultationType"></param>
+    /// <param name="aberration"></param>
+    /// <param name="stepSize"></param>
+    /// <returns></returns>
     public Window[] FindWindowsOnOccultationConstraint(Window searchWindow, int observerId,
         int targetId, string targetFrame, string targetShape, int frontBodyId, string frontFrame, string frontShape,
         string occultationType, string aberration, double stepSize)
@@ -178,14 +200,29 @@ public class API
         Window[] windows = new Window[1000];
         for (int i = 0; i < 1000; i++)
         {
-            windows[i].Start = Double.NaN;
-            windows[i].End = Double.NaN;
+            windows[i].Start = double.NaN;
+            windows[i].End = double.NaN;
         }
         FindWindowsOnOccultationConstraintProxy(searchWindow, observerId, targetId, targetFrame, targetShape,
             frontBodyId, frontFrame, frontShape, occultationType, aberration, stepSize, windows);
         return windows.Where(x => !double.IsNaN(x.Start)).ToArray();
     }
 
+    /// <summary>
+    /// Find time windows based on coordinate constraint
+    /// </summary>
+    /// <param name="searchWindow"></param>
+    /// <param name="observerId"></param>
+    /// <param name="targetId"></param>
+    /// <param name="frame"></param>
+    /// <param name="coordinateSystem"></param>
+    /// <param name="coordinate"></param>
+    /// <param name="relationalOperator"></param>
+    /// <param name="value"></param>
+    /// <param name="adjustValue"></param>
+    /// <param name="aberration"></param>
+    /// <param name="stepSize"></param>
+    /// <returns></returns>
     public Window[] FindWindowsOnCoordinateConstraint(Window searchWindow, int observerId, int targetId,
         string frame, string coordinateSystem, string coordinate,
         string relationalOperator, double value, double adjustValue, string aberration, double stepSize)
@@ -193,14 +230,31 @@ public class API
         Window[] windows = new Window[1000];
         for (int i = 0; i < 1000; i++)
         {
-            windows[i].Start = Double.NaN;
-            windows[i].End = Double.NaN;
+            windows[i].Start = double.NaN;
+            windows[i].End = double.NaN;
         }
         FindWindowsOnCoordinateConstraintProxy(searchWindow, observerId, targetId, frame, coordinateSystem,
             coordinate, relationalOperator, value, adjustValue, aberration, stepSize, windows);
         return windows.Where(x => !double.IsNaN(x.Start)).ToArray();
     }
 
+    /// <summary>
+    /// Find time windows based on illumination constraint
+    /// </summary>
+    /// <param name="searchWindow"></param>
+    /// <param name="observerId"></param>
+    /// <param name="illuminationSource"></param>
+    /// <param name="targetBody"></param>
+    /// <param name="fixedFrame"></param>
+    /// <param name="geodetic"></param>
+    /// <param name="illuminationType"></param>
+    /// <param name="relationalOperator"></param>
+    /// <param name="value"></param>
+    /// <param name="adjustValue"></param>
+    /// <param name="aberration"></param>
+    /// <param name="stepSize"></param>
+    /// <param name="method"></param>
+    /// <returns></returns>
     public Window[] FindWindowsOnIlluminationConstraint(Window searchWindow, int observerId,
         string illuminationSource, int targetBody, string fixedFrame,
         Geodetic geodetic, string illuminationType, string relationalOperator, double value, double adjustValue,
@@ -209,22 +263,34 @@ public class API
         Window[] windows = new Window[1000];
         for (int i = 0; i < 1000; i++)
         {
-            windows[i].Start = Double.NaN;
-            windows[i].End = Double.NaN;
+            windows[i].Start = double.NaN;
+            windows[i].End = double.NaN;
         }
         FindWindowsOnIlluminationConstraintProxy(searchWindow, observerId, illuminationSource, targetBody, fixedFrame,
             geodetic, illuminationType, relationalOperator, value, adjustValue, aberration, stepSize, method, windows);
         return windows.Where(x => !double.IsNaN(x.Start)).ToArray();
     }
 
+    /// <summary>
+    /// Find time window when a target is in instrument's field of view
+    /// </summary>
+    /// <param name="searchWindow"></param>
+    /// <param name="observerId"></param>
+    /// <param name="instrumentId"></param>
+    /// <param name="targetId"></param>
+    /// <param name="targetFrame"></param>
+    /// <param name="targetShape"></param>
+    /// <param name="aberration"></param>
+    /// <param name="stepSize"></param>
+    /// <returns></returns>
     public Window[] FindWindowsInFieldOfViewConstraint(Window searchWindow, int observerId,
         int instrumentId, int targetId, string targetFrame, string targetShape, string aberration, double stepSize)
     {
         Window[] windows = new Window[1000];
         for (int i = 0; i < 1000; i++)
         {
-            windows[i].Start = Double.NaN;
-            windows[i].End = Double.NaN;
+            windows[i].Start = double.NaN;
+            windows[i].End = double.NaN;
         }
 
         FindWindowsInFieldOfViewConstraintProxy(searchWindow, observerId, instrumentId, targetId, targetFrame,

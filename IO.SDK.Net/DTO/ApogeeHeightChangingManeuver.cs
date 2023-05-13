@@ -1,4 +1,3 @@
-using System;
 using System.Runtime.InteropServices;
 
 namespace IO.SDK.Net.DTO;
