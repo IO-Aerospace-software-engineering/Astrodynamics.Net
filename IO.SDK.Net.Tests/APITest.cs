@@ -355,7 +355,7 @@ public class APITest
 
         api.ExecuteScenario(ref scenario);
         api.LoadKernels("Data/User/Spacecrafts/DRAGONFLY");
-        var res = api.FindWindowsInFieldOfViewConstraint(new Window(676555200, 676561647), -178, -178600, PlanetsAndMoons.EARTH.NaifId,
+        var res = api.FindWindowsInFieldOfViewConstraint(new Window(676555200, 676561647), -178, 600, PlanetsAndMoons.EARTH.NaifId,
             "IAU_EARTH", "Ellipsoid",
             "LT", 3600.0);
         Assert.Equal(2, res.Length);

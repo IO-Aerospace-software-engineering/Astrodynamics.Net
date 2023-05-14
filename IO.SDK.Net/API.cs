@@ -173,6 +173,7 @@ public class API
             windows[i].Start = double.NaN;
             windows[i].End = double.NaN;
         }
+
         FindWindowsOnDistanceConstraintProxy(searchWindow, observerId, targetId, constraint, value, aberration,
             stepSize, windows);
         return windows.Where(x => !double.IsNaN(x.Start)).ToArray();
@@ -203,6 +204,7 @@ public class API
             windows[i].Start = double.NaN;
             windows[i].End = double.NaN;
         }
+
         FindWindowsOnOccultationConstraintProxy(searchWindow, observerId, targetId, targetFrame, targetShape,
             frontBodyId, frontFrame, frontShape, occultationType, aberration, stepSize, windows);
         return windows.Where(x => !double.IsNaN(x.Start)).ToArray();
@@ -233,6 +235,7 @@ public class API
             windows[i].Start = double.NaN;
             windows[i].End = double.NaN;
         }
+
         FindWindowsOnCoordinateConstraintProxy(searchWindow, observerId, targetId, frame, coordinateSystem,
             coordinate, relationalOperator, value, adjustValue, aberration, stepSize, windows);
         return windows.Where(x => !double.IsNaN(x.Start)).ToArray();
@@ -266,6 +269,7 @@ public class API
             windows[i].Start = double.NaN;
             windows[i].End = double.NaN;
         }
+
         FindWindowsOnIlluminationConstraintProxy(searchWindow, observerId, illuminationSource, targetBody, fixedFrame,
             geodetic, illuminationType, relationalOperator, value, adjustValue, aberration, stepSize, method, windows);
         return windows.Where(x => !double.IsNaN(x.Start)).ToArray();
@@ -293,7 +297,8 @@ public class API
             windows[i].End = double.NaN;
         }
 
-        FindWindowsInFieldOfViewConstraintProxy(searchWindow, observerId, instrumentId, targetId, targetFrame,
+        FindWindowsInFieldOfViewConstraintProxy(searchWindow, observerId, (observerId * 1000) - instrumentId, targetId,
+            targetFrame,
             targetShape, aberration, stepSize, windows);
         return windows.Where(x => !double.IsNaN(x.Start)).ToArray();
     }
