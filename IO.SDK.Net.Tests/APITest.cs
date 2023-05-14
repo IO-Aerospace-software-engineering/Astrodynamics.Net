@@ -3,6 +3,7 @@ using System.Runtime.InteropServices;
 using IO.SDK.Net.DTO;
 using Xunit;
 using System.Linq;
+using IO.SDK.Net.SolarSystemObjects;
 
 namespace IO.SDK.Net.Tests;
 
@@ -36,13 +37,14 @@ public class APITest
         double end = 668174330.814560;
         API api = new API();
         api.LoadKernels(SolarSystemKernelPath);
-        CelestialBody celestialBody = new CelestialBody(id: 399, centerOfMotionId: 10);
+        CelestialBody celestialBody =
+            new CelestialBody(id: PlanetsAndMoons.EARTH.NaifId, centerOfMotionId: Stars.Sun.NaifId);
 
-        Site launchSite = new Site(id: 399303, bodyId: 399,
+        Site launchSite = new Site(id: 399303, bodyId: PlanetsAndMoons.EARTH.NaifId,
             coordinates: new Geodetic(-81.0 * Constants.DEG_RAD, 28.5 * Constants.DEG_RAD, 0.0), name: "S3",
             directoryPath: SitePath);
 
-        Site recoverySite = new Site(id: 399304, bodyId: 399,
+        Site recoverySite = new Site(id: 399304, bodyId: PlanetsAndMoons.EARTH.NaifId,
             coordinates: new Geodetic(-81.0 * Constants.DEG_RAD, 28.5 * Constants.DEG_RAD, 0.0), name: "S4",
             directoryPath: SitePath);
 
@@ -81,17 +83,18 @@ public class APITest
         API api = new API();
         api.LoadKernels(SolarSystemKernelPath);
         var scenario = new Scenario("titi", new Window(startPropagator, end));
-        scenario.CelestialBodies[0].Id = 10;
-        scenario.CelestialBodies[1].Id = 399;
-        scenario.CelestialBodies[1].CenterOfMotionId = 10;
-        scenario.CelestialBodies[2].Id = 301;
-        scenario.CelestialBodies[2].CenterOfMotionId = 399;
+        scenario.CelestialBodies[0].Id = Stars.Sun.NaifId;
+        scenario.CelestialBodies[1].Id = PlanetsAndMoons.EARTH.NaifId;
+        scenario.CelestialBodies[1].CenterOfMotionId = Stars.Sun.NaifId;
+        scenario.CelestialBodies[2].Id = PlanetsAndMoons.MOON.NaifId;
+        scenario.CelestialBodies[2].CenterOfMotionId = PlanetsAndMoons.EARTH.NaifId;
 
-        Site launchSite = new Site(399303, 399, new Geodetic(-81.0 * Constants.DEG_RAD, 28.5 * Constants.DEG_RAD, 0.0),
+        Site launchSite = new Site(399303, PlanetsAndMoons.EARTH.NaifId,
+            new Geodetic(-81.0 * Constants.DEG_RAD, 28.5 * Constants.DEG_RAD, 0.0),
             "S33",
             SitePath);
 
-        Site recoverySite = new Site(399304, 399,
+        Site recoverySite = new Site(399304, PlanetsAndMoons.EARTH.NaifId,
             new Geodetic(-81.0 * Constants.DEG_RAD, 28.5 * Constants.DEG_RAD, 0.0), "S44", SitePath);
 
         scenario.Sites[0] = launchSite;
@@ -268,7 +271,8 @@ public class APITest
     {
         API api = new API();
         api.LoadKernels(SolarSystemKernelPath);
-        var res = api.FindWindowsOnDistanceConstraint(new Window(220881665.18391809, 228657665.18565452), 399, 301, ">",
+        var res = api.FindWindowsOnDistanceConstraint(new Window(220881665.18391809, 228657665.18565452),
+            PlanetsAndMoons.EARTH.NaifId, PlanetsAndMoons.MOON.NaifId, ">",
             400000000, "NONE", 86400.0);
         Assert.Equal(4, res.Length);
         Assert.Equal("2007-01-08 00:11:07.628591 (TDB)", api.TDBToString(res[0].Start));
@@ -282,8 +286,9 @@ public class APITest
     {
         API api = new API();
         api.LoadKernels(SolarSystemKernelPath);
-        var res = api.FindWindowsOnOccultationConstraint(new Window(61473664.183390938, 61646464.183445148), 399, 10,
-            "IAU_SUN", "Ellipsoid", 301,
+        var res = api.FindWindowsOnOccultationConstraint(new Window(61473664.183390938, 61646464.183445148),
+            PlanetsAndMoons.EARTH.NaifId, Stars.Sun.NaifId,
+            "IAU_SUN", "Ellipsoid", PlanetsAndMoons.MOON.NaifId,
             "IAU_MOON",
             "Ellipsoid", "ANY", "LT", 3600.0);
         Assert.Single(res);
@@ -296,7 +301,8 @@ public class APITest
     {
         API api = new API();
         api.LoadKernels(SolarSystemKernelPath);
-        var res = api.FindWindowsOnCoordinateConstraint(new Window(730036800.0, 730123200), 399013, 301, "DSS-13_TOPO",
+        var res = api.FindWindowsOnCoordinateConstraint(new Window(730036800.0, 730123200), 399013,
+            PlanetsAndMoons.MOON.NaifId, GroundStations.DSS_13.Frame,
             "LATITUDINAL", "LATITUDE",
             ">",
             0.0, 0.0, "NONE", 60.0);
@@ -311,7 +317,7 @@ public class APITest
     {
         API api = new API();
         api.LoadKernels(SolarSystemKernelPath);
-        var res = api.FindWindowsOnIlluminationConstraint(new Window(674524800, 674611200), 10, "Sun", 399, "IAU_EARTH",
+        var res = api.FindWindowsOnIlluminationConstraint(new Window(674524800, 674611200), Stars.Sun.NaifId, Stars.Sun.Name, PlanetsAndMoons.EARTH.NaifId, PlanetsAndMoons.EARTH.Frame,
             new Geodetic(2.2 * Constants.DEG_RAD, 48.0 * Constants.DEG_RAD, 0.0),
             "INCIDENCE",
             "<", Math.PI * 0.5 - (-0.8 * Constants.DEG_RAD), 0.0, "CN+S", 60.0 * 60.0 * 4.5, "Ellipsoid");
@@ -332,11 +338,11 @@ public class APITest
         api.LoadKernels(SolarSystemKernelPath);
 
         var scenario = new Scenario("titi", new Window(start, end));
-        scenario.CelestialBodies[0].Id = 10;
-        scenario.CelestialBodies[1].Id = 399;
-        scenario.CelestialBodies[1].CenterOfMotionId = 10;
-        scenario.CelestialBodies[2].Id = 301;
-        scenario.CelestialBodies[2].CenterOfMotionId = 399;
+        scenario.CelestialBodies[0].Id = Stars.Sun.NaifId;
+        scenario.CelestialBodies[1].Id = PlanetsAndMoons.EARTH.NaifId;
+        scenario.CelestialBodies[1].CenterOfMotionId = Stars.Sun.NaifId;
+        scenario.CelestialBodies[2].Id = PlanetsAndMoons.MOON.NaifId;
+        scenario.CelestialBodies[2].CenterOfMotionId = PlanetsAndMoons.EARTH.NaifId;
 
         StateVector parkingOrbit = new StateVector(scenario.CelestialBodies[1], start, "J2000",
             new Vector3D(6800000.0, 0.0, 0.0),
@@ -349,7 +355,7 @@ public class APITest
 
         api.ExecuteScenario(ref scenario);
         api.LoadKernels("Data/User/Spacecrafts/DRAGONFLY");
-        var res = api.FindWindowsInFieldOfViewConstraint(new Window(676555200, 676561647), -178, -178600, 399,
+        var res = api.FindWindowsInFieldOfViewConstraint(new Window(676555200, 676561647), -178, -178600, PlanetsAndMoons.EARTH.NaifId,
             "IAU_EARTH", "Ellipsoid",
             "LT", 3600.0);
         Assert.Equal(2, res.Length);
