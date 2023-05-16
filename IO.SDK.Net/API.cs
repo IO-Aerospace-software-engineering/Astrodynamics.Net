@@ -59,6 +59,14 @@ public class API
         int instrumentId, int targetId, string targetFrame, string targetShape, string aberration, double stepSize,
         [In, Out] Window[] windows);
 
+    [DllImport(@"IO.SDK", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+    private static extern void ReadOrientationProxy(Window searchWindow, int spacecraftId, double tolerance,
+        string frame, double stepSize, [In, Out] StateOrientation[] stateOrientations);
+
+    [DllImport(@"IO.SDK", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+    private static extern void ReadEphemerisProxy(Window searchWindow, int observerId, int targetId,
+        string frame, string aberration, double stepSize, [In, Out] StateVector[] stateVectors);
+
     /// <summary>
     /// Instantiate API
     /// </summary>
@@ -301,5 +309,21 @@ public class API
             targetFrame,
             targetShape, aberration, stepSize, windows);
         return windows.Where(x => !double.IsNaN(x.Start)).ToArray();
+    }
+
+    public StateVector[] ReadEphemeris(Window searchWindow, int observerId, int targetId, string frame,
+        string aberration, double stepSize)
+    {
+        StateVector[] stateVectors = new StateVector[10000];
+        ReadEphemerisProxy(searchWindow, observerId, targetId, frame, aberration, stepSize, stateVectors);
+        return stateVectors;
+    }
+
+    public StateOrientation[] ReadOrientation(Window searchWindow, int spacecraftId, double tolerance,
+        string refrenceFrame, double stepSize)
+    {
+        StateOrientation[] stateOrientations = new StateOrientation[10000];
+        ReadOrientationProxy(searchWindow, spacecraftId, tolerance, refrenceFrame, stepSize, stateOrientations);
+        return stateOrientations;
     }
 }

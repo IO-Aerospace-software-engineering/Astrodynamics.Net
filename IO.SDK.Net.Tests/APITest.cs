@@ -317,7 +317,8 @@ public class APITest
     {
         API api = new API();
         api.LoadKernels(SolarSystemKernelPath);
-        var res = api.FindWindowsOnIlluminationConstraint(new Window(674524800, 674611200), Stars.Sun.NaifId, Stars.Sun.Name, PlanetsAndMoons.EARTH.NaifId, PlanetsAndMoons.EARTH.Frame,
+        var res = api.FindWindowsOnIlluminationConstraint(new Window(674524800, 674611200), Stars.Sun.NaifId,
+            Stars.Sun.Name, PlanetsAndMoons.EARTH.NaifId, PlanetsAndMoons.EARTH.Frame,
             new Geodetic(2.2 * Constants.DEG_RAD, 48.0 * Constants.DEG_RAD, 0.0),
             "INCIDENCE",
             "<", Math.PI * 0.5 - (-0.8 * Constants.DEG_RAD), 0.0, "CN+S", 60.0 * 60.0 * 4.5, "Ellipsoid");
@@ -355,7 +356,8 @@ public class APITest
 
         api.ExecuteScenario(ref scenario);
         api.LoadKernels("Data/User/Spacecrafts/DRAGONFLY");
-        var res = api.FindWindowsInFieldOfViewConstraint(new Window(676555200, 676561647), -178, 600, PlanetsAndMoons.EARTH.NaifId,
+        var res = api.FindWindowsInFieldOfViewConstraint(new Window(676555200, 676561647), -178, 600,
+            PlanetsAndMoons.EARTH.NaifId,
             "IAU_EARTH", "Ellipsoid",
             "LT", 3600.0);
         Assert.Equal(2, res.Length);
@@ -363,5 +365,25 @@ public class APITest
         Assert.Equal("2021-06-10 00:30:12.723937 (TDB)", api.TDBToString(res[0].End));
         Assert.Equal("2021-06-10 01:02:51.088286 (TDB)", api.TDBToString(res[1].Start));
         Assert.Equal("2021-06-10 01:47:27.000000 (TDB)", api.TDBToString(res[1].End));
+    }
+
+    [Fact]
+    public void ReadEphemeris()
+    {
+        API api = new API();
+        api.LoadKernels(SolarSystemKernelPath);
+        Window searchWindow = new Window(0.0, 100.0);
+        var res = api.ReadEphemeris(searchWindow, 399, 301, "J2000", "LT", 10.0);
+
+        Assert.Equal(-291569264.48965073, res[0].Position.X);
+        Assert.Equal(-266709187.1624887, res[0].Position.Y);
+        Assert.Equal(-76099155.244104564, res[0].Position.Z);
+        Assert.Equal(643.53061483971885, res[0].Velocity.X);
+        Assert.Equal(-666.08181440799092, res[0].Velocity.Y);
+        Assert.Equal(-301.32283209101018, res[0].Velocity.Z);
+        Assert.Equal(399, res[0].CenterOfMotion.Id);
+        Assert.Equal(10, res[0].CenterOfMotion.CenterOfMotionId);
+        Assert.Equal("J2000", res[0].Frame);
+        Assert.Equal(0.0, res[0].Epoch);
     }
 }
