@@ -33,10 +33,12 @@ public class APITest
         // 2021-03-05 00:00:00.000000 TDB
         //
         // 668174330.814560
-        double start = 667915130.814600;
-        double end = 668174330.814560;
         API api = new API();
         api.LoadKernels(SolarSystemKernelPath);
+        double start = api.ConvertUTCToTDB(667915130.814600);
+        double end = api.ConvertUTCToTDB(668174330.814560);
+        
+        
         CelestialBody celestialBody =
             new CelestialBody(id: PlanetsAndMoons.EARTH.NaifId, centerOfMotionId: Stars.Sun.NaifId);
 
@@ -77,11 +79,12 @@ public class APITest
         // 2021-03-05 00:00:00.000000 TDB
         //
         // 668174330.814560
-        double start = 667915269.18539762;
-        double startPropagator = 668085555.829810;
-        double end = 668174400.000000;
         API api = new API();
         api.LoadKernels(SolarSystemKernelPath);
+        double start = api.ConvertUTCToTDB(667915269.18539762);
+        double startPropagator = api.ConvertUTCToTDB(668085555.829810);
+        double end = api.ConvertUTCToTDB(668174400.000000);
+        
         var scenario = new Scenario("titi", new Window(startPropagator, end));
         scenario.CelestialBodies[0].Id = Stars.Sun.NaifId;
         scenario.CelestialBodies[1].Id = PlanetsAndMoons.EARTH.NaifId;
@@ -155,85 +158,85 @@ public class APITest
 
         api.ExecuteScenario(ref scenario);
 
-        Assert.Equal("2021-03-04 00:31:35.852044 (TDB)",
+        Assert.Equal("2021-03-04 00:32:42.854653 (TDB)",
             api.TDBToString(scenario.Spacecraft.OrbitalPlaneChangingManeuvers[0].ManeuverWindow.Start));
-        Assert.Equal("2021-03-04 00:31:44.178429 (TDB)",
+        Assert.Equal("2021-03-04 00:32:51.175821 (TDB)",
             api.TDBToString(scenario.Spacecraft.OrbitalPlaneChangingManeuvers[0].ManeuverWindow.End));
-        Assert.Equal("2021-03-04 00:31:35.852044 (TDB)",
+        Assert.Equal("2021-03-04 00:32:42.854653 (TDB)",
             api.TDBToString(scenario.Spacecraft.OrbitalPlaneChangingManeuvers[0].ThrustWindow.Start));
-        Assert.Equal("2021-03-04 00:31:44.178429 (TDB)",
+        Assert.Equal("2021-03-04 00:32:51.175821 (TDB)",
             api.TDBToString(scenario.Spacecraft.OrbitalPlaneChangingManeuvers[0].ThrustWindow.End));
-        Assert.Equal(8.326384663581848,
+        Assert.Equal(8.321168541908264,
             scenario.Spacecraft.OrbitalPlaneChangingManeuvers[0].ThrustWindow.End -
             scenario.Spacecraft.OrbitalPlaneChangingManeuvers[0].ThrustWindow.Start);
         Assert.Equal(
             OperatingSystem.IsLinux()
-                ? new Vector3D(-96.310132502235291, 106.94716089267334, -118.92923688022945)
+                ? new Vector3D(-96.249682169636841, 106.8756958946026, -118.85490552843048)
                 : new Vector3D(-96.310132502235575, 106.94716089267355, -118.9292368802296),
             scenario.Spacecraft.OrbitalPlaneChangingManeuvers[0].DeltaV);
 
-        Assert.Equal(416.3192335596316, scenario.Spacecraft.OrbitalPlaneChangingManeuvers[0].FuelBurned);
+        Assert.Equal(416.0584252471169, scenario.Spacecraft.OrbitalPlaneChangingManeuvers[0].FuelBurned);
 
-        Assert.Equal("2021-03-04 01:14:35.908715 (TDB)",
+        Assert.Equal("2021-03-04 01:15:43.938777 (TDB)",
             api.TDBToString(scenario.Spacecraft.ApsidalAlignmentManeuvers[0].ManeuverWindow.Start));
-        Assert.Equal("2021-03-04 01:14:58.448143 (TDB)",
+        Assert.Equal("2021-03-04 01:16:06.412865 (TDB)",
             api.TDBToString(scenario.Spacecraft.ApsidalAlignmentManeuvers[0].ManeuverWindow.End));
-        Assert.Equal("2021-03-04 01:14:35.908715 (TDB)",
+        Assert.Equal("2021-03-04 01:15:43.938777 (TDB)",
             api.TDBToString(scenario.Spacecraft.ApsidalAlignmentManeuvers[0].ThrustWindow.Start));
-        Assert.Equal("2021-03-04 01:14:58.448143 (TDB)",
+        Assert.Equal("2021-03-04 01:16:06.412865 (TDB)",
             api.TDBToString(scenario.Spacecraft.ApsidalAlignmentManeuvers[0].ThrustWindow.End));
-        Assert.Equal(22.539427876472473,
+        Assert.Equal(22.474087476730347,
             scenario.Spacecraft.ApsidalAlignmentManeuvers[0].ThrustWindow.End -
             scenario.Spacecraft.ApsidalAlignmentManeuvers[0].ThrustWindow.Start);
         Assert.Equal(
             OperatingSystem.IsLinux()
-                ? new Vector3D(-465.43237249809499, -170.79467001831654, 235.85199549814843)
+                ? new Vector3D(-463.86026824667442, -168.446133153132, 236.66179218359866)
                 : new Vector3D(-465.43237249801768, -170.7946700182174, 235.8519954981366),
             scenario.Spacecraft.ApsidalAlignmentManeuvers[0].DeltaV);
 
         Assert.Equal(OperatingSystem.IsLinux()
-            ? 1126.971395681102
+            ? 1123.704373112356
             : 1126.9713956809062, scenario.Spacecraft.ApsidalAlignmentManeuvers[0].FuelBurned);
 
-        Assert.Equal("2021-03-04 01:15:06.675929 (TDB)",
+        Assert.Equal("2021-03-04 01:16:14.640093 (TDB)",
             api.TDBToString(scenario.Spacecraft.PhasingManeuverDto[0].ManeuverWindow.Start));
-        Assert.Equal("2021-03-04 04:58:19.564061 (TDB)",
+        Assert.Equal("2021-03-04 04:59:25.401665 (TDB)",
             api.TDBToString(scenario.Spacecraft.PhasingManeuverDto[0].ManeuverWindow.End));
-        Assert.Equal("2021-03-04 01:15:06.675929 (TDB)",
+        Assert.Equal("2021-03-04 01:16:14.640093 (TDB)",
             api.TDBToString(scenario.Spacecraft.PhasingManeuverDto[0].ThrustWindow.Start));
-        Assert.Equal("2021-03-04 01:15:16.220357 (TDB)",
+        Assert.Equal("2021-03-04 01:16:24.185636 (TDB)",
             api.TDBToString(scenario.Spacecraft.PhasingManeuverDto[0].ThrustWindow.End));
-        Assert.Equal(9.544427156448364,
+        Assert.Equal(9.54554295539856,
             scenario.Spacecraft.PhasingManeuverDto[0].ThrustWindow.End -
             scenario.Spacecraft.PhasingManeuverDto[0].ThrustWindow.Start);
 
         Assert.Equal(
             OperatingSystem.IsLinux()
-                ? new Vector3D(-140.06591089740422, 85.292644161629369, 194.98809324843614)
+                ? new Vector3D(-139.74832471889238, 85.585884339402824, 194.98547637537283)
                 : new Vector3D(-140.06591089738828, 85.292644161619563, 194.98809324841392),
             scenario.Spacecraft.PhasingManeuverDto[0].DeltaV);
 
-        Assert.Equal(OperatingSystem.IsLinux() ? 477.2213550574124 : 477.22135505737054,
+        Assert.Equal(OperatingSystem.IsLinux() ? 477.2771488397447 : 477.22135505737054,
             scenario.Spacecraft.PhasingManeuverDto[0].FuelBurned);
 
-        Assert.Equal("2021-03-04 05:23:34.930489 (TDB)",
+        Assert.Equal("2021-03-04 05:24:43.893746 (TDB)",
             api.TDBToString(scenario.Spacecraft.ApogeeHeightChangingManeuvers[0].ManeuverWindow.Start));
-        Assert.Equal("2021-03-04 05:23:43.510224 (TDB)",
+        Assert.Equal("2021-03-04 05:24:52.477527 (TDB)",
             api.TDBToString(scenario.Spacecraft.ApogeeHeightChangingManeuvers[0].ManeuverWindow.End));
-        Assert.Equal("2021-03-04 05:23:34.930489 (TDB)",
+        Assert.Equal("2021-03-04 05:24:43.893746 (TDB)",
             api.TDBToString(scenario.Spacecraft.ApogeeHeightChangingManeuvers[0].ThrustWindow.Start));
-        Assert.Equal("2021-03-04 05:23:43.510224 (TDB)",
+        Assert.Equal("2021-03-04 05:24:52.477527 (TDB)",
             api.TDBToString(scenario.Spacecraft.ApogeeHeightChangingManeuvers[0].ThrustWindow.End));
-        Assert.Equal(8.5797358751297,
+        Assert.Equal(8.583780884742737,
             scenario.Spacecraft.ApogeeHeightChangingManeuvers[0].ThrustWindow.End -
             scenario.Spacecraft.ApogeeHeightChangingManeuvers[0].ThrustWindow.Start);
         Assert.Equal(
             OperatingSystem.IsLinux()
-                ? new Vector3D(134.75015047648623, -81.245837445793484, -184.26044152450118)
+                ? new Vector3D(134.61136287435605, -81.418092113142166, -184.29863264945666)
                 : new Vector3D(134.75015047654603, -81.245837445635601, -184.26044152440747),
             scenario.Spacecraft.ApogeeHeightChangingManeuvers[0].DeltaV);
 
-        Assert.Equal(OperatingSystem.IsLinux() ? 428.98679499077326 : 428.98679499062905,
+        Assert.Equal(OperatingSystem.IsLinux() ? 429.18904439256715 : 428.98679499062905,
             scenario.Spacecraft.ApogeeHeightChangingManeuvers[0].FuelBurned);
     }
 
@@ -333,10 +336,10 @@ public class APITest
     public void FindWindowsInFieldOfViewConstraint()
     {
         API api = new API();
-        double start = 676555130.80;
-        double end = start + 6448.0;
-
         api.LoadKernels(SolarSystemKernelPath);
+        
+        double start = api.ConvertUTCToTDB(676555130.80);
+        double end = api.ConvertUTCToTDB(start + 6448.0);
 
         var scenario = new Scenario("titi", new Window(start, end));
         scenario.CelestialBodies[0].Id = Stars.Sun.NaifId;
@@ -362,8 +365,8 @@ public class APITest
             "LT", 3600.0);
         Assert.Equal(2, res.Length);
         Assert.Equal("2021-06-10 00:00:00.000000 (TDB)", api.TDBToString(res[0].Start));
-        Assert.Equal("2021-06-10 00:30:12.723937 (TDB)", api.TDBToString(res[0].End));
-        Assert.Equal("2021-06-10 01:02:51.088286 (TDB)", api.TDBToString(res[1].Start));
+        Assert.Equal("2021-06-10 00:30:12.445632 (TDB)", api.TDBToString(res[0].End));
+        Assert.Equal("2021-06-10 01:02:53.829736 (TDB)", api.TDBToString(res[1].Start));
         Assert.Equal("2021-06-10 01:47:27.000000 (TDB)", api.TDBToString(res[1].End));
     }
 
@@ -385,5 +388,72 @@ public class APITest
         Assert.Equal(10, res[0].CenterOfMotion.CenterOfMotionId);
         Assert.Equal("J2000", res[0].Frame);
         Assert.Equal(0.0, res[0].Epoch);
+    }
+
+    [Fact]
+    public void ReadOrientation()
+    {
+        API api = new API();
+        // Window utcSearchWindow = new Window(662777930.816060, 662777990.816060);
+        Window tdbSearchWindow = new Window(662778000.0 + 0.0, 662778060.0);
+
+        api.LoadKernels(SolarSystemKernelPath);
+
+        var scenario = new Scenario("ReadOrientation", tdbSearchWindow);
+        scenario.CelestialBodies[0].Id = Stars.Sun.NaifId;
+        scenario.CelestialBodies[1].Id = PlanetsAndMoons.EARTH.NaifId;
+        scenario.CelestialBodies[1].CenterOfMotionId = Stars.Sun.NaifId;
+        scenario.CelestialBodies[2].Id = PlanetsAndMoons.MOON.NaifId;
+        scenario.CelestialBodies[2].CenterOfMotionId = PlanetsAndMoons.EARTH.NaifId;
+
+        StateVector parkingOrbit = new StateVector(scenario.CelestialBodies[1], tdbSearchWindow.Start, "J2000",
+            new Vector3D(6800000.0, 0.0, 0.0),
+            new Vector3D(0.0, 7656.2204182967143, 0.0));
+
+
+        scenario.Spacecraft = new Spacecraft(-1782, "DRAGONFLY2", 1000.0, 10000.0, parkingOrbit, SpacecraftPath);
+        scenario.Spacecraft.FuelTanks[0] =
+            new FuelTank(id: 1, capacity: 9000.0, quantity: 9000.0, serialNumber: "fuelTank1");
+        scenario.Spacecraft.Engines[0] = new EngineDTO(id: 1, name: "engine1", fuelFlow: 50,
+            serialNumber: "serialNumber1", fuelTankSerialNumber: "fuelTank1", isp: 450);
+
+        scenario.Spacecraft.nadirAttitudes[0] = new NadirAttitude(0, 0.0, double.MinValue)
+        {
+            Engines =
+            {
+                [0] = "serialNumber1"
+            }
+        };
+
+        api.ExecuteScenario(ref scenario);
+        api.LoadKernels("Data/User/Spacecrafts/DRAGONFLY2");
+
+        var res = api.ReadOrientation(tdbSearchWindow, -1782, Math.Pow(2, 16), "J2000", 10.0);
+
+        Assert.Equal(0.7071067811865476, res[0].Orientation.W);
+        Assert.Equal(0.0, res[0].Orientation.X);
+        Assert.Equal(0.0, res[0].Orientation.Y);
+        Assert.Equal(-0.7071067811865475, res[0].Orientation.Z);
+        Assert.Equal(0.0, res[0].AngularVelocity.X);
+        Assert.Equal(0.0, res[0].AngularVelocity.Y);
+        Assert.Equal(0.0, res[0].AngularVelocity.Z);
+        Assert.Equal(tdbSearchWindow.Start, res[0].Epoch);
+        Assert.Equal("J2000", res[0].Frame);
+    }
+
+    [Fact]
+    void ConvertTDBToUTC()
+    {
+        API api = new API();
+        api.LoadKernels(SolarSystemKernelPath);
+        Assert.Equal(-64.18392726322381, api.ConvertTDBToUTC(0.0));
+    }
+    
+    [Fact]
+    void ConverUTCToTDB()
+    {
+        API api = new API();
+        api.LoadKernels(SolarSystemKernelPath);
+        Assert.Equal(64.18392728466942, api.ConvertUTCToTDB(0.0));
     }
 }

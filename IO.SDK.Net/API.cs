@@ -66,6 +66,12 @@ public class API
     [DllImport(@"IO.SDK", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     private static extern void ReadEphemerisProxy(Window searchWindow, int observerId, int targetId,
         string frame, string aberration, double stepSize, [In, Out] StateVector[] stateVectors);
+    
+    [DllImport(@"IO.SDK", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+    private static extern double ConvertUTCToTDBProxy(double utc);
+    
+    [DllImport(@"IO.SDK", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+    private static extern double ConvertTDBToUTCProxy(double tdb);
 
     /// <summary>
     /// Instantiate API
@@ -325,5 +331,25 @@ public class API
         StateOrientation[] stateOrientations = new StateOrientation[10000];
         ReadOrientationProxy(searchWindow, spacecraftId, tolerance, refrenceFrame, stepSize, stateOrientations);
         return stateOrientations;
+    }
+
+    /// <summary>
+    /// Convert UTC to TDB seconds elapsed from J2000
+    /// </summary>
+    /// <param name="utc"></param>
+    /// <returns></returns>
+    public double ConvertUTCToTDB(double utc)
+    {
+        return ConvertUTCToTDBProxy(utc);
+    }
+    
+    /// <summary>
+    /// Convert TDB to UTC seconds elapsed from J2000
+    /// </summary>
+    /// <param name="tdb"></param>
+    /// <returns></returns>
+    public double ConvertTDBToUTC(double tdb)
+    {
+        return ConvertTDBToUTCProxy(tdb);
     }
 }
