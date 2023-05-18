@@ -66,12 +66,16 @@ public class API
     [DllImport(@"IO.SDK", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     private static extern void ReadEphemerisProxy(Window searchWindow, int observerId, int targetId,
         string frame, string aberration, double stepSize, [In, Out] StateVector[] stateVectors);
-    
+
     [DllImport(@"IO.SDK", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     private static extern double ConvertUTCToTDBProxy(double utc);
-    
+
     [DllImport(@"IO.SDK", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     private static extern double ConvertTDBToUTCProxy(double tdb);
+
+    [DllImport(@"IO.SDK", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+    private static extern bool
+        WriteEphemerisProxy(string filePath, int objectId, StateVector[] stateVectors, int size);
 
     /// <summary>
     /// Instantiate API
@@ -317,6 +321,16 @@ public class API
         return windows.Where(x => !double.IsNaN(x.Start)).ToArray();
     }
 
+    /// <summary>
+    /// Read object ephemeris for a given period
+    /// </summary>
+    /// <param name="searchWindow"></param>
+    /// <param name="observerId"></param>
+    /// <param name="targetId"></param>
+    /// <param name="frame"></param>
+    /// <param name="aberration"></param>
+    /// <param name="stepSize"></param>
+    /// <returns></returns>
     public StateVector[] ReadEphemeris(Window searchWindow, int observerId, int targetId, string frame,
         string aberration, double stepSize)
     {
@@ -325,6 +339,15 @@ public class API
         return stateVectors;
     }
 
+    /// <summary>
+    /// Read spacecraft orientation for a given period
+    /// </summary>
+    /// <param name="searchWindow"></param>
+    /// <param name="spacecraftId"></param>
+    /// <param name="tolerance"></param>
+    /// <param name="refrenceFrame"></param>
+    /// <param name="stepSize"></param>
+    /// <returns></returns>
     public StateOrientation[] ReadOrientation(Window searchWindow, int spacecraftId, double tolerance,
         string refrenceFrame, double stepSize)
     {
@@ -342,7 +365,7 @@ public class API
     {
         return ConvertUTCToTDBProxy(utc);
     }
-    
+
     /// <summary>
     /// Convert TDB to UTC seconds elapsed from J2000
     /// </summary>
@@ -351,5 +374,18 @@ public class API
     public double ConvertTDBToUTC(double tdb)
     {
         return ConvertTDBToUTCProxy(tdb);
+    }
+
+    /// <summary>
+    /// Write ephemeris file
+    /// </summary>
+    /// <param name="filePath"></param>
+    /// <param name="objectId"></param>
+    /// <param name="stateVectors"></param>
+    /// <param name="size"></param>
+    /// <returns></returns>
+    public bool WriteEphemeris(string filePath, int objectId, StateVector[] stateVectors, int size)
+    {
+        return WriteEphemerisProxy(filePath, objectId, stateVectors, size);
     }
 }

@@ -441,4 +441,48 @@ public class APITest
         api.LoadKernels(SolarSystemKernelPath);
         Assert.Equal(64.18392728466942, api.ConvertUTCToTDB(0.0));
     }
+
+    [Fact]
+    void WriteEphemeris()
+    {
+        API api = new API();
+        api.LoadKernels(SolarSystemKernelPath);
+        const int size = 10;
+        StateVector[] sv = new StateVector[size];
+        for (int i = 0; i < size; ++i)
+        {
+            sv[i].Position.X = 6800 + i;
+            sv[i].Position.Y = i;
+            sv[i].Position.Z = i;
+            sv[i].Velocity.X = i;
+            sv[i].Velocity.Y = 8.0 + i * 0.001;
+            sv[i].Velocity.Z = i;
+            sv[i].Epoch = i;
+            sv[i].CenterOfMotion.Id = 399;
+            sv[i].CenterOfMotion.CenterOfMotionId = 10;
+            sv[i].Frame = "J2000";
+        }
+
+        //Write ephemeris file
+        api.WriteEphemeris("EphemerisTestFile.spk", -135, sv, size);
+
+        //Load ephemeris file
+        api.LoadKernels("EphemerisTestFile.spk");
+
+        Window window = new Window(0.0, 9.0);
+        var svResult = api.ReadEphemeris(window, 399, -135, "J2000", "NONE", 1.0);
+        for (int i = 0; i < size; ++i)
+        {
+            Assert.Equal(6800.0 + i, svResult[i].Position.X);
+            Assert.Equal(i, svResult[i].Position.Y, 12);
+            Assert.Equal(i, svResult[i].Position.Z, 12);
+            Assert.Equal(i, svResult[i].Velocity.X, 12);
+            Assert.Equal(8 + i * 0.001, svResult[i].Velocity.Y, 12);
+            Assert.Equal(i, svResult[i].Velocity.Z, 12);
+            Assert.Equal(i, svResult[i].Epoch);
+            Assert.Equal(399, svResult[i].CenterOfMotion.Id);
+            Assert.Equal(10, svResult[i].CenterOfMotion.CenterOfMotionId);
+            Assert.Equal("J2000", svResult[i].Frame);
+        }
+    }
 }
