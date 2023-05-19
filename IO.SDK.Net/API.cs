@@ -337,7 +337,7 @@ public class API
     public StateVector[] ReadEphemeris(Window searchWindow, int observerId, int targetId, string frame,
         string aberration, double stepSize)
     {
-        StateVector[] stateVectors = new StateVector[10000];
+        StateVector[] stateVectors = new StateVector[5000];
         ReadEphemerisProxy(searchWindow, observerId, targetId, frame, aberration, stepSize, stateVectors);
         return stateVectors;
     }
