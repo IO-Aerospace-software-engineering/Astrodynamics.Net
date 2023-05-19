@@ -40,7 +40,7 @@ public class APITest
 
 
         CelestialBody celestialBody =
-            new CelestialBody(id: PlanetsAndMoons.EARTH.NaifId, centerOfMotionId: Stars.Sun.NaifId);
+            new CelestialBody(id: PlanetsAndMoons.EARTH.NaifId, centerOfMotionId: Stars.Sun.NaifId,"",new Vector3D(0.0,0.0,0.0),0.0,"",0,"");
 
         Site launchSite = new Site(id: 399303, bodyId: PlanetsAndMoons.EARTH.NaifId,
             coordinates: new Geodetic(-81.0 * Constants.DEG_RAD, 28.5 * Constants.DEG_RAD, 0.0), name: "S3",
@@ -230,7 +230,7 @@ public class APITest
     {
         var scenario = new Scenario();
         var size = Marshal.SizeOf(scenario);
-        Assert.Equal(18816, size);
+        Assert.Equal(21440, size);
     }
 
     [Fact]
@@ -484,5 +484,24 @@ public class APITest
             Assert.Equal(10, svResult[i].CenterOfMotion.CenterOfMotionId);
             Assert.Equal("J2000", svResult[i].Frame);
         }
+    }
+
+    [Fact]
+    void GetCelestialBodyInformation()
+    {
+        API api = new API();
+        api.LoadKernels(SolarSystemKernelPath);
+        var res = api.GetCelestialBodyInfo(399);
+        Assert.Equal(399, res.Id);
+        Assert.Equal(10, res.CenterOfMotionId);
+        Assert.Equal("EARTH", res.Name);
+        Assert.Equal("", res.Error);
+        Assert.Equal(13000, res.FrameId);
+        Assert.Equal("ITRF93", res.FrameName);
+        Assert.Equal(398600.43543609593, res.GM);
+        Assert.Equal(6378.1365999999998, res.Radii.X);
+        Assert.Equal(6378.1365999999998, res.Radii.Y);
+        Assert.Equal(6356.7519000000002, res.Radii.Z);
+
     }
 }
