@@ -77,6 +77,9 @@ public class API
     private static extern bool
         WriteEphemerisProxy(string filePath, int objectId, StateVector[] stateVectors, int size);
 
+    [DllImport(@"IO.SDK", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+    private static extern CelestialBody GetCelestialBodyInfoProxy(int celestialBodyId);
+
     /// <summary>
     /// Instantiate API
     /// </summary>
@@ -387,5 +390,15 @@ public class API
     public bool WriteEphemeris(string filePath, int objectId, StateVector[] stateVectors, int size)
     {
         return WriteEphemerisProxy(filePath, objectId, stateVectors, size);
+    }
+
+    /// <summary>
+    /// Get celestial body information like radius, GM, name, associated frame, ...
+    /// </summary>
+    /// <param name="celestialBodyId"></param>
+    /// <returns></returns>
+    public CelestialBody GetCelestialBodyInfo(int celestialBodyId)
+    {
+        return GetCelestialBodyInfoProxy(celestialBodyId);
     }
 }
