@@ -8,14 +8,19 @@ IO.SDK.Net is the .Net connector to [IO.SDK native library](https://github.com/I
 It allows .Net developers to call IO.SDK high level features :
 
 * Load [JPL Spice kernels](https://naif.jpl.nasa.gov/naif/data.html)
-* Execute spacecraft propagator to evaluate maneuvers and fuel consumption
+* Execute spacecraft propagator to evaluate maneuvers and fuel balance
 * Evaluate launch opportunities
 * Convert elapsed seconds from J2000 to TDB or UTC string
+* Convert TDB <-> UTC
+* Get celestial body information
 * Find time windows based on distance constraints
 * Find time windows based on occultation constraints
 * Find time windows based on coordinate constraints
 * Find time windows based on illumination constraints
 * Find time windows when an object is in instrument field of view.
+* Write ephemeris file
+* Read ephemeris file
+* Read orientation file
 
 ## Installation
 This package is hosted by Nuget [here](https://www.nuget.org/packages/IO.SDK.Net/).
