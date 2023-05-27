@@ -51,7 +51,7 @@ public class APITest
             directoryPath: SitePath);
 
 
-        StateVector parkingOrbit = new StateVector(celestialBody, start, "J2000",
+        StateVector parkingOrbit = new StateVector(celestialBody, start, InertialFrame.ICRF.GetDescription(),
             new Vector3D(5056554.1874925727, 4395595.4942363985, 0.0),
             new Vector3D(-3708.6305608890916, 4266.2914313011433, 6736.8538488755494));
 
@@ -103,11 +103,11 @@ public class APITest
         scenario.Sites[0] = launchSite;
         scenario.Sites[1] = recoverySite;
 
-        StateVector parkingOrbit = new StateVector(scenario.CelestialBodies[1], start, "J2000",
+        StateVector parkingOrbit = new StateVector(scenario.CelestialBodies[1], start, InertialFrame.ICRF.GetDescription(),
             new Vector3D(5056554.1874925727, 4395595.4942363985, 0.0),
             new Vector3D(-3708.6305608890916, 4266.2914313011433, 6736.8538488755494));
 
-        StateVector target = new StateVector(scenario.CelestialBodies[1], start, "J2000",
+        StateVector target = new StateVector(scenario.CelestialBodies[1], start, InertialFrame.ICRF.GetDescription(),
             new Vector3D(4390853.7278876612, 5110607.0005866792, 917659.86391987884),
             new Vector3D(-4979.4693432656513, 3033.2639866911495, 6933.1803797017265));
 
@@ -118,7 +118,7 @@ public class APITest
         scenario.Spacecraft.Engines[0] = new EngineDTO(id: 1, name: "engine1", fuelFlow: 50,
             serialNumber: "serialNumber1", fuelTankSerialNumber: "fuelTank1", isp: 450);
         scenario.Spacecraft.Payloads[0] = new Payload("PAY01", "Payload 01", 50.0);
-        scenario.Spacecraft.Instruments[0] = new Instrument(600, "CAM600", "circular", new Vector3D(1.0, 0.0, 0.0),
+        scenario.Spacecraft.Instruments[0] = new Instrument(600, "CAM600", InstrumentShape.Circular.ToString(), new Vector3D(1.0, 0.0, 0.0),
             new Vector3D(0.0, 0.0, 1.0), new Vector3D(1.0, 0.0, 0.0), 80.0 * Constants.DEG_RAD, double.NaN);
 
 
@@ -261,7 +261,7 @@ public class APITest
         api.LoadKernels(SolarSystemKernelPath);
         var res = api.FindWindowsOnDistanceConstraint(new Window(220881665.18391809, 228657665.18565452),
             PlanetsAndMoons.EARTH.NaifId, PlanetsAndMoons.MOON.NaifId, ">",
-            400000000, "NONE", 86400.0);
+            400000000, Aberration.None, 86400.0);
         Assert.Equal(4, res.Length);
         Assert.Equal("2007-01-08 00:11:07.628591 (TDB)", api.TDBToString(res[0].Start));
         Assert.Equal("2007-01-13 06:37:47.948144 (TDB)", api.TDBToString(res[0].End));
@@ -278,7 +278,7 @@ public class APITest
             PlanetsAndMoons.EARTH.NaifId, Stars.Sun.NaifId,
             "IAU_SUN", "Ellipsoid", PlanetsAndMoons.MOON.NaifId,
             "IAU_MOON",
-            "Ellipsoid", "ANY", "LT", 3600.0);
+            "Ellipsoid", "ANY", Aberration.LT, 3600.0);
         Assert.Single(res);
         Assert.Equal("2001-12-14 20:10:15.410588 (TDB)", api.TDBToString(res[0].Start));
         Assert.Equal("2001-12-14 21:35:49.100520 (TDB)", api.TDBToString(res[0].End));
@@ -293,7 +293,7 @@ public class APITest
             PlanetsAndMoons.MOON.NaifId, GroundStations.DSS_13.Frame,
             "LATITUDINAL", "LATITUDE",
             ">",
-            0.0, 0.0, "NONE", 60.0);
+            0.0, 0.0, Aberration.None, 60.0);
 
         Assert.Single(res);
         Assert.Equal("2023-02-19 14:33:08.918098 (TDB)", api.TDBToString(res[0].Start));
@@ -309,7 +309,7 @@ public class APITest
             Stars.Sun.Name, PlanetsAndMoons.EARTH.NaifId, PlanetsAndMoons.EARTH.Frame,
             new Geodetic(2.2 * Constants.DEG_RAD, 48.0 * Constants.DEG_RAD, 0.0),
             "INCIDENCE",
-            "<", Math.PI * 0.5 - (-0.8 * Constants.DEG_RAD), 0.0, "CN+S", 60.0 * 60.0 * 4.5, "Ellipsoid");
+            "<", Math.PI * 0.5 - (-0.8 * Constants.DEG_RAD), 0.0, Aberration.CNS, 60.0 * 60.0 * 4.5, "Ellipsoid");
         Assert.Equal(2, res.Length);
         Assert.Equal("2021-05-17 12:00:00.000000 (TDB)", api.TDBToString(res[0].Start));
         Assert.Equal("2021-05-17 19:35:42.885022 (TDB)", api.TDBToString(res[0].End));
@@ -333,13 +333,13 @@ public class APITest
         scenario.CelestialBodies[2].Id = PlanetsAndMoons.MOON.NaifId;
         scenario.CelestialBodies[2].CenterOfMotionId = PlanetsAndMoons.EARTH.NaifId;
 
-        StateVector parkingOrbit = new StateVector(scenario.CelestialBodies[1], start, "J2000",
+        StateVector parkingOrbit = new StateVector(scenario.CelestialBodies[1], start, InertialFrame.ICRF.GetDescription(),
             new Vector3D(6800000.0, 0.0, 0.0),
             new Vector3D(0.0, 7656.2204182967143, 0.0));
 
 
         scenario.Spacecraft = new Spacecraft(-178, "DRAGONFLY", 1000.0, 3000.0, parkingOrbit, SpacecraftPath);
-        scenario.Spacecraft.Instruments[0] = new Instrument(600, "CAM600", "circular", new Vector3D(1.0, 0.0, 0.0),
+        scenario.Spacecraft.Instruments[0] = new Instrument(600, "CAM600", InstrumentShape.Circular.ToString(), new Vector3D(1.0, 0.0, 0.0),
             new Vector3D(0.0, 0.0, 1.0), new Vector3D(1.0, 0.0, 0.0), 1.5, double.NaN);
 
         api.ExecuteScenario(ref scenario);
@@ -347,7 +347,7 @@ public class APITest
         var res = api.FindWindowsInFieldOfViewConstraint(new Window(676555200, 676561647), -178, 600,
             PlanetsAndMoons.EARTH.NaifId,
             "IAU_EARTH", "Ellipsoid",
-            "LT", 3600.0);
+            Aberration.LT, 3600.0);
         Assert.Equal(2, res.Length);
         Assert.Equal("2021-06-10 00:00:00.000000 (TDB)", api.TDBToString(res[0].Start));
         Assert.Equal("2021-06-10 00:30:12.445632 (TDB)", api.TDBToString(res[0].End));
@@ -361,7 +361,7 @@ public class APITest
         API api = new API();
         api.LoadKernels(SolarSystemKernelPath);
         Window searchWindow = new Window(0.0, 100.0);
-        var res = api.ReadEphemeris(searchWindow, 399, 301, "J2000", "LT", 10.0);
+        var res = api.ReadEphemeris(searchWindow, PlanetsAndMoons.EARTH.NaifId, PlanetsAndMoons.MOON.NaifId, InertialFrame.ICRF.GetDescription(), Aberration.LT, 10.0);
 
         Assert.Equal(-291569264.48965073, res[0].Position.X);
         Assert.Equal(-266709187.1624887, res[0].Position.Y);
@@ -369,9 +369,9 @@ public class APITest
         Assert.Equal(643.53061483971885, res[0].Velocity.X);
         Assert.Equal(-666.08181440799092, res[0].Velocity.Y);
         Assert.Equal(-301.32283209101018, res[0].Velocity.Z);
-        Assert.Equal(399, res[0].CenterOfMotion.Id);
-        Assert.Equal(10, res[0].CenterOfMotion.CenterOfMotionId);
-        Assert.Equal("J2000", res[0].Frame);
+        Assert.Equal(PlanetsAndMoons.EARTH.NaifId, res[0].CenterOfMotion.Id);
+        Assert.Equal(Stars.Sun.NaifId, res[0].CenterOfMotion.CenterOfMotionId);
+        Assert.Equal(InertialFrame.ICRF.GetDescription(), res[0].Frame);
         Assert.Equal(0.0, res[0].Epoch);
     }
 
@@ -391,7 +391,7 @@ public class APITest
         scenario.CelestialBodies[2].Id = PlanetsAndMoons.MOON.NaifId;
         scenario.CelestialBodies[2].CenterOfMotionId = PlanetsAndMoons.EARTH.NaifId;
 
-        StateVector parkingOrbit = new StateVector(scenario.CelestialBodies[1], tdbSearchWindow.Start, "J2000",
+        StateVector parkingOrbit = new StateVector(scenario.CelestialBodies[1], tdbSearchWindow.Start, InertialFrame.ICRF.GetDescription(),
             new Vector3D(6800000.0, 0.0, 0.0),
             new Vector3D(0.0, 7656.2204182967143, 0.0));
 
@@ -413,7 +413,7 @@ public class APITest
         api.ExecuteScenario(ref scenario);
         api.LoadKernels("Data/User/Spacecrafts/DRAGONFLY2");
 
-        var res = api.ReadOrientation(tdbSearchWindow, -1782, Math.Pow(2, 16), "J2000", 10.0);
+        var res = api.ReadOrientation(tdbSearchWindow, -1782, Math.Pow(2, 16), InertialFrame.ICRF.GetDescription(), 10.0);
 
         Assert.Equal(0.7071067811865476, res[0].Orientation.W);
         Assert.Equal(0.0, res[0].Orientation.X);
@@ -423,7 +423,7 @@ public class APITest
         Assert.Equal(0.0, res[0].AngularVelocity.Y);
         Assert.Equal(0.0, res[0].AngularVelocity.Z);
         Assert.Equal(tdbSearchWindow.Start, res[0].Epoch);
-        Assert.Equal("J2000", res[0].Frame);
+        Assert.Equal(InertialFrame.ICRF.GetDescription(), res[0].Frame);
     }
 
     [Fact]
@@ -458,9 +458,9 @@ public class APITest
             sv[i].Velocity.Y = 8.0 + i * 0.001;
             sv[i].Velocity.Z = i;
             sv[i].Epoch = i;
-            sv[i].CenterOfMotion.Id = 399;
-            sv[i].CenterOfMotion.CenterOfMotionId = 10;
-            sv[i].Frame = "J2000";
+            sv[i].CenterOfMotion.Id = PlanetsAndMoons.EARTH.NaifId;
+            sv[i].CenterOfMotion.CenterOfMotionId = Stars.Sun.NaifId;
+            sv[i].Frame = InertialFrame.ICRF.GetDescription();
         }
 
         //Write ephemeris file
@@ -470,7 +470,7 @@ public class APITest
         api.LoadKernels("EphemerisTestFile.spk");
 
         Window window = new Window(0.0, 9.0);
-        var svResult = api.ReadEphemeris(window, 399, -135, "J2000", "NONE", 1.0);
+        var svResult = api.ReadEphemeris(window, PlanetsAndMoons.EARTH.NaifId, -135, InertialFrame.ICRF.GetDescription(), Aberration.None, 1.0);
         for (int i = 0; i < size; ++i)
         {
             Assert.Equal(6800.0 + i, svResult[i].Position.X);
@@ -480,9 +480,9 @@ public class APITest
             Assert.Equal(8 + i * 0.001, svResult[i].Velocity.Y, 12);
             Assert.Equal(i, svResult[i].Velocity.Z, 12);
             Assert.Equal(i, svResult[i].Epoch);
-            Assert.Equal(399, svResult[i].CenterOfMotion.Id);
-            Assert.Equal(10, svResult[i].CenterOfMotion.CenterOfMotionId);
-            Assert.Equal("J2000", svResult[i].Frame);
+            Assert.Equal(PlanetsAndMoons.EARTH.NaifId, svResult[i].CenterOfMotion.Id);
+            Assert.Equal(Stars.Sun.NaifId, svResult[i].CenterOfMotion.CenterOfMotionId);
+            Assert.Equal(InertialFrame.ICRF.GetDescription(), svResult[i].Frame);
         }
     }
 
@@ -491,9 +491,9 @@ public class APITest
     {
         API api = new API();
         api.LoadKernels(SolarSystemKernelPath);
-        var res = api.GetCelestialBodyInfo(399);
-        Assert.Equal(399, res.Id);
-        Assert.Equal(10, res.CenterOfMotionId);
+        var res = api.GetCelestialBodyInfo(PlanetsAndMoons.EARTH.NaifId);
+        Assert.Equal(PlanetsAndMoons.EARTH.NaifId, res.Id);
+        Assert.Equal(Stars.Sun.NaifId, res.CenterOfMotionId);
         Assert.Equal("EARTH", res.Name);
         Assert.Equal("", res.Error);
         Assert.Equal(13000, res.FrameId);

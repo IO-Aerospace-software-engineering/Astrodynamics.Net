@@ -13,13 +13,12 @@ public struct Instrument
     public Vector3D FovRefVector;
     public double FieldOfView;
     public double CrossAngle;
-    // [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
-    // public InFieldOfView[] InFieldOfViews;
+    
     public Instrument(int id, string name, string shape, Vector3D orientation, Vector3D boresight, Vector3D fovRefVector, double fieldOfView, double crossAngle)
     {
         Id = id;
         Name = name;
-        Shape = shape;
+        Shape = shape.ToLower();
         Orientation = orientation;
         Boresight = boresight;
         FovRefVector = fovRefVector;
