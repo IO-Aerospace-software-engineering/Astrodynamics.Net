@@ -23,7 +23,6 @@
         <!-- native libraries -->
         <file src="resources/IO.SDK.dll" target="runtimes/windows10-x64"/>
         <file src="resources/IO.SDK.lib" target="runtimes/windows10-x64"/>
-        <file src="resources/IO.SDK.exp" target="runtimes/windows10-x64"/>
         <file src="resources/libIO.SDK.so" target="runtimes/linux-x64"/>
         <!-- targets file -->
         <file src="IO.SDK.Net.targets" target="build/"/>
