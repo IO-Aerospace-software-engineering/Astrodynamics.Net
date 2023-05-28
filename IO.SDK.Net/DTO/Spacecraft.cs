@@ -38,7 +38,7 @@ public struct Spacecraft
         OrbitalPlaneChangingManeuvers = ArrayBuilder.ArrayOf<OrbitalPlaneChangingManeuver>(MANEUVERSIZE);
         CombinedManeuvers = ArrayBuilder.ArrayOf<CombinedManeuver>(MANEUVERSIZE);
         ApsidalAlignmentManeuvers = ArrayBuilder.ArrayOf<ApsidalAlignmentManeuver>(MANEUVERSIZE);
-        PhasingManeuverDto = ArrayBuilder.ArrayOf<PhasingManeuver>(MANEUVERSIZE);
+        PhasingManeuver = ArrayBuilder.ArrayOf<PhasingManeuver>(MANEUVERSIZE);
 
     }
 
@@ -95,5 +95,5 @@ public struct Spacecraft
     public ApsidalAlignmentManeuver[] ApsidalAlignmentManeuvers;
 
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
-    public PhasingManeuver[] PhasingManeuverDto;
+    public PhasingManeuver[] PhasingManeuver;
 }
