@@ -186,7 +186,7 @@ public class API
     /// <param name="stepSize"></param>
     /// <returns></returns>
     public Window[] FindWindowsOnDistanceConstraint(Window searchWindow, int observerId,
-        int targetId, string constraint, double value, Aberration aberration, double stepSize)
+        int targetId, RelationnalOperator relationnalOperator, double value, Aberration aberration, TimeSpan stepSize)
     {
         Window[] windows = new Window[1000];
         for (int i = 0; i < 1000; i++)
@@ -195,9 +195,9 @@ public class API
             windows[i].End = double.NaN;
         }
 
-        FindWindowsOnDistanceConstraintProxy(searchWindow, observerId, targetId, constraint, value,
+        FindWindowsOnDistanceConstraintProxy(searchWindow, observerId, targetId, relationnalOperator.GetDescription(), value,
             aberration.GetDescription(),
-            stepSize, windows);
+            stepSize.TotalSeconds, windows);
         return windows.Where(x => !double.IsNaN(x.Start)).ToArray();
     }
 
@@ -218,7 +218,7 @@ public class API
     /// <returns></returns>
     public Window[] FindWindowsOnOccultationConstraint(Window searchWindow, int observerId,
         int targetId, string targetFrame, string targetShape, int frontBodyId, string frontFrame, string frontShape,
-        string occultationType, Aberration aberration, double stepSize)
+        string occultationType, Aberration aberration, TimeSpan stepSize)
     {
         Window[] windows = new Window[1000];
         for (int i = 0; i < 1000; i++)
@@ -228,7 +228,7 @@ public class API
         }
 
         FindWindowsOnOccultationConstraintProxy(searchWindow, observerId, targetId, targetFrame, targetShape,
-            frontBodyId, frontFrame, frontShape, occultationType, aberration.GetDescription(), stepSize, windows);
+            frontBodyId, frontFrame, frontShape, occultationType, aberration.GetDescription(), stepSize.TotalSeconds, windows);
         return windows.Where(x => !double.IsNaN(x.Start)).ToArray();
     }
 
@@ -249,7 +249,7 @@ public class API
     /// <returns></returns>
     public Window[] FindWindowsOnCoordinateConstraint(Window searchWindow, int observerId, int targetId,
         string frame, string coordinateSystem, string coordinate,
-        string relationalOperator, double value, double adjustValue, Aberration aberration, double stepSize)
+        RelationnalOperator relationalOperator, double value, double adjustValue, Aberration aberration, TimeSpan stepSize)
     {
         Window[] windows = new Window[1000];
         for (int i = 0; i < 1000; i++)
@@ -259,7 +259,7 @@ public class API
         }
 
         FindWindowsOnCoordinateConstraintProxy(searchWindow, observerId, targetId, frame, coordinateSystem,
-            coordinate, relationalOperator, value, adjustValue, aberration.GetDescription(), stepSize, windows);
+            coordinate, relationalOperator.GetDescription(), value, adjustValue, aberration.GetDescription(), stepSize.TotalSeconds, windows);
         return windows.Where(x => !double.IsNaN(x.Start)).ToArray();
     }
 
@@ -282,8 +282,8 @@ public class API
     /// <returns></returns>
     public Window[] FindWindowsOnIlluminationConstraint(Window searchWindow, int observerId,
         string illuminationSource, int targetBody, string fixedFrame,
-        Geodetic geodetic, string illuminationType, string relationalOperator, double value, double adjustValue,
-        Aberration aberration, double stepSize, string method)
+        Geodetic geodetic, string illuminationType, RelationnalOperator relationalOperator, double value, double adjustValue,
+        Aberration aberration, TimeSpan stepSize, string method)
     {
         Window[] windows = new Window[1000];
         for (int i = 0; i < 1000; i++)
@@ -293,7 +293,7 @@ public class API
         }
 
         FindWindowsOnIlluminationConstraintProxy(searchWindow, observerId, illuminationSource, targetBody, fixedFrame,
-            geodetic, illuminationType, relationalOperator, value, adjustValue, aberration.GetDescription(), stepSize,
+            geodetic, illuminationType, relationalOperator.GetDescription(), value, adjustValue, aberration.GetDescription(), stepSize.TotalSeconds,
             method, windows);
         return windows.Where(x => !double.IsNaN(x.Start)).ToArray();
     }
@@ -311,7 +311,7 @@ public class API
     /// <param name="stepSize"></param>
     /// <returns></returns>
     public Window[] FindWindowsInFieldOfViewConstraint(Window searchWindow, int observerId,
-        int instrumentId, int targetId, string targetFrame, string targetShape, Aberration aberration, double stepSize)
+        int instrumentId, int targetId, string targetFrame, string targetShape, Aberration aberration, TimeSpan stepSize)
     {
         Window[] windows = new Window[1000];
         for (int i = 0; i < 1000; i++)
@@ -321,7 +321,7 @@ public class API
         }
 
         FindWindowsInFieldOfViewConstraintProxy(searchWindow, observerId, (observerId * 1000) - instrumentId, targetId,
-            targetFrame, targetShape, aberration.GetDescription(), stepSize, windows);
+            targetFrame, targetShape, aberration.GetDescription(), stepSize.TotalSeconds, windows);
         return windows.Where(x => !double.IsNaN(x.Start)).ToArray();
     }
 
@@ -336,10 +336,10 @@ public class API
     /// <param name="stepSize"></param>
     /// <returns></returns>
     public StateVector[] ReadEphemeris(Window searchWindow, int observerId, int targetId, string frame,
-        Aberration aberration, double stepSize)
+        Aberration aberration, TimeSpan stepSize)
     {
         StateVector[] stateVectors = new StateVector[5000];
-        ReadEphemerisProxy(searchWindow, observerId, targetId, frame, aberration.GetDescription(), stepSize,
+        ReadEphemerisProxy(searchWindow, observerId, targetId, frame, aberration.GetDescription(), stepSize.TotalSeconds,
             stateVectors);
         return stateVectors;
     }
@@ -354,10 +354,10 @@ public class API
     /// <param name="stepSize"></param>
     /// <returns></returns>
     public StateOrientation[] ReadOrientation(Window searchWindow, int spacecraftId, double tolerance,
-        string refrenceFrame, double stepSize)
+        string referenceFrame, TimeSpan stepSize)
     {
         StateOrientation[] stateOrientations = new StateOrientation[10000];
-        ReadOrientationProxy(searchWindow, spacecraftId, tolerance, refrenceFrame, stepSize, stateOrientations);
+        ReadOrientationProxy(searchWindow, spacecraftId, tolerance, referenceFrame, stepSize.TotalSeconds, stateOrientations);
         return stateOrientations;
     }
 
