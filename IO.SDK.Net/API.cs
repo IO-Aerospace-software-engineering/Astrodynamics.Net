@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -160,9 +161,9 @@ public class API
     /// Load generic kernel at given path
     /// </summary>
     /// <param name="path">Path where kernels are located. This could be a file path or a directory path</param>
-    public void LoadKernels(string path)
+    public void LoadKernels(FileSystemInfo path)
     {
-        LoadKernelsProxy(path);
+        LoadKernelsProxy(path.FullName);
     }
 
     /// <summary>
@@ -287,11 +288,10 @@ public class API
     /// <param name="stepSize"></param>
     /// <param name="method"></param>
     /// <returns></returns>
-    public Window[] FindWindowsOnIlluminationConstraint(Window searchWindow, int observerId,
-        string illuminationSource, int targetBody, string fixedFrame,
-        Geodetic geodetic, IlluminationAngle illuminationType, RelationnalOperator relationalOperator, double value,
-        double adjustValue,
-        Aberration aberration, TimeSpan stepSize, string method = "Ellipsoid")
+    public Window[] FindWindowsOnIlluminationConstraint(Window searchWindow, int observerId, int targetBody,
+        string fixedFrame, Geodetic geodetic, IlluminationAngle illuminationType,
+        RelationnalOperator relationalOperator, double value, double adjustValue,
+        Aberration aberration, TimeSpan stepSize, string illuminationSource = "SUN", string method = "Ellipsoid")
     {
         Window[] windows = new Window[1000];
         for (int i = 0; i < 1000; i++)
@@ -401,9 +401,9 @@ public class API
     /// <param name="stateVectors"></param>
     /// <param name="size"></param>
     /// <returns></returns>
-    public bool WriteEphemeris(string filePath, int objectId, StateVector[] stateVectors, int size)
+    public bool WriteEphemeris(FileInfo filePath, int objectId, StateVector[] stateVectors, int size)
     {
-        return WriteEphemerisProxy(filePath, objectId, stateVectors, size);
+        return WriteEphemerisProxy(filePath.FullName, objectId, stateVectors, size);
     }
 
     /// <summary>
