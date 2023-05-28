@@ -248,7 +248,7 @@ public class API
     /// <param name="stepSize"></param>
     /// <returns></returns>
     public Window[] FindWindowsOnCoordinateConstraint(Window searchWindow, int observerId, int targetId,
-        string frame, string coordinateSystem, string coordinate,
+        string frame, CoordinateSystem coordinateSystem, Coordinate coordinate,
         RelationnalOperator relationalOperator, double value, double adjustValue, Aberration aberration, TimeSpan stepSize)
     {
         Window[] windows = new Window[1000];
@@ -258,8 +258,8 @@ public class API
             windows[i].End = double.NaN;
         }
 
-        FindWindowsOnCoordinateConstraintProxy(searchWindow, observerId, targetId, frame, coordinateSystem,
-            coordinate, relationalOperator.GetDescription(), value, adjustValue, aberration.GetDescription(), stepSize.TotalSeconds, windows);
+        FindWindowsOnCoordinateConstraintProxy(searchWindow, observerId, targetId, frame, coordinateSystem.GetDescription(),
+            coordinate.GetDescription(), relationalOperator.GetDescription(), value, adjustValue, aberration.GetDescription(), stepSize.TotalSeconds, windows);
         return windows.Where(x => !double.IsNaN(x.Start)).ToArray();
     }
 

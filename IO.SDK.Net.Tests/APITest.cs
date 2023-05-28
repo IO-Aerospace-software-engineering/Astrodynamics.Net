@@ -291,7 +291,7 @@ public class APITest
         api.LoadKernels(SolarSystemKernelPath);
         var res = api.FindWindowsOnCoordinateConstraint(new Window(730036800.0, 730123200), 399013,
             PlanetsAndMoons.MOON.NaifId, GroundStations.DSS_13.Frame,
-            "LATITUDINAL", "LATITUDE",
+            CoordinateSystem.Latitudinal, Coordinate.Latitude,
             RelationnalOperator.Greater,
             0.0, 0.0, Aberration.None, TimeSpan.FromSeconds(60.0));
 
