@@ -276,9 +276,9 @@ public class APITest
         api.LoadKernels(SolarSystemKernelPath);
         var res = api.FindWindowsOnOccultationConstraint(new Window(61473664.183390938, 61646464.183445148),
             PlanetsAndMoons.EARTH.NaifId, Stars.Sun.NaifId,
-            "IAU_SUN", "Ellipsoid", PlanetsAndMoons.MOON.NaifId,
-            "IAU_MOON",
-            "Ellipsoid", "ANY", Aberration.LT, TimeSpan.FromSeconds(3600.0));
+            Stars.Sun.Frame, ShapeType.Ellipsoid, PlanetsAndMoons.MOON.NaifId,
+            PlanetsAndMoons.MOON.Frame,
+            ShapeType.Ellipsoid, OccultationType.Any, Aberration.LT, TimeSpan.FromSeconds(3600.0));
         Assert.Single(res);
         Assert.Equal("2001-12-14 20:10:15.410588 (TDB)", api.TDBToString(res[0].Start));
         Assert.Equal("2001-12-14 21:35:49.100520 (TDB)", api.TDBToString(res[0].End));
@@ -308,8 +308,8 @@ public class APITest
         var res = api.FindWindowsOnIlluminationConstraint(new Window(674524800, 674611200), Stars.Sun.NaifId,
             Stars.Sun.Name, PlanetsAndMoons.EARTH.NaifId, PlanetsAndMoons.EARTH.Frame,
             new Geodetic(2.2 * Constants.DEG_RAD, 48.0 * Constants.DEG_RAD, 0.0),
-            "INCIDENCE",
-            RelationnalOperator.Lower, Math.PI * 0.5 - (-0.8 * Constants.DEG_RAD), 0.0, Aberration.CNS, TimeSpan.FromHours(4.5), "Ellipsoid");
+            IlluminationAngle.Incidence,
+            RelationnalOperator.Lower, Math.PI * 0.5 - (-0.8 * Constants.DEG_RAD), 0.0, Aberration.CNS, TimeSpan.FromHours(4.5));
         Assert.Equal(2, res.Length);
         Assert.Equal("2021-05-17 12:00:00.000000 (TDB)", api.TDBToString(res[0].Start));
         Assert.Equal("2021-05-17 19:35:42.885022 (TDB)", api.TDBToString(res[0].End));
@@ -346,7 +346,7 @@ public class APITest
         api.LoadKernels("Data/User/Spacecrafts/DRAGONFLY");
         var res = api.FindWindowsInFieldOfViewConstraint(new Window(676555200, 676561647), -178, 600,
             PlanetsAndMoons.EARTH.NaifId,
-            PlanetsAndMoons.EARTH.Frame, "Ellipsoid",
+            PlanetsAndMoons.EARTH.Frame, ShapeType.Ellipsoid,
             Aberration.LT, TimeSpan.FromHours(1.0));
         Assert.Equal(2, res.Length);
         Assert.Equal("2021-06-10 00:00:00.000000 (TDB)", api.TDBToString(res[0].Start));
