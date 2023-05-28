@@ -17,4 +17,10 @@
       <None Remove="resources\IO.SDK.lib" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Content Include="resources\IO.SDK.dll" />
+      <Content Include="resources\IO.SDK.lib" />
+      <Content Include="resources\libIO.SDK.so" />
+    </ItemGroup>
+
 </Project>
