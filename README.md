@@ -45,7 +45,7 @@ Console.WriteLine(epoch); //Expected output : 2000-01-01 12:00:00.000000 (TDB)
 
 ```
 
+You can find more advanced examples [here](https://github.com/IO-Aerospace-software-engineering/SDK.Net/wiki/Examples)
+
 ## Documentation
 For more information you can read the [wiki](https://github.com/IO-Aerospace-software-engineering/SDK.Net/wiki)
-
-You can find more advanced examples [here](https://github.com/IO-Aerospace-software-engineering/SDK.Net/wiki/Examples)
