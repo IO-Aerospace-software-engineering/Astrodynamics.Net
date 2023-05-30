@@ -76,10 +76,13 @@ public class API
 
     [DllImport(@"IO.SDK", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     private static extern bool
-        WriteEphemerisProxy(string filePath, int objectId, StateVector[] stateVectors, int size);
+        WriteEphemerisProxy(string filePath, int objectId, StateVector[] stateVectors, uint size);
 
     [DllImport(@"IO.SDK", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     private static extern CelestialBody GetCelestialBodyInfoProxy(int celestialBodyId);
+
+    [DllImport(@"IO.SDK", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+    private static extern FrameTransformation TransformFrameProxy(string fromFrame, string toFrame, double epoch);
 
     /// <summary>
     /// Instantiate API
@@ -181,7 +184,7 @@ public class API
     /// <param name="searchWindow"></param>
     /// <param name="observerId"></param>
     /// <param name="targetId"></param>
-    /// <param name="constraint"></param>
+    /// <param name="relationnalOperator"></param>
     /// <param name="value"></param>
     /// <param name="aberration"></param>
     /// <param name="stepSize"></param>
@@ -223,6 +226,8 @@ public class API
         ShapeType frontShape,
         OccultationType occultationType, Aberration aberration, TimeSpan stepSize)
     {
+        if (targetFrame == null) throw new ArgumentNullException(nameof(targetFrame));
+        if (frontFrame == null) throw new ArgumentNullException(nameof(frontFrame));
         Window[] windows = new Window[1000];
         for (int i = 0; i < 1000; i++)
         {
@@ -293,6 +298,9 @@ public class API
         RelationnalOperator relationalOperator, double value, double adjustValue,
         Aberration aberration, TimeSpan stepSize, string illuminationSource = "SUN", string method = "Ellipsoid")
     {
+        if (fixedFrame == null) throw new ArgumentNullException(nameof(fixedFrame));
+        if (illuminationSource == null) throw new ArgumentNullException(nameof(illuminationSource));
+        if (method == null) throw new ArgumentNullException(nameof(method));
         Window[] windows = new Window[1000];
         for (int i = 0; i < 1000; i++)
         {
@@ -323,6 +331,7 @@ public class API
         int instrumentId, int targetId, string targetFrame, ShapeType targetShape, Aberration aberration,
         TimeSpan stepSize)
     {
+        if (targetFrame == null) throw new ArgumentNullException(nameof(targetFrame));
         Window[] windows = new Window[1000];
         for (int i = 0; i < 1000; i++)
         {
@@ -348,6 +357,7 @@ public class API
     public StateVector[] ReadEphemeris(Window searchWindow, int observerId, int targetId, string frame,
         Aberration aberration, TimeSpan stepSize)
     {
+        if (frame == null) throw new ArgumentNullException(nameof(frame));
         StateVector[] stateVectors = new StateVector[5000];
         ReadEphemerisProxy(searchWindow, observerId, targetId, frame, aberration.GetDescription(),
             stepSize.TotalSeconds,
@@ -361,12 +371,13 @@ public class API
     /// <param name="searchWindow"></param>
     /// <param name="spacecraftId"></param>
     /// <param name="tolerance"></param>
-    /// <param name="refrenceFrame"></param>
+    /// <param name="referenceFrame"></param>
     /// <param name="stepSize"></param>
     /// <returns></returns>
     public StateOrientation[] ReadOrientation(Window searchWindow, int spacecraftId, double tolerance,
         string referenceFrame, TimeSpan stepSize)
     {
+        if (referenceFrame == null) throw new ArgumentNullException(nameof(referenceFrame));
         StateOrientation[] stateOrientations = new StateOrientation[10000];
         ReadOrientationProxy(searchWindow, spacecraftId, tolerance, referenceFrame, stepSize.TotalSeconds,
             stateOrientations);
@@ -401,8 +412,12 @@ public class API
     /// <param name="stateVectors"></param>
     /// <param name="size"></param>
     /// <returns></returns>
-    public bool WriteEphemeris(FileInfo filePath, int objectId, StateVector[] stateVectors, int size)
+    public bool WriteEphemeris(FileInfo filePath, int objectId, StateVector[] stateVectors, uint size)
     {
+        if (filePath == null) throw new ArgumentNullException(nameof(filePath));
+        if (stateVectors == null) throw new ArgumentNullException(nameof(stateVectors));
+        if (stateVectors.Length == 0)
+            throw new ArgumentException("Value cannot be an empty collection.", nameof(stateVectors));
         return WriteEphemerisProxy(filePath.FullName, objectId, stateVectors, size);
     }
 
@@ -414,5 +429,12 @@ public class API
     public CelestialBody GetCelestialBodyInfo(int celestialBodyId)
     {
         return GetCelestialBodyInfoProxy(celestialBodyId);
+    }
+
+    public FrameTransformation TransformFrame(string fromFrame, string toFrame, double epoch)
+    {
+        if (fromFrame == null) throw new ArgumentNullException(nameof(fromFrame));
+        if (toFrame == null) throw new ArgumentNullException(nameof(toFrame));
+        return TransformFrameProxy(fromFrame, toFrame, epoch);
     }
 }

@@ -4,7 +4,7 @@
         <id>IO.SDK.Net</id>
         <authors>Sylvain Guillet</authors>
         <copyright>Sylvain Guillet</copyright>
-        <version>0.7.0-alpha</version>
+        <version>0.8.0-alpha</version>
         <title>.Net proxy to IO SDK</title>
         <icon>images\dragonfly-dark-trans.png</icon>
         <readme>docs\README.md</readme>
