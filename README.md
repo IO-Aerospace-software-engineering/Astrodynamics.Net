@@ -21,6 +21,7 @@ It allows .Net developers to call IO.SDK high level features :
 * Write ephemeris file
 * Read ephemeris file
 * Read orientation file
+* Frame transformation
 
 ## Installation
 This package is hosted by Nuget [here](https://www.nuget.org/packages/IO.SDK.Net/).
