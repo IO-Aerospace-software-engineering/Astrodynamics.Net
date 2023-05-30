@@ -4,7 +4,7 @@ public static class PlanetsAndMoons
 {
     public static SolarSytemObject MERCURY = new(199, "MERCURY", "IAU_MERCURY");
     public static SolarSytemObject VENUS = new(299, "VENUS", "IAU_VENUS");
-    public static SolarSytemObject EARTH = new(399, "EARTH", "IAU_EARTH");
+    public static SolarSytemObject EARTH = new(399, "EARTH", "ITRF93");
     public static SolarSytemObject MOON = new(301, "MOON", "IAU_MOON");
     public static SolarSytemObject MARS = new(499, "MARS", "IAU_MARS");
     public static SolarSytemObject PHOBOS = new(401, "PHOBOS", "IAU_PHOBOS");
