@@ -18,13 +18,14 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Content Include="..\..\SDK\cmake-build-release\IO.SDK\libIO.SDK.so">
+        <Link>resources/libIO.SDK.so</Link>
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
       <Content Include="resources\IO.SDK.dll">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
       <Content Include="resources\IO.SDK.lib">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>
-      <Content Include="resources\libIO.SDK.so">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
     </ItemGroup>

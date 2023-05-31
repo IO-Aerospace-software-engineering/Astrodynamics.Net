@@ -83,6 +83,9 @@ public class API
 
     [DllImport(@"IO.SDK", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     private static extern FrameTransformation TransformFrameProxy(string fromFrame, string toFrame, double epoch);
+    
+    [DllImport(@"IO.SDK", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+    private static extern StateVector ConvertEquinoctialElementsToStateVectorProxy(EquinoctialElements equinoctialElements);
 
     /// <summary>
     /// Instantiate API
@@ -436,5 +439,10 @@ public class API
         if (fromFrame == null) throw new ArgumentNullException(nameof(fromFrame));
         if (toFrame == null) throw new ArgumentNullException(nameof(toFrame));
         return TransformFrameProxy(fromFrame, toFrame, epoch);
+    }
+
+    public StateVector ConvertEquinoctialElementsToStateVector(EquinoctialElements equinoctialElements)
+    {
+        return ConvertEquinoctialElementsToStateVectorProxy(equinoctialElements);
     }
 }

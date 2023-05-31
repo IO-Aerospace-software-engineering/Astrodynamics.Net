@@ -591,4 +591,53 @@ public class APITest
         Assert.Equal(-2.0389340573814659e-09, res.AngularVelocity.Y);
         Assert.Equal(7.2921150642488516e-05, res.AngularVelocity.Z);
     }
+
+    [Fact]
+    void ConvertEquinoctialElementsToStateVector()
+    {
+        //Initialize API
+        API api = new API();
+
+        //Load solar system kernels
+        api.LoadKernels(new DirectoryInfo(SolarSystemKernelPath));
+
+        double p = 1.0e7;
+        double ecc = 0.1;
+        double a = p / (1.0 - ecc);
+        double argp = 30.0 * Constants.DEG_RAD;
+        double node = 15.0 * Constants.DEG_RAD;
+        double inc = 10.0 * Constants.DEG_RAD;
+        double m0 = 45.0 * Constants.DEG_RAD;
+
+        //equinoctial elements
+        double h = ecc * Math.Sin(argp + node);
+        double k = ecc * Math.Cos(argp + node);
+        double p2 = Math.Tan(inc / 2.0) * Math.Sin(node);
+        double q = Math.Tan(inc / 2.0) * Math.Cos(node);
+        double L = m0 + argp + node;
+
+        EquinoctialElements eqDTO = new EquinoctialElements();
+        eqDTO.Frame = InertialFrame.ICRF.GetDescription();
+        eqDTO.DeclinationOfThePole = Math.PI * 0.5;
+        eqDTO.RightAscensionOfThePole = -Math.PI * 0.5;
+        eqDTO.AscendingNodeLongitudeRate = 0.0;
+        eqDTO.PeriapsisLongitudeRate = 0.0;
+        eqDTO.H = h;
+        eqDTO.P = p2;
+        eqDTO.SemiMajorAxis = a;
+        eqDTO.Epoch = 10.0;
+        eqDTO.CenterOfMotionId = 399;
+        eqDTO.L = L;
+        eqDTO.K = k;
+        eqDTO.Q = q;
+
+        var sv = api.ConvertEquinoctialElementsToStateVector(eqDTO);
+
+        Assert.Equal(-1557343.2179623565, sv.Position.X);
+        Assert.Equal(10112046.56492505, sv.Position.Y);
+        Assert.Equal(1793343.6111546031, sv.Position.Z);
+        Assert.Equal(-6369.0795341145204, sv.Velocity.X);
+        Assert.Equal(-517.51239201161684, sv.Velocity.Y);
+        Assert.Equal(202.52220483204573, sv.Velocity.Z);
+    }
 }
