@@ -640,4 +640,40 @@ public class APITest
         Assert.Equal(-517.51239201161684, sv.Velocity.Y);
         Assert.Equal(202.52220483204573, sv.Velocity.Z);
     }
+
+    [Fact]
+    void ConvertConicElementsToStateVector()
+    {
+        //Initialize API
+        API api = new API();
+
+        //Load solar system kernels
+        api.LoadKernels(new DirectoryInfo(SolarSystemKernelPath));
+
+        double perifocalDist = Math.Sqrt(Math.Pow(-6.116559469556896E+06, 2) + Math.Pow(-1.546174698676721E+06, 2) +
+                                         Math.Pow(2.521950157430313E+06, 2));
+
+        ConicElements conicElements = new ConicElements();
+        conicElements.Frame = InertialFrame.ICRF.GetDescription();
+        conicElements.Epoch = 663724800.00001490; //"2021-01-12T11:58:50.816" UTC
+        conicElements.MeanAnomaly = 4.541224977546975E+01 * Constants.DEG_RAD;
+        conicElements.PeriapsisArgument = 1.062574316262159E+02 * Constants.DEG_RAD;
+        conicElements.AscendingNodeLongitude = 3.257605322534260E+01 * Constants.DEG_RAD;
+        conicElements.Inclination = 5.171921958517460E+01 * Constants.DEG_RAD;
+        conicElements.Eccentricity = 1.353139738203394E-03;
+        conicElements.PerifocalDistance = perifocalDist;
+        conicElements.CenterOfMotionId = 399;
+
+        var sv = api.ConvertConicElementsToStateVector(conicElements);
+
+        Assert.Equal(-6119034.915639279, sv.Position.X);
+        Assert.Equal(-1546800.4544009243, sv.Position.Y);
+        Assert.Equal(2522970.821362097, sv.Position.Z);
+        Assert.Equal(-807.6748840709542, sv.Velocity.X);
+        Assert.Equal(-5476.5381803473965, sv.Velocity.Y);
+        Assert.Equal(-5296.561721841285, sv.Velocity.Z);
+        Assert.Equal(663724800.00001490, sv.Epoch);
+        Assert.Equal(399, sv.CenterOfMotion.Id);
+        Assert.Equal(InertialFrame.ICRF.GetDescription(), sv.Frame);
+    }
 }

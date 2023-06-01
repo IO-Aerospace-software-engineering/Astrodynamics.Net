@@ -86,6 +86,9 @@ public class API
     
     [DllImport(@"IO.SDK", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     private static extern StateVector ConvertEquinoctialElementsToStateVectorProxy(EquinoctialElements equinoctialElements);
+    
+    [DllImport(@"IO.SDK", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+    private static extern StateVector ConvertConicElementsToStateVectorProxy(ConicElements conicElements);
 
     /// <summary>
     /// Instantiate API
@@ -444,5 +447,10 @@ public class API
     public StateVector ConvertEquinoctialElementsToStateVector(EquinoctialElements equinoctialElements)
     {
         return ConvertEquinoctialElementsToStateVectorProxy(equinoctialElements);
+    }
+    
+    public StateVector ConvertConicElementsToStateVector(ConicElements conicElements)
+    {
+        return ConvertConicElementsToStateVectorProxy(conicElements);
     }
 }
