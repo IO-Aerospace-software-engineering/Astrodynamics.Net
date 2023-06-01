@@ -444,12 +444,12 @@ public class API
         return TransformFrameProxy(fromFrame, toFrame, epoch);
     }
 
-    public StateVector ConvertEquinoctialElementsToStateVector(EquinoctialElements equinoctialElements)
+    public StateVector ConvertToStateVector(EquinoctialElements equinoctialElements)
     {
         return ConvertEquinoctialElementsToStateVectorProxy(equinoctialElements);
     }
     
-    public StateVector ConvertConicElementsToStateVector(ConicElements conicElements)
+    public StateVector ConvertToStateVector(ConicElements conicElements)
     {
         return ConvertConicElementsToStateVectorProxy(conicElements);
     }

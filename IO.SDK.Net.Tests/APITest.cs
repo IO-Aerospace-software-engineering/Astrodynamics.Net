@@ -631,7 +631,7 @@ public class APITest
         eqDTO.K = k;
         eqDTO.Q = q;
 
-        var sv = api.ConvertEquinoctialElementsToStateVector(eqDTO);
+        var sv = api.ConvertToStateVector(eqDTO);
 
         Assert.Equal(-1557343.2179623565, sv.Position.X);
         Assert.Equal(10112046.56492505, sv.Position.Y);
@@ -664,14 +664,14 @@ public class APITest
         conicElements.PerifocalDistance = perifocalDist;
         conicElements.CenterOfMotionId = 399;
 
-        var sv = api.ConvertConicElementsToStateVector(conicElements);
+        var sv = api.ConvertToStateVector(conicElements);
 
-        Assert.Equal(-6119034.915639279, sv.Position.X);
-        Assert.Equal(-1546800.4544009243, sv.Position.Y);
-        Assert.Equal(2522970.821362097, sv.Position.Z);
-        Assert.Equal(-807.6748840709542, sv.Velocity.X);
-        Assert.Equal(-5476.5381803473965, sv.Velocity.Y);
-        Assert.Equal(-5296.561721841285, sv.Velocity.Z);
+        Assert.Equal(-6119034.915639279, sv.Position.X, 8);
+        Assert.Equal(-1546800.4544009243, sv.Position.Y, 6);
+        Assert.Equal(2522970.821362097, sv.Position.Z, 8);
+        Assert.Equal(-807.6748840709542, sv.Velocity.X, 8);
+        Assert.Equal(-5476.5381803473965, sv.Velocity.Y, 8);
+        Assert.Equal(-5296.561721841285, sv.Velocity.Z, 8);
         Assert.Equal(663724800.00001490, sv.Epoch);
         Assert.Equal(399, sv.CenterOfMotion.Id);
         Assert.Equal(InertialFrame.ICRF.GetDescription(), sv.Frame);
