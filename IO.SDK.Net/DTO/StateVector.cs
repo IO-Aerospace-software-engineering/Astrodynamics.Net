@@ -8,12 +8,12 @@ public struct StateVector
     public double Epoch;
     public Vector3D Position;
     public Vector3D Velocity;
-    public CelestialBody CenterOfMotion;
+    public int CenterOfMotionId;
     public string Frame;
 
-    public StateVector(CelestialBody centerOfMotion, double epoch, string frame, Vector3D position, Vector3D velocity)
+    public StateVector(int centerOfMotionId, double epoch, string frame, Vector3D position, Vector3D velocity)
     {
-        CenterOfMotion = centerOfMotion;
+        CenterOfMotionId = centerOfMotionId;
         Epoch = epoch;
         Frame = frame;
         Position = position;

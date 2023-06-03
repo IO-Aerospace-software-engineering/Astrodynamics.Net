@@ -83,12 +83,16 @@ public class API
 
     [DllImport(@"IO.SDK", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     private static extern FrameTransformation TransformFrameProxy(string fromFrame, string toFrame, double epoch);
-    
+
     [DllImport(@"IO.SDK", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-    private static extern StateVector ConvertEquinoctialElementsToStateVectorProxy(EquinoctialElements equinoctialElements);
-    
+    private static extern StateVector ConvertEquinoctialElementsToStateVectorProxy(
+        EquinoctialElements equinoctialElements);
+
     [DllImport(@"IO.SDK", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     private static extern StateVector ConvertConicElementsToStateVectorProxy(ConicElements conicElements);
+
+    [DllImport(@"IO.SDK", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+    private static extern RaDec ConvertToRightAscensionAndDeclinationProxy(StateVector stateVector);
 
     /// <summary>
     /// Instantiate API
@@ -448,9 +452,26 @@ public class API
     {
         return ConvertEquinoctialElementsToStateVectorProxy(equinoctialElements);
     }
-    
+
     public StateVector ConvertToStateVector(ConicElements conicElements)
     {
         return ConvertConicElementsToStateVectorProxy(conicElements);
+    }
+
+    public RaDec ConvertToRaDec(StateVector stateVector)
+    {
+        return ConvertToRightAscensionAndDeclinationProxy(stateVector);
+    }
+
+    public RaDec ConvertToRaDec(ConicElements conicElements)
+    {
+        var sv = ConvertToStateVector(conicElements);
+        return ConvertToRightAscensionAndDeclinationProxy(sv);
+    }
+
+    public RaDec ConvertToRaDec(EquinoctialElements equinoctialElements)
+    {
+        var sv = ConvertToStateVector(equinoctialElements);
+        return ConvertToRightAscensionAndDeclinationProxy(sv);
     }
 }
