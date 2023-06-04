@@ -1,3 +1,5 @@
+// Copyright 2023. Sylvain Guillet (sylvain.guillet@tutamail.com)
+
 using System.Runtime.InteropServices;
 
 namespace IO.SDK.Net.DTO;
@@ -13,8 +15,9 @@ public struct Instrument
     public Vector3D FovRefVector;
     public double FieldOfView;
     public double CrossAngle;
-    
-    public Instrument(int id, string name, string shape, Vector3D orientation, Vector3D boresight, Vector3D fovRefVector, double fieldOfView, double crossAngle)
+
+    public Instrument(int id, string name, string shape, Vector3D orientation, Vector3D boresight,
+        Vector3D fovRefVector, double fieldOfView, double crossAngle)
     {
         Id = id;
         Name = name;

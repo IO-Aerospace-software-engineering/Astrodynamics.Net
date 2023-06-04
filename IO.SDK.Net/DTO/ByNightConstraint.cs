@@ -1,3 +1,5 @@
+// Copyright 2023. Sylvain Guillet (sylvain.guillet@tutamail.com)
+
 using System.Runtime.InteropServices;
 
 namespace IO.SDK.Net.DTO;
@@ -9,7 +11,7 @@ public struct ByNightConstraint
 
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 1000)]
     public Window[] Windows;
-    
+
     public ByNightConstraint(double twilightDefinition)
     {
         Windows = new Window[1000];

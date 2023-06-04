@@ -1,3 +1,5 @@
+// Copyright 2023. Sylvain Guillet (sylvain.guillet@tutamail.com)
+
 using System.Runtime.InteropServices;
 
 namespace IO.SDK.Net.DTO;
@@ -8,6 +10,7 @@ public struct InFieldOfViewConstraint
     public int TargetId;
     public string Aberration;
     public double InitialStepSize;
+
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 1000)]
     public Window[] Windows;
 

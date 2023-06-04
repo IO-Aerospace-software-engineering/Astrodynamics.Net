@@ -1,3 +1,5 @@
+// Copyright 2023. Sylvain Guillet (sylvain.guillet@tutamail.com)
+
 using System.Runtime.InteropServices;
 
 namespace IO.SDK.Net.DTO;
@@ -11,11 +13,13 @@ public struct OccultationConstraint
     public string Type;
     public string AberrationId;
     public double InitialStepSize;
+
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 1000)]
     public Window[] Windows;
 
     //Occultation
-    public OccultationConstraint(int observerId, int backBodyId, int frontId, string type, string aberrationId, double initialStepSize)
+    public OccultationConstraint(int observerId, int backBodyId, int frontId, string type, string aberrationId,
+        double initialStepSize)
     {
         ObserverId = observerId;
         BackBodyId = backBodyId;

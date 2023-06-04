@@ -686,7 +686,7 @@ public class APITest
         sv.Velocity = new Vector3D(643.53139, -666.08768, -301.32570);
         sv.Frame = InertialFrame.ICRF.GetDescription();
 
-        var radec = api.ConvertToRaDec(sv);
+        var radec = api.ConvertToEquatorialCoordinates(sv);
         Assert.Equal(222.4472994995566, radec.RightAscencion * Constants.RAD_DEG);
         Assert.Equal(-10.900186051699306, radec.Declination * Constants.RAD_DEG);
         Assert.Equal(402448639.887328, radec.Radius);
@@ -712,7 +712,7 @@ public class APITest
         conics.PeriapsisArgument = 68.05335129 * Constants.DEG_RAD;
         conics.MeanAnomaly = 140.14966394 * Constants.DEG_RAD;
 
-        var radec = api.ConvertToRaDec(conics);
+        var radec = api.ConvertToEquatorialCoordinates(conics);
         Assert.Equal(222.4472992707561, radec.RightAscencion * Constants.RAD_DEG);
         Assert.Equal(-10.900185977212049, radec.Declination * Constants.RAD_DEG);
         Assert.Equal(402448637.2542864, radec.Radius);

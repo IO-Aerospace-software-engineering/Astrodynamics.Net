@@ -1,4 +1,6 @@
-﻿using System.Runtime.InteropServices;
+﻿// Copyright 2023. Sylvain Guillet (sylvain.guillet@tutamail.com)
+
+using System.Runtime.InteropServices;
 
 namespace IO.SDK.Net.DTO;
 

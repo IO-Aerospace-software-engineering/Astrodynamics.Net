@@ -1,3 +1,5 @@
+// Copyright 2023. Sylvain Guillet (sylvain.guillet@tutamail.com)
+
 using System.Runtime.InteropServices;
 
 namespace IO.SDK.Net.DTO;
@@ -10,9 +12,9 @@ public struct ZenithAttitude
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = Spacecraft.ENGINESIZE)]
     public string[] Engines;
 
-    double AttitudeHoldDuration;
-    double MinimumEpoch;
-    Window Window;
+    private readonly double AttitudeHoldDuration;
+    private readonly double MinimumEpoch;
+    private readonly Window Window;
 
     public ZenithAttitude() : this(-1, 0.0, double.MinValue)
     {
