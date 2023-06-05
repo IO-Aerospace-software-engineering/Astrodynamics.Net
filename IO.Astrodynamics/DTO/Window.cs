@@ -7,7 +7,8 @@ namespace IO.Astrodynamics.DTO;
 [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
 public struct Window
 {
-    public double Start, End;
+    public double Start { get; }
+    public double End { get; }
 
     public Window(double start, double end)
     {

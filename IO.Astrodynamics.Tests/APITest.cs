@@ -81,9 +81,9 @@ public class APITest
 
         //Create and configure scenario
         var scenario = new Scenario("titi", new Window(startPropagator, end));
-        scenario.CelestialBodies[0].Id = Stars.Sun.NaifId;
-        scenario.CelestialBodies[1].Id = PlanetsAndMoons.EARTH.NaifId;
-        scenario.CelestialBodies[2].Id = PlanetsAndMoons.MOON.NaifId;
+        scenario.CelestialBodiesId[0] = Stars.Sun.NaifId;
+        scenario.CelestialBodiesId[1] = PlanetsAndMoons.EARTH.NaifId;
+        scenario.CelestialBodiesId[2] = PlanetsAndMoons.MOON.NaifId;
 
         //Define parking orbit
         StateVector parkingOrbit = new StateVector(PlanetsAndMoons.EARTH.NaifId, start,
@@ -221,7 +221,7 @@ public class APITest
     {
         var scenario = new Scenario();
         var size = Marshal.SizeOf(scenario);
-        Assert.Equal(19456, size);
+        Assert.Equal(18776, size);
     }
 
     [Fact]
@@ -351,9 +351,9 @@ public class APITest
 
         //Configure scenario
         var scenario = new Scenario("Scenario_A", new Window(start, end));
-        scenario.CelestialBodies[0].Id = Stars.Sun.NaifId;
-        scenario.CelestialBodies[1].Id = PlanetsAndMoons.EARTH.NaifId;
-        scenario.CelestialBodies[2].Id = PlanetsAndMoons.MOON.NaifId;
+        scenario.CelestialBodiesId[0] = Stars.Sun.NaifId;
+        scenario.CelestialBodiesId[1] = PlanetsAndMoons.EARTH.NaifId;
+        scenario.CelestialBodiesId[2] = PlanetsAndMoons.MOON.NaifId;
 
         //Define parking orbit
         StateVector parkingOrbit = new StateVector(PlanetsAndMoons.EARTH.NaifId, start,
@@ -425,9 +425,9 @@ public class APITest
 
         //Configure scenario
         var scenario = new Scenario("ReadOrientation", tdbSearchWindow);
-        scenario.CelestialBodies[0].Id = Stars.Sun.NaifId;
-        scenario.CelestialBodies[1].Id = PlanetsAndMoons.EARTH.NaifId;
-        scenario.CelestialBodies[2].Id = PlanetsAndMoons.MOON.NaifId;
+        scenario.CelestialBodiesId[0] = Stars.Sun.NaifId;
+        scenario.CelestialBodiesId[1] = PlanetsAndMoons.EARTH.NaifId;
+        scenario.CelestialBodiesId[2] = PlanetsAndMoons.MOON.NaifId;
 
         //Configure parking orbit
         StateVector parkingOrbit = new StateVector(PlanetsAndMoons.EARTH.NaifId, tdbSearchWindow.Start,
@@ -507,15 +507,8 @@ public class APITest
         StateVector[] sv = new StateVector[size];
         for (int i = 0; i < size; ++i)
         {
-            sv[i].Position.X = 6800 + i;
-            sv[i].Position.Y = i;
-            sv[i].Position.Z = i;
-            sv[i].Velocity.X = i;
-            sv[i].Velocity.Y = 8.0 + i * 0.001;
-            sv[i].Velocity.Z = i;
-            sv[i].Epoch = i;
-            sv[i].CenterOfMotionId = PlanetsAndMoons.EARTH.NaifId;
-            sv[i].Frame = InertialFrame.ICRF.GetDescription();
+            sv[i] = new StateVector(PlanetsAndMoons.EARTH.NaifId, i, InertialFrame.ICRF.GetDescription(),
+                new Vector3D(6800 + i, i, i), new Vector3D(i, 8.0 + i * 0.001, i));
         }
 
         //Write ephemeris file
@@ -679,12 +672,9 @@ public class APITest
         //Load solar system kernels
         api.LoadKernels(new DirectoryInfo(SolarSystemKernelPath));
 
-        var sv = new StateVector();
-        sv.CenterOfMotionId = PlanetsAndMoons.EARTH.NaifId;
-        sv.Epoch = 0.0;
-        sv.Position = new Vector3D(-291608384.63344, -266716833.39423, -76102487.09990);
-        sv.Velocity = new Vector3D(643.53139, -666.08768, -301.32570);
-        sv.Frame = InertialFrame.ICRF.GetDescription();
+        var sv = new StateVector(PlanetsAndMoons.EARTH.NaifId, 0.0, InertialFrame.ICRF.GetDescription(),
+            new Vector3D(-291608384.63344, -266716833.39423, -76102487.09990),
+            new Vector3D(643.53139, -666.08768, -301.32570));
 
         var radec = api.ConvertToEquatorialCoordinates(sv);
         Assert.Equal(222.4472994995566, radec.RightAscencion * Constants.RAD_DEG);

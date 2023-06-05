@@ -7,21 +7,21 @@ namespace IO.Astrodynamics.DTO;
 [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
 public struct ApogeeHeightChangingManeuver
 {
-    public int ManeuverOrder;
+    public int ManeuverOrder { get; }
 
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = Spacecraft.ENGINESIZE)]
-    public string[] Engines;
+    public readonly string[] Engines;
 
-    public double AttitudeHoldDuration;
-    public double MinimumEpoch;
+    public double AttitudeHoldDuration { get; }
+    public double MinimumEpoch { get; }
 
-    public double TargetHeight;
+    public double TargetHeight { get; }
 
-    public Window ManeuverWindow;
-    public Window ThrustWindow;
-    public Window AttitudeWindow;
-    public Vector3D DeltaV;
-    public double FuelBurned;
+    public Window ManeuverWindow { get; }
+    public Window ThrustWindow { get; }
+    public Window AttitudeWindow { get; }
+    public Vector3D DeltaV { get; }
+    public double FuelBurned { get; }
 
     public ApogeeHeightChangingManeuver() : this(-1, 0.0, double.MinValue, double.NaN)
     {

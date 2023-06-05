@@ -1,5 +1,6 @@
 // Copyright 2023. Sylvain Guillet (sylvain.guillet@tutamail.com)
 
+using System;
 using System.Runtime.InteropServices;
 
 namespace IO.Astrodynamics.DTO;
@@ -10,14 +11,6 @@ public struct Scenario
     private const int SITESIZE = 10;
     private const int CELESTIALBODIESIZE = 10;
 
-    public Scenario(string name, Window window) : this()
-    {
-        Name = name;
-        Window = window;
-        Sites = ArrayBuilder.ArrayOf<Site>(SITESIZE);
-        CelestialBodies = ArrayBuilder.ArrayOf<CelestialBody>(CELESTIALBODIESIZE);
-    }
-
     public string Name;
     public Window Window;
     public Spacecraft Spacecraft;
@@ -25,10 +18,15 @@ public struct Scenario
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = SITESIZE)]
     public Site[] Sites;
 
-    // [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
-    // public Distance[] Distances;
-    // [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
-    // public Occultation[] Occultations;
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = CELESTIALBODIESIZE)]
-    public CelestialBody[] CelestialBodies;
+    public int[] CelestialBodiesId;
+    
+    public Scenario(string name, Window window) : this()
+    {
+        Name = name;
+        Window = window;
+        Sites = ArrayBuilder.ArrayOf<Site>(SITESIZE);
+        CelestialBodiesId = new int[CELESTIALBODIESIZE];
+        Array.Fill(CelestialBodiesId,-1);
+    }
 }

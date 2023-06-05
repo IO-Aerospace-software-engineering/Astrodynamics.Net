@@ -7,14 +7,14 @@ namespace IO.Astrodynamics.DTO;
 [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
 public struct CelestialBody
 {
-    public int Id;
-    public int CenterOfMotionId;
-    public string Name;
-    public Vector3D Radii;
-    public double GM;
-    public string FrameName;
-    public int FrameId;
-    public string Error;
+    public int Id { get; }
+    public int CenterOfMotionId { get; }
+    public string Name { get; }
+    public Vector3D Radii { get; }
+    public double GM { get; }
+    public string FrameName { get; }
+    public int FrameId { get; }
+    public string Error { get; }
 
     public CelestialBody(int id, int centerOfMotionId, string name, Vector3D radii, double gm, string frameName,
         int frameId, string error)

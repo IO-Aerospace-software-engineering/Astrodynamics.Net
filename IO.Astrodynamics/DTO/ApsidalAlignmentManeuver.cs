@@ -12,17 +12,17 @@ public struct ApsidalAlignmentManeuver
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = Spacecraft.ENGINESIZE)]
     public string[] Engines;
 
-    public double AttitudeHoldDuration;
-    public double MinimumEpoch;
+    public double AttitudeHoldDuration { get; }
+    public double MinimumEpoch { get; }
 
-    public StateVector TargetOrbit;
+    public StateVector TargetOrbit { get; }
 
-    public Window ManeuverWindow;
-    public Window ThrustWindow;
-    public Window AttitudeWindow;
-    public Vector3D DeltaV;
-    public double FuelBurned;
-    private readonly double Theta;
+    public Window ManeuverWindow { get; }
+    public Window ThrustWindow { get; }
+    public Window AttitudeWindow { get; }
+    public Vector3D DeltaV { get; }
+    public double FuelBurned { get; }
+    private readonly double Theta { get; }
 
     public ApsidalAlignmentManeuver() : this(-1, 0.0, double.MinValue, default)
     {

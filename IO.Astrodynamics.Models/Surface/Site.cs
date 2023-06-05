@@ -62,7 +62,7 @@ namespace IO.Astrodynamics.Models.Surface
         /// <returns></returns>
         private StateVector StateVector(DateTime epoch)
         {
-            double e = 2 * Body.PhysicalBody.Flatenning - Body.PhysicalBody.Flatenning * Body.PhysicalBody.Flatenning;
+            double e = 2 * Body.PhysicalBody.Flattening - Body.PhysicalBody.Flattening * Body.PhysicalBody.Flattening;
             double e2 = e * e;
             double sinLat = System.Math.Sin(Geodetic.Latitude);
             double sinLat2 = sinLat * sinLat;

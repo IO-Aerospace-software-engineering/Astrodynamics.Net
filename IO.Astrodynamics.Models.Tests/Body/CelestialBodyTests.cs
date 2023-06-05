@@ -18,7 +18,7 @@ public class CelestialBodyTests
         Assert.Equal(5.972168494074285E+24, earth.Mass);
         Assert.Equal(6356.7519, earth.PolarRadius);
         Assert.Equal(6378.1366, earth.EquatorialRadius);
-        Assert.Equal(0.0033528131084554717, earth.Flatenning);
+        Assert.Equal(0.0033528131084554717, earth.Flattening);
     }
 
     [Fact]

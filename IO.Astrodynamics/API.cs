@@ -10,7 +10,7 @@ using IO.Astrodynamics.DTO;
 namespace IO.Astrodynamics;
 
 /// <summary>
-///     API to communicate with IO.SDK
+///     API to communicate with IO.Astrodynamics
 /// </summary>
 public class API
 {
@@ -26,95 +26,95 @@ public class API
         _isResolverLoaded = true;
     }
 
-    [DllImport(@"IO.SDK", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+    [DllImport(@"IO.Astrodynamics", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     private static extern string GetSpiceVersionProxy();
 
-    [DllImport(@"IO.SDK", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+    [DllImport(@"IO.Astrodynamics", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     private static extern void PropagateProxy([In] [Out] ref Scenario scenario);
 
-    [DllImport(@"IO.SDK", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+    [DllImport(@"IO.Astrodynamics", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     private static extern void LaunchProxy([In] [Out] ref Launch launch);
 
-    [DllImport(@"IO.SDK", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+    [DllImport(@"IO.Astrodynamics", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     private static extern void LoadKernelsProxy(string directoryPath);
 
-    [DllImport(@"IO.SDK", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+    [DllImport(@"IO.Astrodynamics", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     private static extern string TDBToStringProxy(double secondsFromJ2000);
 
-    [DllImport(@"IO.SDK", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+    [DllImport(@"IO.Astrodynamics", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     private static extern string UTCToStringProxy(double secondsFromJ2000);
 
-    [DllImport(@"IO.SDK", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+    [DllImport(@"IO.Astrodynamics", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     private static extern void FindWindowsOnDistanceConstraintProxy(Window searchWindow, int observerId,
         int targetId, string constraint, double value, string aberration, double stepSize, [In] [Out] Window[] windows);
 
-    [DllImport(@"IO.SDK", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+    [DllImport(@"IO.Astrodynamics", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     private static extern void FindWindowsOnOccultationConstraintProxy(Window searchWindow, int observerId,
         int targetId,
         string targetFrame, string targetShape, int frontBodyId, string frontFrame, string frontShape,
         string occultationType,
         string aberration, double stepSize, [In] [Out] Window[] windows);
 
-    [DllImport(@"IO.SDK", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+    [DllImport(@"IO.Astrodynamics", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     private static extern void FindWindowsOnCoordinateConstraintProxy(Window searchWindow, int observerId, int targetId,
         string frame, string coordinateSystem, string coordinate,
         string relationalOperator, double value, double adjustValue, string aberration, double stepSize,
         [In] [Out] Window[] windows);
 
-    [DllImport(@"IO.SDK", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+    [DllImport(@"IO.Astrodynamics", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     private static extern void FindWindowsOnIlluminationConstraintProxy(Window searchWindow, int observerId,
         string illuminationSource, int targetBody, string fixedFrame,
         Geodetic geodetic, string illuminationType, string relationalOperator, double value, double adjustValue,
         string aberration, double stepSize, string method, [In] [Out] Window[] windows);
 
-    [DllImport(@"IO.SDK", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+    [DllImport(@"IO.Astrodynamics", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     private static extern void FindWindowsInFieldOfViewConstraintProxy(Window searchWindow, int observerId,
         int instrumentId, int targetId, string targetFrame, string targetShape, string aberration, double stepSize,
         [In] [Out] Window[] windows);
 
-    [DllImport(@"IO.SDK", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+    [DllImport(@"IO.Astrodynamics", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     private static extern void ReadOrientationProxy(Window searchWindow, int spacecraftId, double tolerance,
         string frame, double stepSize, [In] [Out] StateOrientation[] stateOrientations);
 
-    [DllImport(@"IO.SDK", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+    [DllImport(@"IO.Astrodynamics", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     private static extern void ReadEphemerisProxy(Window searchWindow, int observerId, int targetId,
         string frame, string aberration, double stepSize, [In] [Out] StateVector[] stateVectors);
 
-    [DllImport(@"IO.SDK", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+    [DllImport(@"IO.Astrodynamics", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     private static extern double ConvertUTCToTDBProxy(double utc);
 
-    [DllImport(@"IO.SDK", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+    [DllImport(@"IO.Astrodynamics", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     private static extern double ConvertTDBToUTCProxy(double tdb);
 
-    [DllImport(@"IO.SDK", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+    [DllImport(@"IO.Astrodynamics", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     private static extern bool
         WriteEphemerisProxy(string filePath, int objectId, StateVector[] stateVectors, uint size);
 
-    [DllImport(@"IO.SDK", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+    [DllImport(@"IO.Astrodynamics", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     private static extern CelestialBody GetCelestialBodyInfoProxy(int celestialBodyId);
 
-    [DllImport(@"IO.SDK", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+    [DllImport(@"IO.Astrodynamics", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     private static extern FrameTransformation TransformFrameProxy(string fromFrame, string toFrame, double epoch);
 
-    [DllImport(@"IO.SDK", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+    [DllImport(@"IO.Astrodynamics", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     private static extern StateVector ConvertEquinoctialElementsToStateVectorProxy(
         EquinoctialElements equinoctialElements);
 
-    [DllImport(@"IO.SDK", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+    [DllImport(@"IO.Astrodynamics", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     private static extern StateVector ConvertConicElementsToStateVectorProxy(ConicElements conicElements);
 
-    [DllImport(@"IO.SDK", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+    [DllImport(@"IO.Astrodynamics", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     private static extern RaDec ConvertStateVectorToEquatorialCoordinatesProxy(StateVector stateVector);
 
     private static IntPtr Resolver(string libraryName, Assembly assembly, DllImportSearchPath? searchPath)
     {
         var libHandle = IntPtr.Zero;
 
-        if (libraryName != "IO.SDK") return libHandle;
+        if (libraryName != "IO.Astrodynamics") return libHandle;
         string sharedLibName = null;
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            sharedLibName = "resources/IO.SDK.dll";
-        else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) sharedLibName = "resources/libIO.SDK.so";
+            sharedLibName = "resources/IO.Astrodynamics.dll";
+        else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) sharedLibName = "resources/libIO.Astrodynamics.so";
 
         if (!string.IsNullOrEmpty(sharedLibName))
             NativeLibrary.TryLoad(sharedLibName, typeof(API).Assembly, DllImportSearchPath.AssemblyDirectory,
@@ -198,8 +198,7 @@ public class API
         var windows = new Window[1000];
         for (var i = 0; i < 1000; i++)
         {
-            windows[i].Start = double.NaN;
-            windows[i].End = double.NaN;
+            windows[i] = new Window(double.NaN, double.NaN);
         }
 
         FindWindowsOnDistanceConstraintProxy(searchWindow, observerId, targetId, relationnalOperator.GetDescription(),
@@ -234,8 +233,7 @@ public class API
         var windows = new Window[1000];
         for (var i = 0; i < 1000; i++)
         {
-            windows[i].Start = double.NaN;
-            windows[i].End = double.NaN;
+            windows[i] = new Window(double.NaN, double.NaN);
         }
 
         FindWindowsOnOccultationConstraintProxy(searchWindow, observerId, targetId, targetFrame,
@@ -268,8 +266,7 @@ public class API
         var windows = new Window[1000];
         for (var i = 0; i < 1000; i++)
         {
-            windows[i].Start = double.NaN;
-            windows[i].End = double.NaN;
+            windows[i] = new Window(double.NaN, double.NaN);
         }
 
         FindWindowsOnCoordinateConstraintProxy(searchWindow, observerId, targetId, frame,
@@ -307,8 +304,7 @@ public class API
         var windows = new Window[1000];
         for (var i = 0; i < 1000; i++)
         {
-            windows[i].Start = double.NaN;
-            windows[i].End = double.NaN;
+            windows[i] = new Window(double.NaN, double.NaN);
         }
 
         FindWindowsOnIlluminationConstraintProxy(searchWindow, observerId, illuminationSource, targetBody, fixedFrame,
@@ -338,8 +334,7 @@ public class API
         var windows = new Window[1000];
         for (var i = 0; i < 1000; i++)
         {
-            windows[i].Start = double.NaN;
-            windows[i].End = double.NaN;
+            windows[i] = new Window(double.NaN, double.NaN);
         }
 
         FindWindowsInFieldOfViewConstraintProxy(searchWindow, observerId, observerId * 1000 - instrumentId, targetId,

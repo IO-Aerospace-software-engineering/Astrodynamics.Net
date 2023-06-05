@@ -21,8 +21,4 @@
     </PackageReference>
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\IO.Astrodynamics.Models\IO.Astrodynamics.Models.csproj" />
-  </ItemGroup>
-
 </Project>

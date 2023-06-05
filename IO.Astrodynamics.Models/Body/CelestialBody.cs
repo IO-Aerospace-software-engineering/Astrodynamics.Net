@@ -10,7 +10,7 @@ public class CelestialBody : Body
     public string FrameName { get; private set; }
     public double PolarRadius { get; private set; }
     public double EquatorialRadius { get; private set; }
-    public double Flatenning { get; private set; }
+    public double Flattening { get; private set; }
     public double GM { get; set; }
 
     /// <summary>
@@ -50,11 +50,11 @@ public class CelestialBody : Body
         FrameName = frameName;
         PolarRadius = polarRadius;
         EquatorialRadius = equatorialRadius;
-        Flatenning = (equatorialRadius - polarRadius) / equatorialRadius;
+        Flattening = (equatorialRadius - polarRadius) / equatorialRadius;
         this.GM = GM;
-        if (double.IsNaN(Flatenning))
+        if (double.IsNaN(Flattening))
         {
-            Flatenning = double.PositiveInfinity;
+            Flattening = double.PositiveInfinity;
         }
     }
 

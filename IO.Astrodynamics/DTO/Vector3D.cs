@@ -7,9 +7,9 @@ namespace IO.Astrodynamics.DTO;
 [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
 public struct Vector3D
 {
-    public double X = double.NaN;
-    public double Y = double.NaN;
-    public double Z = double.NaN;
+    public double X { get; } = double.NaN;
+    public double Y { get; } = double.NaN;
+    public double Z { get; } = double.NaN;
 
     public Vector3D(double x, double y, double z)
     {

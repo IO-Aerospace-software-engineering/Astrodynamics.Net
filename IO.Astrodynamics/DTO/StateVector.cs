@@ -7,13 +7,13 @@ namespace IO.Astrodynamics.DTO;
 [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
 public struct StateVector
 {
-    public double Epoch;
-    public Vector3D Position;
-    public Vector3D Velocity;
-    public int CenterOfMotionId;
-    public string Frame;
+    public double Epoch { get; }
+    public Vector3D Position { get; }
+    public Vector3D Velocity { get; }
+    public int CenterOfMotionId { get; }
+    public string Frame { get; }
 
-    public StateVector(int centerOfMotionId, double epoch, string frame, Vector3D position, Vector3D velocity)
+    public StateVector(int centerOfMotionId, double epoch, string frame, in Vector3D position, in Vector3D velocity)
     {
         CenterOfMotionId = centerOfMotionId;
         Epoch = epoch;
