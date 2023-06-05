@@ -1,3 +1,5 @@
+// Copyright 2023. Sylvain Guillet (sylvain.guillet@tutamail.com)
+
 using System.Runtime.InteropServices;
 
 namespace IO.SDK.Net.DTO;
@@ -18,9 +20,9 @@ public struct ApsidalAlignmentManeuver
     public Window ManeuverWindow;
     public Window ThrustWindow;
     public Window AttitudeWindow;
-    public Vector3D DeltaV ;
+    public Vector3D DeltaV;
     public double FuelBurned;
-    double Theta;
+    private readonly double Theta;
 
     public ApsidalAlignmentManeuver() : this(-1, 0.0, double.MinValue, default)
     {

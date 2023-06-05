@@ -1,3 +1,5 @@
+// Copyright 2023. Sylvain Guillet (sylvain.guillet@tutamail.com)
+
 using System.Runtime.InteropServices;
 
 namespace IO.SDK.Net.DTO;
@@ -8,11 +10,11 @@ public struct RetrogradeAttitude
     public int ManeuverOrder;
 
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = Spacecraft.ENGINESIZE)]
-    public string[] Engines ;
+    public string[] Engines;
 
-    double AttitudeHoldDuration ;
-    double MinimumEpoch ;
-    Window Window ;
+    private readonly double AttitudeHoldDuration;
+    private readonly double MinimumEpoch;
+    private readonly Window Window;
 
     public RetrogradeAttitude() : this(-1, 0.0, double.MinValue)
     {

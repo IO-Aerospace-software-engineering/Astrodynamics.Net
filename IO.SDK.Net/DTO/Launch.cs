@@ -1,3 +1,5 @@
+// Copyright 2023. Sylvain Guillet (sylvain.guillet@tutamail.com)
+
 using System.Runtime.InteropServices;
 
 namespace IO.SDK.Net.DTO;
@@ -19,7 +21,7 @@ public struct Launch
 
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 100)]
     public Window[] Windows;
-    
+
     public Launch(Site launchSite, Site recoverySite, bool launchByDay, double initialStepSize, StateVector targetOrbit,
         Window window)
     {

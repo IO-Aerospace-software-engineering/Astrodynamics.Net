@@ -1,3 +1,5 @@
+// Copyright 2023. Sylvain Guillet (sylvain.guillet@tutamail.com)
+
 using System.Runtime.InteropServices;
 
 namespace IO.SDK.Net.DTO;
@@ -13,8 +15,9 @@ public struct CelestialBody
     public string FrameName;
     public int FrameId;
     public string Error;
-    
-    public CelestialBody(int id, int centerOfMotionId, string name, Vector3D radii, double gm, string frameName, int frameId, string error)
+
+    public CelestialBody(int id, int centerOfMotionId, string name, Vector3D radii, double gm, string frameName,
+        int frameId, string error)
     {
         Id = id;
         CenterOfMotionId = centerOfMotionId;
@@ -25,6 +28,4 @@ public struct CelestialBody
         FrameId = frameId;
         Error = error;
     }
-
-    
 }

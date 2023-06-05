@@ -1,16 +1,17 @@
+// Copyright 2023. Sylvain Guillet (sylvain.guillet@tutamail.com)
+
 using System;
 using System.ComponentModel;
-using System.Reflection;
 
 namespace IO.SDK.Net;
 
 public static class Enumeration
 {
     public static string GetDescription(this Enum value)
-    {            
-        FieldInfo field = value.GetType().GetField(value.ToString());
+    {
+        var field = value.GetType().GetField(value.ToString());
 
-        DescriptionAttribute attribute
+        var attribute
             = Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute))
                 as DescriptionAttribute;
 
