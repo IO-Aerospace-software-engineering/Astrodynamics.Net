@@ -6,6 +6,9 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using IO.Astrodynamics.DTO;
+using IO.Astrodynamics.Models.Frames;
+using IO.Astrodynamics.Models.Time;
+using Window = IO.Astrodynamics.DTO.Window;
 
 namespace IO.Astrodynamics;
 
@@ -429,11 +432,15 @@ public class API
         return GetCelestialBodyInfoProxy(celestialBodyId);
     }
 
-    public FrameTransformation TransformFrame(string fromFrame, string toFrame, double epoch)
+    public Models.OrbitalParameters.StateOrientation TransformFrame(Frame fromFrame, Frame toFrame, DateTime epoch)
     {
         if (fromFrame == null) throw new ArgumentNullException(nameof(fromFrame));
         if (toFrame == null) throw new ArgumentNullException(nameof(toFrame));
-        return TransformFrameProxy(fromFrame, toFrame, epoch);
+        var res = TransformFrameProxy(fromFrame.Name, toFrame.Name, epoch.ToTDB().SecondsFromJ2000());
+        return new Models.OrbitalParameters.StateOrientation(
+            new IO.Astrodynamics.Models.Math.Quaternion(res.Rotation.W, res.Rotation.X, res.Rotation.Y, res.Rotation.Z),
+            new IO.Astrodynamics.Models.Math.Vector3(res.AngularVelocity.X, res.AngularVelocity.Y,
+                res.AngularVelocity.Z), epoch, fromFrame);
     }
 
     public StateVector ConvertToStateVector(EquinoctialElements equinoctialElements)

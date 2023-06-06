@@ -31,7 +31,8 @@ namespace IO.Astrodynamics.Models.OrbitalParameters
                 return this;
             }
 
-            return new StateOrientation(Orientation * Frame.ToFrame(frame, Epoch).Orientation, AngularVelocity - frame.FromICRF(Epoch).AngularVelocity, Epoch, frame);
+            return new StateOrientation(Orientation * Frame.ToFrame(frame, Epoch).Orientation,
+                AngularVelocity - Frames.Frame.ICRF.ToFrame(frame, Epoch).AngularVelocity, Epoch, frame);
         }
     }
 }

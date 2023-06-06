@@ -20,32 +20,6 @@ namespace IO.Astrodynamics.Models.Propagator
 
         public override void Propagate()
         {
-            StateVector sv = Body.GetLatestEphemeris();
-
-            if (!Body.Scenario.Window.Intersects(sv.Epoch))
-            {
-                throw new InvalidOperationException("Initial state vector epoch is out of scenario Window ");
-            }
-            
-            while (sv.Epoch <= Body.Scenario.Window.EndDate)
-            {
-                if (Body.StandbyManeuver != null)
-                {
-                    if (Body.StandbyManeuver.CanExecute(sv))
-                    {
-                        //If release occurs we set the new active body used by propagator and integrator
-                        if (Body.StandbyManeuver is ReleaseManeuver)
-                        {
-                            Body = Body.Child;
-                            _integrator.UpdateBody(Body);
-                            continue;
-                        }
-                        Body.StandbyManeuver.Execute(sv);
-                    }
-                }
-                sv = _integrator.Integrate();
-                Body.AddStateVector(sv);
-            }
 
         }
     }

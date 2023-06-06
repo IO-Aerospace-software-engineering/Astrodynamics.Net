@@ -21,29 +21,7 @@ namespace IO.Astrodynamics.Models.Maneuver
 
         public SpacecraftScenario Spacecraft { get; private set; }
 
-        private readonly BodyScenario _targetBody;
-        private OrbitalParameters.OrbitalParameters _targetOrbit;
-
-        protected Maneuver() { }
-
-        protected Maneuver(SpacecraftScenario spacecraft, DateTime minimumEpoch, TimeSpan maneuverHoldDuration, BodyScenario targetBody, params SpacecraftEngine[] engines)
-        {
-            if (spacecraft == null)
-            {
-                throw new ArgumentNullException(nameof(spacecraft));
-            }
-
-            if (targetBody == null)
-            {
-                throw new ArgumentException("Target body must be define");
-            }
-
-            Spacecraft = spacecraft;
-            MinimumEpoch = minimumEpoch;
-            ManeuverHoldDuration = maneuverHoldDuration;
-            Engines = engines;
-            _targetBody = targetBody;
-        }
+        public OrbitalParameters.OrbitalParameters TargetOrbit { get; }
 
         protected Maneuver(SpacecraftScenario spacecraft, DateTime minimumEpoch, TimeSpan maneuverHoldDuration, OrbitalParameters.OrbitalParameters targetOrbit, params SpacecraftEngine[] engines)
         {
@@ -61,7 +39,7 @@ namespace IO.Astrodynamics.Models.Maneuver
             MinimumEpoch = minimumEpoch;
             ManeuverHoldDuration = maneuverHoldDuration;
             Engines = engines;
-            _targetOrbit = targetOrbit;
+            TargetOrbit = targetOrbit;
         }
 
         protected Maneuver(SpacecraftScenario spacecraft, DateTime minimumEpoch, TimeSpan maneuverHoldDuration, params SpacecraftEngine[] engines)
@@ -82,74 +60,6 @@ namespace IO.Astrodynamics.Models.Maneuver
             Window temp = new(ThrustWindow.StartDate, ManeuverHoldDuration);
             return ThrustWindow.Merge(AttitudeWindow).Merge(temp);
         }
-
-        /// <summary>
-        /// Get target orbit at epoch
-        /// </summary>
-        /// <param name="epoch"></param>
-        /// <returns></returns>
-        public OrbitalParameters.OrbitalParameters GetTargetOrbit(DateTime epoch)
-        {
-            if (_targetBody != null)
-            {
-                _targetOrbit = _targetBody.GetEphemeris(epoch);
-            }
-            else if (_targetOrbit != null)
-            {
-                _targetOrbit = _targetOrbit.AtEpoch(epoch);
-            }
-            return _targetOrbit;
-        }
-
-        /// <summary>
-        /// Check if maneuver can execute at epoch
-        /// </summary>
-        /// <param name="epoch"></param>
-        /// <returns></returns>
-        public virtual bool CanExecute(OrbitalParameters.OrbitalParameters maneuverPoint)
-        {
-            if (maneuverPoint.Epoch < MinimumEpoch)
-            {
-                return false;
-            }
-
-            return ComputeCanExecute(maneuverPoint);
-        }
-
-        /// <summary>
-        /// Evaluate if maneuver can execute
-        /// </summary>
-        /// <param name="epoch"></param>
-        /// <returns></returns>
-        public abstract bool ComputeCanExecute(OrbitalParameters.OrbitalParameters maneuverPoint);
-
-        /// <summary>
-        /// Execute maneuver
-        /// </summary>
-        /// <param name="maneuverPoint"></param>
-        public abstract void Execute(OrbitalParameters.OrbitalParameters maneuverPoint);
-
-        /// <summary>
-        /// This maneuver become the standby maneuver
-        /// </summary>
-        /// <param name="minimumEpoch"></param>
-        public void Handle(DateTime minimumEpoch)
-        {
-            this.MinimumEpoch = minimumEpoch;
-            this.Spacecraft.SetStandbyManeuver(this);
-        }
-
-        /// <summary>
-        /// Compute DeltaV and orientation
-        /// </summary>
-        /// <param name="epoch"></param>
-        public abstract Vector3 ComputeDeltaV(OrbitalParameters.OrbitalParameters maneuverPoint);
-
-        /// <summary>
-        /// Compute spacecraft orientation
-        /// </summary>
-        /// <param name="epoch"></param>
-        public abstract Quaternion ComputeOrientation(OrbitalParameters.OrbitalParameters maneuverPoint);
 
         public Maneuver SetNextManeuver(Maneuver maneuver)
         {

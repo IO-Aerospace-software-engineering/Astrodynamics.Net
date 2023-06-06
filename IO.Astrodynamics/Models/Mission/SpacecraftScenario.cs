@@ -200,18 +200,6 @@ namespace IO.Astrodynamics.Models.Mission
             return FuelTanks.Sum(x => x.Quantity);
         }
 
-        /// <summary>
-        /// Add state orientation and propagte to children
-        /// </summary>
-        /// <param name="orientation"></param>
-        public override void AddStateOrientationFromICRF(StateOrientation orientation)
-        {
-            base.AddStateOrientationFromICRF(orientation);
-            if (Child != null)
-            {
-                Child.AddStateOrientationFromICRF(orientation);
-            }
-        }
 
         /// <summary>
         /// Add state vector and propagate to children

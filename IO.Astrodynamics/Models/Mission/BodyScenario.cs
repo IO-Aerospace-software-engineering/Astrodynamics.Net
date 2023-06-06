@@ -4,12 +4,11 @@ using System.Linq;
 using IO.Astrodynamics.Models;
 using IO.Astrodynamics.Models.Math;
 using IO.Astrodynamics.Models.OrbitalParameters;
-
 using IO.Astrodynamics.Models.Time;
 
 namespace IO.Astrodynamics.Models.Mission
 {
-    public abstract class BodyScenario: IEquatable<BodyScenario>, ILocalizable
+    public abstract class BodyScenario : IEquatable<BodyScenario>, ILocalizable
     {
         public Scenario Scenario { get; private set; }
         public Body.Body PhysicalBody { get; protected set; }
@@ -27,7 +26,7 @@ namespace IO.Astrodynamics.Models.Mission
         }
 
         protected BodyScenario(Body.Body body, OrbitalParameters.OrbitalParameters initialOrbitalParameters,
-            Frames.Frame frame, Scenario scenario, int id = default) 
+            Frames.Frame frame, Scenario scenario, int id = default)
         {
             PhysicalBody = body ?? throw new ArgumentNullException(nameof(body));
             Frame = frame ?? throw new ArgumentNullException(nameof(frame));
@@ -38,7 +37,8 @@ namespace IO.Astrodynamics.Models.Mission
             }
         }
 
-        protected BodyScenario(Body.Body body, Frames.Frame frame, Scenario scenario) : this(body, null, frame, scenario)
+        protected BodyScenario(Body.Body body, Frames.Frame frame, Scenario scenario) : this(body, null, frame,
+            scenario)
         {
         }
 
@@ -100,12 +100,7 @@ namespace IO.Astrodynamics.Models.Mission
 
         public StateOrientation GetOrientationFromICRF(in DateTime epoch)
         {
-            if (Frame.Length == 0)
-            {
-                throw new InvalidOperationException("Frame's orientation array is empty");
-            }
-
-            return Frame.FromICRF(epoch);
+            return Frames.Frame.ICRF.ToFrame(Frame, epoch);
         }
 
         public virtual void AddStateVector(params StateVector[] stateVectors)
@@ -136,16 +131,6 @@ namespace IO.Astrodynamics.Models.Mission
         {
             InitialOrbitalParameters = orbitalParameters;
             InitialOrbitalParameters.CenterOfMotion._satellites.Add(this);
-        }
-
-        public virtual void AddStateOrientationFromICRF(StateOrientation orientation)
-        {
-            if (orientation == null)
-            {
-                throw new ArgumentNullException(nameof(orientation));
-            }
-
-            Frame.AddStateOrientationFromICRF(orientation);
         }
 
         /// <summary>

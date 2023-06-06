@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using IO.Astrodynamics.Models.Frames;
 
 namespace IO.Astrodynamics.Models.Maneuver
 {
@@ -78,8 +79,8 @@ namespace IO.Astrodynamics.Models.Maneuver
 
         double GetInclination(in DateTime epoch)
         {
-            return Vector3.VectorZ.Rotate(LaunchSite.Body.Frame.ToICRF(epoch).Orientation)
-                .Angle(GetOrbitalParameters(epoch).ToFrame(Frames.Frame.ICRF).SpecificAngularMomentum());
+            return Vector3.VectorZ.Rotate( LaunchSite.Body.Frame.ToFrame(Frame.ICRF,  epoch).Orientation)
+                .Angle(GetOrbitalParameters(epoch).ToFrame(Frame.ICRF).SpecificAngularMomentum());
         }
 
         public double GetInertialAscendingAzimuthLaunch(in DateTime epoch)
