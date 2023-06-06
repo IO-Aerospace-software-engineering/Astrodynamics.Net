@@ -26,7 +26,7 @@ namespace IO.Astrodynamics.Models.Mission
         }
 
         protected BodyScenario(Body.Body body, OrbitalParameters.OrbitalParameters initialOrbitalParameters,
-            Frames.Frame frame, Scenario scenario, int id = default)
+            Frames.Frame frame, Scenario scenario)
         {
             PhysicalBody = body ?? throw new ArgumentNullException(nameof(body));
             Frame = frame ?? throw new ArgumentNullException(nameof(frame));

@@ -29,10 +29,10 @@ public struct Spacecraft
         Instruments = ArrayBuilder.ArrayOf<Instrument>(INSTRUMENTSIZE);
         Payloads = ArrayBuilder.ArrayOf<Payload>(PAYLOADSIZE);
 
-        progradeAttitudes = ArrayBuilder.ArrayOf<ProgradeAttitude>(ATTITUDESIZE);
-        retrogradeAttitudes = ArrayBuilder.ArrayOf<RetrogradeAttitude>(ATTITUDESIZE);
-        zenithAttitudes = ArrayBuilder.ArrayOf<ZenithAttitude>(ATTITUDESIZE);
-        nadirAttitudes = ArrayBuilder.ArrayOf<NadirAttitude>(ATTITUDESIZE);
+        ProgradeAttitudes = ArrayBuilder.ArrayOf<ProgradeAttitude>(ATTITUDESIZE);
+        RetrogradeAttitudes = ArrayBuilder.ArrayOf<RetrogradeAttitude>(ATTITUDESIZE);
+        ZenithAttitudes = ArrayBuilder.ArrayOf<ZenithAttitude>(ATTITUDESIZE);
+        NadirAttitudes = ArrayBuilder.ArrayOf<NadirAttitude>(ATTITUDESIZE);
         PointingToAttitudes = ArrayBuilder.ArrayOf<InstrumentPointingToAttitude>(ATTITUDESIZE);
 
         PerigeeHeightChangingManeuvers = ArrayBuilder.ArrayOf<PerigeeHeightChangingManeuver>(MANEUVERSIZE);
@@ -65,16 +65,16 @@ public struct Spacecraft
 
     //Spacecraft attitudes
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
-    public ProgradeAttitude[] progradeAttitudes;
+    public ProgradeAttitude[] ProgradeAttitudes;
 
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
-    public RetrogradeAttitude[] retrogradeAttitudes;
+    public RetrogradeAttitude[] RetrogradeAttitudes;
 
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
-    public ZenithAttitude[] zenithAttitudes;
+    public ZenithAttitude[] ZenithAttitudes;
 
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
-    public NadirAttitude[] nadirAttitudes;
+    public NadirAttitude[] NadirAttitudes;
 
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
     public InstrumentPointingToAttitude[] PointingToAttitudes;

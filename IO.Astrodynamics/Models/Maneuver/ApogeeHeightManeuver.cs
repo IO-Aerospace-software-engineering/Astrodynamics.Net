@@ -9,13 +9,14 @@ namespace IO.Astrodynamics.Models.Maneuver
 {
     public class ApogeeHeightManeuver : ImpulseManeuver
     {
-        public double TargetApogee { get; private set; } = double.NaN;
+        public double TargetApogee { get; }
 
 
         public ApogeeHeightManeuver(SpacecraftScenario spacecraft, DateTime minimumEpoch, TimeSpan maneuverHoldDuration,
             OrbitalParameters.OrbitalParameters targetOrbit, params SpacecraftEngine[] engines) : base(spacecraft,
             minimumEpoch, maneuverHoldDuration, targetOrbit, engines)
         {
+            TargetApogee = targetOrbit.ApogeeVector().Magnitude();
         }
 
         public ApogeeHeightManeuver(SpacecraftScenario spacecraft, DateTime minimumEpoch, TimeSpan maneuverHoldDuration,

@@ -11,9 +11,9 @@ namespace IO.Astrodynamics.Models.Body.Spacecraft
         public Engine Engine { get; private set; }
         public SpacecraftFuelTank FuelTank { get; private set; }
         public IReadOnlyCollection<Maneuver.Maneuver> Maneuvers { get; private set; }
+        public string SerialNumber { get;}
 
-        private SpacecraftEngine() { }
-        public SpacecraftEngine(SpacecraftScenario spacecraft, Engine engine, SpacecraftFuelTank fuelTank)
+        public SpacecraftEngine(SpacecraftScenario spacecraft, Engine engine, SpacecraftFuelTank fuelTank, string serialNumber)
         {
             if (spacecraft == null)
             {
@@ -33,6 +33,7 @@ namespace IO.Astrodynamics.Models.Body.Spacecraft
             Spacecraft = spacecraft;
             Engine = engine;
             FuelTank = fuelTank;
+            if (serialNumber != null) SerialNumber = serialNumber;
         }
 
         public double BurnFuel(TimeSpan duration)

@@ -12,16 +12,14 @@ namespace IO.Astrodynamics.Models.Math
 
         public Quaternion() : this(1.0, 0.0, 0.0, 0.0)
         {
-
         }
 
         [JsonConstructor]
         public Quaternion(double w, Vector3 vectorPart) : this(w, vectorPart.X, vectorPart.Y, vectorPart.Z)
         {
-
         }
 
-        
+
         public Quaternion(Vector3 axis, double angle)
         {
             double c = System.Math.Cos(angle * 0.5);
@@ -75,6 +73,25 @@ namespace IO.Astrodynamics.Models.Math
         public static Quaternion operator /(double lhs, Quaternion rhs)
         {
             return rhs / lhs;
+        }
+
+        public Vector3 ToEuler()
+        {
+            double sinrCosp = 2 * (W * VectorPart.X + VectorPart.Y * VectorPart.Z);
+            double cosrCosp = 1 - 2 * (VectorPart.X * VectorPart.X + VectorPart.Y * VectorPart.Y);
+            var x = System.Math.Atan2(sinrCosp, cosrCosp);
+
+            // pitch (y-axis rotation)
+            double sinp = System.Math.Sqrt(1 + 2 * (W * VectorPart.Y - VectorPart.X * VectorPart.Z));
+            double cosp = System.Math.Sqrt(1 - 2 * (W * VectorPart.Y - VectorPart.X * VectorPart.Z));
+            var y = 2 * System.Math.Atan2(sinp, cosp) - System.Math.PI / 2;
+
+            // yaw (z-axis rotation)
+            double sinyCosp = 2 * (W * VectorPart.Z + VectorPart.X * VectorPart.Y);
+            double cosyCosp = 1 - 2 * (VectorPart.Y * VectorPart.Y + VectorPart.Z * VectorPart.Z);
+            var z = System.Math.Atan2(sinyCosp, cosyCosp);
+
+            return new Vector3(x, y, z);
         }
     }
 }

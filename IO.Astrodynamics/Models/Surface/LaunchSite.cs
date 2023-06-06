@@ -13,7 +13,6 @@ namespace IO.Astrodynamics.Models.Surface
         public IReadOnlyCollection<AzimuthRange> AzimuthRanges => _azimuthRanges;
         private readonly List<AzimuthRange> _azimuthRanges;
 
-        LaunchSite() { }
         /// <summary>
         /// Create launch site
         /// </summary>
@@ -21,7 +20,7 @@ namespace IO.Astrodynamics.Models.Surface
         /// <param name="body">Celestial body</param>
         /// <param name="geodetic">Geodetic coordinates</param>
         /// <param name="launchAzimuths">Allowed launch azimuths</param>
-        public LaunchSite(string name, CelestialBodyScenario body, in Geodetic geodetic, int id = default, params AzimuthRange[] launchAzimuths) : base(name, body, geodetic, id)
+        public LaunchSite(string name, CelestialBodyScenario body, in Geodetic geodetic, int id = default, params AzimuthRange[] launchAzimuths) : base(name, body, geodetic)
         {
             _azimuthRanges = new List<AzimuthRange>(launchAzimuths);
         }

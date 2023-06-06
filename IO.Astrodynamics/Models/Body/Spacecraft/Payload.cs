@@ -10,9 +10,10 @@ namespace IO.Astrodynamics.Models.Body.Spacecraft
         private HashSet<SpacecraftScenario> _spacecrafts = new();
         public IReadOnlyCollection<SpacecraftScenario> Spacecrafts { get; private set; }
         public string Name { get; private set; }
+        public string SerialNumber { get; private set; }
         public double Mass { get; private set; }
 
-        public Payload(string name, double mass, int id = default) 
+        public Payload(string name, double mass, string serialNumber, int id = default) 
         {
             if (string.IsNullOrEmpty(name))
             {
@@ -26,6 +27,7 @@ namespace IO.Astrodynamics.Models.Body.Spacecraft
 
             Name = name;
             Mass = mass;
+            SerialNumber = serialNumber ?? throw new ArgumentNullException(nameof(serialNumber));
         }
     }
 }

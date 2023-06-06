@@ -9,9 +9,11 @@ namespace IO.Astrodynamics.Models.Body.Spacecraft
     public class Spacecraft : Body
     {
         public double DryOperatingMass { get => base.Mass; }
+        public double MaximumOperatingMass { get; }
 
-        public Spacecraft(int naifId, string name, double mass) : base(naifId, name, mass)
+        public Spacecraft(int naifId, string name, double mass, double maximumOperatingMass) : base(naifId, name, mass)
         {
+            MaximumOperatingMass = maximumOperatingMass;
         }
 
         public override double GetTotalMass()

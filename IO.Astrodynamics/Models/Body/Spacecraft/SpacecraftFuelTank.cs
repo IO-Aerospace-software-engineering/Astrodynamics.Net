@@ -10,9 +10,9 @@ namespace IO.Astrodynamics.Models.Body.Spacecraft
         public FuelTank FuelTank { get; private set; }
         public double InitialQuantity { get; private set; }
         public double Quantity { get; private set; }
+        public string SerialNumber { get; }
 
-        private SpacecraftFuelTank() { }
-        public SpacecraftFuelTank(SpacecraftScenario spacecraft, FuelTank fuelTank, double quantity)
+        public SpacecraftFuelTank(SpacecraftScenario spacecraft, FuelTank fuelTank, double quantity, string serialNumber)
         {
             if (spacecraft == null)
             {
@@ -34,6 +34,7 @@ namespace IO.Astrodynamics.Models.Body.Spacecraft
                 throw new ArgumentException("Fuel quantity must be lower or equal to fuel tank capacity");
             }
 
+            SerialNumber = serialNumber ?? throw new ArgumentNullException(nameof(serialNumber));
             Spacecraft = spacecraft;
             FuelTank = fuelTank;
             Quantity = InitialQuantity = quantity;

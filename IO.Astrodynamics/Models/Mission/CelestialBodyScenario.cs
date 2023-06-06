@@ -6,21 +6,17 @@ namespace IO.Astrodynamics.Models.Mission
 {
     public class CelestialBodyScenario : BodyScenario
     {
-        new public CelestialBody PhysicalBody
+        public new CelestialBody PhysicalBody
         {
-            get { return base.PhysicalBody as CelestialBody; }
-            private set { base.PhysicalBody = value; }
+            get => base.PhysicalBody as CelestialBody;
+            private init => base.PhysicalBody = value;
         }
 
         public double SphereOfInfluence { get; private set; }
 
-        CelestialBodyScenario() : base()
-        {
-        }
-
         public CelestialBodyScenario(CelestialBody celestialBody,
-            OrbitalParameters.OrbitalParameters initialOrbitalParameters, Scenario scenario, int id = default) : base(
-            celestialBody, initialOrbitalParameters, new Frames.Frame(celestialBody.FrameName), scenario, id)
+            OrbitalParameters.OrbitalParameters initialOrbitalParameters, Scenario scenario) : base(
+            celestialBody, initialOrbitalParameters, new Frames.Frame(celestialBody.FrameName), scenario)
         {
             PhysicalBody = celestialBody ?? throw new ArgumentNullException(nameof(celestialBody));
 
@@ -30,8 +26,8 @@ namespace IO.Astrodynamics.Models.Mission
                 : double.PositiveInfinity;
         }
 
-        public CelestialBodyScenario(CelestialBody celestialBody, Scenario scenario, int id = default) : this(
-            celestialBody, null, scenario, id)
+        public CelestialBodyScenario(CelestialBody celestialBody, Scenario scenario) : this(
+            celestialBody, null, scenario)
         {
         }
 

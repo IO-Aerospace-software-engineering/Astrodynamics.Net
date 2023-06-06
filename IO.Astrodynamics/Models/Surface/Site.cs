@@ -16,8 +16,9 @@ namespace IO.Astrodynamics.Models.Surface
     public class Site : ILocalizable
     {
         public string Name { get; private set; }
-        public CelestialBodyScenario Body { get; private set; }
-        public Geodetic Geodetic { get; private set; }
+        public CelestialBodyScenario Body { get; }
+        public Geodetic Geodetic { get; }
+        
 
         protected Site() { }
 

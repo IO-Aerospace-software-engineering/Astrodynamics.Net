@@ -8,8 +8,7 @@ namespace IO.Astrodynamics.DTO;
 public struct InstrumentPointingToAttitude
 {
     public int InstrumentId;
-    public int TargetBodyId;
-    public int TargetSiteId;
+    public int TargetId;
     public int ManeuverOrder;
 
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = Spacecraft.ENGINESIZE)]
@@ -19,17 +18,16 @@ public struct InstrumentPointingToAttitude
     public double MinimumEpoch;
     public Window Window;
 
-    public InstrumentPointingToAttitude() : this(-1, 0, 0, 0, 0, double.MinValue)
+    public InstrumentPointingToAttitude() : this(-1, 0, 0, 0, double.MinValue)
     {
     }
 
-    public InstrumentPointingToAttitude(int maneuverOrder, int instrumentId, int targetBodyId, int targetSiteId,
+    public InstrumentPointingToAttitude(int maneuverOrder, int instrumentId, int targetId,
         double attitudeHoldDuration, double minimumEpoch)
     {
         Engines = new string[Spacecraft.ENGINESIZE];
         InstrumentId = instrumentId;
-        TargetBodyId = targetBodyId;
-        TargetSiteId = targetSiteId;
+        TargetId = targetId;
         ManeuverOrder = maneuverOrder;
         AttitudeHoldDuration = attitudeHoldDuration;
         MinimumEpoch = minimumEpoch;

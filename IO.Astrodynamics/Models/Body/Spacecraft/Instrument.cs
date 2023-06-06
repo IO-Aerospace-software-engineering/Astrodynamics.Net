@@ -4,14 +4,19 @@ using IO.Astrodynamics.Models.Math;
 
 namespace IO.Astrodynamics.Models.Body.Spacecraft
 {
-    public class Instrument 
+    public class Instrument : INaifObject
     {
+        //TODO Comment clearly
+        public int NaifId { get; }
+        public string Name { get; }
+        public string Model { get; }
+        public double FieldOfView { get; }
+        public double CrossAngle { get; }
+        public InstrumentShape Shape { get; }
+        public static readonly Vector3 Boresight = Vector3.VectorZ;
+        public static readonly Vector3 RefVector = Vector3.VectorX;
 
-        public string Name { get; private set; }
-        public string Model { get; private set; }
-        public double FieldOfView { get; private set; }
-
-        public Instrument(string name, string model, double fieldOfView, int id = default) 
+        public Instrument(int naifId, string name, string model, double fieldOfView, InstrumentShape shape, double crossAngle = double.NaN)
         {
             if (string.IsNullOrEmpty(name))
             {
@@ -31,6 +36,9 @@ namespace IO.Astrodynamics.Models.Body.Spacecraft
             Name = name;
             Model = model;
             FieldOfView = fieldOfView;
+            Shape = shape;
+            CrossAngle = crossAngle;
+            NaifId = naifId;
         }
     }
 }

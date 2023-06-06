@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using IO.Astrodynamics.Models.Body;
 using IO.Astrodynamics.Models.Body.Spacecraft;
@@ -28,6 +29,8 @@ namespace IO.Astrodynamics.Models.Mission
         public SpacecraftScenario Child { get; private set; }
         public Clock Clock { get; private set; }
 
+        public DirectoryInfo SpacecraftDirectory { get; }
+
 
         private HashSet<SpacecraftInstrument> _instruments = new();
         public IReadOnlyCollection<SpacecraftInstrument> Intruments => _instruments;
@@ -41,8 +44,9 @@ namespace IO.Astrodynamics.Models.Mission
         private HashSet<Payload> _payloads = new();
         public IReadOnlyCollection<Payload> Payloads => _payloads;
 
-        private SpacecraftScenario() : base()
+        private SpacecraftScenario(DirectoryInfo spacecraftDirectory) : base()
         {
+            SpacecraftDirectory = spacecraftDirectory;
         }
 
         /// <summary>
@@ -50,14 +54,14 @@ namespace IO.Astrodynamics.Models.Mission
         /// </summary>
         /// <param name="spacecraft"></param>
         /// <param name="clock"></param>
-        /// <param name="standbyManeuver"></param>
         /// <param name="initialOrbitalParameters"></param>
+        /// <param name="scenario"></param>
+        /// <param name="spacecraftDirectory"></param>
         /// <exception cref="ArgumentException"></exception>
         /// <exception cref="ArgumentNullException"></exception>
         public SpacecraftScenario(Spacecraft spacecraft, Clock clock,
-            OrbitalParameters.OrbitalParameters initialOrbitalParameters, Scenario scenario, int id = 0) : base(
-            spacecraft,
-            initialOrbitalParameters, new Frames.Frame($"frm_{spacecraft.Name}"), scenario, id)
+            OrbitalParameters.OrbitalParameters initialOrbitalParameters, Scenario scenario, DirectoryInfo spacecraftDirectory) : base(spacecraft, initialOrbitalParameters,
+            new Frames.Frame($"frm_{spacecraft.Name}"), scenario)
         {
             if (spacecraft == null)
             {
@@ -71,6 +75,7 @@ namespace IO.Astrodynamics.Models.Mission
 
             PhysicalBody = spacecraft;
             Clock = clock;
+            SpacecraftDirectory = spacecraftDirectory ?? throw new ArgumentNullException(nameof(spacecraftDirectory));
         }
 
         /// <summary>
@@ -85,7 +90,7 @@ namespace IO.Astrodynamics.Models.Mission
         }
 
         /// <summary>
-        /// Add instrument to spacraft
+        /// Add instrument to spacecraft
         /// </summary>
         /// <param name="instrument"></param>
         /// <param name="orientation"></param>
@@ -99,8 +104,9 @@ namespace IO.Astrodynamics.Models.Mission
         /// </summary>
         /// <param name="engine"></param>
         /// <param name="fuelTank"></param>
+        /// <param name="serialNumber"></param>
         /// <exception cref="InvalidOperationException"></exception>
-        public void AddEngine(Engine engine, FuelTank fuelTank)
+        public void AddEngine(Engine engine, FuelTank fuelTank, string serialNumber)
         {
             if (!FuelTanks.Select(x => x.FuelTank).Contains(fuelTank))
             {
@@ -108,7 +114,7 @@ namespace IO.Astrodynamics.Models.Mission
                     "Unknown fuel tank, you must add fuel tank to spacecraft before add engine");
             }
 
-            this._engines.Add(new SpacecraftEngine(this, engine, FuelTanks.First(x => x.FuelTank == fuelTank)));
+            this._engines.Add(new SpacecraftEngine(this, engine, FuelTanks.First(x => x.FuelTank == fuelTank), serialNumber));
         }
 
         /// <summary>
@@ -116,9 +122,10 @@ namespace IO.Astrodynamics.Models.Mission
         /// </summary>
         /// <param name="fuelTank"></param>
         /// <param name="quantity"></param>
-        public void AddFuelTank(FuelTank fuelTank, double quantity)
+        /// <param name="serialNumber"></param>
+        public void AddFuelTank(FuelTank fuelTank, double quantity, string serialNumber)
         {
-            this._fuelTanks.Add(new SpacecraftFuelTank(this, fuelTank, quantity));
+            this._fuelTanks.Add(new SpacecraftFuelTank(this, fuelTank, quantity, serialNumber));
         }
 
         public void RemoveFuelTank(SpacecraftFuelTank fuelTank)
