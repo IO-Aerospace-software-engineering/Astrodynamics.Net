@@ -59,22 +59,11 @@ namespace IO.Astrodynamics.Models.Mission
         /// <param name="spacecraftDirectory"></param>
         /// <exception cref="ArgumentException"></exception>
         /// <exception cref="ArgumentNullException"></exception>
-        public SpacecraftScenario(Spacecraft spacecraft, Clock clock,
-            OrbitalParameters.OrbitalParameters initialOrbitalParameters, Scenario scenario, DirectoryInfo spacecraftDirectory) : base(spacecraft, initialOrbitalParameters,
-            new Frames.Frame($"frm_{spacecraft.Name}"), scenario)
+        public SpacecraftScenario(Spacecraft spacecraft, Clock clock, OrbitalParameters.OrbitalParameters initialOrbitalParameters, Scenario scenario,
+            DirectoryInfo spacecraftDirectory) : base(spacecraft, initialOrbitalParameters, new Frames.Frame($"{spacecraft.Name}_SPACECRAFT"), scenario)
         {
-            if (spacecraft == null)
-            {
-                throw new ArgumentException("SpacecraftScenario requires a spacecraft body");
-            }
-
-            if (clock is null)
-            {
-                throw new ArgumentNullException(nameof(clock));
-            }
-
-            PhysicalBody = spacecraft;
-            Clock = clock;
+            PhysicalBody = spacecraft ?? throw new ArgumentNullException(nameof(spacecraft));
+            Clock = clock ?? throw new ArgumentNullException(nameof(clock));
             SpacecraftDirectory = spacecraftDirectory ?? throw new ArgumentNullException(nameof(spacecraftDirectory));
         }
 
@@ -85,8 +74,7 @@ namespace IO.Astrodynamics.Models.Mission
         /// <exception cref="ArgumentNullException"></exception>
         public void UpdateClock(Clock clock)
         {
-            if (clock == null) throw new ArgumentNullException(nameof(clock));
-            Clock = clock;
+            Clock = clock ?? throw new ArgumentNullException(nameof(clock));
         }
 
         /// <summary>

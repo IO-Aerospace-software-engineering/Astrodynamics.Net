@@ -26,7 +26,6 @@ namespace IO.Astrodynamics.Models.Tests
             Scenario scenario = new Scenario("scn1", mission,new Window(new DateTime(2021, 1, 1), new DateTime(2021, 1, 2)));
             CelestialBody earth = new CelestialBody(399, "earth", 3.986004418E+5, 6356.7519, 6378.1366);
             var earthScn = new CelestialBodyScenario(earth, new StateVector(new Vector3(-2.679537555216521E+07, 1.327011135216045E+08, 5.752533467064925E+07), new Vector3(-2.976558008982104E+01, -5.075339952746913E+00, -2.200929976753953E+00), GetSun(), new DateTime(2021, 1, 1), Frames.Frame.ICRF), scenario);
-            earthScn.AddStateOrientationFromICRF(new StateOrientation(new Quaternion(0.76686839, 0.0, 0.0, 0.64180439), new Vector3(1.00974196E-28, 3.08055237E-12, 7.29211502E-05), new DateTime(2000, 1, 1, 12, 0, 0), Frames.Frame.ICRF));
             return earthScn;
         }
 
@@ -53,7 +52,6 @@ namespace IO.Astrodynamics.Models.Tests
             Scenario scenario = new Scenario("scn1", mission,new Window(new DateTime(2021, 1, 1), new DateTime(2021, 1, 2)));
             CelestialBody earth = new CelestialBody(399, "earth", 3.986004418E+5, 6356.7519, 6378.1366);
             var earthScn = new CelestialBodyScenario(earth, new StateVector(new Vector3(-26499033.67742509, 132757417.33833946, 57556718.47053819), new Vector3(-29.79426007, -5.01805231, -2.17539380), GetSun(), new DateTime(2000, 1, 1, 12, 0, 0), Frames.Frame.ICRF), scenario);
-            earthScn.AddStateOrientationFromICRF(new StateOrientation(new Quaternion(0.76686839, 0.0, 0.0, 0.64180439), new Vector3(1.00974196E-28, 3.08055237E-12, 7.29211502E-05), new DateTime(2000, 1, 1, 12, 0, 0), Frames.Frame.ICRF));
             return earthScn;
         }
 
@@ -63,7 +61,6 @@ namespace IO.Astrodynamics.Models.Tests
             Scenario scenario = new Scenario("scn1", mission,new Window(new DateTime(2021, 1, 1), new DateTime(2021, 1, 2)));
             CelestialBody earth = new CelestialBody(399, "earth", 3.986004418E+5, 6356.7519, 6378.1366);
             var earthScn = new CelestialBodyScenario(earth, new StateVector(new Vector3(20406240.51495151, 133809670.48912178, 58012572.06513986), new Vector3(-29.99780186, 3.68842732, 1.60029151), GetSun(), new DateTime(2001, 12, 14, 0, 0, 0), Frames.Frame.ICRF), scenario);
-            earthScn.AddStateOrientationFromICRF(new StateOrientation(new Quaternion(0.75218041, -5.07034510E-05, -5.81630099E-05, -0.65895723), new Vector3(1.13278713E-08, -3.21761646E-11, 7.29211501E-05), new DateTime(2001, 12, 14, 0, 0, 0), Frames.Frame.ICRF));
             return earthScn;
         }
 

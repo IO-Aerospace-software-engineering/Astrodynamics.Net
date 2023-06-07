@@ -31,12 +31,12 @@ namespace IO.Astrodynamics.Models.OrbitalParameters
             L0 = l0;
         }
 
-        public double P { get; private set; }
-        public double F { get; private set; }
-        public double G { get; private set; }
-        public double H { get; private set; }
-        public double K { get; private set; }
-        public double L0 { get; private set; }
+        public double P { get; }
+        public double F { get; }
+        public double G { get; }
+        public double H { get; }
+        public double K { get; }
+        public double L0 { get; }
 
         public override double ArgumentOfPeriapsis()
         {

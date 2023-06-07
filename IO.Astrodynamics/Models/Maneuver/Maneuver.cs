@@ -12,10 +12,10 @@ namespace IO.Astrodynamics.Models.Maneuver
 {
     public abstract class Maneuver 
     {
-        public Window ThrustWindow { get; protected set; }
-        public Window AttitudeWindow { get; protected set; }
-        public DateTime MinimumEpoch { get; protected set; }
-        public TimeSpan ManeuverHoldDuration { get; protected set; }
+        public Window ThrustWindow { get; }
+        public Window AttitudeWindow { get; }
+        public DateTime MinimumEpoch { get; }
+        public TimeSpan ManeuverHoldDuration { get; }
         public IReadOnlyCollection<SpacecraftEngine> Engines { get; private set; }
         public Maneuver NextManeuver { get; protected set; }
 

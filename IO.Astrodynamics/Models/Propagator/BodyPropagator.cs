@@ -12,7 +12,7 @@ namespace IO.Astrodynamics.Models.Propagator
     public class BodyPropagator
     {
         protected readonly Integrator.Integrator _integrator = null;
-        public BodyScenario Body { get; private set; }
+        public BodyScenario Body { get; }
         public BodyPropagator(Integrator.Integrator integrator, BodyScenario body)
         {
             _integrator = integrator ?? throw new ArgumentNullException(nameof(integrator));

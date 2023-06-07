@@ -10,8 +10,8 @@ public class CelestialBody : Body
     public string FrameName { get; private set; }
     public double PolarRadius { get; private set; }
     public double EquatorialRadius { get; private set; }
-    public double Flatenning { get; private set; }
-    public double GM { get; set; }
+    public double Flatenning { get; }
+    public double GM { get; }
 
     /// <summary>
     /// 

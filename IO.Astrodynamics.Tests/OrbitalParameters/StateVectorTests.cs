@@ -243,7 +243,7 @@ namespace IO.Astrodynamics.Models.Tests.OrbitalParameters
             CelestialBody earth = new CelestialBody(399, "earth", 3.986004418E+5, 6356.7519, 6378.1366);
             CelestialBodyScenario earthScn = new CelestialBodyScenario(earth, scenario);
             var epoch = new DateTime(2000, 1, 1, 12, 0, 0);
-            var earthFrame = new Frames.Frame("earth", new StateOrientation(new Quaternion(0.76686839, 0.0, 0.0, -0.64180439), new Vector3(-1.00974196E-28, -3.08055237E-12, -7.29211502E-05), epoch, Frames.Frame.ICRF));
+            var earthFrame = new Frames.Frame("earth");
 
             //J2000->IAU_ERATH
             //Earth from sun at 0 TDB

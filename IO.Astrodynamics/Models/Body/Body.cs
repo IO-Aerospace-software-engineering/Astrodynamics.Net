@@ -8,8 +8,8 @@ namespace IO.Astrodynamics.Models.Body;
 
 public abstract class Body : INaifObject
 {
-    public int NaifId { get; private set; }
-    public string Name { get; private set; }
+    public int NaifId { get; }
+    public string Name { get; }
     public double Mass { get; private set; }
 
     /// <summary>

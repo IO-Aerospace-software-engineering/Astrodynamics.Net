@@ -8,9 +8,9 @@ namespace IO.Astrodynamics.Models.Body.Spacecraft
     public class SpacecraftEngine 
     {
         public SpacecraftScenario Spacecraft { get; private set; }
-        public Engine Engine { get; private set; }
-        public SpacecraftFuelTank FuelTank { get; private set; }
-        public IReadOnlyCollection<Maneuver.Maneuver> Maneuvers { get; private set; }
+        public Engine Engine { get; }
+        public SpacecraftFuelTank FuelTank { get; }
+        public IReadOnlyCollection<Maneuver.Maneuver> Maneuvers { get; }
         public string SerialNumber { get;}
 
         public SpacecraftEngine(SpacecraftScenario spacecraft, Engine engine, SpacecraftFuelTank fuelTank, string serialNumber)

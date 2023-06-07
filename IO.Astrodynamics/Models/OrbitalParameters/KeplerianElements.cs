@@ -45,12 +45,12 @@ namespace IO.Astrodynamics.Models.OrbitalParameters
             this.M = meanAnomaly;
         }
 
-        public double A { get; private set; }
-        public double E { get; private set; }
-        public double I { get; private set; }
-        public double RAAN { get; private set; }
-        public double AOP { get; private set; }
-        public double M { get; private set; }
+        public double A { get; }
+        public double E { get; }
+        public double I { get; }
+        public double RAAN { get; }
+        public double AOP { get; }
+        public double M { get; }
 
         public override double ArgumentOfPeriapsis()
         {

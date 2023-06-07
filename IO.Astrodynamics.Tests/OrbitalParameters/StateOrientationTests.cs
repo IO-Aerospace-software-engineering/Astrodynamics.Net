@@ -16,10 +16,10 @@ namespace IO.Astrodynamics.Models.Tests.OrbitalParameters
         {
             var so = new StateOrientation(new Quaternion(1, 2, 3, 4), Vector3.VectorX, DateTime.MaxValue, Frames.Frame.ICRF);
             Assert.NotNull(so);
-            Assert.Equal(new Quaternion(1, 2, 3, 4), so.Orientation);
+            Assert.Equal(new Quaternion(1, 2, 3, 4), so.Rotation);
             Assert.Equal(Vector3.VectorX, so.AngularVelocity);
             Assert.Equal(DateTime.MaxValue, so.Epoch);
-            Assert.Equal(Frames.Frame.ICRF, so.Frame);
+            Assert.Equal(Frames.Frame.ICRF, so.ReferenceFrame);
         }
 
         [Fact]
@@ -30,9 +30,9 @@ namespace IO.Astrodynamics.Models.Tests.OrbitalParameters
             Assert.NotNull(so);
 
             //Which is equal to ecliptic (23.44° + 10° relative to ecliptic)
-            Assert.Equal(new Quaternion(0.95772390696309828, 0.28768892166113869, 0, 0), res.Orientation);
+            Assert.Equal(new Quaternion(0.95772390696309828, 0.28768892166113869, 0, 0), res.Rotation);
             Assert.Equal(DateTime.MaxValue, res.Epoch);
-            Assert.Equal(Frames.Frame.ICRF, res.Frame);
+            Assert.Equal(Frames.Frame.ICRF, res.ReferenceFrame);
         }
     }
 }

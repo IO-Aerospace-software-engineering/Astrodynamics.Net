@@ -119,20 +119,20 @@ namespace IO.Astrodynamics.Models.Tests.Mission
             //BEFORE
             var orientation = sc.GetOrientationFromICRF(e.AddSeconds(-10.0));
             Assert.Equal(e.AddSeconds(-10.0), orientation.Epoch);
-            Assert.Equal(q, orientation.Orientation);
-            Assert.Equal(Frames.Frame.ICRF, orientation.Frame);
+            Assert.Equal(q, orientation.Rotation);
+            Assert.Equal(Frames.Frame.ICRF, orientation.ReferenceFrame);
 
             //AT EPOCH
             orientation = sc.GetOrientationFromICRF(e);
             Assert.Equal(e, orientation.Epoch);
-            Assert.Equal(q, orientation.Orientation);
-            Assert.Equal(Frames.Frame.ICRF, orientation.Frame);
+            Assert.Equal(q, orientation.Rotation);
+            Assert.Equal(Frames.Frame.ICRF, orientation.ReferenceFrame);
 
             //AFTER
             orientation = sc.GetOrientationFromICRF(e.AddSeconds(10.0));
             Assert.Equal(e.AddSeconds(10.0), orientation.Epoch);
-            Assert.Equal(q2, orientation.Orientation);
-            Assert.Equal(Frames.Frame.ICRF, orientation.Frame);
+            Assert.Equal(q2, orientation.Rotation);
+            Assert.Equal(Frames.Frame.ICRF, orientation.ReferenceFrame);
         }
 
         [Fact]

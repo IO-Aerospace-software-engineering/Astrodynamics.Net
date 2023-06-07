@@ -13,9 +13,9 @@ public abstract class OrbitalParameters : IEquatable<OrbitalParameters>
 {
     public CelestialBodyScenario CenterOfMotion { get; protected set; }
 
-    public DateTime Epoch { get; private set; }
+    public DateTime Epoch { get; }
 
-    public Frames.Frame Frame { get; private set; }
+    public Frames.Frame Frame { get; }
 
     protected OrbitalParameters() { }
     /// <summary>
@@ -315,8 +315,8 @@ public abstract class OrbitalParameters : IEquatable<OrbitalParameters>
 
         StateVector icrfSv = this.ToStateVector();
         var orientation = Frame.ToFrame(frame, Epoch);
-        var newPos = icrfSv.Position.Rotate(orientation.Orientation);
-        var newVel = icrfSv.Velocity.Rotate(orientation.Orientation) - orientation.AngularVelocity.Cross(newPos);
+        var newPos = icrfSv.Position.Rotate(orientation.Rotation);
+        var newVel = icrfSv.Velocity.Rotate(orientation.Rotation) - orientation.AngularVelocity.Cross(newPos);
         return new StateVector(newPos, newVel, CenterOfMotion, Epoch, frame);
     }
 

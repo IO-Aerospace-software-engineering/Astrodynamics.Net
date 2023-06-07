@@ -3,30 +3,32 @@ using IO.Astrodynamics.Models.Coordinates;
 using IO.Astrodynamics.Models.Math;
 using IO.Astrodynamics.Models.Mission;
 using IO.Astrodynamics.Models.OrbitalParameters;
-
 using IO.Astrodynamics.Models.Time;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace IO.Astrodynamics.Models.Surface
 {
-    public class Site : ILocalizable
+    public class Site : ILocalizable, INaifObject
     {
-        public string Name { get; private set; }
+        public int NaifId { get; }
+        public string Name { get; }
         public CelestialBodyScenario Body { get; }
         public Geodetic Geodetic { get; }
-        
+        public DirectoryInfo DirectoryPath { get; }
 
-        protected Site() { }
-
-        public Site(string name, CelestialBodyScenario body, in Geodetic geodetic) 
+        public Site(int id, string name, CelestialBodyScenario body, in Geodetic geodetic, DirectoryInfo directoryPath)
         {
+            if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id));
             Name = name ?? throw new ArgumentNullException(nameof(name));
             Body = body ?? throw new ArgumentNullException(nameof(body));
             Geodetic = geodetic;
+            DirectoryPath = directoryPath ?? throw new ArgumentNullException(nameof(directoryPath));
+            NaifId = body.PhysicalBody.NaifId * 1000 + id;
         }
 
         /// <summary>
@@ -105,6 +107,7 @@ namespace IO.Astrodynamics.Models.Surface
 
             return windows.ToArray();
         }
+
         public Window[] FindDayWindows(in Window window, in double twilight)
         {
             //define body rotation duration
@@ -135,12 +138,12 @@ namespace IO.Astrodynamics.Models.Surface
                     end = epoch;
                     windows.Add(new Window(start.Value, end.Value));
                     isDay = false;
-
                 }
                 else
                 {
                     isDay = true;
                 }
+
                 stepSize = coarseStepSize;
             }
 
@@ -159,6 +162,7 @@ namespace IO.Astrodynamics.Models.Surface
                     sun = body;
                     break;
                 }
+
                 body = body.InitialOrbitalParameters.CenterOfMotion;
             }
 
@@ -166,6 +170,7 @@ namespace IO.Astrodynamics.Models.Surface
             {
                 throw new InvalidOperationException("Sun not found");
             }
+
             return sun;
         }
 
@@ -200,7 +205,5 @@ namespace IO.Astrodynamics.Models.Surface
 
             return new Horizontal(az, el, bodySv.Position.Magnitude());
         }
-
-
     }
 }

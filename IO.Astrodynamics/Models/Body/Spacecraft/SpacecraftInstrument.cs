@@ -8,9 +8,9 @@ namespace IO.Astrodynamics.Models.Body.Spacecraft
 {
     public class SpacecraftInstrument 
     {
-        public SpacecraftScenario Spacecraft { get; private set; }
-        public Instrument Instrument { get; private set; }
-        public Quaternion Orientation { get; private set; }
+        public SpacecraftScenario Spacecraft { get; }
+        public Instrument Instrument { get; }
+        public Quaternion Orientation { get; }
 
         private SpacecraftInstrument() { }
         public SpacecraftInstrument(SpacecraftScenario spacecraft, Instrument instrument, Quaternion orientation)
@@ -49,7 +49,7 @@ namespace IO.Astrodynamics.Models.Body.Spacecraft
         public bool IsInFieldOfView(OrbitalParameters.OrbitalParameters orbitalParameters)
         {
             var sv = orbitalParameters.ToFrame(Frames.Frame.ICRF).ToStateVector();
-            var foresight = SpacecraftScenario.Front.Rotate(Spacecraft.GetOrientationFromICRF(orbitalParameters.Epoch).Orientation * Orientation);
+            var foresight = SpacecraftScenario.Front.Rotate(Spacecraft.GetOrientationFromICRF(orbitalParameters.Epoch).Rotation * Orientation);
             return sv.Position.Angle(foresight) < Instrument.FieldOfView * 0.5;
         }
     }

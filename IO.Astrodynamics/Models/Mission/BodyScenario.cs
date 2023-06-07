@@ -17,7 +17,7 @@ namespace IO.Astrodynamics.Models.Mission
         public SortedDictionary<DateTime, StateVector> Trajectory { get; } =
             new SortedDictionary<DateTime, StateVector>();
 
-        public Frames.Frame Frame { get; protected set; }
+        public Frames.Frame Frame { get; }
         private readonly HashSet<BodyScenario> _satellites = new();
         public IReadOnlyCollection<BodyScenario> Satellites => _satellites;
 

@@ -1,6 +1,5 @@
 ﻿using IO.Astrodynamics.Models.Math;
 using IO.Astrodynamics.Models.Mission;
-
 using IO.Astrodynamics.Models.Surface;
 using IO.Astrodynamics.Models.Time;
 using System;
@@ -12,18 +11,15 @@ using IO.Astrodynamics.Models.Frames;
 
 namespace IO.Astrodynamics.Models.Maneuver
 {
-    public class Launch 
+    public class Launch
     {
-        public LaunchSite LaunchSite { get; private set; }
-        public Site RecoverySite { get; private set; }
-        public OrbitalParameters.OrbitalParameters TargetOrbit { get; private set; }
-        public Mission.BodyScenario TargetBody { get; private set; }
-        public bool? LaunchByDay { get; private set; }
-        public double Twilight { get; private set; }
-
-        Launch()
-        {
-        }
+        public LaunchSite LaunchSite { get; }
+        public Site RecoverySite { get; }
+        public OrbitalParameters.OrbitalParameters TargetOrbit { get; }
+        public Mission.BodyScenario TargetBody { get; }
+        public bool? LaunchByDay { get; }
+        public double Twilight { get; }
+        private readonly API _api;
 
         /// <summary>
         /// 
@@ -41,6 +37,7 @@ namespace IO.Astrodynamics.Models.Maneuver
             TargetBody = targetBody ?? throw new ArgumentNullException(nameof(targetBody));
             LaunchByDay = launchByDay;
             Twilight = twilight;
+            _api = new API();
         }
 
         /// <summary>
@@ -79,7 +76,7 @@ namespace IO.Astrodynamics.Models.Maneuver
 
         double GetInclination(in DateTime epoch)
         {
-            return Vector3.VectorZ.Rotate( LaunchSite.Body.Frame.ToFrame(Frame.ICRF,  epoch).Orientation)
+            return Vector3.VectorZ.Rotate(LaunchSite.Body.Frame.ToFrame(Frame.ICRF, epoch).Rotation)
                 .Angle(GetOrbitalParameters(epoch).ToFrame(Frame.ICRF).SpecificAngularMomentum());
         }
 
@@ -155,107 +152,10 @@ namespace IO.Astrodynamics.Models.Maneuver
         /// <returns></returns>
         public LaunchWindow[] FindLaunchWindows(in Window searchWindow)
         {
-            //if not specified return all windows
-            if (!LaunchByDay.HasValue)
-            {
-                return SearchLaunchWindows(searchWindow);
-            }
+            _api.FindLaunchWindows(this, searchWindow);
 
-            List<Window> launchSiteIlluminationWindows = new List<Window>();
-            List<Window> recoverySiteIlluminationWindows = new List<Window>();
-            List<Window> commonIlluminationWindows = new List<Window>();
 
-            if (LaunchByDay != false) //Find sites windows by days
-            {
-                launchSiteIlluminationWindows.AddRange(LaunchSite.FindDayWindows(searchWindow, Twilight));
-                recoverySiteIlluminationWindows.AddRange(RecoverySite.FindDayWindows(searchWindow, Twilight));
-            }
-
-            if (LaunchByDay != true) //Find sites windows by night
-            {
-                launchSiteIlluminationWindows.AddRange(LaunchSite.FindNightWindows(searchWindow, Twilight));
-                recoverySiteIlluminationWindows.AddRange(RecoverySite.FindNightWindows(searchWindow, Twilight));
-            }
-
-            //Find common illumination windows
-            foreach (var launchSiteWindow in launchSiteIlluminationWindows)
-            {
-                foreach (var recoverySiteWindow in recoverySiteIlluminationWindows)
-                {
-                    if (launchSiteWindow.Intersects(recoverySiteWindow))
-                    {
-                        commonIlluminationWindows.Add(launchSiteWindow.GetIntersection(recoverySiteWindow));
-                    }
-                }
-            }
-
-            //Find launch windows from illumination windows
             List<LaunchWindow> launchWindows = new List<LaunchWindow>();
-            foreach (var commonIlluminationWindow in commonIlluminationWindows)
-            {
-                launchWindows.AddRange(SearchLaunchWindows(commonIlluminationWindow));
-            }
-
-            return launchWindows.ToArray();
-        }
-
-        /// <summary>
-        /// Search launch windows in given window
-        /// </summary>
-        /// <param name="searchWindow"></param>
-        /// <returns></returns>
-        private LaunchWindow[] SearchLaunchWindows(in Window searchWindow)
-        {
-            var date = searchWindow.StartDate;
-            var step = TimeSpan.FromSeconds(Constants._2PI /
-                LaunchSite.Body.GetOrientationFromICRF(date).AngularVelocity.Magnitude() * 0.25);
-            var initialStep = step;
-            List<LaunchWindow> launchWindows = new List<LaunchWindow>();
-
-            while (date < searchWindow.EndDate)
-            {
-                bool status = LaunchSite.GetEphemeris(Frames.Frame.ICRF, date).Position *
-                    GetOrbitalParameters(date).ToFrame(Frames.Frame.ICRF).SpecificAngularMomentum() > 0.0;
-                while (System.Math.Abs(step.TotalSeconds) > 1.0)
-                {
-                    date += step;
-                    if (status != LaunchSite.GetEphemeris(Frames.Frame.ICRF, date).Position * GetOrbitalParameters(date)
-                            .ToFrame(Frames.Frame.ICRF).SpecificAngularMomentum() > 0.0)
-                    {
-                        step *= -0.5;
-                        status = !status;
-                    }
-                }
-
-                if (date > searchWindow.EndDate)
-                {
-                    break;
-                }
-
-                double inertialVel = GetInertialInsertionVelocity(date);
-                double nonInertialVel = GetNonInertialInsertionVelocity(date);
-                double inertialAz = double.NaN;
-                double nonInertialAz = double.NaN;
-                bool isAscending = LaunchSite.GetEphemeris(Frames.Frame.ICRF, date).Position *
-                    GetOrbitalParameters(date).ToFrame(Frames.Frame.ICRF).AscendingNodeVector() > 0.0;
-                if (isAscending)
-                {
-                    inertialAz = GetInertialAscendingAzimuthLaunch(date);
-                    nonInertialAz = GetNonInertialAscendingAzimuthLaunch(date);
-                }
-                else
-                {
-                    inertialAz = GetInertialDescendingAzimuthLaunch(date);
-                    nonInertialAz = GetNonInertialDescendingAzimuthLaunch(date);
-                }
-
-
-                launchWindows.Add(new LaunchWindow(new Window(date, date), inertialVel, nonInertialVel, inertialAz,
-                    nonInertialAz));
-                step = initialStep;
-                date = date.AddSeconds(2.0);
-            }
-
             return launchWindows.ToArray();
         }
     }

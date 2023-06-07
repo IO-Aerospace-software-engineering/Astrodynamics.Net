@@ -5,9 +5,9 @@ using System.Text.Json.Serialization;
 namespace IO.Astrodynamics.Models.Time;
 public record struct Window
 {
-    public DateTime StartDate { get; private set; }
-    public DateTime EndDate { get; private set; }
-    public TimeSpan Length { get; private set; }
+    public DateTime StartDate { get; }
+    public DateTime EndDate { get; }
+    public TimeSpan Length { get; }
 
     /// <summary>
     /// Constructor

@@ -25,7 +25,7 @@ namespace IO.Astrodynamics.Models.Tests.Body
             Clock clk = new Clock("My clock", 1.0 / 256.0);
             Assert.Throws<ArgumentException>(() => new Spacecraft(-1001, "", 1000.0, 10000.0));
             Assert.Throws<ArgumentException>(() => new Spacecraft(-1001, "My spacecraft", 0.0, 10000.0));
-            Assert.Throws<ArgumentException>(() => new Spacecraft(-1001, "My spacecraft", 1000.0, 999.0));
+            Assert.Throws<ArgumentOutOfRangeException>(() => new Spacecraft(-1001, "My spacecraft", 1000.0, 999.0));
         }
     }
 }

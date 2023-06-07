@@ -6,17 +6,21 @@ namespace IO.Astrodynamics.Models.OrbitalParameters
 {
     public record class StateOrientation
     {
-        public Quaternion Orientation { get; set; }
-        public DateTime Epoch { get; private set; }
-        public Frames.Frame Frame { get; private set; }
-        public Vector3 AngularVelocity { get; private set; }
+        public Quaternion Rotation { get; }
+        public DateTime Epoch { get; }
+        
+        /// <summary>
+        /// Frame from which the rotation is applied
+        /// </summary>
+        public Frames.Frame ReferenceFrame { get; }
+        public Vector3 AngularVelocity { get; }
 
         public StateOrientation(Quaternion orientation, Vector3 angularVelocity, DateTime epoch, Frames.Frame frame)
         {
-            Orientation = orientation;
+            Rotation = orientation;
             AngularVelocity = angularVelocity;
             Epoch = epoch;
-            Frame = frame;
+            ReferenceFrame = frame;
         }
 
         public StateOrientation RelativeToICRF()
@@ -26,12 +30,12 @@ namespace IO.Astrodynamics.Models.OrbitalParameters
 
         public StateOrientation RelativeTo(Frame frame)
         {
-            if (Frame == frame)
+            if (ReferenceFrame == frame)
             {
                 return this;
             }
 
-            return new StateOrientation(Orientation * Frame.ToFrame(frame, Epoch).Orientation,
+            return new StateOrientation(Rotation * ReferenceFrame.ToFrame(frame, Epoch).Rotation,
                 AngularVelocity - Frames.Frame.ICRF.ToFrame(frame, Epoch).AngularVelocity, Epoch, frame);
         }
     }

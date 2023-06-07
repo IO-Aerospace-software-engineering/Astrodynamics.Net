@@ -377,9 +377,13 @@ public class API
     /// <summary>
     ///     Find launch windows
     /// </summary>
-    /// <param name="launchDto"></param>
-    public void FindLaunchWindows(ref Launch launchDto)
+    /// <param name="launch"></param>
+    /// <param name="window"></param>
+    public void FindLaunchWindows(IO.Astrodynamics.Models.Maneuver.Launch launch,in Models.Time.Window window)
     {
+        Launch launchDto = _mapper.Map<Launch>(launch);
+        launchDto.Window = _mapper.Map<Models.Time.Window, Window>(window);
+        
         LaunchProxy(ref launchDto);
     }
 

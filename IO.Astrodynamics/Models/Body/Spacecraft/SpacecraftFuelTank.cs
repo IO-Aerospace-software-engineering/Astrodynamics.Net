@@ -7,7 +7,7 @@ namespace IO.Astrodynamics.Models.Body.Spacecraft
     public class SpacecraftFuelTank 
     {
         public SpacecraftScenario Spacecraft { get; private set; }
-        public FuelTank FuelTank { get; private set; }
+        public FuelTank FuelTank { get; }
         public double InitialQuantity { get; private set; }
         public double Quantity { get; private set; }
         public string SerialNumber { get; }

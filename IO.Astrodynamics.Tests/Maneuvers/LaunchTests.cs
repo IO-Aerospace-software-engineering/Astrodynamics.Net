@@ -14,12 +14,20 @@ namespace IO.Astrodynamics.Models.Tests.Maneuvers
 {
     public class LaunchTests
     {
+        private API _api;
+
+        public LaunchTests()
+        {
+            _api = new API();
+            _api.LoadKernels(Astrodynamics.Tests.Constants.SolarSystemKernelPath);
+        }
+
         [Fact]
         public void CreateWithBody()
         {
             var th = new TestHelpers();
-            LaunchSite site = new LaunchSite("l1", th.GetEarthAtJ2000(), new Geodetic(1.0, 2.0, 3.0), default, new AzimuthRange(1.0, 2.0));
-            Site recoverySite = new Site("l2", th.GetEarthAtJ2000(), new Geodetic(1.0, 2.0, 3.0));
+            LaunchSite site = new LaunchSite(33, "l1", th.GetEarthAtJ2000(), new Geodetic(1.0, 2.0, 3.0), default, new AzimuthRange(1.0, 2.0));
+            Site recoverySite = new Site(34, "l2", th.GetEarthAtJ2000(), new Geodetic(1.0, 2.0, 3.0), Astrodynamics.Tests.Constants.SitePath);
             Launch launch = new Launch(site, recoverySite, th.GetMoon(), Constants.CivilTwilight, true);
             Assert.NotNull(launch);
             Assert.Equal(site, launch.LaunchSite);
@@ -33,8 +41,8 @@ namespace IO.Astrodynamics.Models.Tests.Maneuvers
         public void CreateWithOrbitalParameter()
         {
             var th = new TestHelpers();
-            LaunchSite site = new LaunchSite("l1", th.GetEarthAtJ2000(), new Geodetic(1.0, 2.0, 3.0), default, new AzimuthRange(1.0, 2.0));
-            Site recoverySite = new Site("l2", th.GetEarthAtJ2000(), new Geodetic(1.0, 2.0, 3.0));
+            LaunchSite site = new LaunchSite(33, "l1", th.GetEarthAtJ2000(), new Geodetic(1.0, 2.0, 3.0), default, new AzimuthRange(1.0, 2.0));
+            Site recoverySite = new Site(34, "l2", th.GetEarthAtJ2000(), new Geodetic(1.0, 2.0, 3.0), Astrodynamics.Tests.Constants.SitePath);
             Launch launch = new Launch(site, recoverySite, th.GetMoon().InitialOrbitalParameters, Constants.CivilTwilight, true);
             Assert.NotNull(launch);
             Assert.Equal(site, launch.LaunchSite);
@@ -49,9 +57,11 @@ namespace IO.Astrodynamics.Models.Tests.Maneuvers
         {
             var epoch = new DateTime(2013, 10, 14, 10, 18, 0);
             var th = new TestHelpers();
-            LaunchSite site = new LaunchSite("l1", th.GetEarthAtJ2000(), new Geodetic(-81.0 * Constants.Deg2Rad, 28.5 * Constants.Deg2Rad, 0.0), default, new AzimuthRange(0.0, 6.0));
-            Site recoverySite = new Site("l2", th.GetEarthAtJ2000(), new Geodetic(-81.0 * Constants.Deg2Rad, 28.5 * Constants.Deg2Rad, 0.0));
-            Launch launch = new Launch(site, recoverySite, new KeplerianElements(6728.137, 0.0, 51.6494 * Constants.Deg2Rad, 0.0, 0.0, 0.0, th.GetEarthAtJ2000(), epoch, Frames.Frame.ICRF), Constants.CivilTwilight, null);
+            LaunchSite site = new LaunchSite(33, "l1", th.GetEarthAtJ2000(), new Geodetic(-81.0 * Constants.Deg2Rad, 28.5 * Constants.Deg2Rad, 0.0), default,
+                new AzimuthRange(0.0, 6.0));
+            Site recoverySite = new Site(34, "l2", th.GetEarthAtJ2000(), new Geodetic(-81.0 * Constants.Deg2Rad, 28.5 * Constants.Deg2Rad, 0.0), Astrodynamics.Tests.Constants.SitePath);
+            Launch launch = new Launch(site, recoverySite,
+                new KeplerianElements(6728.137, 0.0, 51.6494 * Constants.Deg2Rad, 0.0, 0.0, 0.0, th.GetEarthAtJ2000(), epoch, Frames.Frame.ICRF), Constants.CivilTwilight, null);
             var res = launch.GetInertialAscendingAzimuthLaunch(epoch);
             Assert.Equal(44.912872404793241, res * Constants.Rad2Deg, 3);
         }
@@ -61,9 +71,11 @@ namespace IO.Astrodynamics.Models.Tests.Maneuvers
         {
             var epoch = new DateTime(2013, 10, 14, 10, 18, 0);
             var th = new TestHelpers();
-            LaunchSite site = new LaunchSite("l1", th.GetEarthAtJ2000(), new Geodetic(-81.0 * Constants.Deg2Rad, 28.5 * Constants.Deg2Rad, 0.0), default, new AzimuthRange(0.0, 6.0));
-            Site recoverySite = new Site("l2", th.GetEarthAtJ2000(), new Geodetic(-81.0 * Constants.Deg2Rad, 28.5 * Constants.Deg2Rad, 0.0));
-            Launch launch = new Launch(site, recoverySite, new KeplerianElements(6728.137, 0.0, 51.6494 * Constants.Deg2Rad, 0.0, 0.0, 0.0, th.GetEarthAtJ2000(), epoch, Frames.Frame.ICRF), Constants.CivilTwilight, null);
+            LaunchSite site = new LaunchSite(33, "l1", th.GetEarthAtJ2000(), new Geodetic(-81.0 * Constants.Deg2Rad, 28.5 * Constants.Deg2Rad, 0.0), default,
+                new AzimuthRange(0.0, 6.0));
+            Site recoverySite = new Site(34, "l2", th.GetEarthAtJ2000(), new Geodetic(-81.0 * Constants.Deg2Rad, 28.5 * Constants.Deg2Rad, 0.0), Astrodynamics.Tests.Constants.SitePath);
+            Launch launch = new Launch(site, recoverySite,
+                new KeplerianElements(6728.137, 0.0, 51.6494 * Constants.Deg2Rad, 0.0, 0.0, 0.0, th.GetEarthAtJ2000(), epoch, Frames.Frame.ICRF), Constants.CivilTwilight, null);
             var res = launch.GetInertialDescendingAzimuthLaunch(epoch);
             Assert.Equal(180 - 44.912872404793241, res * Constants.Rad2Deg, 3);
         }
@@ -73,9 +85,11 @@ namespace IO.Astrodynamics.Models.Tests.Maneuvers
         {
             var epoch = new DateTime(2013, 10, 14, 10, 18, 0);
             var th = new TestHelpers();
-            LaunchSite site = new LaunchSite("l1", th.GetEarthAtJ2000(), new Geodetic(-81.0 * Constants.Deg2Rad, 28.5 * Constants.Deg2Rad, 0.0), default, new AzimuthRange(0.0, 6.0));
-            Site recoverySite = new Site("l2", th.GetEarthAtJ2000(), new Geodetic(-81.0 * Constants.Deg2Rad, 28.5 * Constants.Deg2Rad, 0.0));
-            Launch launch = new Launch(site, recoverySite, new KeplerianElements(6728.137, 0.0, 51.6494 * Constants.Deg2Rad, 0.0, 0.0, 0.0, th.GetEarthAtJ2000(), epoch, Frames.Frame.ICRF), Constants.CivilTwilight, null);
+            LaunchSite site = new LaunchSite(33, "l1", th.GetEarthAtJ2000(), new Geodetic(-81.0 * Constants.Deg2Rad, 28.5 * Constants.Deg2Rad, 0.0), default,
+                new AzimuthRange(0.0, 6.0));
+            Site recoverySite = new Site(34, "l2", th.GetEarthAtJ2000(), new Geodetic(-81.0 * Constants.Deg2Rad, 28.5 * Constants.Deg2Rad, 0.0), Astrodynamics.Tests.Constants.SitePath);
+            Launch launch = new Launch(site, recoverySite,
+                new KeplerianElements(6728.137, 0.0, 51.6494 * Constants.Deg2Rad, 0.0, 0.0, 0.0, th.GetEarthAtJ2000(), epoch, Frames.Frame.ICRF), Constants.CivilTwilight, null);
             var res = launch.GetInertialInsertionVelocity(epoch);
             Assert.Equal(7.6969997304533663, res, 3);
         }
@@ -85,11 +99,13 @@ namespace IO.Astrodynamics.Models.Tests.Maneuvers
         {
             var epoch = new DateTime(2013, 10, 14, 10, 18, 0);
             var th = new TestHelpers();
-            LaunchSite site = new LaunchSite("l1", th.GetEarthAtJ2000(), new Geodetic(-81.0 * Constants.Deg2Rad, 28.5 * Constants.Deg2Rad, 0.0), default, new AzimuthRange(0.0, 6.0));
-            Site recoverySite = new Site("l2", th.GetEarthAtJ2000(), new Geodetic(-81.0 * Constants.Deg2Rad, 28.5 * Constants.Deg2Rad, 0.0));
-            Launch launch = new Launch(site, recoverySite, new KeplerianElements(6728.137, 0.0, 51.6494 * Constants.Deg2Rad, 0.0, 0.0, 0.0, th.GetEarthAtJ2000(), epoch, Frames.Frame.ICRF), Constants.CivilTwilight, null);
+            LaunchSite site = new LaunchSite(33, "l1", th.GetEarthAtJ2000(), new Geodetic(-81.0 * Constants.Deg2Rad, 28.5 * Constants.Deg2Rad, 0.0), default,
+                new AzimuthRange(0.0, 6.0));
+            Site recoverySite = new Site(34, "l2", th.GetEarthAtJ2000(), new Geodetic(-81.0 * Constants.Deg2Rad, 28.5 * Constants.Deg2Rad, 0.0), Astrodynamics.Tests.Constants.SitePath);
+            Launch launch = new Launch(site, recoverySite,
+                new KeplerianElements(6728.137, 0.0, 51.6494 * Constants.Deg2Rad, 0.0, 0.0, 0.0, th.GetEarthAtJ2000(), epoch, Frames.Frame.ICRF), Constants.CivilTwilight, null);
             var res = launch.GetNonInertialAscendingAzimuthLaunch(epoch);
-            Assert.Equal(42.675344642468474, res * Constants.Rad2Deg, 3);
+            Assert.Equal(42.676, res * Constants.Rad2Deg, 3);
         }
 
         [Fact]
@@ -97,11 +113,13 @@ namespace IO.Astrodynamics.Models.Tests.Maneuvers
         {
             var epoch = new DateTime(2013, 10, 14, 10, 18, 0);
             var th = new TestHelpers();
-            LaunchSite site = new LaunchSite("l1", th.GetEarthAtJ2000(), new Geodetic(-81.0 * Constants.Deg2Rad, 28.5 * Constants.Deg2Rad, 0.0), default, new AzimuthRange(0.0, 6.0));
-            Site recoverySite = new Site("l2", th.GetEarthAtJ2000(), new Geodetic(-81.0 * Constants.Deg2Rad, 28.5 * Constants.Deg2Rad, 0.0));
-            Launch launch = new Launch(site, recoverySite, new KeplerianElements(6728.137, 0.0, 51.6494 * Constants.Deg2Rad, 0.0, 0.0, 0.0, th.GetEarthAtJ2000(), epoch, Frames.Frame.ICRF), Constants.CivilTwilight, null);
+            LaunchSite site = new LaunchSite(33, "l1", th.GetEarthAtJ2000(), new Geodetic(-81.0 * Constants.Deg2Rad, 28.5 * Constants.Deg2Rad, 0.0), default,
+                new AzimuthRange(0.0, 6.0));
+            Site recoverySite = new Site(34, "l2", th.GetEarthAtJ2000(), new Geodetic(-81.0 * Constants.Deg2Rad, 28.5 * Constants.Deg2Rad, 0.0), Astrodynamics.Tests.Constants.SitePath);
+            Launch launch = new Launch(site, recoverySite,
+                new KeplerianElements(6728.137, 0.0, 51.6494 * Constants.Deg2Rad, 0.0, 0.0, 0.0, th.GetEarthAtJ2000(), epoch, Frames.Frame.ICRF), Constants.CivilTwilight, null);
             var res = launch.GetNonInertialDescendingAzimuthLaunch(epoch);
-            Assert.Equal(180 - 42.675344642468474, res * Constants.Rad2Deg, 3);
+            Assert.Equal(137.324, res * Constants.Rad2Deg, 3);
         }
 
         [Fact]
@@ -109,9 +127,11 @@ namespace IO.Astrodynamics.Models.Tests.Maneuvers
         {
             var epoch = new DateTime(2013, 10, 14, 10, 18, 0);
             var th = new TestHelpers();
-            LaunchSite site = new LaunchSite("l1", th.GetEarthAtJ2000(), new Geodetic(-81.0 * Constants.Deg2Rad, 28.5 * Constants.Deg2Rad, 0.0), default, new AzimuthRange(0.0, 6.0));
-            Site recoverySite = new Site("l2", th.GetEarthAtJ2000(), new Geodetic(-81.0 * Constants.Deg2Rad, 28.5 * Constants.Deg2Rad, 0.0));
-            Launch launch = new Launch(site, recoverySite, new KeplerianElements(6728.137, 0.0, 51.6494 * Constants.Deg2Rad, 0.0, 0.0, 0.0, th.GetEarthAtJ2000(), epoch, Frames.Frame.ICRF), Constants.CivilTwilight, null);
+            LaunchSite site = new LaunchSite(33, "l1", th.GetEarthAtJ2000(), new Geodetic(-81.0 * Constants.Deg2Rad, 28.5 * Constants.Deg2Rad, 0.0), default,
+                new AzimuthRange(0.0, 6.0));
+            Site recoverySite = new Site(34, "l2", th.GetEarthAtJ2000(), new Geodetic(-81.0 * Constants.Deg2Rad, 28.5 * Constants.Deg2Rad, 0.0), Astrodynamics.Tests.Constants.SitePath);
+            Launch launch = new Launch(site, recoverySite,
+                new KeplerianElements(6728.137, 0.0, 51.6494 * Constants.Deg2Rad, 0.0, 0.0, 0.0, th.GetEarthAtJ2000(), epoch, Frames.Frame.ICRF), Constants.CivilTwilight, null);
             var res = launch.GetNonInertialInsertionVelocity(epoch);
             Assert.Equal(7.4138589742455188, res, 3);
         }
@@ -121,11 +141,13 @@ namespace IO.Astrodynamics.Models.Tests.Maneuvers
         {
             var epoch = new DateTime(2013, 10, 14, 10, 18, 0);
             var th = new TestHelpers();
-            LaunchSite site = new LaunchSite("l1", th.GetEarthAtJ2000(), new Geodetic(-81.0 * Constants.Deg2Rad, 28.5 * Constants.Deg2Rad, 0.0), default, new AzimuthRange(0.0, 6.0));
-            Site recoverySite = new Site("l2", th.GetEarthAtJ2000(), new Geodetic(-81.0 * Constants.Deg2Rad, 28.5 * Constants.Deg2Rad, 0.0));
-            Launch launch = new Launch(site, recoverySite, new KeplerianElements(6728.137, 0.0, 110.0 * Constants.Deg2Rad, 0.0, 0.0, 0.0, th.GetEarthAtJ2000(), epoch, Frames.Frame.ICRF), Constants.CivilTwilight, null);
+            LaunchSite site = new LaunchSite(33, "l1", th.GetEarthAtJ2000(), new Geodetic(-81.0 * Constants.Deg2Rad, 28.5 * Constants.Deg2Rad, 0.0), default,
+                new AzimuthRange(0.0, 6.0));
+            Site recoverySite = new Site(34, "l2", th.GetEarthAtJ2000(), new Geodetic(-81.0 * Constants.Deg2Rad, 28.5 * Constants.Deg2Rad, 0.0), Astrodynamics.Tests.Constants.SitePath);
+            Launch launch = new Launch(site, recoverySite,
+                new KeplerianElements(6728.137, 0.0, 110.0 * Constants.Deg2Rad, 0.0, 0.0, 0.0, th.GetEarthAtJ2000(), epoch, Frames.Frame.ICRF), Constants.CivilTwilight, null);
             var res = launch.GetInertialAscendingAzimuthLaunch(epoch);
-            Assert.Equal(337.09636518334463, res * Constants.Rad2Deg, 3);
+            Assert.Equal(337.097, res * Constants.Rad2Deg, 3);
         }
 
         [Fact]
@@ -133,11 +155,13 @@ namespace IO.Astrodynamics.Models.Tests.Maneuvers
         {
             var epoch = new DateTime(2013, 10, 14, 10, 18, 0);
             var th = new TestHelpers();
-            LaunchSite site = new LaunchSite("l1", th.GetEarthAtJ2000(), new Geodetic(-81.0 * Constants.Deg2Rad, 28.5 * Constants.Deg2Rad, 0.0), default, new AzimuthRange(0.0, 6.0));
-            Site recoverySite = new Site("l2", th.GetEarthAtJ2000(), new Geodetic(-81.0 * Constants.Deg2Rad, 28.5 * Constants.Deg2Rad, 0.0));
-            Launch launch = new Launch(site, recoverySite, new KeplerianElements(6728.137, 0.0, 110.0 * Constants.Deg2Rad, 0.0, 0.0, 0.0, th.GetEarthAtJ2000(), epoch, Frames.Frame.ICRF), Constants.CivilTwilight, null);
+            LaunchSite site = new LaunchSite(33, "l1", th.GetEarthAtJ2000(), new Geodetic(-81.0 * Constants.Deg2Rad, 28.5 * Constants.Deg2Rad, 0.0), default,
+                new AzimuthRange(0.0, 6.0));
+            Site recoverySite = new Site(34, "l2", th.GetEarthAtJ2000(), new Geodetic(-81.0 * Constants.Deg2Rad, 28.5 * Constants.Deg2Rad, 0.0), Astrodynamics.Tests.Constants.SitePath);
+            Launch launch = new Launch(site, recoverySite,
+                new KeplerianElements(6728.137, 0.0, 110.0 * Constants.Deg2Rad, 0.0, 0.0, 0.0, th.GetEarthAtJ2000(), epoch, Frames.Frame.ICRF), Constants.CivilTwilight, null);
             var res = launch.GetNonInertialAscendingAzimuthLaunch(epoch);
-            Assert.Equal(334.352, res * Constants.Rad2Deg, 3);
+            Assert.Equal(334.353, res * Constants.Rad2Deg, 3);
         }
 
         [Fact]
@@ -145,9 +169,11 @@ namespace IO.Astrodynamics.Models.Tests.Maneuvers
         {
             var epoch = new DateTime(2013, 10, 14, 10, 18, 0);
             var th = new TestHelpers();
-            LaunchSite site = new LaunchSite("l1", th.GetEarthAtJ2000(), new Geodetic(-81.0 * Constants.Deg2Rad, 28.5 * Constants.Deg2Rad, 0.0), default, new AzimuthRange(0.0, 6.0));
-            Site recoverySite = new Site("l2", th.GetEarthAtJ2000(), new Geodetic(-81.0 * Constants.Deg2Rad, 28.5 * Constants.Deg2Rad, 0.0));
-            Launch launch = new Launch(site, recoverySite, new KeplerianElements(6728.137, 0.0, 140.0 * Constants.Deg2Rad, 0.0, 0.0, 0.0, th.GetEarthAtJ2000(), epoch, Frames.Frame.ICRF), Constants.CivilTwilight, null);
+            LaunchSite site = new LaunchSite(33, "l1", th.GetEarthAtJ2000(), new Geodetic(-81.0 * Constants.Deg2Rad, 28.5 * Constants.Deg2Rad, 0.0), default,
+                new AzimuthRange(0.0, 6.0));
+            Site recoverySite = new Site(34, "l2", th.GetEarthAtJ2000(), new Geodetic(-81.0 * Constants.Deg2Rad, 28.5 * Constants.Deg2Rad, 0.0), Astrodynamics.Tests.Constants.SitePath);
+            Launch launch = new Launch(site, recoverySite,
+                new KeplerianElements(6728.137, 0.0, 140.0 * Constants.Deg2Rad, 0.0, 0.0, 0.0, th.GetEarthAtJ2000(), epoch, Frames.Frame.ICRF), Constants.CivilTwilight, null);
             var res = launch.GetNonInertialInsertionVelocity(epoch);
             Assert.Equal(8.056, res, 3);
         }
@@ -157,9 +183,11 @@ namespace IO.Astrodynamics.Models.Tests.Maneuvers
         {
             var epoch = new DateTime(2013, 10, 14, 10, 18, 0);
             var th = new TestHelpers();
-            LaunchSite site = new LaunchSite("l1", th.GetEarthAtJ2000(), new Geodetic(-81.0 * Constants.Deg2Rad, 28.5 * Constants.Deg2Rad, 0.0), default, new AzimuthRange(0.0, 6.0));
-            Site recoverySite = new Site("l2", th.GetEarthAtJ2000(), new Geodetic(-81.0 * Constants.Deg2Rad, 28.5 * Constants.Deg2Rad, 0.0));
-            Launch launch = new Launch(site, recoverySite, new KeplerianElements(6728.137, 0.0, 140.0 * Constants.Deg2Rad, 0.0, 0.0, 0.0, th.GetEarthAtJ2000(), epoch, Frames.Frame.ICRF), Constants.CivilTwilight, null);
+            LaunchSite site = new LaunchSite(33, "l1", th.GetEarthAtJ2000(), new Geodetic(-81.0 * Constants.Deg2Rad, 28.5 * Constants.Deg2Rad, 0.0), default,
+                new AzimuthRange(0.0, 6.0));
+            Site recoverySite = new Site(34, "l2", th.GetEarthAtJ2000(), new Geodetic(-81.0 * Constants.Deg2Rad, 28.5 * Constants.Deg2Rad, 0.0), Astrodynamics.Tests.Constants.SitePath);
+            Launch launch = new Launch(site, recoverySite,
+                new KeplerianElements(6728.137, 0.0, 140.0 * Constants.Deg2Rad, 0.0, 0.0, 0.0, th.GetEarthAtJ2000(), epoch, Frames.Frame.ICRF), Constants.CivilTwilight, null);
             var res = launch.GetInertialInsertionVelocity(epoch);
             Assert.Equal(7.6969997304533663, res, 3);
         }
@@ -170,27 +198,29 @@ namespace IO.Astrodynamics.Models.Tests.Maneuvers
             var epoch = new DateTime(2021, 6, 2);
             var th = new TestHelpers();
             var earth = th.GetEarth();
-            LaunchSite site = new LaunchSite("l1", earth, new Geodetic(-81.0 * Constants.Deg2Rad, 28.5 * Constants.Deg2Rad, 0.0), default, new AzimuthRange(0.0, 6.0));
-            Site recoverySite = new Site("l2", earth, new Geodetic(-81.0 * Constants.Deg2Rad, 28.5 * Constants.Deg2Rad, 0.0));
+            LaunchSite site = new LaunchSite(33, "l1", earth, new Geodetic(-81.0 * Constants.Deg2Rad, 28.5 * Constants.Deg2Rad, 0.0), default, new AzimuthRange(0.0, 6.0));
+            Site recoverySite = new Site(34, "l2", earth, new Geodetic(-81.0 * Constants.Deg2Rad, 28.5 * Constants.Deg2Rad, 0.0), Astrodynamics.Tests.Constants.SitePath);
             //ISS at 2021-06-02 TDB
-            Launch launch = new Launch(site, recoverySite, new StateVector(new Vector3(-1.144243683349977E+03, 4.905086030671815E+03, 4.553416875193589E+03), new Vector3(-5.588288926819989E+00, -4.213222250603758E+00, 3.126518392859475E+00), earth, epoch, Frames.Frame.ICRF), Constants.CivilTwilight, null);
+            Launch launch = new Launch(site, recoverySite,
+                new StateVector(new Vector3(-1.144243683349977E+03, 4.905086030671815E+03, 4.553416875193589E+03),
+                    new Vector3(-5.588288926819989E+00, -4.213222250603758E+00, 3.126518392859475E+00), earth, epoch, Frames.Frame.ICRF), Constants.CivilTwilight, null);
             var res = launch.FindLaunchWindows(new Window(epoch, TimeSpan.FromDays(1.0)));
             Assert.Equal(2, res.Count());
             var firstWindow = res[0];
-            Assert.Equal(Convert.ToDateTime("2021-06-02 02:52:03.4942137"), firstWindow.Window.StartDate);
-            Assert.Equal(Convert.ToDateTime("2021-06-02 02:52:03.4942137"), firstWindow.Window.EndDate);
-            Assert.Equal(135.1619859153713, firstWindow.InertialAzimuth * Constants.Rad2Deg, 6);
-            Assert.Equal(137.41309272638028, firstWindow.NonInertialAzimuth * Constants.Rad2Deg, 6);
+            Assert.Equal(Convert.ToDateTime("2021-06-02T02:51:54.2908902"), firstWindow.Window.StartDate);
+            Assert.Equal(Convert.ToDateTime("2021-06-02T02:51:54.2908902"), firstWindow.Window.EndDate);
+            Assert.Equal(135.067934, firstWindow.InertialAzimuth * Constants.Rad2Deg, 6);
+            Assert.Equal(137.311593, firstWindow.NonInertialAzimuth * Constants.Rad2Deg, 6);
             Assert.Equal(7.6670268762217848, firstWindow.InertialInsertionVelocity, 6);
-            Assert.Equal(7.3843116897175163, firstWindow.NonInertialInsertionVelocity, 6);
+            Assert.Equal(7.384284, firstWindow.NonInertialInsertionVelocity, 6);
 
             var secondWindow = res[1];
-            Assert.Equal(Convert.ToDateTime("2021-06-02 18:13:32.4599782"), secondWindow.Window.StartDate);
-            Assert.Equal(Convert.ToDateTime("2021-06-02 18:13:32.4599782"), secondWindow.Window.EndDate);
-            Assert.Equal(45.106102519620528, secondWindow.InertialAzimuth * Constants.Rad2Deg, 6);
-            Assert.Equal(42.8697243790726, secondWindow.NonInertialAzimuth * Constants.Rad2Deg, 6);
+            Assert.Equal(Convert.ToDateTime("2021-06-02T18:13:00.9057113"), secondWindow.Window.StartDate);
+            Assert.Equal(Convert.ToDateTime("2021-06-02T18:13:00.9057113"), secondWindow.Window.EndDate);
+            Assert.Equal(44.932076, secondWindow.InertialAzimuth * Constants.Rad2Deg, 6);
+            Assert.Equal(42.685873, secondWindow.NonInertialAzimuth * Constants.Rad2Deg, 6);
             Assert.Equal(7.6670268762217848, secondWindow.InertialInsertionVelocity, 6);
-            Assert.Equal(7.3834621503134024, secondWindow.NonInertialInsertionVelocity, 6);
+            Assert.Equal(7.383981, secondWindow.NonInertialInsertionVelocity, 6);
         }
 
         [Fact]
@@ -199,19 +229,21 @@ namespace IO.Astrodynamics.Models.Tests.Maneuvers
             var epoch = new DateTime(2021, 6, 2);
             var th = new TestHelpers();
             var earth = th.GetEarth();
-            LaunchSite site = new LaunchSite("l1", earth, new Geodetic(-81.0 * Constants.Deg2Rad, 28.5 * Constants.Deg2Rad, 0.0), default, new AzimuthRange(0.0, 6.0));
-            Site recoverySite = new Site("l2", earth, new Geodetic(-81.0 * Constants.Deg2Rad, 28.5 * Constants.Deg2Rad, 0.0));
+            LaunchSite site = new LaunchSite(33, "l1", earth, new Geodetic(-81.0 * Constants.Deg2Rad, 28.5 * Constants.Deg2Rad, 0.0), default, new AzimuthRange(0.0, 6.0));
+            Site recoverySite = new Site(34, "l2", earth, new Geodetic(-81.0 * Constants.Deg2Rad, 28.5 * Constants.Deg2Rad, 0.0), Astrodynamics.Tests.Constants.SitePath);
             //ISS at 2021-06-02 TDB
-            Launch launch = new Launch(site, recoverySite, new StateVector(new Vector3(-1.144243683349977E+03, 4.905086030671815E+03, 4.553416875193589E+03), new Vector3(-5.588288926819989E+00, -4.213222250603758E+00, 3.126518392859475E+00), earth, epoch, Frames.Frame.ICRF), Constants.CivilTwilight, true);
+            Launch launch = new Launch(site, recoverySite,
+                new StateVector(new Vector3(-1.144243683349977E+03, 4.905086030671815E+03, 4.553416875193589E+03),
+                    new Vector3(-5.588288926819989E+00, -4.213222250603758E+00, 3.126518392859475E+00), earth, epoch, Frames.Frame.ICRF), Constants.CivilTwilight, true);
             var res = launch.FindLaunchWindows(new Window(epoch, TimeSpan.FromDays(1.0)));
             Assert.Single(res);
             var firstWindow = res[0];
-            Assert.Equal(Convert.ToDateTime("2021-06-02T18:13:31.7747382"), firstWindow.Window.StartDate);
-            Assert.Equal(Convert.ToDateTime("2021-06-02T18:13:31.7747382"), firstWindow.Window.EndDate);
-            Assert.Equal(45.106104650222136, firstWindow.InertialAzimuth * Constants.Rad2Deg, 6);
-            Assert.Equal(42.8697266220075, firstWindow.NonInertialAzimuth * Constants.Rad2Deg, 6);
+            Assert.Equal(Convert.ToDateTime("2021-06-02T18:13:01.5352310"), firstWindow.Window.StartDate);
+            Assert.Equal(Convert.ToDateTime("2021-06-02T18:13:01.5352310"), firstWindow.Window.EndDate);
+            Assert.Equal(44.932076, firstWindow.InertialAzimuth * Constants.Rad2Deg, 6);
+            Assert.Equal(42.685873, firstWindow.NonInertialAzimuth * Constants.Rad2Deg, 6);
             Assert.Equal(7.6670268762217848, firstWindow.InertialInsertionVelocity, 6);
-            Assert.Equal(7.3834621430387886, firstWindow.NonInertialInsertionVelocity, 6);
+            Assert.Equal(7.383981, firstWindow.NonInertialInsertionVelocity, 6);
         }
 
         [Fact]
@@ -220,10 +252,12 @@ namespace IO.Astrodynamics.Models.Tests.Maneuvers
             var epoch = new DateTime(2021, 6, 2);
             var th = new TestHelpers();
             var earth = th.GetEarth();
-            LaunchSite site = new LaunchSite("l1", earth, new Geodetic(-104.0 * Constants.Deg2Rad, -41.0 * Constants.Deg2Rad, 0.0), default, new AzimuthRange(0.0, 6.0));
-            Site recoverySite = new Site("l2", earth, new Geodetic(-104.0 * Constants.Deg2Rad, -41.0 * Constants.Deg2Rad, 0.0));
+            LaunchSite site = new LaunchSite(33, "l1", earth, new Geodetic(-104.0 * Constants.Deg2Rad, -41.0 * Constants.Deg2Rad, 0.0), default, new AzimuthRange(0.0, 6.0));
+            Site recoverySite = new Site(34, "l2", earth, new Geodetic(-104.0 * Constants.Deg2Rad, -41.0 * Constants.Deg2Rad, 0.0), Astrodynamics.Tests.Constants.SitePath);
             //ISS at 2021-06-02 TDB
-            Launch launch = new Launch(site, recoverySite, new StateVector(new Vector3(-1.144243683349977E+03, 4.905086030671815E+03, 4.553416875193589E+03), new Vector3(-5.588288926819989E+00, -4.213222250603758E+00, 3.126518392859475E+00), earth, epoch, Frames.Frame.ICRF), Constants.CivilTwilight, true);
+            Launch launch = new Launch(site, recoverySite,
+                new StateVector(new Vector3(-1.144243683349977E+03, 4.905086030671815E+03, 4.553416875193589E+03),
+                    new Vector3(-5.588288926819989E+00, -4.213222250603758E+00, 3.126518392859475E+00), earth, epoch, Frames.Frame.ICRF), Constants.CivilTwilight, true);
             var res = launch.FindLaunchWindows(new Window(epoch, TimeSpan.FromDays(1.0)));
             Assert.Single(res);
             var firstWindow = res[0];
@@ -241,14 +275,17 @@ namespace IO.Astrodynamics.Models.Tests.Maneuvers
             var epoch = new DateTime(2021, 6, 2);
             var th = new TestHelpers();
             var earth = th.GetEarth();
-            LaunchSite site = new LaunchSite("l1", earth, new Geodetic(-104.0 * Constants.Deg2Rad, -41.0 * Constants.Deg2Rad, 0.0), default, new AzimuthRange(0.0, 6.0));
-            Site recoverySite = new Site("l2", earth, new Geodetic(-104.0 * Constants.Deg2Rad, -41.0 * Constants.Deg2Rad, 0.0));
+            LaunchSite site = new LaunchSite(33, "l1", earth, new Geodetic(-104.0 * Constants.Deg2Rad, -41.0 * Constants.Deg2Rad, 0.0), Astrodynamics.Tests.Constants.SitePath,
+                new AzimuthRange(0.0, 6.0));
+            Site recoverySite = new Site(34, "l2", earth, new Geodetic(-104.0 * Constants.Deg2Rad, -41.0 * Constants.Deg2Rad, 0.0), Astrodynamics.Tests.Constants.SitePath);
             //ISS at 2021-06-02 TDB
-            Launch launch = new Launch(site, recoverySite, new StateVector(new Vector3(-1.144243683349977E+03, 4.905086030671815E+03, 4.553416875193589E+03), new Vector3(-5.588288926819989E+00, -4.213222250603758E+00, 3.126518392859475E+00), earth, epoch, Frames.Frame.ICRF), Constants.CivilTwilight, null);
+            Launch launch = new Launch(site, recoverySite,
+                new StateVector(new Vector3(-1.144243683349977E+03, 4.905086030671815E+03, 4.553416875193589E+03),
+                    new Vector3(-5.588288926819989E+00, -4.213222250603758E+00, 3.126518392859475E+00), earth, epoch, Frames.Frame.ICRF), Constants.CivilTwilight, null);
             var res = launch.FindLaunchWindows(new Window(epoch, TimeSpan.FromDays(1.0)));
             Assert.Equal(2, res.Count());
             var firstWindow = res[0];
-            Assert.Equal(Convert.ToDateTime("2021-06-02 08:58:43.3705101"), firstWindow.Window.StartDate);
+            Assert.Equal(Convert.ToDateTime("2021-06-02T08:58:38.1114556"), firstWindow.Window.StartDate);
             Assert.Equal(Convert.ToDateTime("2021-06-02 08:58:43.3705101"), firstWindow.Window.EndDate);
             Assert.Equal(124.74777778701655, firstWindow.InertialAzimuth * Constants.Rad2Deg, 6);
             Assert.Equal(126.29778811432655, firstWindow.NonInertialAzimuth * Constants.Rad2Deg, 6);

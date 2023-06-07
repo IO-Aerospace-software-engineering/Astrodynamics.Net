@@ -67,7 +67,7 @@ namespace IO.Astrodynamics.Models.Math
             {
                 // Compute individual terms
                 // of above formula
-                var q = data[i].Orientation;
+                var q = data[i].Rotation;
                 var av = data[i].AngularVelocity;
                 for (int j = 0; j < n; j++)
                 {
@@ -83,7 +83,7 @@ namespace IO.Astrodynamics.Models.Math
                 qRes *= q;
                 avRes += av;
             }
-            return new StateOrientation(qRes, avRes, epoch, data[0].Frame);
+            return new StateOrientation(qRes, avRes, epoch, data[0].ReferenceFrame);
         }
     }
 }

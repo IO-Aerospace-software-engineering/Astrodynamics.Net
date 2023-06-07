@@ -14,7 +14,7 @@ public class Frame
 
     private readonly API _api;
 
-    public static readonly Frame ICRF = new Frame("ICRF");
+    public static readonly Frame ICRF = new Frame("J2000");
     public static readonly Frame ECLIPTIC = new Frame("ECLIPJ2000");
 
     public Frame(string name)

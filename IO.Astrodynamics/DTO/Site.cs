@@ -20,6 +20,7 @@ public struct Site
     public string DirectoryPath = null;
 
 
+    //Todo check if id must be (ex. 13 or 399013) and body id is necessary
     public Site(int id, int bodyId, Geodetic coordinates, string name, string directoryPath) : this()
     {
         Id = id;
