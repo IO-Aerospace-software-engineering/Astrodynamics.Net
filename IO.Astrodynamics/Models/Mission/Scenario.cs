@@ -17,7 +17,7 @@ namespace IO.Astrodynamics.Models.Mission
         public IReadOnlyCollection<Site> Sites => _sites;
         private readonly API _api;
 
-        public Scenario(string name, Mission mission, in Window window, API api, int id = default) 
+        public Scenario(string name, Mission mission, in Window window) 
         {
             if (string.IsNullOrEmpty(name))
             {
@@ -26,7 +26,7 @@ namespace IO.Astrodynamics.Models.Mission
 
             Name = name;
             Mission = mission ?? throw new System.ArgumentNullException(nameof(mission));
-            _api = api ?? throw new ArgumentNullException(nameof(api));
+            _api = new API();
             Window = window;
             
         }

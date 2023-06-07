@@ -10,9 +10,7 @@ namespace IO.Astrodynamics.Tests;
 
 public class APITest
 {
-    const string SpacecraftPath = "Data/User/Spacecrafts";
-    const string SolarSystemKernelPath = "Data/SolarSystem";
-    const string SitePath = "Data/User/Sites";
+   
 
     [Fact]
     public void CheckVersion()
@@ -28,7 +26,7 @@ public class APITest
         API api = new API();
 
         //Load solar system kernels
-        api.LoadKernels(new DirectoryInfo(SolarSystemKernelPath));
+        api.LoadKernels(new DirectoryInfo(Constants.SolarSystemKernelPath));
 
         //Convert UTC time to TDB
         double start = api.ConvertUTCToTDB(667915130.814600);
@@ -37,12 +35,12 @@ public class APITest
         //Define launch site
         Site launchSite = new Site(id: 399303, bodyId: PlanetsAndMoons.EARTH.NaifId,
             coordinates: new Geodetic(-81.0 * Constants.DEG_RAD, 28.5 * Constants.DEG_RAD, 0.0), name: "S3",
-            directoryPath: SitePath);
+            directoryPath: Constants.SitePath);
 
         //Define recovery site
         Site recoverySite = new Site(id: 399304, bodyId: PlanetsAndMoons.EARTH.NaifId,
             coordinates: new Geodetic(-81.0 * Constants.DEG_RAD, 28.5 * Constants.DEG_RAD, 0.0), name: "S4",
-            directoryPath: SitePath);
+            directoryPath: Constants.SitePath);
 
         //Define the targeted parking orbit
         StateVector parkingOrbit = new StateVector(399, start, InertialFrame.ICRF.GetDescription(),
@@ -72,7 +70,7 @@ public class APITest
         API api = new API();
 
         //Load solar system kernels
-        api.LoadKernels(new DirectoryInfo(SolarSystemKernelPath));
+        api.LoadKernels(new DirectoryInfo(Constants.SolarSystemKernelPath));
 
         //Define some keys datetime
         double start = api.ConvertUTCToTDB(667915269.18539762);
@@ -98,7 +96,7 @@ public class APITest
 
 
         //Create and configure spacecraft
-        scenario.Spacecraft = new Spacecraft(-178, "DRAGONFLY", 1000.0, 10000.0, parkingOrbit, SpacecraftPath);
+        scenario.Spacecraft = new Spacecraft(-178, "DRAGONFLY", 1000.0, 10000.0, parkingOrbit, Constants.SpacecraftPath);
         scenario.Spacecraft.FuelTanks[0] =
             new FuelTank(id: 1, capacity: 9000.0, quantity: 9000.0, serialNumber: "fuelTank1");
         scenario.Spacecraft.Engines[0] = new EngineDTO(id: 1, name: "engine1", fuelFlow: 50,
@@ -231,7 +229,7 @@ public class APITest
         API api = new API();
 
         //Load solar system kernels
-        api.LoadKernels(new DirectoryInfo(SolarSystemKernelPath));
+        api.LoadKernels(new DirectoryInfo(Constants.SolarSystemKernelPath));
 
         var res = api.TDBToString(0.0);
         Assert.Equal("2000-01-01 12:00:00.000000 (TDB)", res);
@@ -247,7 +245,7 @@ public class APITest
         API api = new API();
 
         //Load solar system kernels
-        api.LoadKernels(new DirectoryInfo(SolarSystemKernelPath));
+        api.LoadKernels(new DirectoryInfo(Constants.SolarSystemKernelPath));
 
         var res = api.UTCToString(0.0);
         Assert.Equal("2000-01-01 12:00:00.000000 (UTC)", res);
@@ -260,7 +258,7 @@ public class APITest
         API api = new API();
 
         //Load solar system kernels
-        api.LoadKernels(new DirectoryInfo(SolarSystemKernelPath));
+        api.LoadKernels(new DirectoryInfo(Constants.SolarSystemKernelPath));
 
         //Find time windows when the moon will be 400000 km away from the Earth
         var res = api.FindWindowsOnDistanceConstraint(new Window(220881665.18391809, 228657665.18565452),
@@ -280,7 +278,7 @@ public class APITest
         API api = new API();
 
         //Load solar system kernels
-        api.LoadKernels(new DirectoryInfo(SolarSystemKernelPath));
+        api.LoadKernels(new DirectoryInfo(Constants.SolarSystemKernelPath));
 
         //Find time windows when the Sun will be occulted by the moon
         var res = api.FindWindowsOnOccultationConstraint(new Window(61473664.183390938, 61646464.183445148),
@@ -300,7 +298,7 @@ public class APITest
         API api = new API();
 
         //Load solar system kernels
-        api.LoadKernels(new DirectoryInfo(SolarSystemKernelPath));
+        api.LoadKernels(new DirectoryInfo(Constants.SolarSystemKernelPath));
 
         //Find time windows when the moon will be above the horizon relative to Deep Space Station 13
         var res = api.FindWindowsOnCoordinateConstraint(new Window(730036800.0, 730123200), 399013,
@@ -321,7 +319,7 @@ public class APITest
         API api = new API();
 
         //Load solar system kernels
-        api.LoadKernels(new DirectoryInfo(SolarSystemKernelPath));
+        api.LoadKernels(new DirectoryInfo(Constants.SolarSystemKernelPath));
 
         //Find time windows when the geodetic point is illuminated by the sun (Official twilight 0.8° bellow horizon)
         var res = api.FindWindowsOnIlluminationConstraint(new Window(674524800, 674611200), Stars.Sun.NaifId,
@@ -344,7 +342,7 @@ public class APITest
         API api = new API();
 
         //Load solar system kernels
-        api.LoadKernels(new DirectoryInfo(SolarSystemKernelPath));
+        api.LoadKernels(new DirectoryInfo(Constants.SolarSystemKernelPath));
 
         double start = api.ConvertUTCToTDB(676555130.80);
         double end = api.ConvertUTCToTDB(start + 6448.0);
@@ -363,7 +361,7 @@ public class APITest
 
 
         //Configure spacecraft
-        scenario.Spacecraft = new Spacecraft(-178, "DRAGONFLY", 1000.0, 3000.0, parkingOrbit, SpacecraftPath);
+        scenario.Spacecraft = new Spacecraft(-178, "DRAGONFLY", 1000.0, 3000.0, parkingOrbit, Constants.SpacecraftPath);
         scenario.Spacecraft.Instruments[0] = new Instrument(600, "CAM600", InstrumentShape.Circular.ToString(),
             new Vector3D(1.0, 0.0, 0.0),
             new Vector3D(0.0, 0.0, 1.0), new Vector3D(1.0, 0.0, 0.0), 1.5, double.NaN);
@@ -395,7 +393,7 @@ public class APITest
         API api = new API();
 
         //Load solar system kernels
-        api.LoadKernels(new DirectoryInfo(SolarSystemKernelPath));
+        api.LoadKernels(new DirectoryInfo(Constants.SolarSystemKernelPath));
 
         Window searchWindow = new Window(0.0, 100.0);
         var res = api.ReadEphemeris(searchWindow, PlanetsAndMoons.EARTH.NaifId, PlanetsAndMoons.MOON.NaifId,
@@ -419,7 +417,7 @@ public class APITest
         API api = new API();
 
         //Load solar system kernels
-        api.LoadKernels(new DirectoryInfo(SolarSystemKernelPath));
+        api.LoadKernels(new DirectoryInfo(Constants.SolarSystemKernelPath));
         // Window utcSearchWindow = new Window(662777930.816060, 662777990.816060);
         Window tdbSearchWindow = new Window(662778000.0 + 0.0, 662778060.0);
 
@@ -436,14 +434,14 @@ public class APITest
             new Vector3D(0.0, 7656.2204182967143, 0.0));
 
         //Configure spacecraft
-        scenario.Spacecraft = new Spacecraft(-1782, "DRAGONFLY2", 1000.0, 10000.0, parkingOrbit, SpacecraftPath);
+        scenario.Spacecraft = new Spacecraft(-1782, "DRAGONFLY2", 1000.0, 10000.0, parkingOrbit, Constants.SpacecraftPath);
         scenario.Spacecraft.FuelTanks[0] =
             new FuelTank(id: 1, capacity: 9000.0, quantity: 9000.0, serialNumber: "fuelTank1");
         scenario.Spacecraft.Engines[0] = new EngineDTO(id: 1, name: "engine1", fuelFlow: 50,
             serialNumber: "serialNumber1", fuelTankSerialNumber: "fuelTank1", isp: 450);
 
         //Spacecraft must point to nadir
-        scenario.Spacecraft.nadirAttitudes[0] = new NadirAttitude(0, 0.0, double.MinValue)
+        scenario.Spacecraft.NadirAttitudes[0] = new NadirAttitude(0, 0.0, double.MinValue)
         {
             Engines =
             {
@@ -480,7 +478,7 @@ public class APITest
         API api = new API();
 
         //Load solar system kernels
-        api.LoadKernels(new DirectoryInfo(SolarSystemKernelPath));
+        api.LoadKernels(new DirectoryInfo(Constants.SolarSystemKernelPath));
         Assert.Equal(-64.18392726322381, api.ConvertTDBToUTC(0.0));
     }
 
@@ -491,7 +489,7 @@ public class APITest
         API api = new API();
 
         //Load solar system kernels
-        api.LoadKernels(new DirectoryInfo(SolarSystemKernelPath));
+        api.LoadKernels(new DirectoryInfo(Constants.SolarSystemKernelPath));
         Assert.Equal(64.18392728466942, api.ConvertUTCToTDB(0.0));
     }
 
@@ -502,7 +500,7 @@ public class APITest
         API api = new API();
 
         //Load solar system kernels
-        api.LoadKernels(new DirectoryInfo(SolarSystemKernelPath));
+        api.LoadKernels(new DirectoryInfo(Constants.SolarSystemKernelPath));
         const int size = 10;
         StateVector[] sv = new StateVector[size];
         for (int i = 0; i < size; ++i)
@@ -542,7 +540,7 @@ public class APITest
         API api = new API();
 
         //Load solar system kernels
-        api.LoadKernels(new DirectoryInfo(SolarSystemKernelPath));
+        api.LoadKernels(new DirectoryInfo(Constants.SolarSystemKernelPath));
 
         //Read celestial body information from spice kernels
         var res = api.GetCelestialBodyInfo(PlanetsAndMoons.EARTH.NaifId);
@@ -565,7 +563,7 @@ public class APITest
         API api = new API();
 
         //Load solar system kernels
-        api.LoadKernels(new DirectoryInfo(SolarSystemKernelPath));
+        api.LoadKernels(new DirectoryInfo(Constants.SolarSystemKernelPath));
 
         //Get the quaternion to transform
         var res = api.TransformFrame(InertialFrame.ICRF.GetDescription(), PlanetsAndMoons.EARTH.Frame, 0.0);
@@ -585,7 +583,7 @@ public class APITest
         API api = new API();
 
         //Load solar system kernels
-        api.LoadKernels(new DirectoryInfo(SolarSystemKernelPath));
+        api.LoadKernels(new DirectoryInfo(Constants.SolarSystemKernelPath));
 
         double p = 1.0e7;
         double ecc = 0.1;
@@ -634,7 +632,7 @@ public class APITest
         API api = new API();
 
         //Load solar system kernels
-        api.LoadKernels(new DirectoryInfo(SolarSystemKernelPath));
+        api.LoadKernels(new DirectoryInfo(Constants.SolarSystemKernelPath));
 
         double perifocalDist = Math.Sqrt(Math.Pow(-6.116559469556896E+06, 2) + Math.Pow(-1.546174698676721E+06, 2) +
                                          Math.Pow(2.521950157430313E+06, 2));
@@ -670,7 +668,7 @@ public class APITest
         API api = new API();
 
         //Load solar system kernels
-        api.LoadKernels(new DirectoryInfo(SolarSystemKernelPath));
+        api.LoadKernels(new DirectoryInfo(Constants.SolarSystemKernelPath));
 
         var sv = new StateVector(PlanetsAndMoons.EARTH.NaifId, 0.0, InertialFrame.ICRF.GetDescription(),
             new Vector3D(-291608384.63344, -266716833.39423, -76102487.09990),
@@ -689,7 +687,7 @@ public class APITest
         API api = new API();
 
         //Load solar system kernels
-        api.LoadKernels(new DirectoryInfo(SolarSystemKernelPath));
+        api.LoadKernels(new DirectoryInfo(Constants.SolarSystemKernelPath));
 
         var conics = new ConicElements();
         conics.CenterOfMotionId = PlanetsAndMoons.EARTH.NaifId;

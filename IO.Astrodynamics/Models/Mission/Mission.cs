@@ -4,7 +4,7 @@ namespace IO.Astrodynamics.Models.Mission
 {
     public class Mission 
     {
-        public Mission(string name, int id = default) 
+        public Mission(string name) 
         {
             Name = name;
         }

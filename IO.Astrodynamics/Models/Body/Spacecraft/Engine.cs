@@ -7,11 +7,10 @@ namespace IO.Astrodynamics.Models.Body.Spacecraft
 
         public string Name { get; private set; }
         public string Model { get; private set; }
-        public string SerialNumber { get; private set; }
         public double ISP { get; private set; }
         public double FuelFlow { get; private set; }
         public double Thrust { get; private set; }
-        public Engine(string name, string model, string serialNumber, double iSP, double fuelFlow, int id = default) 
+        public Engine(string name, string model, double isp, double fuelFlow) 
         {
             if (string.IsNullOrEmpty(name))
             {
@@ -23,12 +22,7 @@ namespace IO.Astrodynamics.Models.Body.Spacecraft
                 throw new ArgumentException("Engine requires a model");
             }
 
-            if (string.IsNullOrEmpty(serialNumber))
-            {
-                throw new ArgumentException($"'{nameof(serialNumber)}' cannot be null or empty.", nameof(serialNumber));
-            }
-
-            if (iSP <= 0)
+            if (isp <= 0)
             {
                 throw new ArgumentException("ISP must be a positive number");
             }
@@ -40,10 +34,9 @@ namespace IO.Astrodynamics.Models.Body.Spacecraft
 
             Name = name;
             Model = model;
-            ISP = iSP;
+            ISP = isp;
             FuelFlow = fuelFlow;
-            SerialNumber = serialNumber;
-            Thrust = iSP * fuelFlow * Constants.g0;
+            Thrust = isp * fuelFlow * Constants.g0;
         }
     }
 }

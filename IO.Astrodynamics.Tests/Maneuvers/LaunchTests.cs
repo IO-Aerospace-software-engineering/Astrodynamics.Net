@@ -170,7 +170,6 @@ namespace IO.Astrodynamics.Models.Tests.Maneuvers
             var epoch = new DateTime(2021, 6, 2);
             var th = new TestHelpers();
             var earth = th.GetEarth();
-            earth.AddStateOrientationFromICRF(new StateOrientation(new Quaternion(0.57445446, 0.00084188, -0.00058582, 0.81853590), new Vector3(1.51823816E-07, -3.60693290E-10, 7.29209921E-05), epoch, Frames.Frame.ICRF));
             LaunchSite site = new LaunchSite("l1", earth, new Geodetic(-81.0 * Constants.Deg2Rad, 28.5 * Constants.Deg2Rad, 0.0), default, new AzimuthRange(0.0, 6.0));
             Site recoverySite = new Site("l2", earth, new Geodetic(-81.0 * Constants.Deg2Rad, 28.5 * Constants.Deg2Rad, 0.0));
             //ISS at 2021-06-02 TDB
@@ -200,7 +199,6 @@ namespace IO.Astrodynamics.Models.Tests.Maneuvers
             var epoch = new DateTime(2021, 6, 2);
             var th = new TestHelpers();
             var earth = th.GetEarth();
-            earth.AddStateOrientationFromICRF(new StateOrientation(new IO.Astrodynamics.Models.Math.Quaternion(0.57445446, 0.00084188, -0.00058582, 0.81853590), new Vector3(1.51823816E-07, -3.60693290E-10, 7.29209921E-05), epoch, Frames.Frame.ICRF));
             LaunchSite site = new LaunchSite("l1", earth, new Geodetic(-81.0 * Constants.Deg2Rad, 28.5 * Constants.Deg2Rad, 0.0), default, new AzimuthRange(0.0, 6.0));
             Site recoverySite = new Site("l2", earth, new Geodetic(-81.0 * Constants.Deg2Rad, 28.5 * Constants.Deg2Rad, 0.0));
             //ISS at 2021-06-02 TDB
@@ -222,7 +220,6 @@ namespace IO.Astrodynamics.Models.Tests.Maneuvers
             var epoch = new DateTime(2021, 6, 2);
             var th = new TestHelpers();
             var earth = th.GetEarth();
-            earth.AddStateOrientationFromICRF(new StateOrientation(new IO.Astrodynamics.Models.Math.Quaternion(0.57445446, 0.00084188, -0.00058582, 0.81853590), new Vector3(1.51823816E-07, -3.60693290E-10, 7.29209921E-05), epoch, Frames.Frame.ICRF));
             LaunchSite site = new LaunchSite("l1", earth, new Geodetic(-104.0 * Constants.Deg2Rad, -41.0 * Constants.Deg2Rad, 0.0), default, new AzimuthRange(0.0, 6.0));
             Site recoverySite = new Site("l2", earth, new Geodetic(-104.0 * Constants.Deg2Rad, -41.0 * Constants.Deg2Rad, 0.0));
             //ISS at 2021-06-02 TDB
@@ -244,7 +241,6 @@ namespace IO.Astrodynamics.Models.Tests.Maneuvers
             var epoch = new DateTime(2021, 6, 2);
             var th = new TestHelpers();
             var earth = th.GetEarth();
-            earth.AddStateOrientationFromICRF(new StateOrientation(new IO.Astrodynamics.Models.Math.Quaternion(0.57445446, 0.00084188, -0.00058582, 0.81853590), new Vector3(1.51823816E-07, -3.60693290E-10, 7.29209921E-05), epoch, Frames.Frame.ICRF));
             LaunchSite site = new LaunchSite("l1", earth, new Geodetic(-104.0 * Constants.Deg2Rad, -41.0 * Constants.Deg2Rad, 0.0), default, new AzimuthRange(0.0, 6.0));
             Site recoverySite = new Site("l2", earth, new Geodetic(-104.0 * Constants.Deg2Rad, -41.0 * Constants.Deg2Rad, 0.0));
             //ISS at 2021-06-02 TDB

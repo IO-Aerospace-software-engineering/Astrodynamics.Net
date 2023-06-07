@@ -14,7 +14,7 @@ namespace IO.Astrodynamics.Models.Body.Spacecraft
         public IReadOnlyCollection<SpacecraftScenario> Spacecrafts { get; private set; }
 
 
-        public Clock(string name, double resolution, int id = default)
+        public Clock(string name, double resolution)
         {
             if (string.IsNullOrEmpty(name))
             {

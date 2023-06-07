@@ -16,7 +16,7 @@ namespace IO.Astrodynamics.Models.Body.Spacecraft
         public static readonly Vector3 Boresight = Vector3.VectorZ;
         public static readonly Vector3 RefVector = Vector3.VectorX;
 
-        public Instrument(int naifId, string name, string model, double fieldOfView, InstrumentShape shape, double crossAngle = double.NaN)
+        public Instrument(uint naifId, string name, string model, double fieldOfView, InstrumentShape shape, double crossAngle = double.NaN)
         {
             if (string.IsNullOrEmpty(name))
             {
@@ -38,7 +38,7 @@ namespace IO.Astrodynamics.Models.Body.Spacecraft
             FieldOfView = fieldOfView;
             Shape = shape;
             CrossAngle = crossAngle;
-            NaifId = naifId;
+            NaifId = (int)naifId;
         }
     }
 }

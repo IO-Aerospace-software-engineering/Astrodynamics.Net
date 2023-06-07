@@ -5,6 +5,7 @@ using IO.Astrodynamics.Models.Mission;
 
 namespace IO.Astrodynamics.Models.Body.Spacecraft
 {
+    //TODO create spacecraft payload
     public class Payload 
     {
         private HashSet<SpacecraftScenario> _spacecrafts = new();
@@ -13,7 +14,7 @@ namespace IO.Astrodynamics.Models.Body.Spacecraft
         public string SerialNumber { get; private set; }
         public double Mass { get; private set; }
 
-        public Payload(string name, double mass, string serialNumber, int id = default) 
+        public Payload(string name, double mass, string serialNumber) 
         {
             if (string.IsNullOrEmpty(name))
             {

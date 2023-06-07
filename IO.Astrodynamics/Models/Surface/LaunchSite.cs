@@ -20,7 +20,7 @@ namespace IO.Astrodynamics.Models.Surface
         /// <param name="body">Celestial body</param>
         /// <param name="geodetic">Geodetic coordinates</param>
         /// <param name="launchAzimuths">Allowed launch azimuths</param>
-        public LaunchSite(string name, CelestialBodyScenario body, in Geodetic geodetic, int id = default, params AzimuthRange[] launchAzimuths) : base(name, body, geodetic)
+        public LaunchSite(string name, CelestialBodyScenario body, in Geodetic geodetic, params AzimuthRange[] launchAzimuths) : base(name, body, geodetic)
         {
             _azimuthRanges = new List<AzimuthRange>(launchAzimuths);
         }

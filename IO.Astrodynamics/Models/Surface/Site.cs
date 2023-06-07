@@ -22,7 +22,7 @@ namespace IO.Astrodynamics.Models.Surface
 
         protected Site() { }
 
-        public Site(string name, CelestialBodyScenario body, in Geodetic geodetic, int id = default) 
+        public Site(string name, CelestialBodyScenario body, in Geodetic geodetic) 
         {
             Name = name ?? throw new ArgumentNullException(nameof(name));
             Body = body ?? throw new ArgumentNullException(nameof(body));

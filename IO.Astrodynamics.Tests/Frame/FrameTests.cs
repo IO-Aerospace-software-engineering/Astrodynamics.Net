@@ -1,24 +1,13 @@
 using IO.Astrodynamics.Models.Math;
 using IO.Astrodynamics.Models.OrbitalParameters;
 using System;
+using IO.Astrodynamics.SolarSystemObjects;
 using Xunit;
 
 namespace IO.Astrodynamics.Models.Tests.Frame;
 
 public class FrameTests
 {
-    [Fact]
-    public void CreateFrame()
-    {
-        StateOrientation so = new StateOrientation(new Quaternion(1.0, 2.0, 3.0, 4.0), new Vector3(5.0, 6.0, 7.0), DateTime.MinValue, Frames.Frame.ICRF);
-        Frames.Frame frame = new Frames.Frame("frm", so);
-        Assert.Equal("frm", frame.Name);
-        Assert.Equal(DateTime.MinValue, frame.FromICRF(DateTime.MinValue).Epoch);
-        Assert.Equal(so, frame.ToICRF(DateTime.MinValue));
-        var expectedFrame = new StateOrientation(new Quaternion(1.0, 2.0, 3.0, 4.0).Conjugate(), new Vector3(5.0, 6.0, 7.0).Inverse(), DateTime.MinValue, Frames.Frame.ICRF);
-        Assert.Equal(expectedFrame, frame.FromICRF(DateTime.MinValue));
-    }
-
     [Fact]
     public void ToInertialFrame()
     {
@@ -30,8 +19,8 @@ public class FrameTests
     public void ToNonInertialFrame()
     {
         var epoch = DateTime.MinValue;
-        var moonFrame = new Frames.Frame("moon", new StateOrientation(new Quaternion(0.92408921, 0.19537823, -0.07960816, 0.31866756), new Vector3(5.89144380E-08, 1.09616810E-06, -2.42504180E-06), epoch, Frames.Frame.ICRF));
-        var earthFrame = new Frames.Frame("earth", new StateOrientation(new Quaternion(0.76686839, 0.0, 0.0, -0.64180439), new Vector3(-1.00974196E-28, -3.08055237E-12, -7.29211502E-05), epoch, Frames.Frame.ICRF));
+        var moonFrame = new Frames.Frame(PlanetsAndMoons.MOON.Frame);
+        var earthFrame = new Frames.Frame(PlanetsAndMoons.EARTH.Frame);
         var q = moonFrame.ToFrame(earthFrame, epoch);
 
         Assert.Equal(epoch, q.Epoch);

@@ -9,7 +9,7 @@ namespace IO.Astrodynamics.Models.Body.Spacecraft
         public string Model { get; private set; }
         public double Capacity { get; private set; }
 
-        public FuelTank(string name, string model, double capacity, int id = default) 
+        public FuelTank(string name, string model, double capacity) 
         {
             if (string.IsNullOrEmpty(name))
             {
