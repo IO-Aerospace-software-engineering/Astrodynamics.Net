@@ -11,16 +11,16 @@ using IO.Astrodynamics.Models.Time;
 
 namespace IO.Astrodynamics.Models.Tests
 {
-    internal class TestHelpers
+    internal static class TestHelpers
     {
-        internal CelestialBodyScenario GetSun()
+        internal static CelestialBodyScenario GetSun()
         {
             Models.Mission.Mission mission = new Models.Mission.Mission("mission1");
             Scenario scenario = new Scenario("scn1", mission,new Window(new DateTime(2021, 1, 1), new DateTime(2021, 1, 2)));
             CelestialBody sun = new CelestialBody(10, "sun", 1.32712440018E+11, 695508.0, 695508.0);
             return new CelestialBodyScenario(sun, scenario);
         }
-        internal CelestialBodyScenario GetEarth()
+        internal static CelestialBodyScenario GetEarth()
         {
             Models.Mission.Mission mission = new Models.Mission.Mission("mission1");
             Scenario scenario = new Scenario("scn1", mission,new Window(new DateTime(2021, 1, 1), new DateTime(2021, 1, 2)));
@@ -30,7 +30,7 @@ namespace IO.Astrodynamics.Models.Tests
         }
 
 
-        internal CelestialBodyScenario GetMoon()
+        internal static CelestialBodyScenario GetMoon()
         {
             Models.Mission.Mission mission = new Models.Mission.Mission("mission1");
             Scenario scenario = new Scenario("scn1", mission,new Window(new DateTime(2021, 1, 1), new DateTime(2021, 1, 2)));
@@ -38,7 +38,7 @@ namespace IO.Astrodynamics.Models.Tests
             return new CelestialBodyScenario(moon, new StateVector(new Vector3(-2.068864826237993E+05, 2.891146390982051E+05, 1.515746884380044E+05), new Vector3(-8.366764389833921E-01, -5.602543663174073E-01, -1.710459390585548E-01), GetEarth(), new DateTime(2021, 1, 1), Frames.Frame.ICRF), scenario);
         }
 
-        internal CelestialBodyScenario GetMars()
+        internal static CelestialBodyScenario GetMars()
         {
             Models.Mission.Mission mission = new Models.Mission.Mission("mission1");
             Scenario scenario = new Scenario("scn1", mission,new Window(new DateTime(2021, 1, 1), new DateTime(2021, 1, 2)));
@@ -46,7 +46,7 @@ namespace IO.Astrodynamics.Models.Tests
             return new CelestialBodyScenario(moon, new StateVector(new Vector3(92881635.80779284, 188006710.59934112, 83728055.58077827), new Vector3(-21.16658268, 10.72779167, 5.49171534), GetSun(), new DateTime(2021, 1, 1), Frames.Frame.ICRF), scenario);
         }
 
-        internal CelestialBodyScenario GetEarthAtJ2000()
+        internal static CelestialBodyScenario GetEarthAtJ2000()
         {
             Models.Mission.Mission mission = new Models.Mission.Mission("mission1");
             Scenario scenario = new Scenario("scn1", mission,new Window(new DateTime(2021, 1, 1), new DateTime(2021, 1, 2)));
@@ -55,7 +55,7 @@ namespace IO.Astrodynamics.Models.Tests
             return earthScn;
         }
 
-        internal CelestialBodyScenario GetEarthAtJ20011214()
+        internal static CelestialBodyScenario GetEarthAtJ20011214()
         {
             Models.Mission.Mission mission = new Models.Mission.Mission("mission1");
             Scenario scenario = new Scenario("scn1", mission,new Window(new DateTime(2021, 1, 1), new DateTime(2021, 1, 2)));
@@ -64,7 +64,7 @@ namespace IO.Astrodynamics.Models.Tests
             return earthScn;
         }
 
-        internal CelestialBodyScenario GetMoonAtJ2000()
+        internal static CelestialBodyScenario GetMoonAtJ2000()
         {
             Models.Mission.Mission mission = new Models.Mission.Mission("mission1");
             Scenario scenario = new Scenario("scn1", mission,new Window(new DateTime(2021, 1, 1), new DateTime(2021, 1, 2)));
@@ -72,7 +72,7 @@ namespace IO.Astrodynamics.Models.Tests
             return new CelestialBodyScenario(moon, new StateVector(new Vector3(-291608.38463344, -266716.83339423, -76102.48709990), new Vector3(0.64353139, -0.66608768, -0.30132570), GetEarthAtJ2000() ,new DateTime(2000, 1, 1, 12, 0, 0), Frames.Frame.ICRF), scenario);
         }
 
-        internal CelestialBodyScenario GetMoonAt20011214()
+        internal static CelestialBodyScenario GetMoonAt20011214()
         {
             Models.Mission.Mission mission = new Models.Mission.Mission("mission1");
             Scenario scenario = new Scenario("scn1", mission,new Window(new DateTime(2021, 1, 1), new DateTime(2021, 1, 2)));
@@ -80,7 +80,7 @@ namespace IO.Astrodynamics.Models.Tests
             return new CelestialBodyScenario(moon, new StateVector(new Vector3(-121546.11992047, -336069.18056094, -135303.93452846), new Vector3(0.96178812 , -0.30184678, -0.22950150), GetEarthAtJ20011214(), new DateTime(2001, 12, 14, 0, 0, 0), Frames.Frame.ICRF), scenario);
         }
 
-        internal CelestialBodyScenario GetMarsAtJ2000()
+        internal static CelestialBodyScenario GetMarsAtJ2000()
         {
             Models.Mission.Mission mission = new Models.Mission.Mission("mission1");
             Scenario scenario = new Scenario("scn1", mission,new Window(new DateTime(2021, 1, 1), new DateTime(2021, 1, 2)));

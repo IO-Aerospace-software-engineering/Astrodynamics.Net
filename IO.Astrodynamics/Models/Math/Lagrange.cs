@@ -30,7 +30,7 @@ namespace IO.Astrodynamics.Models.Math
 
         public static StateVector Interpolate(StateVector[] data, DateTime epoch)
         {
-            double idx = epoch.SecondsFromJ2000();
+            double idx = epoch.SecondsFromJ2000TDB();
             int n = data.Length;
             StateVector result = new StateVector(new Vector3(), new Vector3(), data[0].CenterOfMotion, epoch, data[0].Frame); // Initialize result
 
@@ -44,7 +44,7 @@ namespace IO.Astrodynamics.Models.Math
                 {
                     if (j != i)
                     {
-                        var t = (idx - data[j].Epoch.SecondsFromJ2000()) / (data[i].Epoch.SecondsFromJ2000() - data[j].Epoch.SecondsFromJ2000());
+                        var t = (idx - data[j].Epoch.SecondsFromJ2000TDB()) / (data[i].Epoch.SecondsFromJ2000TDB() - data[j].Epoch.SecondsFromJ2000TDB());
                         posTerm *= t;
                         velTerm *= t;
                     }
@@ -58,7 +58,7 @@ namespace IO.Astrodynamics.Models.Math
 
         public static StateOrientation Interpolate(StateOrientation[] data, DateTime epoch)
         {
-            double idx = epoch.SecondsFromJ2000();
+            double idx = epoch.SecondsFromJ2000TDB();
             int n = data.Length;
             Quaternion qRes = new Quaternion();
             Vector3 avRes = new Vector3();
@@ -73,7 +73,7 @@ namespace IO.Astrodynamics.Models.Math
                 {
                     if (j != i)
                     {
-                        var t = (idx - data[j].Epoch.SecondsFromJ2000()) / (data[i].Epoch.SecondsFromJ2000() - data[j].Epoch.SecondsFromJ2000());
+                        var t = (idx - data[j].Epoch.SecondsFromJ2000TDB()) / (data[i].Epoch.SecondsFromJ2000TDB() - data[j].Epoch.SecondsFromJ2000TDB());
                         q *= t;
                         av *= t;
                     }

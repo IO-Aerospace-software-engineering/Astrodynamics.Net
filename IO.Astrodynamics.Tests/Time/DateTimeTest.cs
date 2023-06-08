@@ -20,13 +20,15 @@ public class DateTimeTests
     [Fact]
     public void ToTDBFromLocal()
     {
-        Assert.Equal(new DateTime(2022, 1, 1, 12, 1, 9, 184, DateTimeKind.Unspecified) - TimeZoneInfo.Local.GetUtcOffset(new DateTime(2022, 1, 1, 12, 0, 0, DateTimeKind.Local)), new DateTime(2022, 1, 1, 12, 0, 0, DateTimeKind.Local).ToTDB());
+        Assert.Equal(new DateTime(2022, 1, 1, 12, 1, 9, 184, DateTimeKind.Unspecified) - TimeZoneInfo.Local.GetUtcOffset(new DateTime(2022, 1, 1, 12, 0, 0, DateTimeKind.Local)),
+            new DateTime(2022, 1, 1, 12, 0, 0, DateTimeKind.Local).ToTDB());
     }
 
     [Fact]
     public void ToUTCFromLocal()
     {
-        Assert.Equal(new DateTime(2022, 1, 1, 12, 0, 0, DateTimeKind.Utc) - TimeZoneInfo.Local.GetUtcOffset(new DateTime(2022, 1, 1, 12, 0, 0, DateTimeKind.Local)), new DateTime(2022, 1, 1, 12, 0, 0, DateTimeKind.Local).ToUTC());
+        Assert.Equal(new DateTime(2022, 1, 1, 12, 0, 0, DateTimeKind.Utc) - TimeZoneInfo.Local.GetUtcOffset(new DateTime(2022, 1, 1, 12, 0, 0, DateTimeKind.Local)),
+            new DateTime(2022, 1, 1, 12, 0, 0, DateTimeKind.Local).ToUTC());
     }
 
     [Fact]
@@ -43,8 +45,16 @@ public class DateTimeTests
     [Fact]
     public void SecondsFromJ2000()
     {
-        Assert.Equal(0.0, new DateTime(2000, 01, 01, 12, 0, 0, 0, DateTimeKind.Unspecified).SecondsFromJ2000());
-        Assert.Equal(-315532742.816, new DateTime(1990, 01, 01, 12, 0, 0, 0, DateTimeKind.Utc).SecondsFromJ2000());
-        Assert.Equal(631152069.184, new DateTime(2020, 01, 01, 12, 0, 0, 0, DateTimeKind.Utc).SecondsFromJ2000());
+        Assert.Equal(0.0, new DateTime(2000, 01, 01, 12, 0, 0, 0, DateTimeKind.Unspecified).SecondsFromJ2000TDB());
+        Assert.Equal(-315532742.816, new DateTime(1990, 01, 01, 12, 0, 0, 0, DateTimeKind.Utc).SecondsFromJ2000TDB());
+        Assert.Equal(631152069.184, new DateTime(2020, 01, 01, 12, 0, 0, 0, DateTimeKind.Utc).SecondsFromJ2000TDB());
+    }
+
+    [Fact]
+    public void CreateFromEllapsedSeconds()
+    {
+        Assert.Equal(new DateTime(2000, 01, 01, 12, 0, 0, 0, DateTimeKind.Unspecified), DateTimeExtension.CreateTDB(0.0));
+        Assert.Equal(new DateTime(1990, 01, 01, 12, 0, 0, 0, DateTimeKind.Utc), DateTimeExtension.CreateUTC(-315532742.816));
+        Assert.Equal(new DateTime(2020, 01, 01, 12, 0, 0, 0, DateTimeKind.Utc), DateTimeExtension.CreateUTC(631152069.184));
     }
 }

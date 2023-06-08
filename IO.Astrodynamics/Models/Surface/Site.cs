@@ -15,6 +15,7 @@ namespace IO.Astrodynamics.Models.Surface
 {
     public class Site : ILocalizable, INaifObject
     {
+        public int Id { get; }
         public int NaifId { get; }
         public string Name { get; }
         public CelestialBodyScenario Body { get; }
@@ -28,6 +29,7 @@ namespace IO.Astrodynamics.Models.Surface
             Body = body ?? throw new ArgumentNullException(nameof(body));
             Geodetic = geodetic;
             DirectoryPath = directoryPath ?? throw new ArgumentNullException(nameof(directoryPath));
+            Id = id;
             NaifId = body.PhysicalBody.NaifId * 1000 + id;
         }
 

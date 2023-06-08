@@ -292,7 +292,7 @@ public abstract class OrbitalParameters : IEquatable<OrbitalParameters>
 
     private KeplerianElements ToKeplerianElements(DateTime epoch)
     {
-        double ellapsedTime = epoch.SecondsFromJ2000() - Epoch.SecondsFromJ2000();
+        double ellapsedTime = epoch.SecondsFromJ2000TDB() - Epoch.SecondsFromJ2000TDB();
         double M = MeanAnomaly() + MeanMotion() * ellapsedTime;
         while (M < 0.0)
         {

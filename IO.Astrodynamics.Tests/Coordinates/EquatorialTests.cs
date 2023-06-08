@@ -38,9 +38,8 @@ namespace IO.Astrodynamics.Models.Tests.Coordinates
         public void CreateFromStateVector2()
         {
             var epoch = new DateTime(2021, 1, 1);
-            TestHelpers th = new TestHelpers();
 
-            var moon = th.GetMoon();
+            var moon = TestHelpers.GetMoon();
             var earth = moon.InitialOrbitalParameters.CenterOfMotion;
             var eq = new Equatorial(new StateVector(new Vector3(-202831.34150844064, 284319.70678317308, 150458.88140126597), new Vector3(-0.48702480142667454, -0.26438331399030518, -0.17175837261637006), earth, epoch, Frames.Frame.ICRF));
             Assert.Equal(new Equatorial(0.406773808779999, 2.1904536325374035, 380284.26703704614), eq);

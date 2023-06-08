@@ -30,11 +30,4 @@ public struct Site
         DirectoryPath = directoryPath;
         Ranges = ArrayBuilder.ArrayOf<AzimuthRange>(AZIMUTHRANGESIZE);
     }
-
-    // [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
-    // public BodyVisibilityFromSite[] BodyVisibilityFromSites;
-    //
-    // public ByDay ByDay;
-    //
-    // public ByNight ByNight;
 }

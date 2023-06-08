@@ -30,8 +30,8 @@ namespace IO.Astrodynamics.Models.Tests.Mission
         public void RelativeStateVectorSatellites()
         {
             var epoch = new DateTime(2021, 1, 1);
-            TestHelpers th = new TestHelpers();
-            var moon = th.GetMoon();
+            
+            var moon = TestHelpers.GetMoon();
             var earth = moon.InitialOrbitalParameters.CenterOfMotion;
 
             var sv = earth.RelativeStateVector(moon, epoch);
@@ -45,8 +45,8 @@ namespace IO.Astrodynamics.Models.Tests.Mission
             Models.Mission.Mission mission = new Models.Mission.Mission("mission1");
             Scenario scenario = new Scenario("scn1", mission,new Window(new DateTime(2021, 1, 1), new DateTime(2021, 1, 2)));
             var epoch = new DateTime(2021, 1, 1);
-            TestHelpers th = new TestHelpers();
-            var moon = th.GetMoon();
+            
+            var moon = TestHelpers.GetMoon();
             var earth = moon.InitialOrbitalParameters.CenterOfMotion;
 
             Clock clk1 = new Clock("My clock", 1.0 / 256.0);
@@ -65,8 +65,8 @@ namespace IO.Astrodynamics.Models.Tests.Mission
         public void RelativeStateVectorSun()
         {
             var epoch = new DateTime(2021, 1, 1);
-            TestHelpers th = new TestHelpers();
-            var moon = th.GetMoon();
+            
+            var moon = TestHelpers.GetMoon();
             var earth = moon.InitialOrbitalParameters.CenterOfMotion;
             var sun = earth.InitialOrbitalParameters.CenterOfMotion;
 
@@ -80,11 +80,11 @@ namespace IO.Astrodynamics.Models.Tests.Mission
         public void RelativeStateVectorOtherBranch()
         {
             var epoch = new DateTime(2021, 1, 1);
-            TestHelpers th = new TestHelpers();
-            var moon = th.GetMoon();
+            
+            var moon = TestHelpers.GetMoon();
             var earth = moon.InitialOrbitalParameters.CenterOfMotion;
             var sun = earth.InitialOrbitalParameters.CenterOfMotion;
-            var mars = th.GetMars();
+            var mars = TestHelpers.GetMars();
 
             var res = moon.RelativeStateVector(mars, epoch);
 
@@ -95,8 +95,8 @@ namespace IO.Astrodynamics.Models.Tests.Mission
         public void RelativeStateVectorFromSun()
         {
             var epoch = new DateTime(2021, 1, 1);
-            TestHelpers th = new TestHelpers();
-            var moon = th.GetMoon();
+            
+            var moon = TestHelpers.GetMoon();
             var earth = moon.InitialOrbitalParameters.CenterOfMotion;
             var sun = earth.InitialOrbitalParameters.CenterOfMotion;
 
@@ -109,8 +109,8 @@ namespace IO.Astrodynamics.Models.Tests.Mission
         public void RelativeStateVectorToSun()
         {
             var epoch = new DateTime(2021, 1, 1);
-            TestHelpers th = new TestHelpers();
-            var moon = th.GetMoon();
+            
+            var moon = TestHelpers.GetMoon();
             var earth = moon.InitialOrbitalParameters.CenterOfMotion;
             var sun = earth.InitialOrbitalParameters.CenterOfMotion;
 
@@ -123,8 +123,8 @@ namespace IO.Astrodynamics.Models.Tests.Mission
         public void IsOcculted()
         {
             var epoch = new DateTime(2000, 1, 1);
-            TestHelpers th = new TestHelpers();
-            var moon = th.GetMoonAt20011214();
+            
+            var moon = TestHelpers.GetMoonAt20011214();
             var earth = moon.InitialOrbitalParameters.CenterOfMotion;
             var sun = earth.InitialOrbitalParameters.CenterOfMotion;
             var res = sun.IsOcculted(moon, earth, new DateTime(2001, 12, 14, 21, 0, 0));
@@ -136,8 +136,8 @@ namespace IO.Astrodynamics.Models.Tests.Mission
         public void FindOccultationsEclipse()
         {
             var epoch = new DateTime(2000, 1, 1);
-            TestHelpers th = new TestHelpers();
-            var moon = th.GetMoonAt20011214();
+            
+            var moon = TestHelpers.GetMoonAt20011214();
             var earth = moon.InitialOrbitalParameters.CenterOfMotion;
             var sun = earth.InitialOrbitalParameters.CenterOfMotion;
             var res = sun.FindOccultations(moon, earth, new Window(new DateTime(2001, 12, 14, 20, 0, 0), new DateTime(2001, 12, 14, 22, 0, 0)), TimeSpan.FromMinutes(1.0));
@@ -160,8 +160,8 @@ namespace IO.Astrodynamics.Models.Tests.Mission
         public void FindOccultations()
         {
             var epoch = new DateTime(2000, 1, 1);
-            TestHelpers th = new TestHelpers();
-            var moon = th.GetMoonAt20011214();
+            
+            var moon = TestHelpers.GetMoonAt20011214();
             var earth = moon.InitialOrbitalParameters.CenterOfMotion;
             var sun = earth.InitialOrbitalParameters.CenterOfMotion;
             var res = sun.FindOccultations(moon, earth, new Window(new DateTime(2001, 12, 14, 3, 0, 0), new DateTime(2001, 12, 14, 4, 0, 0)), TimeSpan.FromMinutes(1.0));
@@ -178,10 +178,10 @@ namespace IO.Astrodynamics.Models.Tests.Mission
         public void AngularSize()
         {
             var epoch = new DateTime(2000, 1, 1);
-            TestHelpers th = new TestHelpers();
-            var moon = th.GetMoonAtJ2000();
-            var sun = th.GetSun();
-            var earth = th.GetEarthAtJ2000();
+            
+            var moon = TestHelpers.GetMoonAtJ2000();
+            var sun = TestHelpers.GetSun();
+            var earth = TestHelpers.GetEarthAtJ2000();
             var res = sun.AngularSize(earth.InitialOrbitalParameters.ToStateVector().Position.Magnitude());
             Assert.Equal(0.009456, res, 6);
 

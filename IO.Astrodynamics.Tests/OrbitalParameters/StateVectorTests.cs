@@ -261,8 +261,8 @@ namespace IO.Astrodynamics.Models.Tests.OrbitalParameters
         [Fact]
         public void PerigeeVelocity()
         {
-            TestHelpers th = new TestHelpers();
-            var earth = th.GetEarthAtJ2000();
+            
+            var earth = TestHelpers.GetEarthAtJ2000();
             var sv = new StateVector(new Vector3(6800.0, 0.0, 0.0), new Vector3(0.0, 8.0, 0.0), earth, earth.InitialOrbitalParameters.Epoch, Frames.Frame.ICRF);
             Assert.Equal(8.0, sv.PerigeeVelocity());
             
@@ -271,8 +271,8 @@ namespace IO.Astrodynamics.Models.Tests.OrbitalParameters
         [Fact]
         public void ApogeeVelocity()
         {
-            TestHelpers th = new TestHelpers();
-            var earth = th.GetEarthAtJ2000();
+            
+            var earth = TestHelpers.GetEarthAtJ2000();
             var sv = new StateVector(new Vector3(6800.0, 0.0, 0.0), new Vector3(0.0, 8.0, 0.0), earth, earth.InitialOrbitalParameters.Epoch, Frames.Frame.ICRF);
             Assert.Equal(6.65442800735294, sv.ApogeeVelocity());
 

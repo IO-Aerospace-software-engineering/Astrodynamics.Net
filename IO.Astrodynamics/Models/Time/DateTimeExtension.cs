@@ -82,7 +82,7 @@ public static class DateTimeExtension
     /// </summary>
     /// <param name="date"></param>
     /// <returns></returns>
-    public static double SecondsFromJ2000(this DateTime date)
+    public static double SecondsFromJ2000TDB(this DateTime date)
     {
         if (date.Kind != DateTimeKind.Unspecified)
         {
@@ -90,5 +90,15 @@ public static class DateTimeExtension
         }
 
         return (date - J2000).TotalSeconds;
+    }
+
+    public static DateTime CreateTDB(double secondsFromJ2000)
+    {
+        return J2000.AddSeconds(secondsFromJ2000).ToTDB();
+    }
+
+    public static DateTime CreateUTC(double secondsFromJ2000)
+    {
+        return J2000.AddSeconds(secondsFromJ2000).ToUTC();
     }
 }

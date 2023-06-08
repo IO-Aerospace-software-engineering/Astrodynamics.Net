@@ -37,9 +37,9 @@ namespace IO.Astrodynamics.Models.Tests.Surface
         public void RelativeStatevectorToBody()
         {
             var epoch = new DateTime(2021, 1, 1);
-            TestHelpers th = new TestHelpers();
+            
 
-            var moon = th.GetMoon();
+            var moon = TestHelpers.GetMoon();
             var earth = moon.InitialOrbitalParameters.CenterOfMotion;
             Site site = new Site(33, "S1", earth, new Geodetic(30 * Constants.Deg2Rad, 10.0 * Constants.Deg2Rad, 0.0), Astrodynamics.Tests.Constants.SitePath);
 
@@ -55,9 +55,9 @@ namespace IO.Astrodynamics.Models.Tests.Surface
         {
             var epoch = new DateTime(2000, 1, 1, 12, 0, 0);
 
-            TestHelpers th = new TestHelpers();
+            
 
-            var earth = th.GetEarthAtJ2000();
+            var earth = TestHelpers.GetEarthAtJ2000();
             Site site = new Site(33,"S1", earth, new Geodetic(2.2 * Constants.Deg2Rad, 48.0 * Constants.Deg2Rad, 0.0),Astrodynamics.Tests.Constants.SitePath);
 
             var res = site.FindDayWindows(new Window(epoch, epoch.AddDays(1.0)), Constants.CivilTwilight);
@@ -71,9 +71,9 @@ namespace IO.Astrodynamics.Models.Tests.Surface
         {
             var epoch = new DateTime(2000, 1, 1, 12, 0, 0);
 
-            TestHelpers th = new TestHelpers();
+            
 
-            var earth = th.GetEarthAtJ2000();
+            var earth = TestHelpers.GetEarthAtJ2000();
             Site site = new Site(33,"S1", earth, new Geodetic(2.2 * Constants.Deg2Rad, 48.0 * Constants.Deg2Rad, 0.0),Astrodynamics.Tests.Constants.SitePath);
 
             var res = site.FindNightWindows(new Window(epoch, epoch.AddDays(1.0)), Constants.CivilTwilight);
@@ -86,10 +86,10 @@ namespace IO.Astrodynamics.Models.Tests.Surface
         {
             var epoch = new DateTime(2000, 1, 1, 12, 0, 0);
 
-            TestHelpers th = new TestHelpers();
+            
 
 
-            var earth = th.GetEarthAtJ2000();
+            var earth = TestHelpers.GetEarthAtJ2000();
             Site site = new Site(33,"S1", earth, new Geodetic(0.0, 45.0 * Constants.Deg2Rad, 0.0),Astrodynamics.Tests.Constants.SitePath);
 
             var isday = site.IsDay(epoch, Constants.CivilTwilight);
@@ -101,9 +101,9 @@ namespace IO.Astrodynamics.Models.Tests.Surface
         {
             var epoch = new DateTime(2000, 1, 1, 0, 0, 0);
 
-            TestHelpers th = new TestHelpers();
+            
 
-            var earth = th.GetEarthAtJ2000();
+            var earth = TestHelpers.GetEarthAtJ2000();
             Site site = new Site(33,"S1", earth, new Geodetic(0.0, 45.0 * Constants.Deg2Rad, 0.0),Astrodynamics.Tests.Constants.SitePath);
 
             var isNight = site.IsNight(epoch, Constants.CivilTwilight);
@@ -115,11 +115,9 @@ namespace IO.Astrodynamics.Models.Tests.Surface
         {
             var epoch = new DateTime(2000, 1, 1, 12, 0, 0);
 
-            TestHelpers th = new TestHelpers();
-
-            var earth = th.GetEarthAtJ2000();
+            var earth = TestHelpers.GetEarthAtJ2000();
             Site site = new Site(33,"S1", earth, new Geodetic(-116.7944627147624 * Constants.Deg2Rad, 35.2471635434595 * Constants.Deg2Rad, 0.107),Astrodynamics.Tests.Constants.SitePath);
-            var hor = site.GetHorizontalCoordinates(th.GetMarsAtJ2000(), epoch);
+            var hor = site.GetHorizontalCoordinates(TestHelpers.GetMarsAtJ2000(), epoch);
             Assert.Equal(-0.53861419209430739, hor.Azimuth);
             Assert.Equal(-1.1359034659274423, hor.Elevation);
             Assert.Equal(276702594.231908, hor.Altitude);

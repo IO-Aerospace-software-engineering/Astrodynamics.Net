@@ -3,18 +3,21 @@ using System.IO;
 using System.Runtime.InteropServices;
 using Xunit;
 using System.Linq;
+using IO.Astrodynamics.Converters;
 using IO.Astrodynamics.DTO;
 using IO.Astrodynamics.Models.Frames;
+using IO.Astrodynamics.Models.Math;
+using IO.Astrodynamics.Models.Surface;
+using IO.Astrodynamics.Models.Tests;
 using IO.Astrodynamics.Models.Time;
 using IO.Astrodynamics.SolarSystemObjects;
+using Site = IO.Astrodynamics.DTO.Site;
 using Window = IO.Astrodynamics.DTO.Window;
 
 namespace IO.Astrodynamics.Tests;
 
 public class APITest
 {
-   
-
     [Fact]
     public void CheckVersion()
     {
@@ -31,40 +34,33 @@ public class APITest
         //Load solar system kernels
         api.LoadKernels(Constants.SolarSystemKernelPath);
 
-        //Convert UTC time to TDB
-        double start = api.ConvertUTCToTDB(667915130.814600);
-        double end = api.ConvertUTCToTDB(668174330.814560);
+        var start = DateTime.Parse("2021-03-02 00:00:00.000000").ToTDB();
+        var end = DateTime.Parse("2021-03-05 00:00:00.000000").ToTDB();
+
+        Models.Time.Window window = new Models.Time.Window(start, end);
 
         //Define launch site
-        Site launchSite = new Site(id: 399303, bodyId: PlanetsAndMoons.EARTH.NaifId,
-            coordinates: new Geodetic(-81.0 * Constants.DEG_RAD, 28.5 * Constants.DEG_RAD, 0.0), name: "S3",
-            directoryPath: Constants.SitePath.FullName);
-
-        //Define recovery site
-        Site recoverySite = new Site(id: 399304, bodyId: PlanetsAndMoons.EARTH.NaifId,
-            coordinates: new Geodetic(-81.0 * Constants.DEG_RAD, 28.5 * Constants.DEG_RAD, 0.0), name: "S4",
-            directoryPath: Constants.SitePath.FullName);
+        LaunchSite launchSite = new LaunchSite(399303, "S3", TestHelpers.GetEarthAtJ2000(),
+            new Models.Coordinates.Geodetic(-81.0 * Constants.DEG_RAD, 28.5 * Constants.DEG_RAD, 0.0), Constants.SitePath);
 
         //Define the targeted parking orbit
-        StateVector parkingOrbit = new StateVector(399, start, InertialFrame.ICRF.GetDescription(),
-            new Vector3D(5056554.1874925727, 4395595.4942363985, 0.0),
-            new Vector3D(-3708.6305608890916, 4266.2914313011433, 6736.8538488755494));
+        Models.OrbitalParameters.StateVector parkingOrbit = new Models.OrbitalParameters.StateVector(new Vector3(5056554.1874925727, 4395595.4942363985, 0.0),
+            new Vector3(-3708.6305608890916, 4266.2914313011433, 6736.8538488755494), TestHelpers.GetEarthAtJ2000(), start, Frame.ICRF);
 
         //Create launch object
-        Launch launch = new Launch(launchSite, recoverySite, true, 1, parkingOrbit, new Window(start, end));
+        Models.Maneuver.Launch launch = new Models.Maneuver.Launch(launchSite, launchSite, parkingOrbit, Models.Constants.CivilTwilight, true);
 
         //Find launch windows
-        //Find launch windows
-        api.FindLaunchWindows(ref launch);
+        var res = api.FindLaunchWindows(launch, window);
 
         //Read results
-        Assert.Equal(2, launch.Windows.Count(x => x.Start != 0 && x.End != 0));
-        Assert.Equal(new Window(668084955.97088385, 668084955.97088385), launch.Windows[0]);
-        Assert.Equal(new Window(668171119.44731534, 668171119.44731534), launch.Windows[1]);
-        Assert.Equal(47.00587579161426, launch.InertialAzimuth * Constants.RAD_DEG);
-        Assert.Equal(45.125224583051406, launch.NonInertialAzimuth * Constants.RAD_DEG);
-        Assert.Equal(8794.33812148836, launch.InertialInsertionVelocity);
-        Assert.Equal(8499.727158006212, launch.NonInertialInsertionVelocity);
+        Assert.Equal(2, res.Count());
+        Assert.Equal(new Models.Time.Window(DateTime.Parse("2021-03-03 23:09:15.971").ToTDB(), DateTime.Parse("2021-03-03 23:09:15.971").ToTDB()), res.ElementAt(0).Window);
+        Assert.Equal(new Models.Time.Window(DateTime.Parse("2021-03-04 23:05:19.447").ToTDB(), DateTime.Parse("2021-03-04 23:05:19.447").ToTDB()), res.ElementAt(1).Window);
+        Assert.Equal(47.00587579161426, res.ElementAt(0).InertialAzimuth * Constants.RAD_DEG);
+        Assert.Equal(45.125224583051406, res.ElementAt(0).NonInertialAzimuth * Constants.RAD_DEG);
+        Assert.Equal(8794.33812148836, res.ElementAt(0).InertialInsertionVelocity);
+        Assert.Equal(8499.727158006212, res.ElementAt(0).NonInertialInsertionVelocity);
     }
 
     // [Fact]
