@@ -99,6 +99,8 @@ public static class DateTimeExtension
 
     public static DateTime CreateUTC(double secondsFromJ2000)
     {
-        return J2000.AddSeconds(secondsFromJ2000).ToUTC();
+        var date = J2000.AddSeconds(secondsFromJ2000);
+        DateTime.SpecifyKind(date, DateTimeKind.Utc);
+        return DateTime.SpecifyKind(date, DateTimeKind.Utc).ToUTC();
     }
 }

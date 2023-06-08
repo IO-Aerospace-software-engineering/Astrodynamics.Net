@@ -35,6 +35,8 @@ namespace IO.Astrodynamics.Models.Mission
             {
                 SetInitialOrbitalParameters(initialOrbitalParameters);
             }
+
+            Scenario.AddBody(this);
         }
 
         protected BodyScenario(Body.Body body, Frames.Frame frame, Scenario scenario) : this(body, null, frame,

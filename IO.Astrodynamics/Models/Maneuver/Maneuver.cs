@@ -19,6 +19,7 @@ namespace IO.Astrodynamics.Models.Maneuver
         public IReadOnlyCollection<SpacecraftEngine> Engines { get; private set; }
         public Maneuver NextManeuver { get; protected set; }
 
+        //todo Maybe could I remove it
         public SpacecraftScenario Spacecraft { get; private set; }
 
         public OrbitalParameters.OrbitalParameters TargetOrbit { get; }

@@ -6,7 +6,7 @@ namespace IO.Astrodynamics;
 
 public enum InstrumentShape
 {
-    [Description("rectangular")] Circular,
+    [Description("circular")] Circular,
     [Description("elliptical")] Elliptical,
     [Description("rectangular")] Rectangular
 }

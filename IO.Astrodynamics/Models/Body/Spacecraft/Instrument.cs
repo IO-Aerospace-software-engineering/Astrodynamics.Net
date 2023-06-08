@@ -13,6 +13,8 @@ namespace IO.Astrodynamics.Models.Body.Spacecraft
         public double FieldOfView { get; }
         public double CrossAngle { get; }
         public InstrumentShape Shape { get; }
+        
+        //todo customize these two parameters by constructor
         public static readonly Vector3 Boresight = Vector3.VectorZ;
         public static readonly Vector3 RefVector = Vector3.VectorX;
 

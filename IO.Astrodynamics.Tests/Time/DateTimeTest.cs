@@ -54,7 +54,7 @@ public class DateTimeTests
     public void CreateFromEllapsedSeconds()
     {
         Assert.Equal(new DateTime(2000, 01, 01, 12, 0, 0, 0, DateTimeKind.Unspecified), DateTimeExtension.CreateTDB(0.0));
-        Assert.Equal(new DateTime(1990, 01, 01, 12, 0, 0, 0, DateTimeKind.Utc), DateTimeExtension.CreateUTC(-315532742.816));
-        Assert.Equal(new DateTime(2020, 01, 01, 12, 0, 0, 0, DateTimeKind.Utc), DateTimeExtension.CreateUTC(631152069.184));
+        Assert.Equal(new DateTime(1990, 01, 01, 12, 0, 57, 184, DateTimeKind.Utc), DateTimeExtension.CreateUTC(-315532742.816));
+        Assert.Equal(new DateTime(2020, 01, 01, 12, 1, 9, 184, DateTimeKind.Utc), DateTimeExtension.CreateUTC(631152069.184));
     }
 }

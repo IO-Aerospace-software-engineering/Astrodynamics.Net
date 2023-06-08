@@ -175,19 +175,17 @@ public class API
     /// <param name="scenario"></param>
     public void ExecuteScenario(Models.Mission.Scenario scenario)
     {
-        for (int i = 0; i < scenario.Bodies.OfType<Models.Mission.SpacecraftScenario>().Count(); i++)
+        foreach (var spacecraft in scenario.Bodies.OfType<Models.Mission.SpacecraftScenario>())
         {
             Scenario scenarioDto = new Scenario(scenario.Name, new Window(scenario.Window.StartDate.SecondsFromJ2000TDB(), scenario.Window.EndDate.SecondsFromJ2000TDB()));
 
 
             for (int j = 0; j < scenario.Bodies.OfType<Models.Mission.CelestialBodyScenario>().Count(); j++)
             {
-                scenarioDto.CelestialBodiesId[i] = scenario.Bodies.ElementAt(i).PhysicalBody.NaifId;
+                scenarioDto.CelestialBodiesId[j] = scenario.Bodies.ElementAt(j).PhysicalBody.NaifId;
             }
 
-            var spacecraft = scenario.Bodies.ElementAt(i) as SpacecraftScenario;
             //Define parking orbit
-            var sv = spacecraft.InitialOrbitalParameters.ToStateVector();
             StateVector parkingOrbit = _mapper.Map<StateVector>(spacecraft.InitialOrbitalParameters.ToStateVector());
 
             //Create and configure spacecraft
@@ -202,21 +200,21 @@ public class API
             for (int j = 0; j < spacecraft.Engines.Count; j++)
             {
                 var engine = spacecraft.Engines.ElementAt(j);
-                scenarioDto.Spacecraft.Engines[0] = new EngineDTO(id: j + 1, name: engine.Engine.Name, fuelFlow: engine.Engine.FuelFlow, serialNumber: engine.SerialNumber,
+                scenarioDto.Spacecraft.Engines[j] = new EngineDTO(id: j + 1, name: engine.Engine.Name, fuelFlow: engine.Engine.FuelFlow, serialNumber: engine.SerialNumber,
                     fuelTankSerialNumber: engine.FuelTank.SerialNumber, isp: engine.Engine.ISP);
             }
 
             for (int j = 0; j < spacecraft.Payloads.Count; j++)
             {
                 var payload = spacecraft.Payloads.ElementAt(j);
-                scenarioDto.Spacecraft.Payloads[0] = new Payload(payload.SerialNumber, payload.Name, payload.Mass);
+                scenarioDto.Spacecraft.Payloads[j] = new Payload(payload.SerialNumber, payload.Name, payload.Mass);
             }
 
             for (int j = 0; j < spacecraft.Intruments.Count; j++)
             {
                 var instrument = spacecraft.Intruments.ElementAt(j);
                 var orientation = instrument.Orientation.ToEuler();
-                scenarioDto.Spacecraft.Instruments[0] = new Instrument(instrument.Instrument.NaifId, instrument.Instrument.Name, instrument.Instrument.Shape.GetDescription(),
+                scenarioDto.Spacecraft.Instruments[j] = new Instrument(instrument.Instrument.NaifId, instrument.Instrument.Name, instrument.Instrument.Shape.GetDescription(),
                     _mapper.Map<Vector3D>(orientation), _mapper.Map<Vector3D>(Models.Body.Spacecraft.Instrument.Boresight),
                     _mapper.Map<Vector3D>(Models.Body.Spacecraft.Instrument.RefVector), instrument.Instrument.FieldOfView, instrument.Instrument.CrossAngle);
             }
@@ -226,9 +224,10 @@ public class API
             int order = 0;
             while (maneuver != null)
             {
-                StateVector target = _mapper.Map<StateVector>(maneuver.TargetOrbit.ToStateVector());
+                
                 if (maneuver is PlaneAlignmentManeuver)
                 {
+                    StateVector target = _mapper.Map<StateVector>(maneuver.TargetOrbit.ToStateVector());
                     int idx = scenarioDto.Spacecraft.OrbitalPlaneChangingManeuvers.Count(x => x.ManeuverOrder > -1);
                     scenarioDto.Spacecraft.OrbitalPlaneChangingManeuvers[idx] = new OrbitalPlaneChangingManeuver(order, maneuver.ManeuverHoldDuration.TotalSeconds,
                         maneuver.MinimumEpoch.SecondsFromJ2000TDB(), target);
@@ -254,6 +253,7 @@ public class API
                 }
                 else if (maneuver is IO.Astrodynamics.Models.Maneuver.ApsidalAlignmentManeuver)
                 {
+                    StateVector target = _mapper.Map<StateVector>(maneuver.TargetOrbit.ToStateVector());
                     int idx = scenarioDto.Spacecraft.ApsidalAlignmentManeuvers.Count(x => x.ManeuverOrder > -1);
                     scenarioDto.Spacecraft.ApsidalAlignmentManeuvers[scenarioDto.Spacecraft.ApsidalAlignmentManeuvers.Count(x => x.ManeuverOrder > -1)] =
                         new ApsidalAlignmentManeuver(order, maneuver.ManeuverHoldDuration.TotalSeconds, maneuver.MinimumEpoch.SecondsFromJ2000TDB(), target);
@@ -291,6 +291,7 @@ public class API
                 }
                 else if (maneuver is IO.Astrodynamics.Models.Maneuver.PhasingManeuver)
                 {
+                    StateVector target = _mapper.Map<StateVector>(maneuver.TargetOrbit.ToStateVector());
                     int idx = scenarioDto.Spacecraft.PhasingManeuver.Count(x => x.ManeuverOrder > -1);
                     scenarioDto.Spacecraft.PhasingManeuver[scenarioDto.Spacecraft.PhasingManeuver.Count(x => x.ManeuverOrder > -1)] = new PhasingManeuver(order,
                         maneuver.ManeuverHoldDuration.TotalSeconds, maneuver.MinimumEpoch.SecondsFromJ2000TDB(),
