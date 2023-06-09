@@ -72,7 +72,7 @@ namespace IO.Astrodynamics.Models.Mission
         /// </summary>
         /// <param name="instrument"></param>
         /// <param name="orientation"></param>
-        public void AddInstrument(Instrument instrument, Quaternion orientation)
+        public void AddInstrument(Instrument instrument, Vector3 orientation)
         {
             this._instruments.Add(new SpacecraftInstrument(this, instrument, orientation));
         }

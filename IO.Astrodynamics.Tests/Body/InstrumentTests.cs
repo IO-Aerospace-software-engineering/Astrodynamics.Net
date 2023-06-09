@@ -1,5 +1,6 @@
 using System;
 using IO.Astrodynamics.Models.Body.Spacecraft;
+using IO.Astrodynamics.Models.Math;
 using Xunit;
 
 namespace IO.Astrodynamics.Models.Tests.Body
@@ -9,7 +10,7 @@ namespace IO.Astrodynamics.Models.Tests.Body
         [Fact]
         public void Create()
         {
-            Instrument instrument = new Instrument(600, "inst", "model", 1.57, InstrumentShape.Circular);
+            Instrument instrument = new Instrument(600, "inst", "model", 1.57, InstrumentShape.Circular, Vector3.VectorZ, Vector3.VectorX);
             Assert.Equal("inst", instrument.Name);
             Assert.Equal("model", instrument.Model);
             Assert.Equal(1.57, instrument.FieldOfView);
@@ -20,9 +21,9 @@ namespace IO.Astrodynamics.Models.Tests.Body
         [Fact]
         public void CreateInvalid()
         {
-            Assert.Throws<ArgumentException>(() => new Instrument(600, "", "model", 1.57, InstrumentShape.Circular));
-            Assert.Throws<ArgumentException>(() => new Instrument(600, "inst", "", 1.57, InstrumentShape.Circular));
-            Assert.Throws<ArgumentException>(() => new Instrument(600, "inst", "model", 0.0, InstrumentShape.Circular));
+            Assert.Throws<ArgumentException>(() => new Instrument(600, "", "model", 1.57, InstrumentShape.Circular, Vector3.VectorZ, Vector3.VectorX));
+            Assert.Throws<ArgumentException>(() => new Instrument(600, "inst", "", 1.57, InstrumentShape.Circular, Vector3.VectorZ, Vector3.VectorX));
+            Assert.Throws<ArgumentException>(() => new Instrument(600, "inst", "model", 0.0, InstrumentShape.Circular, Vector3.VectorZ, Vector3.VectorX));
         }
     }
 }

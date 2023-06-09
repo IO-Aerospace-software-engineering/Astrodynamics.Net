@@ -19,17 +19,17 @@ namespace IO.Astrodynamics.Models.Tests.Mission
         {
             Models.Mission.Mission mission = new Models.Mission.Mission("mission1");
             Scenario scenario = new Scenario("scn1", mission, new Window(new DateTime(2021, 1, 1), new DateTime(2021, 1, 2)));
-            
+
             Clock clk = new Clock("My clock", 1.0 / 256.0);
             Spacecraft spc = new Spacecraft(-1001, "Myspacecraft", 1000.0, 10000.0);
             var ke = new KeplerianElements(150000000.0, 0.0, 0.0, 0.0, 0.0, 0.0, TestHelpers.GetSun(), DateTime.UtcNow, Frames.Frame.ECLIPTIC);
             SpacecraftScenario sc = new SpacecraftScenario(spc, clk, ke, scenario);
-            Instrument instrument = new Instrument(600, "My instrument", "Model", 1.57, InstrumentShape.Circular);
-            SpacecraftInstrument si = new SpacecraftInstrument(sc, instrument, new Quaternion(1.0, 2.0, 3.0, 4.0));
+            Instrument instrument = new Instrument(600, "My instrument", "Model", 1.57, InstrumentShape.Circular, Vector3.VectorZ, Vector3.VectorX);
+            SpacecraftInstrument si = new SpacecraftInstrument(sc, instrument, new Vector3(1.0, 2.0, 3.0));
 
             Assert.Equal(sc, si.Spacecraft);
             Assert.Equal(instrument, si.Instrument);
-            Assert.Equal(new Quaternion(1.0, 2.0, 3.0, 4.0), si.Orientation);
+            Assert.Equal(new Vector3(1.0, 2.0, 3.0), si.Orientation);
         }
 
         [Fact]
@@ -37,7 +37,7 @@ namespace IO.Astrodynamics.Models.Tests.Mission
         {
             Models.Mission.Mission mission = new Models.Mission.Mission("mission1");
             Scenario scenario = new Scenario("scn1", mission, new Window(new DateTime(2021, 1, 1), new DateTime(2021, 1, 2)));
-            
+
             var earth = TestHelpers.GetEarthAtJ2000();
             var epoch = earth.InitialOrbitalParameters.Epoch;
             Clock clk = new Clock("My clock", 1.0 / 256.0);
@@ -46,8 +46,8 @@ namespace IO.Astrodynamics.Models.Tests.Mission
             double v = System.Math.Sqrt(earth.PhysicalBody.GM / a);
             var sv = new StateVector(new Vector3(a, 0.0, 0.0), new Vector3(0.0, v, 0.0), earth, epoch, Frames.Frame.ICRF);
             SpacecraftScenario sc = new SpacecraftScenario(spc, clk, sv, scenario);
-            Instrument instrument = new Instrument(600,"My instrument", "Model", Constants.PI,InstrumentShape.Circular);
-            SpacecraftInstrument si = new SpacecraftInstrument(sc, instrument, new Quaternion(Vector3.VectorZ, Constants.PI2));
+            Instrument instrument = new Instrument(600, "My instrument", "Model", Constants.PI, InstrumentShape.Circular, Vector3.VectorZ, Vector3.VectorX);
+            SpacecraftInstrument si = new SpacecraftInstrument(sc, instrument, Vector3.VectorX);
 
             Assert.True(si.IsInFieldOfView(earth, epoch));
             Assert.True(si.IsInFieldOfView(earth, epoch + sv.Period() * 0.125));
@@ -58,7 +58,7 @@ namespace IO.Astrodynamics.Models.Tests.Mission
             Assert.True(si.IsInFieldOfView(earth, epoch + sv.Period() * 0.76));
             Assert.True(si.IsInFieldOfView(earth, epoch + sv.Period() * 0.9));
             Assert.Equal(instrument, si.Instrument);
-            Assert.Equal(new Quaternion(Vector3.VectorZ, Constants.PI2), si.Orientation);
+            Assert.Equal(Vector3.VectorX, si.Orientation);
         }
     }
 }

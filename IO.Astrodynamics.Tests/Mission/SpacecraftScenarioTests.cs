@@ -253,8 +253,8 @@ namespace IO.Astrodynamics.Models.Tests.Mission
             Spacecraft spc = new Spacecraft(-1001, "My spacecraft", 1000.0, 10000.0);
             var ke = new KeplerianElements(150000000.0, 0.0, 0.0, 0.0, 0.0, 0.0, TestHelpers.GetSun(), DateTime.UtcNow, Frames.Frame.ECLIPTIC);
             SpacecraftScenario sc = new SpacecraftScenario(spc, clk, ke, scenario);
-            Instrument instrument = new Instrument(600, "My instrument", "Model", 1.57, InstrumentShape.Circular);
-            sc.AddInstrument(instrument, new Quaternion(0.0, 0.0, 0.0, 0.0));
+            Instrument instrument = new Instrument(600, "My instrument", "Model", 1.57, InstrumentShape.Circular, Vector3.VectorZ, Vector3.VectorX);
+            sc.AddInstrument(instrument, Vector3.VectorX);
             Assert.Equal(instrument, sc.Intruments.Single().Instrument);
         }
 
