@@ -10,10 +10,11 @@ using IO.Astrodynamics.Models.Time;
 
 namespace IO.Astrodynamics.Models.Maneuver
 {
-    public abstract class Maneuver 
+    public abstract class Maneuver
     {
-        public Window ThrustWindow { get; }
-        public Window AttitudeWindow { get; }
+        public Window ThrustWindow { get; internal set; }
+        public Window AttitudeWindow { get; internal set; }
+        public Window ManeuverWindow { get; internal set; }
         public DateTime MinimumEpoch { get; }
         public TimeSpan ManeuverHoldDuration { get; }
         public IReadOnlyCollection<SpacecraftEngine> Engines { get; private set; }
@@ -24,7 +25,10 @@ namespace IO.Astrodynamics.Models.Maneuver
 
         public OrbitalParameters.OrbitalParameters TargetOrbit { get; }
 
-        protected Maneuver(SpacecraftScenario spacecraft, DateTime minimumEpoch, TimeSpan maneuverHoldDuration, OrbitalParameters.OrbitalParameters targetOrbit, params SpacecraftEngine[] engines)
+        public double FuelBurned { get; internal set; }
+
+        protected Maneuver(SpacecraftScenario spacecraft, DateTime minimumEpoch, TimeSpan maneuverHoldDuration, OrbitalParameters.OrbitalParameters targetOrbit,
+            params SpacecraftEngine[] engines)
         {
             if (spacecraft == null)
             {
@@ -54,12 +58,6 @@ namespace IO.Astrodynamics.Models.Maneuver
             MinimumEpoch = minimumEpoch;
             ManeuverHoldDuration = maneuverHoldDuration;
             Engines = engines;
-        }
-
-        public Window GetGlobalWindow()
-        {
-            Window temp = new(ThrustWindow.StartDate, ManeuverHoldDuration);
-            return ThrustWindow.Merge(AttitudeWindow).Merge(temp);
         }
 
         public Maneuver SetNextManeuver(Maneuver maneuver)

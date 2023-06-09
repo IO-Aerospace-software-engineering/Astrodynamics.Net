@@ -1,12 +1,12 @@
 using System;
-
 using System.Collections.Generic;
+using System.IO;
 using IO.Astrodynamics.Models.Surface;
 using IO.Astrodynamics.Models.Time;
 
 namespace IO.Astrodynamics.Models.Mission
 {
-    public class Scenario 
+    public class Scenario
     {
         public string Name { get; private set; }
         public Window Window { get; private set; }
@@ -17,7 +17,7 @@ namespace IO.Astrodynamics.Models.Mission
         public IReadOnlyCollection<Site> Sites => _sites;
         private readonly API _api;
 
-        public Scenario(string name, Mission mission, in Window window) 
+        public Scenario(string name, Mission mission, in Window window)
         {
             if (string.IsNullOrEmpty(name))
             {
@@ -28,7 +28,6 @@ namespace IO.Astrodynamics.Models.Mission
             Mission = mission ?? throw new System.ArgumentNullException(nameof(mission));
             _api = new API();
             Window = window;
-            
         }
 
         public void AddBody(BodyScenario body)
@@ -36,10 +35,16 @@ namespace IO.Astrodynamics.Models.Mission
             if (body == null) throw new ArgumentNullException(nameof(body));
             _bodies.Add(body);
         }
-
-        public void Propagate()
+        
+        public void AddSite(Site site)
         {
-            _api.ExecuteScenario(this);
+            if (site == null) throw new ArgumentNullException(nameof(site));
+            _sites.Add(site);
+        }
+
+        public void Propagate(DirectoryInfo outputDirectory)
+        {
+            _api.PropagateScenario(this, outputDirectory);
         }
     }
 }

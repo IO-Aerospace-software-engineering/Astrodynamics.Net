@@ -13,6 +13,7 @@ using IO.Astrodynamics.Models.Mission;
 using IO.Astrodynamics.Models.Time;
 using AutoMapper;
 using IO.Astrodynamics.Converters;
+using IO.Astrodynamics.Models.Math;
 using ApsidalAlignmentManeuver = IO.Astrodynamics.DTO.ApsidalAlignmentManeuver;
 using CombinedManeuver = IO.Astrodynamics.DTO.CombinedManeuver;
 using Launch = IO.Astrodynamics.DTO.Launch;
@@ -35,10 +36,10 @@ public class API
     /// </summary>
     public API()
     {
-        if (_isResolverLoaded) return;
-        NativeLibrary.SetDllImportResolver(typeof(API).Assembly, Resolver);
-        _isResolverLoaded = true;
         _mapper = ProfilesConfiguration.Instance.Mapper;
+        if (_isResolverLoaded) return;
+        _isResolverLoaded = true;
+        NativeLibrary.SetDllImportResolver(typeof(API).Assembly, Resolver);
     }
 
     [DllImport(@"IO.Astrodynamics", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
@@ -173,13 +174,21 @@ public class API
     ///     Execute the scenario
     /// </summary>
     /// <param name="scenario"></param>
-    public void ExecuteScenario(Models.Mission.Scenario scenario)
+    /// <param name="outputDirectory"></param>
+    public void PropagateScenario(Models.Mission.Scenario scenario, DirectoryInfo outputDirectory)
     {
+        Scenario scenarioDto = new Scenario(scenario.Name, new Window(scenario.Window.StartDate.SecondsFromJ2000TDB(), scenario.Window.EndDate.SecondsFromJ2000TDB()));
+        foreach (var site in scenario.Sites)
+        {
+            for (int j = 0; j < scenario.Sites.Count(); j++)
+            {
+                scenarioDto.Sites[j] = _mapper.Map<Site>(scenario.Sites.ElementAt(j));
+                scenarioDto.Sites[j].DirectoryPath = outputDirectory.CreateSubdirectory("Sites").FullName;
+            }
+        }
+
         foreach (var spacecraft in scenario.Bodies.OfType<Models.Mission.SpacecraftScenario>())
         {
-            Scenario scenarioDto = new Scenario(scenario.Name, new Window(scenario.Window.StartDate.SecondsFromJ2000TDB(), scenario.Window.EndDate.SecondsFromJ2000TDB()));
-
-
             for (int j = 0; j < scenario.Bodies.OfType<Models.Mission.CelestialBodyScenario>().Count(); j++)
             {
                 scenarioDto.CelestialBodiesId[j] = scenario.Bodies.ElementAt(j).PhysicalBody.NaifId;
@@ -190,7 +199,7 @@ public class API
 
             //Create and configure spacecraft
             scenarioDto.Spacecraft = new Spacecraft(spacecraft.PhysicalBody.NaifId, spacecraft.PhysicalBody.Name, spacecraft.PhysicalBody.DryOperatingMass,
-                spacecraft.PhysicalBody.MaximumOperatingMass, parkingOrbit, spacecraft.SpacecraftDirectory.FullName);
+                spacecraft.PhysicalBody.MaximumOperatingMass, parkingOrbit,outputDirectory.CreateSubdirectory("Spacecrafts").FullName);
             for (int j = 0; j < spacecraft.FuelTanks.Count; j++)
             {
                 var fuelTank = spacecraft.FuelTanks.ElementAt(j);
@@ -224,7 +233,6 @@ public class API
             int order = 0;
             while (maneuver != null)
             {
-                
                 if (maneuver is PlaneAlignmentManeuver)
                 {
                     StateVector target = _mapper.Map<StateVector>(maneuver.TargetOrbit.ToStateVector());
@@ -365,6 +373,66 @@ public class API
             }
 
             PropagateProxy(ref scenarioDto);
+
+            foreach (var maneuverResult in scenarioDto.Spacecraft.CombinedManeuvers.Where(x => x.ManeuverOrder > -1))
+            {
+                var mnv = spacecraft.GetManeuvers()[maneuverResult.ManeuverOrder] as ImpulseManeuver;
+                mnv.AttitudeWindow = _mapper.Map<Models.Time.Window>(maneuverResult.AttitudeWindow);
+                mnv.ThrustWindow = _mapper.Map<Models.Time.Window>(maneuverResult.ThrustWindow);
+                mnv.ManeuverWindow = _mapper.Map<Models.Time.Window>(maneuverResult.ManeuverWindow);
+                mnv.DeltaV = _mapper.Map<Vector3>(maneuverResult.DeltaV);
+                mnv.FuelBurned = maneuverResult.FuelBurned;
+            }
+
+            foreach (var maneuverResult in scenarioDto.Spacecraft.PhasingManeuver.Where(x => x.ManeuverOrder > -1))
+            {
+                var mnv = spacecraft.GetManeuvers()[maneuverResult.ManeuverOrder] as ImpulseManeuver;
+                mnv.AttitudeWindow = _mapper.Map<Models.Time.Window>(maneuverResult.AttitudeWindow);
+                mnv.ThrustWindow = _mapper.Map<Models.Time.Window>(maneuverResult.ThrustWindow);
+                mnv.ManeuverWindow = _mapper.Map<Models.Time.Window>(maneuverResult.ManeuverWindow);
+                mnv.DeltaV = _mapper.Map<Vector3>(maneuverResult.DeltaV);
+                mnv.FuelBurned = maneuverResult.FuelBurned;
+            }
+
+            foreach (var maneuverResult in scenarioDto.Spacecraft.ApsidalAlignmentManeuvers.Where(x => x.ManeuverOrder > -1))
+            {
+                var mnv = spacecraft.GetManeuvers()[maneuverResult.ManeuverOrder] as ImpulseManeuver;
+                mnv.AttitudeWindow = _mapper.Map<Models.Time.Window>(maneuverResult.AttitudeWindow);
+                mnv.ThrustWindow = _mapper.Map<Models.Time.Window>(maneuverResult.ThrustWindow);
+                mnv.ManeuverWindow = _mapper.Map<Models.Time.Window>(maneuverResult.ManeuverWindow);
+                mnv.DeltaV = _mapper.Map<Vector3>(maneuverResult.DeltaV);
+                mnv.FuelBurned = maneuverResult.FuelBurned;
+            }
+
+            foreach (var maneuverResult in scenarioDto.Spacecraft.ApogeeHeightChangingManeuvers.Where(x => x.ManeuverOrder > -1))
+            {
+                var mnv = spacecraft.GetManeuvers()[maneuverResult.ManeuverOrder] as ImpulseManeuver;
+                mnv.AttitudeWindow = _mapper.Map<Models.Time.Window>(maneuverResult.AttitudeWindow);
+                mnv.ThrustWindow = _mapper.Map<Models.Time.Window>(maneuverResult.ThrustWindow);
+                mnv.ManeuverWindow = _mapper.Map<Models.Time.Window>(maneuverResult.ManeuverWindow);
+                mnv.DeltaV = _mapper.Map<Vector3>(maneuverResult.DeltaV);
+                mnv.FuelBurned = maneuverResult.FuelBurned;
+            }
+
+            foreach (var maneuverResult in scenarioDto.Spacecraft.OrbitalPlaneChangingManeuvers.Where(x => x.ManeuverOrder > -1))
+            {
+                var mnv = spacecraft.GetManeuvers()[maneuverResult.ManeuverOrder] as ImpulseManeuver;
+                mnv.AttitudeWindow = _mapper.Map<Models.Time.Window>(maneuverResult.AttitudeWindow);
+                mnv.ThrustWindow = _mapper.Map<Models.Time.Window>(maneuverResult.ThrustWindow);
+                mnv.ManeuverWindow = _mapper.Map<Models.Time.Window>(maneuverResult.ManeuverWindow);
+                mnv.DeltaV = _mapper.Map<Vector3>(maneuverResult.DeltaV);
+                mnv.FuelBurned = maneuverResult.FuelBurned;
+            }
+
+            foreach (var maneuverResult in scenarioDto.Spacecraft.PerigeeHeightChangingManeuvers.Where(x => x.ManeuverOrder > -1))
+            {
+                var mnv = spacecraft.GetManeuvers()[maneuverResult.ManeuverOrder] as ImpulseManeuver;
+                mnv.AttitudeWindow = _mapper.Map<Models.Time.Window>(maneuverResult.AttitudeWindow);
+                mnv.ThrustWindow = _mapper.Map<Models.Time.Window>(maneuverResult.ThrustWindow);
+                mnv.ManeuverWindow = _mapper.Map<Models.Time.Window>(maneuverResult.ManeuverWindow);
+                mnv.DeltaV = _mapper.Map<Vector3>(maneuverResult.DeltaV);
+                mnv.FuelBurned = maneuverResult.FuelBurned;
+            }
         }
     }
 
@@ -382,18 +450,20 @@ public class API
     /// </summary>
     /// <param name="launch"></param>
     /// <param name="window"></param>
-    public IEnumerable<LaunchWindow> FindLaunchWindows(IO.Astrodynamics.Models.Maneuver.Launch launch, in Models.Time.Window window)
+    public IEnumerable<LaunchWindow> FindLaunchWindows(IO.Astrodynamics.Models.Maneuver.Launch launch, in Models.Time.Window window, DirectoryInfo outputDirectory)
     {
         //Convert data
         Launch launchDto = _mapper.Map<Launch>(launch);
         launchDto.Window = _mapper.Map<Models.Time.Window, Window>(window);
+        launchDto.LaunchSite.DirectoryPath = outputDirectory.CreateSubdirectory("Sites").FullName;
+        launchDto.RecoverySite.DirectoryPath = outputDirectory.CreateSubdirectory("Sites").FullName;
 
         //Execute request
         LaunchProxy(ref launchDto);
 
         //Filter result
         var windows = launchDto.Windows.Where(x => x.Start != 0 && x.End != 0);
-        
+
         //Build result 
         List<LaunchWindow> launchWindows = new List<LaunchWindow>();
         foreach (var lwindow in windows)

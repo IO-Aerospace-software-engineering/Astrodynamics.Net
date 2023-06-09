@@ -27,12 +27,11 @@ namespace IO.Astrodynamics.Models.Tests.Maneuvers
             FuelTank fuelTank10 = new FuelTank("My fuel tank10", "ft2021", 4000.0);
             FuelTank fuelTank11 = new FuelTank("My fuel tank11", "ft2021", 4000.0);
             Engine eng = new Engine("My engine", "model 1", 350.0, 50.0);
-            SpacecraftScenario sc = new SpacecraftScenario(spc1, clk1, ke, scenario, IO.Astrodynamics.Tests.Constants.SpacecraftPath);
+            SpacecraftScenario sc = new SpacecraftScenario(spc1, clk1, ke, scenario);
             sc.AddFuelTank(fuelTank10, 3000.0, "sn1");
             sc.AddFuelTank(fuelTank11, 4000.0, "sn2");
             sc.AddPayload(pl1);
             sc.AddEngine(eng, fuelTank10, "sn1");
-
 
             ApogeeHeightManeuver apogeeHeightManeuver = new ApogeeHeightManeuver(sc, new DateTime(2021, 01, 01), TimeSpan.FromDays(1.0), 151000000.0, sc.Engines.First());
 

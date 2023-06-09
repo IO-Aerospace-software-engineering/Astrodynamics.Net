@@ -21,8 +21,8 @@ namespace IO.Astrodynamics.Models.Surface
         /// <param name="body">Celestial body</param>
         /// <param name="geodetic">Geodetic coordinates</param>
         /// <param name="launchAzimuths">Allowed launch azimuths</param>
-        public LaunchSite(int id, string name, CelestialBodyScenario body, in Geodetic geodetic, DirectoryInfo directoryPath, params AzimuthRange[] launchAzimuths) : base(id, name,
-            body, geodetic, directoryPath)
+        public LaunchSite(int id, string name, CelestialBodyScenario body, in Geodetic geodetic, params AzimuthRange[] launchAzimuths) : base(id, name,
+            body, geodetic)
         {
             _azimuthRanges = new List<AzimuthRange>(launchAzimuths);
         }

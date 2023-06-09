@@ -40,7 +40,7 @@ namespace IO.Astrodynamics.Models.Tests.Integrator
             Clock clk1 = new Clock("My clock", 1.0 / 256.0);
             Spacecraft spc1 = new Spacecraft(-1001, "My spacecraft", 1000.0, 10000.0);
 
-            SpacecraftScenario sc = new SpacecraftScenario(spc1, clk1, sv, scenario, IO.Astrodynamics.Tests.Constants.SpacecraftPath);
+            SpacecraftScenario sc = new SpacecraftScenario(spc1, clk1, sv, scenario);
 
             VVIntegrator integrator = new VVIntegrator(sc, TimeSpan.FromSeconds(1.0));
 
@@ -78,7 +78,7 @@ namespace IO.Astrodynamics.Models.Tests.Integrator
             Clock clk1 = new Clock("My clock", 1.0 / 256.0);
             Spacecraft spc1 = new Spacecraft(-1001, "My spacecraft", 1000.0, 10000.0);
 
-            SpacecraftScenario sc = new SpacecraftScenario(spc1, clk1, sv, scenario, IO.Astrodynamics.Tests.Constants.SpacecraftPath);
+            SpacecraftScenario sc = new SpacecraftScenario(spc1, clk1, sv, scenario);
 
             VVIntegrator integrator = new VVIntegrator(sc, TimeSpan.FromSeconds(1.0), new GravityForce());
 

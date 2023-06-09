@@ -29,9 +29,6 @@ namespace IO.Astrodynamics.Models.Mission
         public SpacecraftScenario Child { get; private set; }
         public Clock Clock { get; private set; }
 
-        public DirectoryInfo SpacecraftDirectory { get; }
-
-
         private HashSet<SpacecraftInstrument> _instruments = new();
         public IReadOnlyCollection<SpacecraftInstrument> Intruments => _instruments;
 
@@ -44,11 +41,6 @@ namespace IO.Astrodynamics.Models.Mission
         private HashSet<Payload> _payloads = new();
         public IReadOnlyCollection<Payload> Payloads => _payloads;
 
-        private SpacecraftScenario(DirectoryInfo spacecraftDirectory) : base()
-        {
-            SpacecraftDirectory = spacecraftDirectory;
-        }
-
         /// <summary>
         /// Create new spacecraft to simulate scenario
         /// </summary>
@@ -56,15 +48,13 @@ namespace IO.Astrodynamics.Models.Mission
         /// <param name="clock"></param>
         /// <param name="initialOrbitalParameters"></param>
         /// <param name="scenario"></param>
-        /// <param name="spacecraftDirectory"></param>
         /// <exception cref="ArgumentException"></exception>
         /// <exception cref="ArgumentNullException"></exception>
-        public SpacecraftScenario(Spacecraft spacecraft, Clock clock, OrbitalParameters.OrbitalParameters initialOrbitalParameters, Scenario scenario,
-            DirectoryInfo spacecraftDirectory) : base(spacecraft, initialOrbitalParameters, new Frames.Frame($"{spacecraft.Name}_SPACECRAFT"), scenario)
+        public SpacecraftScenario(Spacecraft spacecraft, Clock clock, OrbitalParameters.OrbitalParameters initialOrbitalParameters, Scenario scenario) : base(spacecraft,
+            initialOrbitalParameters, new Frames.Frame($"{spacecraft.Name}_SPACECRAFT"), scenario)
         {
             PhysicalBody = spacecraft ?? throw new ArgumentNullException(nameof(spacecraft));
             Clock = clock ?? throw new ArgumentNullException(nameof(clock));
-            SpacecraftDirectory = spacecraftDirectory ?? throw new ArgumentNullException(nameof(spacecraftDirectory));
         }
 
         /// <summary>
@@ -219,6 +209,22 @@ namespace IO.Astrodynamics.Models.Mission
         public void SetStandbyManeuver(Maneuver.Maneuver maneuver)
         {
             StandbyManeuver = maneuver;
+        }
+
+        public Dictionary<int, Maneuver.Maneuver> GetManeuvers()
+        {
+            Dictionary<int, Maneuver.Maneuver> maneuvers = new Dictionary<int, Maneuver.Maneuver>();
+
+            var maneuver = StandbyManeuver;
+            int order = 0;
+            while (maneuver != null)
+            {
+                maneuvers[order] = maneuver;
+                maneuver = maneuver.NextManeuver;
+                order++;
+            }
+
+            return maneuvers;
         }
     }
 }

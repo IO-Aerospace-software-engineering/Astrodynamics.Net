@@ -26,15 +26,17 @@ public class ProfilesConfiguration
                 Mapper.Map<Vector3D>(x.Position), Mapper.Map<Vector3D>(x.Velocity)));
 
             cfg.CreateMap<Window, DTO.Window>().ConstructUsing(x => new DTO.Window(x.StartDate.ToTDB().SecondsFromJ2000TDB(), x.EndDate.ToTDB().SecondsFromJ2000TDB()));
-            cfg.CreateMap<DTO.Window, Window>().ConstructUsing(x => new Window(DateTimeExtension.CreateTDB(x.Start),DateTimeExtension.CreateTDB(x.End)));
+            cfg.CreateMap<DTO.Window, Window>().ConstructUsing(x => new Window(DateTimeExtension.CreateTDB(x.Start), DateTimeExtension.CreateTDB(x.End)));
 
             cfg.CreateMap<Models.Coordinates.Geodetic, Geodetic>().ConstructUsing(x => new Geodetic(x.Longitude, x.Latitude, x.Altitude));
 
             cfg.CreateMap<Site, DTO.Site>()
-                .ConstructUsing(x => new DTO.Site(x.NaifId, x.Body.PhysicalBody.NaifId, Mapper.Map<Geodetic>(x.Geodetic), x.Name, x.DirectoryPath.FullName))
+                .ConstructUsing(x => new DTO.Site(x.NaifId, x.Body.PhysicalBody.NaifId, Mapper.Map<Geodetic>(x.Geodetic), x.Name, string.Empty))
                 .ForMember(x => x.BodyId, o => o.MapFrom(x => x.Body.PhysicalBody.NaifId))
                 .ForMember(x => x.Coordinates, o => o.MapFrom(x => x.Geodetic))
-                .ForMember(x => x.Ranges, o => o.Ignore());
+                .ForMember(x => x.Ranges, o => o.Ignore())
+                .ForMember(x => x.Id, o => o.MapFrom(x=>x.NaifId))
+                .ForMember(x => x.DirectoryPath, o => o.Ignore());
             cfg.CreateMap<LaunchSite, DTO.Site>().IncludeBase<Site, DTO.Site>();
 
             cfg.CreateMap<Launch, DTO.Launch>().ConstructUsing(x => new DTO.Launch(Mapper.Map<DTO.Site>(x.LaunchSite), Mapper.Map<DTO.Site>(x.RecoverySite), x.LaunchByDay ?? false,

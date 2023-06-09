@@ -6,6 +6,7 @@ using IO.Astrodynamics.Models.Math;
 using IO.Astrodynamics.Models;
 using IO.Astrodynamics.Models.Mission;
 using IO.Astrodynamics.Models.Time;
+using IO.Astrodynamics.SolarSystemObjects;
 
 namespace IO.Astrodynamics.Models.Tests.OrbitalParameters
 {
@@ -227,35 +228,37 @@ namespace IO.Astrodynamics.Models.Tests.OrbitalParameters
             var sv = new StateVector(new Vector3(-26499033.67742509, 132757417.33833946, 57556718.47053819), new Vector3(-29.79426007, -5.01805231, -2.17539380), earthScn, new DateTime(2000, 1, 1, 12, 0, 0), Frames.Frame.ICRF);
 
             double[] res = sv.ToFrame(Frames.Frame.ECLIPTIC).ToStateVector().ToArray();
-            Assert.Equal(-26499033.614230465, res[0]);
-            Assert.Equal(144697296.44746894, res[1]);
-            Assert.Equal(-611.521793436259, res[2]);
-            Assert.Equal(-29.794259998946952, res[3]);
-            Assert.Equal(-5.4692949267021529, res[4]);
-            Assert.Equal(0.00018180082728846969, res[5]);
+            Assert.Equal(-26499033.67742509, res[0]);
+            Assert.Equal(144697296.7925432, res[1]);
+            Assert.Equal(-611.1494260467589, res[2]);
+            Assert.Equal(-29.79426007, res[3]);
+            Assert.Equal(-5.46929493974574, res[4]);
+            Assert.Equal(0.0001817867528557393, res[5]);
         }
 
         [Fact]
         public void ToNonInertialFrame()
         {
+            API api = new API();
+            api.LoadKernels(IO.Astrodynamics.Tests.Constants.SolarSystemKernelPath);
             Models.Mission.Mission mission = new Models.Mission.Mission("mission1");
             Scenario scenario = new Scenario("scn1", mission,new Window(new DateTime(2021, 1, 1), new DateTime(2021, 1, 2)));
             CelestialBody earth = new CelestialBody(399, "earth", 3.986004418E+5, 6356.7519, 6378.1366);
             CelestialBodyScenario earthScn = new CelestialBodyScenario(earth, scenario);
             var epoch = new DateTime(2000, 1, 1, 12, 0, 0);
-            var earthFrame = new Frames.Frame("earth");
+            var earthFrame = new Frames.Frame(PlanetsAndMoons.EARTH.Frame);
 
-            //J2000->IAU_ERATH
+            //J2000->IAU_EARTH
             //Earth from sun at 0 TDB
-            var sv = new StateVector(new Vector3(-26499033.67742509, 132757417.33833946, 57556718.47053819), new Vector3(-29.79426007, -5.01805231, -2.17539380), earthScn, new DateTime(2000, 1, 1, 12, 0, 0), Frames.Frame.ICRF);
+            var sv = new StateVector(new Vector3(-26499033.67742509, 132757417.33833946, 57556718.47053819), new Vector3(-29.79426007, -5.01805231, -2.17539380), earthScn, epoch.ToTDB(), Frames.Frame.ICRF);
 
             double[] res = sv.ToFrame(earthFrame).ToStateVector().ToArray();
-            Assert.Equal(-135349405.82736558, res[0]);
-            Assert.Equal(-2696123.4810504094, res[1]);
-            Assert.Equal(57556718.6204426, res[2]);
-            Assert.Equal(-196.91401917792356, res[3]);
-            Assert.Equal(9839.6220521992618, res[4]);
-            Assert.Equal(-2.1758107565986347, res[5]);
+            Assert.Equal(-135352868.83029744, res[0]);
+            Assert.Equal(-2583535.869143948, res[1]);
+            Assert.Equal(57553737.733541526, res[2]);
+            Assert.Equal(-188.61117766406102, res[3]);
+            Assert.Equal(9839.761815065332, res[4]);
+            Assert.Equal(-1.9036033768843523, res[5]);
         }
 
         [Fact]

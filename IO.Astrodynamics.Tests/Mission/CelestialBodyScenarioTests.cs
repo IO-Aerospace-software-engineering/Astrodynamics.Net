@@ -53,7 +53,7 @@ namespace IO.Astrodynamics.Models.Tests.Mission
             Spacecraft spc1 = new Spacecraft(-1001, "My spacecraft", 1000.0,10000.0);
 
             var sv = new StateVector(new Vector3(6800.0, 0.0, 0.0), new Vector3(0.0, 8.0, 0.0), earth, new DateTime(2021, 1, 1), Frames.Frame.ICRF);
-            SpacecraftScenario sc = new SpacecraftScenario(spc1, clk1, sv, scenario,Astrodynamics.Tests.Constants.SpacecraftPath);
+            SpacecraftScenario sc = new SpacecraftScenario(spc1, clk1, sv, scenario);
 
             var res = sc.RelativeStateVector(moon, epoch);
 

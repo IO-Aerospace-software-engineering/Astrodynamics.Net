@@ -36,7 +36,7 @@ namespace IO.Astrodynamics.Models.Tests.Propagator
             Clock clk1 = new Clock("My clock", 1.0 / 256.0);
             Spacecraft spc1 = new Spacecraft(-1001, "My spacecraft", 1000.0,10000.0);
 
-            SpacecraftScenario sc = new SpacecraftScenario(spc1, clk1, sv, scenario,Astrodynamics.Tests.Constants.SpacecraftPath);
+            SpacecraftScenario sc = new SpacecraftScenario(spc1, clk1, sv, scenario);
 
             VVIntegrator integrator = new VVIntegrator(sc, TimeSpan.FromSeconds(1.0));
 
@@ -60,7 +60,7 @@ namespace IO.Astrodynamics.Models.Tests.Propagator
             Clock clk1 = new Clock("My clock", 1.0 / 256.0);
             Spacecraft spc1 = new Spacecraft(-1001, "My spacecraft", 1000.0,10000.0);
 
-            SpacecraftScenario sc = new SpacecraftScenario(spc1, clk1, sv, scenario,Astrodynamics.Tests.Constants.SpacecraftPath);
+            SpacecraftScenario sc = new SpacecraftScenario(spc1, clk1, sv, scenario);
 
             VVIntegrator integrator = new VVIntegrator(sc, TimeSpan.FromSeconds(1.0), new GravityForce());
 
@@ -110,7 +110,7 @@ namespace IO.Astrodynamics.Models.Tests.Propagator
             Spacecraft spc1 = new Spacecraft(-1001, "My spacecraft", 1000.0,10000.0);
             FuelTank fuelTank = new FuelTank("My fuel tank", "ft2021", 4000.0);
             Engine eng = new Engine("My engine", "model 1", 350.0, 50.0);
-            SpacecraftScenario sc = new SpacecraftScenario(spc1, clk1, originalOrbit, scenario,Astrodynamics.Tests.Constants.SpacecraftPath);
+            SpacecraftScenario sc = new SpacecraftScenario(spc1, clk1, originalOrbit, scenario);
             sc.AddFuelTank(fuelTank, 4000.0,"sn0");
             sc.AddEngine(eng, fuelTank,"sn0");
 

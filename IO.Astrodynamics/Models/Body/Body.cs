@@ -15,7 +15,6 @@ public abstract class Body : INaifObject
     /// <summary>
     /// Constructor
     /// </summary>
-    /// <param name="id"></param>
     /// <param name="naifId"></param>
     /// <param name="name"></param>
     /// <param name="mass"></param>

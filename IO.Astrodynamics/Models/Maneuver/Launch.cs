@@ -4,6 +4,7 @@ using IO.Astrodynamics.Models.Surface;
 using IO.Astrodynamics.Models.Time;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,7 +20,7 @@ namespace IO.Astrodynamics.Models.Maneuver
         public Mission.BodyScenario TargetBody { get; }
         public bool? LaunchByDay { get; }
         public double Twilight { get; }
-        private readonly API _api;
+        private readonly API _api = new API();
 
         /// <summary>
         /// 
@@ -37,7 +38,6 @@ namespace IO.Astrodynamics.Models.Maneuver
             TargetBody = targetBody ?? throw new ArgumentNullException(nameof(targetBody));
             LaunchByDay = launchByDay;
             Twilight = twilight;
-            _api = new API();
         }
 
         /// <summary>
@@ -149,14 +149,11 @@ namespace IO.Astrodynamics.Models.Maneuver
         /// Find launch windows based on launch's constraints in the given window
         /// </summary>
         /// <param name="searchWindow"></param>
+        /// <param name="outputDirectory"></param>
         /// <returns></returns>
-        public LaunchWindow[] FindLaunchWindows(in Window searchWindow)
+        public IEnumerable<LaunchWindow> FindLaunchWindows(in Window searchWindow, DirectoryInfo outputDirectory)
         {
-            _api.FindLaunchWindows(this, searchWindow);
-
-
-            List<LaunchWindow> launchWindows = new List<LaunchWindow>();
-            return launchWindows.ToArray();
+            return _api.FindLaunchWindows(this, searchWindow, outputDirectory);
         }
     }
 }

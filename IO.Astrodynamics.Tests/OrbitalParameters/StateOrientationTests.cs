@@ -30,7 +30,7 @@ namespace IO.Astrodynamics.Models.Tests.OrbitalParameters
             Assert.NotNull(so);
 
             //Which is equal to ecliptic (23.44° + 10° relative to ecliptic)
-            Assert.Equal(new Quaternion(0.95772390696309828, 0.28768892166113869, 0, 0), res.Rotation);
+            Assert.Equal(new Quaternion(0.9577239084752576, 0.2876889207718582, 0, 0), res.Rotation);
             Assert.Equal(DateTime.MaxValue, res.Epoch);
             Assert.Equal(Frames.Frame.ICRF, res.ReferenceFrame);
         }

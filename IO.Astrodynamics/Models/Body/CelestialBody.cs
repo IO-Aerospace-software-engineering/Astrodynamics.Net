@@ -1,7 +1,4 @@
-
-
 using System;
-using IO.Astrodynamics.Models.OrbitalParameters;
 
 namespace IO.Astrodynamics.Models.Body;
 public class CelestialBody : Body
@@ -16,7 +13,6 @@ public class CelestialBody : Body
     /// <summary>
     /// 
     /// </summary>
-    /// <param name="id"></param>
     /// <param name="naifId"></param>
     /// <param name="name"></param>
     /// <param name="GM">Km3/s2</param>
@@ -57,9 +53,6 @@ public class CelestialBody : Body
             Flatenning = double.PositiveInfinity;
         }
     }
-
-
-
     public override double GetTotalMass()
     {
         return Mass;

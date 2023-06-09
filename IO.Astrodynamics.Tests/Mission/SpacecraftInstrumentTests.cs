@@ -21,9 +21,9 @@ namespace IO.Astrodynamics.Models.Tests.Mission
             Scenario scenario = new Scenario("scn1", mission, new Window(new DateTime(2021, 1, 1), new DateTime(2021, 1, 2)));
             
             Clock clk = new Clock("My clock", 1.0 / 256.0);
-            Spacecraft spc = new Spacecraft(-1001, "My spacecraft", 1000.0, 10000.0);
+            Spacecraft spc = new Spacecraft(-1001, "Myspacecraft", 1000.0, 10000.0);
             var ke = new KeplerianElements(150000000.0, 0.0, 0.0, 0.0, 0.0, 0.0, TestHelpers.GetSun(), DateTime.UtcNow, Frames.Frame.ECLIPTIC);
-            SpacecraftScenario sc = new SpacecraftScenario(spc, clk, ke, scenario, Astrodynamics.Tests.Constants.SpacecraftPath);
+            SpacecraftScenario sc = new SpacecraftScenario(spc, clk, ke, scenario);
             Instrument instrument = new Instrument(600, "My instrument", "Model", 1.57, InstrumentShape.Circular);
             SpacecraftInstrument si = new SpacecraftInstrument(sc, instrument, new Quaternion(1.0, 2.0, 3.0, 4.0));
 
@@ -41,11 +41,11 @@ namespace IO.Astrodynamics.Models.Tests.Mission
             var earth = TestHelpers.GetEarthAtJ2000();
             var epoch = earth.InitialOrbitalParameters.Epoch;
             Clock clk = new Clock("My clock", 1.0 / 256.0);
-            Spacecraft spc = new Spacecraft(-1001, "My spacecraft", 1000.0, 10000.0);
+            Spacecraft spc = new Spacecraft(-1001, "Myspacecraft", 1000.0, 10000.0);
             double a = 6800.0;
             double v = System.Math.Sqrt(earth.PhysicalBody.GM / a);
             var sv = new StateVector(new Vector3(a, 0.0, 0.0), new Vector3(0.0, v, 0.0), earth, epoch, Frames.Frame.ICRF);
-            SpacecraftScenario sc = new SpacecraftScenario(spc, clk, sv, scenario,Astrodynamics.Tests.Constants.SpacecraftPath);
+            SpacecraftScenario sc = new SpacecraftScenario(spc, clk, sv, scenario);
             Instrument instrument = new Instrument(600,"My instrument", "Model", Constants.PI,InstrumentShape.Circular);
             SpacecraftInstrument si = new SpacecraftInstrument(sc, instrument, new Quaternion(Vector3.VectorZ, Constants.PI2));
 

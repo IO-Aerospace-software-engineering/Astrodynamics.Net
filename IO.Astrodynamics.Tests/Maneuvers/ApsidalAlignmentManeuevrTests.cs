@@ -30,7 +30,7 @@ namespace IO.Astrodynamics.Models.Tests.Maneuvers
             FuelTank fuelTank11 = new FuelTank("My fuel tank11", "ft2021", 4000.0);
             Engine eng = new Engine("My engine", "model 1", 350.0, 50.0);
 
-            SpacecraftScenario sc = new SpacecraftScenario(spc1, clk1, ke, scenario,Astrodynamics.Tests.Constants.SpacecraftPath);
+            SpacecraftScenario sc = new SpacecraftScenario(spc1, clk1, ke, scenario);
             sc.AddFuelTank(fuelTank10, 3000.0,"sn0");
             sc.AddFuelTank(fuelTank11, 4000.0,"sn1");
             sc.AddPayload(pl1);

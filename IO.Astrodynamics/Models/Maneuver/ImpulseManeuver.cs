@@ -11,7 +11,7 @@ namespace IO.Astrodynamics.Models.Maneuver
 {
     public abstract class ImpulseManeuver : Maneuver
     {
-        public Vector3 DeltaV { get; private set; }
+        public Vector3 DeltaV { get; internal set; }
 
         protected ImpulseManeuver(SpacecraftScenario spacecraft, DateTime minimumEpoch, TimeSpan maneuverHoldDuration, params SpacecraftEngine[] engines) : base(spacecraft, minimumEpoch, maneuverHoldDuration, engines)
         {

@@ -57,4 +57,16 @@ public class DateTimeTests
         Assert.Equal(new DateTime(1990, 01, 01, 12, 0, 57, 184, DateTimeKind.Utc), DateTimeExtension.CreateUTC(-315532742.816));
         Assert.Equal(new DateTime(2020, 01, 01, 12, 1, 9, 184, DateTimeKind.Utc), DateTimeExtension.CreateUTC(631152069.184));
     }
+
+    [Fact]
+    public void ToFormattedString()
+    {
+        var utc = new DateTime(2021, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        var local = new DateTime(2021, 1, 1, 0, 0, 0, DateTimeKind.Local);
+        var unspecified = new DateTime(2021, 1, 1, 0, 0, 0, DateTimeKind.Unspecified);
+
+        Assert.Equal("2021-01-01T00:00:00.0000000Z", utc.ToFormattedString());
+        Assert.Equal("2021-01-01T00:00:00.0000000+01:00", local.ToFormattedString());
+        Assert.Equal("2021-01-01T00:00:00.0000000 (TDB)", unspecified.ToFormattedString());
+    }
 }

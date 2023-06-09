@@ -103,4 +103,9 @@ public static class DateTimeExtension
         DateTime.SpecifyKind(date, DateTimeKind.Utc);
         return DateTime.SpecifyKind(date, DateTimeKind.Utc).ToUTC();
     }
+
+    public static string ToFormattedString(this DateTime date)
+    {
+        return date.ToString("O") + (date.Kind == DateTimeKind.Unspecified ? " (TDB)" : string.Empty);
+    }
 }

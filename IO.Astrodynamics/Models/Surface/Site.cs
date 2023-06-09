@@ -20,15 +20,16 @@ namespace IO.Astrodynamics.Models.Surface
         public string Name { get; }
         public CelestialBodyScenario Body { get; }
         public Geodetic Geodetic { get; }
-        public DirectoryInfo DirectoryPath { get; }
 
-        public Site(int id, string name, CelestialBodyScenario body, in Geodetic geodetic, DirectoryInfo directoryPath)
+        public Site(int id, string name, CelestialBodyScenario body, in Geodetic geodetic)
         {
+            if (body == null) throw new ArgumentNullException(nameof(body));
             if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id));
-            Name = name ?? throw new ArgumentNullException(nameof(name));
-            Body = body ?? throw new ArgumentNullException(nameof(body));
+            if (body == null) throw new ArgumentNullException(nameof(body));
+            if (string.IsNullOrEmpty(name)) throw new ArgumentException("Value cannot be null or empty.", nameof(name));
+            Name = name;
+            Body = body;
             Geodetic = geodetic;
-            DirectoryPath = directoryPath ?? throw new ArgumentNullException(nameof(directoryPath));
             Id = id;
             NaifId = body.PhysicalBody.NaifId * 1000 + id;
         }
