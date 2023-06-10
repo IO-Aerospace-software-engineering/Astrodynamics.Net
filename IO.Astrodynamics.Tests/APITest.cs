@@ -197,35 +197,6 @@ public class APITest
     }
 
     [Fact]
-    public void TDBToString()
-    {
-        //Initialize API
-        API api = new API();
-
-        //Load solar system kernels
-        api.LoadKernels(Constants.SolarSystemKernelPath);
-
-        var res = api.TDBToString(0.0);
-        Assert.Equal("2000-01-01 12:00:00.000000 (TDB)", res);
-
-        res = api.TDBToString(100.0);
-        Assert.Equal("2000-01-01 12:01:40.000000 (TDB)", res);
-    }
-
-    [Fact]
-    public void UTCToString()
-    {
-        //Initialize API
-        API api = new API();
-
-        //Load solar system kernels
-        api.LoadKernels(Constants.SolarSystemKernelPath);
-
-        var res = api.UTCToString(0.0);
-        Assert.Equal("2000-01-01 12:00:00.000000 (UTC)", res);
-    }
-
-    [Fact]
     public void FindWindowsOnDistanceConstraintProxy()
     {
         //Initialize API
@@ -235,14 +206,15 @@ public class APITest
         api.LoadKernels(Constants.SolarSystemKernelPath);
 
         //Find time windows when the moon will be 400000 km away from the Earth
-        var res = api.FindWindowsOnDistanceConstraint(new Window(220881665.18391809, 228657665.18565452),
-            PlanetsAndMoons.EARTH.NaifId, PlanetsAndMoons.MOON.NaifId, RelationnalOperator.Greater,
-            400000000, Aberration.None, TimeSpan.FromSeconds(86400.0));
-        Assert.Equal(4, res.Length);
-        Assert.Equal("2007-01-08 00:11:07.628591 (TDB)", api.TDBToString(res[0].Start));
-        Assert.Equal("2007-01-13 06:37:47.948144 (TDB)", api.TDBToString(res[0].End));
-        Assert.Equal("2007-03-29 22:53:58.151896 (TDB)", api.TDBToString(res[3].Start));
-        Assert.Equal("2007-04-01 00:01:05.185654 (TDB)", api.TDBToString(res[3].End));
+        var res = api.FindWindowsOnDistanceConstraint(new Models.Time.Window(DateTimeExtension.CreateTDB(220881665.18391809), DateTimeExtension.CreateTDB(228657665.18565452)),
+            TestHelpers.GetEarthAtJ2000().PhysicalBody, TestHelpers.GetMoonAtJ2000().PhysicalBody, RelationnalOperator.Greater, 400000000, Aberration.None,
+            TimeSpan.FromSeconds(86400.0));
+        var windows = res as Models.Time.Window[] ?? res.ToArray();
+        Assert.Equal(4, windows.Count());
+        Assert.Equal("2007-01-08 00:11:07.628591 (TDB)", windows.ElementAt(0).StartDate.ToFormattedString());
+        Assert.Equal("2007-01-13 06:37:47.948144 (TDB)", windows.ElementAt(0).EndDate.ToFormattedString());
+        Assert.Equal("2007-03-29 22:53:58.151896 (TDB)", windows.ElementAt(3).StartDate.ToFormattedString());
+        Assert.Equal("2007-04-01 00:01:05.185654 (TDB)", windows.ElementAt(3).EndDate.ToFormattedString());
     }
 
     [Fact]
@@ -282,8 +254,8 @@ public class APITest
             0.0, 0.0, Aberration.None, TimeSpan.FromSeconds(60.0));
 
         Assert.Single(res);
-        Assert.Equal("2023-02-19 14:33:08.918098 (TDB)", api.TDBToString(res[0].Start));
-        Assert.Equal("2023-02-20 00:00:00.000000 (TDB)", api.TDBToString(res[0].End));
+        Assert.Equal("2023-02-19 14:33:08.918098 (TDB)", res[0].Start));
+        Assert.Equal("2023-02-20 00:00:00.000000 (TDB)", res[0].End));
     }
 
     [Fact]
@@ -407,7 +379,7 @@ public class APITest
         Models.Time.Window window = new Models.Time.Window(start, end);
 
         //Configure scenario
-        Models.Mission.Scenario scenario = new Models.Mission.Scenario("Scenario_B", new Mission("mission01"),window);
+        Models.Mission.Scenario scenario = new Models.Mission.Scenario("Scenario_B", new Mission("mission01"), window);
         scenario.AddBody(TestHelpers.GetSun());
         scenario.AddBody(TestHelpers.GetEarthAtJ2000());
         scenario.AddBody(TestHelpers.GetMoonAtJ2000());
@@ -431,7 +403,7 @@ public class APITest
         spacecraftScenario.AddInstrument(new Models.Body.Spacecraft.Instrument(600, "CAM600", "mod1", 1.5,
             InstrumentShape.Circular, Vector3.VectorZ, Vector3.VectorX), Vector3.VectorX);
 
-        spacecraftScenario.SetStandbyManeuver(new NadirAttitude(spacecraftScenario,DateTime.MinValue,TimeSpan.Zero,spacecraftScenario.Engines.First()));
+        spacecraftScenario.SetStandbyManeuver(new NadirAttitude(spacecraftScenario, DateTime.MinValue, TimeSpan.Zero, spacecraftScenario.Engines.First()));
 
 
         //Execute scenario
@@ -439,10 +411,10 @@ public class APITest
 
         //Load generated kernels
         api.LoadKernels(new DirectoryInfo(Path.Combine(Constants.OutputPath.FullName, "Spacecrafts/DRAGONFLY2")));
-    
+
         //Read spacecraft orientation
         var res = api.ReadOrientation(window, spacecraftScenario, TimeSpan.FromSeconds(10.0), Frame.ICRF, TimeSpan.FromSeconds(10.0));
-    
+
         //Read results
         Assert.Equal(0.7071067811865476, res.ElementAt(0).Rotation.W);
         Assert.Equal(0.0, res.ElementAt(0).Rotation.VectorPart.X);
@@ -455,27 +427,6 @@ public class APITest
         Assert.Equal(Frame.ICRF, res.ElementAt(0).ReferenceFrame);
     }
 
-    [Fact]
-    void ConvertTDBToUTC()
-    {
-        //Initialize API
-        API api = new API();
-
-        //Load solar system kernels
-        api.LoadKernels(Constants.SolarSystemKernelPath);
-        Assert.Equal(-64.18392726322381, api.ConvertTDBToUTC(0.0));
-    }
-
-    [Fact]
-    void ConverUTCToTDB()
-    {
-        //Initialize API
-        API api = new API();
-
-        //Load solar system kernels
-        api.LoadKernels(Constants.SolarSystemKernelPath);
-        Assert.Equal(64.18392728466942, api.ConvertUTCToTDB(0.0));
-    }
 
     [Fact]
     void WriteEphemeris()

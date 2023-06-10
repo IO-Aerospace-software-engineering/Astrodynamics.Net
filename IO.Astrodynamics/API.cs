@@ -154,26 +154,6 @@ public class API
     }
 
     /// <summary>
-    ///     Convert seconds from J2000 to formatted string
-    /// </summary>
-    /// <param name="secondsFromJ2000"></param>
-    /// <returns></returns>
-    public string TDBToString(double secondsFromJ2000)
-    {
-        return TDBToStringProxy(secondsFromJ2000);
-    }
-
-    /// <summary>
-    ///     Convert seconds from J2000 to formatted string
-    /// </summary>
-    /// <param name="secondsFromJ2000"></param>
-    /// <returns></returns>
-    public string UTCToString(double secondsFromJ2000)
-    {
-        return UTCToStringProxy(secondsFromJ2000);
-    }
-
-    /// <summary>
     ///     Execute the scenario
     /// </summary>
     /// <param name="scenario"></param>
@@ -499,6 +479,7 @@ public class API
     /// </summary>
     /// <param name="launch"></param>
     /// <param name="window"></param>
+    /// <param name="outputDirectory"></param>
     public IEnumerable<LaunchWindow> FindLaunchWindows(IO.Astrodynamics.Models.Maneuver.Launch launch,
         in Models.Time.Window window, DirectoryInfo outputDirectory)
     {
@@ -530,15 +511,15 @@ public class API
     ///     Find time windows based on distance constraint
     /// </summary>
     /// <param name="searchWindow"></param>
-    /// <param name="observerId"></param>
-    /// <param name="targetId"></param>
-    /// <param name="relationnalOperator"></param>
+    /// <param name="observer"></param>
+    /// <param name="target"></param>
+    /// <param name="relationalOperator"></param>
     /// <param name="value"></param>
     /// <param name="aberration"></param>
     /// <param name="stepSize"></param>
     /// <returns></returns>
-    public Window[] FindWindowsOnDistanceConstraint(Window searchWindow, int observerId,
-        int targetId, RelationnalOperator relationnalOperator, double value, Aberration aberration, TimeSpan stepSize)
+    public IEnumerable<Models.Time.Window> FindWindowsOnDistanceConstraint(Models.Time.Window searchWindow, INaifObject observer,
+        INaifObject target, RelationnalOperator relationalOperator, double value, Aberration aberration, TimeSpan stepSize)
     {
         var windows = new Window[1000];
         for (var i = 0; i < 1000; i++)
@@ -546,32 +527,31 @@ public class API
             windows[i] = new Window(double.NaN, double.NaN);
         }
 
-        FindWindowsOnDistanceConstraintProxy(searchWindow, observerId, targetId, relationnalOperator.GetDescription(),
+        FindWindowsOnDistanceConstraintProxy(_mapper.Map<DTO.Window>(searchWindow), observer.NaifId, target.NaifId, relationalOperator.GetDescription(),
             value,
             aberration.GetDescription(),
             stepSize.TotalSeconds, windows);
-        return windows.Where(x => !double.IsNaN(x.Start)).ToArray();
+        return _mapper.Map<Models.Time.Window[]>(windows.Where(x => !double.IsNaN(x.Start)));
     }
 
     /// <summary>
     ///     Find time windows based on occultation constraint
     /// </summary>
     /// <param name="searchWindow"></param>
-    /// <param name="observerId"></param>
-    /// <param name="targetId"></param>
+    /// <param name="target"></param>
     /// <param name="targetFrame"></param>
     /// <param name="targetShape"></param>
-    /// <param name="frontBodyId"></param>
+    /// <param name="frontBody"></param>
     /// <param name="frontFrame"></param>
     /// <param name="frontShape"></param>
     /// <param name="occultationType"></param>
     /// <param name="aberration"></param>
     /// <param name="stepSize"></param>
+    /// <param name="observer"></param>
     /// <returns></returns>
-    public Window[] FindWindowsOnOccultationConstraint(Window searchWindow, int observerId,
-        int targetId, string targetFrame, ShapeType targetShape, int frontBodyId, string frontFrame,
-        ShapeType frontShape,
-        OccultationType occultationType, Aberration aberration, TimeSpan stepSize)
+    public IEnumerable<Models.Time.Window> FindWindowsOnOccultationConstraint(Models.Time.Window searchWindow, INaifObject observer, INaifObject target, Frame targetFrame,
+        ShapeType targetShape, INaifObject frontBody, Frame frontFrame,
+        ShapeType frontShape, OccultationType occultationType, Aberration aberration, TimeSpan stepSize)
     {
         if (targetFrame == null) throw new ArgumentNullException(nameof(targetFrame));
         if (frontFrame == null) throw new ArgumentNullException(nameof(frontFrame));
@@ -581,19 +561,16 @@ public class API
             windows[i] = new Window(double.NaN, double.NaN);
         }
 
-        FindWindowsOnOccultationConstraintProxy(searchWindow, observerId, targetId, targetFrame,
-            targetShape.GetDescription(),
-            frontBodyId, frontFrame, frontShape.GetDescription(), occultationType.GetDescription(),
-            aberration.GetDescription(), stepSize.TotalSeconds, windows);
-        return windows.Where(x => !double.IsNaN(x.Start)).ToArray();
+        FindWindowsOnOccultationConstraintProxy(_mapper.Map<DTO.Window>(searchWindow), observer.NaifId, target.NaifId, targetFrame.Name, targetShape.GetDescription(),
+            frontBody.NaifId,
+            frontFrame.Name, frontShape.GetDescription(), occultationType.GetDescription(), aberration.GetDescription(), stepSize.TotalSeconds, windows);
+        return _mapper.Map<Models.Time.Window[]>(windows.Where(x => !double.IsNaN(x.Start)));
     }
 
     /// <summary>
     ///     Find time windows based on coordinate constraint
     /// </summary>
     /// <param name="searchWindow"></param>
-    /// <param name="observerId"></param>
-    /// <param name="targetId"></param>
     /// <param name="frame"></param>
     /// <param name="coordinateSystem"></param>
     /// <param name="coordinate"></param>
@@ -602,9 +579,10 @@ public class API
     /// <param name="adjustValue"></param>
     /// <param name="aberration"></param>
     /// <param name="stepSize"></param>
+    /// <param name="observer"></param>
     /// <returns></returns>
-    public Window[] FindWindowsOnCoordinateConstraint(Window searchWindow, int observerId, int targetId,
-        string frame, CoordinateSystem coordinateSystem, Coordinate coordinate,
+    public IEnumerable<Models.Time.Window> FindWindowsOnCoordinateConstraint(Models.Time.Window searchWindow, INaifObject observer, INaifObject target,
+        Frame frame, CoordinateSystem coordinateSystem, Coordinate coordinate,
         RelationnalOperator relationalOperator, double value, double adjustValue, Aberration aberration,
         TimeSpan stepSize)
     {
@@ -614,19 +592,17 @@ public class API
             windows[i] = new Window(double.NaN, double.NaN);
         }
 
-        FindWindowsOnCoordinateConstraintProxy(searchWindow, observerId, targetId, frame,
-            coordinateSystem.GetDescription(),
-            coordinate.GetDescription(), relationalOperator.GetDescription(), value, adjustValue,
-            aberration.GetDescription(), stepSize.TotalSeconds, windows);
-        return windows.Where(x => !double.IsNaN(x.Start)).ToArray();
+        FindWindowsOnCoordinateConstraintProxy(_mapper.Map<Window>(searchWindow), observer.NaifId, target.NaifId, frame.Name, coordinateSystem.GetDescription(),
+            coordinate.GetDescription(), relationalOperator.GetDescription(), value, adjustValue, aberration.GetDescription(), stepSize.TotalSeconds, windows);
+        return _mapper.Map<Models.Time.Window[]>(windows.Where(x => !double.IsNaN(x.Start)));
     }
 
     /// <summary>
     ///     Find time windows based on illumination constraint
     /// </summary>
     /// <param name="searchWindow"></param>
-    /// <param name="observerId"></param>
     /// <param name="illuminationSource"></param>
+    /// <param name="observer"></param>
     /// <param name="targetBody"></param>
     /// <param name="fixedFrame"></param>
     /// <param name="geodetic"></param>
@@ -638,10 +614,9 @@ public class API
     /// <param name="stepSize"></param>
     /// <param name="method"></param>
     /// <returns></returns>
-    public Window[] FindWindowsOnIlluminationConstraint(Window searchWindow, int observerId, int targetBody,
-        string fixedFrame, Geodetic geodetic, IlluminationAngle illuminationType,
-        RelationnalOperator relationalOperator, double value, double adjustValue,
-        Aberration aberration, TimeSpan stepSize, string illuminationSource = "SUN", string method = "Ellipsoid")
+    public IEnumerable<Models.Time.Window> FindWindowsOnIlluminationConstraint(Models.Time.Window searchWindow, INaifObject observer, INaifObject targetBody, string fixedFrame,
+        Geodetic geodetic, IlluminationAngle illuminationType, RelationnalOperator relationalOperator, double value, double adjustValue, Aberration aberration, TimeSpan stepSize,
+        string illuminationSource = "SUN", string method = "Ellipsoid")
     {
         if (fixedFrame == null) throw new ArgumentNullException(nameof(fixedFrame));
         if (illuminationSource == null) throw new ArgumentNullException(nameof(illuminationSource));
@@ -652,11 +627,11 @@ public class API
             windows[i] = new Window(double.NaN, double.NaN);
         }
 
-        FindWindowsOnIlluminationConstraintProxy(searchWindow, observerId, illuminationSource, targetBody, fixedFrame,
+        FindWindowsOnIlluminationConstraintProxy(_mapper.Map<Window>(searchWindow), observer.NaifId, illuminationSource, targetBody.NaifId, fixedFrame,
             geodetic, illuminationType.GetDescription(), relationalOperator.GetDescription(), value, adjustValue,
             aberration.GetDescription(), stepSize.TotalSeconds,
             method, windows);
-        return windows.Where(x => !double.IsNaN(x.Start)).ToArray();
+        return _mapper.Map<Models.Time.Window[]>(windows.Where(x => !double.IsNaN(x.Start)));
     }
 
     /// <summary>
@@ -693,28 +668,26 @@ public class API
     ///     Read object ephemeris for a given period
     /// </summary>
     /// <param name="searchWindow"></param>
-    /// <param name="observerId"></param>
-    /// <param name="targetId"></param>
+    /// <param name="target"></param>
     /// <param name="frame"></param>
     /// <param name="aberration"></param>
     /// <param name="stepSize"></param>
+    /// <param name="observer"></param>
     /// <returns></returns>
-    public StateVector[] ReadEphemeris(Window searchWindow, int observerId, int targetId, string frame,
+    public IEnumerable<Models.OrbitalParameters.OrbitalParameters> ReadEphemeris(Models.Time.Window searchWindow, INaifObject observer, INaifObject target, Frame frame,
         Aberration aberration, TimeSpan stepSize)
     {
         if (frame == null) throw new ArgumentNullException(nameof(frame));
         var stateVectors = new StateVector[5000];
-        ReadEphemerisProxy(searchWindow, observerId, targetId, frame, aberration.GetDescription(),
-            stepSize.TotalSeconds,
-            stateVectors);
-        return stateVectors;
+        ReadEphemerisProxy(_mapper.Map<Window>(searchWindow), observer.NaifId, target.NaifId, frame.Name, aberration.GetDescription(), stepSize.TotalSeconds, stateVectors);
+        return _mapper.Map<IEnumerable<Models.OrbitalParameters.StateVector>>(stateVectors);
     }
 
     /// <summary>
     ///     Read spacecraft orientation for a given period
     /// </summary>
     /// <param name="searchWindow"></param>
-    /// <param name="spacecraftId"></param>
+    /// <param name="spacecraft"></param>
     /// <param name="tolerance"></param>
     /// <param name="referenceFrame"></param>
     /// <param name="stepSize"></param>
@@ -731,87 +704,47 @@ public class API
     }
 
     /// <summary>
-    ///     Convert UTC to TDB seconds elapsed from J2000
-    /// </summary>
-    /// <param name="utc"></param>
-    /// <returns></returns>
-    public double ConvertUTCToTDB(double utc)
-    {
-        return ConvertUTCToTDBProxy(utc);
-    }
-
-    /// <summary>
-    ///     Convert TDB to UTC seconds elapsed from J2000
-    /// </summary>
-    /// <param name="tdb"></param>
-    /// <returns></returns>
-    public double ConvertTDBToUTC(double tdb)
-    {
-        return ConvertTDBToUTCProxy(tdb);
-    }
-
-    /// <summary>
     ///     Write ephemeris file
     /// </summary>
     /// <param name="filePath"></param>
-    /// <param name="objectId"></param>
+    /// <param name="naifObject"></param>
     /// <param name="stateVectors"></param>
-    /// <param name="size"></param>
     /// <returns></returns>
-    public bool WriteEphemeris(FileInfo filePath, int objectId, StateVector[] stateVectors, uint size)
+    public bool WriteEphemeris(FileInfo filePath, INaifObject naifObject, IEnumerable<Models.OrbitalParameters.StateVector> stateVectors)
     {
         if (filePath == null) throw new ArgumentNullException(nameof(filePath));
         if (stateVectors == null) throw new ArgumentNullException(nameof(stateVectors));
-        if (stateVectors.Length == 0)
+        var enumerable = stateVectors as Models.OrbitalParameters.StateVector[] ?? stateVectors.ToArray();
+        if (!enumerable.Any())
             throw new ArgumentException("Value cannot be an empty collection.", nameof(stateVectors));
-        return WriteEphemerisProxy(filePath.FullName, objectId, stateVectors, size);
+        return WriteEphemerisProxy(filePath.FullName, naifObject.NaifId, _mapper.Map<StateVector[]>(stateVectors), (uint)enumerable.Count());
     }
 
     /// <summary>
     ///     Get celestial body information like radius, GM, name, associated frame, ...
     /// </summary>
-    /// <param name="celestialBodyId"></param>
+    /// <param name="celestialBody"></param>
     /// <returns></returns>
-    public CelestialBody GetCelestialBodyInfo(int celestialBodyId)
+    public CelestialBody GetCelestialBodyInfo(Models.Body.CelestialBody celestialBody)
     {
-        return GetCelestialBodyInfoProxy(celestialBodyId);
+        return GetCelestialBodyInfoProxy(celestialBody.NaifId);
     }
 
+    /// <summary>
+    /// Transform a frame to another
+    /// </summary>
+    /// <param name="fromFrame"></param>
+    /// <param name="toFrame"></param>
+    /// <param name="epoch"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentNullException"></exception>
     public Models.OrbitalParameters.StateOrientation TransformFrame(Frame fromFrame, Frame toFrame, DateTime epoch)
     {
         if (fromFrame == null) throw new ArgumentNullException(nameof(fromFrame));
         if (toFrame == null) throw new ArgumentNullException(nameof(toFrame));
         var res = TransformFrameProxy(fromFrame.Name, toFrame.Name, epoch.ToTDB().SecondsFromJ2000TDB());
         return new Models.OrbitalParameters.StateOrientation(
-            new IO.Astrodynamics.Models.Math.Quaternion(res.Rotation.W, res.Rotation.X, res.Rotation.Y, res.Rotation.Z),
-            new IO.Astrodynamics.Models.Math.Vector3(res.AngularVelocity.X, res.AngularVelocity.Y,
-                res.AngularVelocity.Z), epoch, fromFrame);
-    }
-
-    public StateVector ConvertToStateVector(EquinoctialElements equinoctialElements)
-    {
-        return ConvertEquinoctialElementsToStateVectorProxy(equinoctialElements);
-    }
-
-    public StateVector ConvertToStateVector(ConicElements conicElements)
-    {
-        return ConvertConicElementsToStateVectorProxy(conicElements);
-    }
-
-    public RaDec ConvertToEquatorialCoordinates(StateVector stateVector)
-    {
-        return ConvertStateVectorToEquatorialCoordinatesProxy(stateVector);
-    }
-
-    public RaDec ConvertToEquatorialCoordinates(ConicElements conicElements)
-    {
-        var sv = ConvertToStateVector(conicElements);
-        return ConvertStateVectorToEquatorialCoordinatesProxy(sv);
-    }
-
-    public RaDec ConvertToEquatorialCoordinates(EquinoctialElements equinoctialElements)
-    {
-        var sv = ConvertToStateVector(equinoctialElements);
-        return ConvertStateVectorToEquatorialCoordinatesProxy(sv);
+            new Quaternion(res.Rotation.W, res.Rotation.X, res.Rotation.Y, res.Rotation.Z),
+            new Vector3(res.AngularVelocity.X, res.AngularVelocity.Y, res.AngularVelocity.Z), epoch, fromFrame);
     }
 }
