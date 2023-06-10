@@ -18,6 +18,7 @@ using IO.Astrodynamics.SolarSystemObjects;
 using ApsidalAlignmentManeuver = IO.Astrodynamics.DTO.ApsidalAlignmentManeuver;
 using FuelTank = IO.Astrodynamics.DTO.FuelTank;
 using Instrument = IO.Astrodynamics.DTO.Instrument;
+using NadirAttitude = IO.Astrodynamics.Models.Maneuver.NadirAttitude;
 using Payload = IO.Astrodynamics.DTO.Payload;
 using PhasingManeuver = IO.Astrodynamics.DTO.PhasingManeuver;
 using Quaternion = IO.Astrodynamics.Models.Math.Quaternion;
@@ -392,66 +393,67 @@ public class APITest
         Assert.Equal(0.0, res[0].Epoch);
     }
 
-    // [Fact]
-    // public void ReadOrientation()
-    // {
-    //     //Initialize API
-    //     API api = new API();
-    //
-    //     //Load solar system kernels
-    //     api.LoadKernels(Constants.SolarSystemKernelPath);
-    //     // Window utcSearchWindow = new Window(662777930.816060, 662777990.816060);
-    //     Window tdbSearchWindow = new Window(662778000.0 + 0.0, 662778060.0);
-    //
-    //     //Configure scenario
-    //     var scenario = new Scenario("ReadOrientation", tdbSearchWindow);
-    //     scenario.CelestialBodiesId[0] = Stars.Sun.NaifId;
-    //     scenario.CelestialBodiesId[1] = PlanetsAndMoons.EARTH.NaifId;
-    //     scenario.CelestialBodiesId[2] = PlanetsAndMoons.MOON.NaifId;
-    //
-    //     //Configure parking orbit
-    //     StateVector parkingOrbit = new StateVector(PlanetsAndMoons.EARTH.NaifId, tdbSearchWindow.Start,
-    //         InertialFrame.ICRF.GetDescription(),
-    //         new Vector3D(6800000.0, 0.0, 0.0),
-    //         new Vector3D(0.0, 7656.2204182967143, 0.0));
-    //
-    //     //Configure spacecraft
-    //     scenario.Spacecraft = new Spacecraft(-1782, "DRAGONFLY2", 1000.0, 10000.0, parkingOrbit, Constants.SpacecraftPath.FullName);
-    //     scenario.Spacecraft.FuelTanks[0] =
-    //         new FuelTank(id: 1, capacity: 9000.0, quantity: 9000.0, serialNumber: "fuelTank1");
-    //     scenario.Spacecraft.Engines[0] = new EngineDTO(id: 1, name: "engine1", fuelFlow: 50,
-    //         serialNumber: "serialNumber1", fuelTankSerialNumber: "fuelTank1", isp: 450);
-    //
-    //     //Spacecraft must point to nadir
-    //     scenario.Spacecraft.NadirAttitudes[0] = new NadirAttitude(0, 0.0, double.MinValue)
-    //     {
-    //         Engines =
-    //         {
-    //             [0] = "serialNumber1"
-    //         }
-    //     };
-    //
-    //     //Execute scenario
-    //     api.ExecuteScenario(ref scenario);
-    //
-    //     //Load generated kernels
-    //     api.LoadKernels(new DirectoryInfo("Data/User/Spacecrafts/DRAGONFLY2"));
-    //
-    //     //Read spacecraft orientation
-    //     var res = api.ReadOrientation(tdbSearchWindow, -1782, Math.Pow(2, 16), InertialFrame.ICRF.GetDescription(),
-    //         TimeSpan.FromSeconds(10.0));
-    //
-    //     //Read results
-    //     Assert.Equal(0.7071067811865476, res[0].Orientation.W);
-    //     Assert.Equal(0.0, res[0].Orientation.X);
-    //     Assert.Equal(0.0, res[0].Orientation.Y);
-    //     Assert.Equal(-0.7071067811865475, res[0].Orientation.Z);
-    //     Assert.Equal(0.0, res[0].AngularVelocity.X);
-    //     Assert.Equal(0.0, res[0].AngularVelocity.Y);
-    //     Assert.Equal(0.0, res[0].AngularVelocity.Z);
-    //     Assert.Equal(tdbSearchWindow.Start, res[0].Epoch);
-    //     Assert.Equal(InertialFrame.ICRF.GetDescription(), res[0].Frame);
-    // }
+    [Fact]
+    public void ReadOrientation()
+    {
+        //Initialize API
+        API api = new API();
+
+        //Load solar system kernels
+        api.LoadKernels(Constants.SolarSystemKernelPath);
+
+        DateTime start = DateTimeExtension.CreateTDB(662778000.0);
+        DateTime end = start.AddSeconds(60.0);
+        Models.Time.Window window = new Models.Time.Window(start, end);
+
+        //Configure scenario
+        Models.Mission.Scenario scenario = new Models.Mission.Scenario("Scenario_B", new Mission("mission01"),window);
+        scenario.AddBody(TestHelpers.GetSun());
+        scenario.AddBody(TestHelpers.GetEarthAtJ2000());
+        scenario.AddBody(TestHelpers.GetMoonAtJ2000());
+
+        //Define parking orbit
+
+        Models.OrbitalParameters.StateVector parkingOrbit = new Models.OrbitalParameters.StateVector(
+            new Vector3(6800000.0, 0.0, 0.0), new Vector3(0.0, 7656.2204182967143, 0.0), TestHelpers.GetEarthAtJ2000(),
+            start, Frame.ICRF);
+
+        //Configure spacecraft
+        Models.Body.Spacecraft.Spacecraft spacecraft =
+            new Models.Body.Spacecraft.Spacecraft(-179, "DRAGONFLY2", 1000.0, 10000.0);
+        Clock clock = new Clock("clk1", Math.Pow(2.0, 16.0));
+        SpacecraftScenario spacecraftScenario = new SpacecraftScenario(spacecraft, clock, parkingOrbit, scenario);
+        Models.Body.Spacecraft.FuelTank fuelTank = new Models.Body.Spacecraft.FuelTank("ft1", "model1", 9000.0);
+        Engine engine = new Engine("engine1", "model1", 450.0, 50.0);
+        spacecraftScenario.AddFuelTank(fuelTank, 9000.0, "fuelTank1");
+        spacecraftScenario.AddEngine(engine, fuelTank, "serialNumber1");
+        spacecraftScenario.AddPayload(new Models.Body.Spacecraft.Payload("payload1", 50.0, "pay01"));
+        spacecraftScenario.AddInstrument(new Models.Body.Spacecraft.Instrument(600, "CAM600", "mod1", 1.5,
+            InstrumentShape.Circular, Vector3.VectorZ, Vector3.VectorX), Vector3.VectorX);
+
+        spacecraftScenario.SetStandbyManeuver(new NadirAttitude(spacecraftScenario,DateTime.MinValue,TimeSpan.Zero,spacecraftScenario.Engines.First()));
+
+
+        //Execute scenario
+        api.PropagateScenario(scenario, Constants.OutputPath);
+
+        //Load generated kernels
+        api.LoadKernels(new DirectoryInfo(Path.Combine(Constants.OutputPath.FullName, "Spacecrafts/DRAGONFLY2")));
+    
+        //Read spacecraft orientation
+        var res = api.ReadOrientation(window, spacecraftScenario, TimeSpan.FromSeconds(10.0), Frame.ICRF, TimeSpan.FromSeconds(10.0));
+    
+        //Read results
+        Assert.Equal(0.7071067811865476, res.ElementAt(0).Rotation.W);
+        Assert.Equal(0.0, res.ElementAt(0).Rotation.VectorPart.X);
+        Assert.Equal(0.0, res.ElementAt(0).Rotation.VectorPart.Y);
+        Assert.Equal(-0.7071067811865475, res.ElementAt(0).Rotation.VectorPart.Z);
+        Assert.Equal(0.0, res.ElementAt(0).AngularVelocity.X);
+        Assert.Equal(0.0, res.ElementAt(0).AngularVelocity.Y);
+        Assert.Equal(0.0, res.ElementAt(0).AngularVelocity.Z);
+        Assert.Equal(window.StartDate, res.ElementAt(0).Epoch);
+        Assert.Equal(Frame.ICRF, res.ElementAt(0).ReferenceFrame);
+    }
 
     [Fact]
     void ConvertTDBToUTC()

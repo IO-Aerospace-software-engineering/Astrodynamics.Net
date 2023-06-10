@@ -20,6 +20,7 @@ using CelestialBody = IO.Astrodynamics.DTO.CelestialBody;
 using CombinedManeuver = IO.Astrodynamics.DTO.CombinedManeuver;
 using Launch = IO.Astrodynamics.DTO.Launch;
 using PhasingManeuver = IO.Astrodynamics.DTO.PhasingManeuver;
+using Quaternion = IO.Astrodynamics.Models.Math.Quaternion;
 using Scenario = IO.Astrodynamics.DTO.Scenario;
 using Window = IO.Astrodynamics.DTO.Window;
 
@@ -416,6 +417,7 @@ public class API
             }
 
             PropagateProxy(ref scenarioDto);
+            //Todo load kernels
 
             foreach (var maneuverResult in scenarioDto.Spacecraft.CombinedManeuvers.Where(x => x.ManeuverOrder > -1))
             {
@@ -683,7 +685,7 @@ public class API
 
         FindWindowsInFieldOfViewConstraintProxy(searchWindowDto, observerId.NaifId, observerId.NaifId * 1000 - instrument.NaifId, targetId.NaifId, targetFrame.Name,
             targetShape.GetDescription(), aberration.GetDescription(), stepSize.TotalSeconds, windows);
-        
+
         return _mapper.Map<IEnumerable<Models.Time.Window>>(windows.Where(x => !double.IsNaN(x.Start)).ToArray());
     }
 
@@ -717,14 +719,15 @@ public class API
     /// <param name="referenceFrame"></param>
     /// <param name="stepSize"></param>
     /// <returns></returns>
-    public StateOrientation[] ReadOrientation(Window searchWindow, int spacecraftId, double tolerance,
-        string referenceFrame, TimeSpan stepSize)
+    public IEnumerable<Models.OrbitalParameters.StateOrientation> ReadOrientation(Models.Time.Window searchWindow, SpacecraftScenario spacecraft, TimeSpan tolerance,
+        Frame referenceFrame, TimeSpan stepSize)
     {
         if (referenceFrame == null) throw new ArgumentNullException(nameof(referenceFrame));
         var stateOrientations = new StateOrientation[10000];
-        ReadOrientationProxy(searchWindow, spacecraftId, tolerance, referenceFrame, stepSize.TotalSeconds,
+        ReadOrientationProxy(_mapper.Map<Window>(searchWindow), spacecraft.PhysicalBody.NaifId, tolerance.TotalSeconds, referenceFrame.Name, stepSize.TotalSeconds,
             stateOrientations);
-        return stateOrientations;
+        return stateOrientations.Select(x => new Models.OrbitalParameters.StateOrientation(_mapper.Map<Quaternion>(x.Rotation), _mapper.Map<Vector3>(x.AngularVelocity),
+            DateTimeExtension.CreateTDB(x.Epoch), referenceFrame));
     }
 
     /// <summary>
