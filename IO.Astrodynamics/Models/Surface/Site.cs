@@ -6,10 +6,7 @@ using IO.Astrodynamics.Models.OrbitalParameters;
 using IO.Astrodynamics.Models.Time;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace IO.Astrodynamics.Models.Surface
 {
@@ -80,7 +77,7 @@ namespace IO.Astrodynamics.Models.Surface
             double y = (N + Geodetic.Altitude) * cosLat * System.Math.Sin(Geodetic.Longitude);
             double z = ((1.0 - e2) * N + Geodetic.Altitude) * sinLat;
 
-            return new StateVector(new Math.Vector3(x, y, z), new Math.Vector3(), Body, epoch, Body.Frame);
+            return new StateVector(new Vector3(x, y, z), new Vector3(), Body, epoch, Body.Frame);
         }
 
         public Window[] FindNightWindows(in Window window, in double twilight)
@@ -197,7 +194,7 @@ namespace IO.Astrodynamics.Models.Surface
         /// <returns></returns>
         public Horizontal GetHorizontalCoordinates(BodyScenario target, DateTime epoch)
         {
-            var bodySv = RelativeStateVector(this.Body.Frame, target, epoch);
+            var bodySv = RelativeStateVector(Body.Frame, target, epoch);
             var r = bodySv.Position.Normalize();
             var z = StateVector(epoch).Position.Normalize();
             var e = z.Cross(Vector3.VectorZ).Normalize().Inverse();

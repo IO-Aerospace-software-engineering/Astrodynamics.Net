@@ -6,10 +6,6 @@ using IO.Astrodynamics.Models.OrbitalParameters;
 using IO.Astrodynamics.Models.Surface;
 using IO.Astrodynamics.Models.Time;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace IO.Astrodynamics.Models.Tests.Surface

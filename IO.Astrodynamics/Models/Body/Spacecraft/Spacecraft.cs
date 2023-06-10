@@ -1,8 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using IO.Astrodynamics.Models.Math;
 
 namespace IO.Astrodynamics.Models.Body.Spacecraft
 {
@@ -10,7 +6,7 @@ namespace IO.Astrodynamics.Models.Body.Spacecraft
     {
         public double DryOperatingMass
         {
-            get => base.Mass;
+            get => Mass;
         }
 
         //TODO Check if the MOM is not exceeded

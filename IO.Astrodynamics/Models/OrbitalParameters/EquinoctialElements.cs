@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using IO.Astrodynamics.Models.Body;
-using IO.Astrodynamics.Models.Math;
 using IO.Astrodynamics.Models.Mission;
 
 namespace IO.Astrodynamics.Models.OrbitalParameters

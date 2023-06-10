@@ -1,5 +1,4 @@
 using System;
-using IO.Astrodynamics.Models;
 using IO.Astrodynamics.Models.Body;
 using IO.Astrodynamics.Models.Math;
 using IO.Astrodynamics.Models.Mission;

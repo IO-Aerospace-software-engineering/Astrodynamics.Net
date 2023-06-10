@@ -1,5 +1,4 @@
 using Xunit;
-using IO.Astrodynamics.Models;
 using IO.Astrodynamics.Models.Maneuver;
 using IO.Astrodynamics.Models.Mission;
 using IO.Astrodynamics.Models.Body;
@@ -7,7 +6,6 @@ using IO.Astrodynamics.Models.Body.Spacecraft;
 using IO.Astrodynamics.Models.OrbitalParameters;
 using System;
 using System.Linq;
-using IO.Astrodynamics.Models.Math;
 using IO.Astrodynamics.Models.Time;
 
 namespace IO.Astrodynamics.Models.Tests.Maneuvers

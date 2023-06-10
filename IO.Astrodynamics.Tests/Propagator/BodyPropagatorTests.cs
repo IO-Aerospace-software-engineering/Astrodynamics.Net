@@ -6,10 +6,6 @@ using IO.Astrodynamics.Models.Mission;
 using IO.Astrodynamics.Models.OrbitalParameters;
 using IO.Astrodynamics.Models.Propagator;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using IO.Astrodynamics.Models.Time;
 using Xunit;
 
@@ -21,7 +17,7 @@ namespace IO.Astrodynamics.Models.Tests.Propagator
         public void Create()
         {
             Models.Mission.Mission mission = new Models.Mission.Mission("mission1");
-            Scenario scenario = new Scenario("scn1", mission,new IO.Astrodynamics.Models.Time.Window(new DateTime(2021, 1, 1), TimeSpan.FromSeconds(100.0)));
+            Scenario scenario = new Scenario("scn1", mission,new Window(new DateTime(2021, 1, 1), TimeSpan.FromSeconds(100.0)));
             CelestialBody sun = new CelestialBody(10, "sun", 1.32712440018E+11, 695508.0, 695508.0);
             CelestialBodyScenario sunScn = new CelestialBodyScenario(sun, scenario);
 

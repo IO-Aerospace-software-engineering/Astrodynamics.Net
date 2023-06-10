@@ -1,10 +1,7 @@
 using System;
-using System.Linq;
 using System.Collections.Generic;
 using IO.Astrodynamics.Models.Body.Spacecraft;
-using IO.Astrodynamics.Models.Math;
 using IO.Astrodynamics.Models.Mission;
-using IO.Astrodynamics.Models.OrbitalParameters;
 using IO.Astrodynamics.Models.Time;
 
 
@@ -62,7 +59,7 @@ namespace IO.Astrodynamics.Models.Maneuver
 
         public Maneuver SetNextManeuver(Maneuver maneuver)
         {
-            this.NextManeuver = maneuver;
+            NextManeuver = maneuver;
             return maneuver;
         }
 

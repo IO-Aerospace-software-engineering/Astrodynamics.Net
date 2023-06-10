@@ -1,9 +1,5 @@
 ﻿using IO.Astrodynamics.Models.Surface;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using IO.Astrodynamics.Models.Coordinates;
 using Xunit;
 

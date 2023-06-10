@@ -3,7 +3,6 @@ using Xunit;
 using IO.Astrodynamics.Models.OrbitalParameters;
 using IO.Astrodynamics.Models.Body;
 using IO.Astrodynamics.Models.Math;
-using IO.Astrodynamics.Models;
 using IO.Astrodynamics.Models.Mission;
 using IO.Astrodynamics.Models.Time;
 using IO.Astrodynamics.SolarSystemObjects;

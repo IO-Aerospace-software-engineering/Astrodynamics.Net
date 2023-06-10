@@ -1,5 +1,3 @@
-using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Serialization;
 
 namespace IO.Astrodynamics.Models.Math
@@ -83,12 +81,12 @@ namespace IO.Astrodynamics.Models.Math
                 double y = System.Math.Abs(vector.Y);
                 double z = System.Math.Abs(vector.Z);
 
-                Vector3 axis = x < y ? (x < z ? Vector3.VectorX : Vector3.VectorZ) : (y < z ? Vector3.VectorY : Vector3.VectorZ);
+                Vector3 axis = x < y ? (x < z ? VectorX : VectorZ) : (y < z ? VectorY : VectorZ);
                 var vec = vector.Cross(axis);
                 return new Quaternion(0.0, vec.X, vec.Y, vec.Z).Normalize();
             }
 
-            var mag1 = this.Magnitude();
+            var mag1 = Magnitude();
             var mag2 = vector.Magnitude();
             var v = vector.Cross(this);
             var w = dot + System.Math.Sqrt(mag1 * mag1 * mag2 * mag2);

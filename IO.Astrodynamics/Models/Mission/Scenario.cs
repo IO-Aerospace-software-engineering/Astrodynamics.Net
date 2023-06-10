@@ -21,11 +21,11 @@ namespace IO.Astrodynamics.Models.Mission
         {
             if (string.IsNullOrEmpty(name))
             {
-                throw new System.ArgumentException($"'{nameof(name)}' cannot be null or empty.", nameof(name));
+                throw new ArgumentException($"'{nameof(name)}' cannot be null or empty.", nameof(name));
             }
 
             Name = name;
-            Mission = mission ?? throw new System.ArgumentNullException(nameof(mission));
+            Mission = mission ?? throw new ArgumentNullException(nameof(mission));
             _api = new API();
             Window = window;
         }

@@ -5,10 +5,6 @@ using IO.Astrodynamics.Models.Math;
 using IO.Astrodynamics.Models.Mission;
 using IO.Astrodynamics.Models.OrbitalParameters;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using IO.Astrodynamics.Models.Time;
 using Xunit;
 
@@ -28,15 +24,15 @@ namespace IO.Astrodynamics.Models.Tests.Integrator
             CelestialBodyScenario earthScn = new CelestialBodyScenario(earth,
                 new StateVector(new Vector3(-2.679537555216521E+07, 1.327011135216045E+08, 5.752533467064925E+07),
                     new Vector3(2.976558008982104E+01, -5.075339952746913E+00, -2.200929976753953E+00), sunScn, new DateTime(2021, 1, 1),
-                    IO.Astrodynamics.Models.Frames.Frame.ICRF), scenario);
+                    Frames.Frame.ICRF), scenario);
 
             CelestialBody moon = new CelestialBody(301, "moon", 4.902E+3, 6356.7519, 6378.1366);
             CelestialBodyScenario moonScn = new CelestialBodyScenario(moon,
                 new StateVector(new Vector3(2.068864826237993E+05, 2.891146390982051E+05, 1.515746884380044E+05),
                     new Vector3(-8.366764389833921E-01, -5.602543663174073E-01, -1.710459390585548E-01), earthScn, new DateTime(2021, 1, 1),
-                    IO.Astrodynamics.Models.Frames.Frame.ICRF), scenario);
+                    Frames.Frame.ICRF), scenario);
 
-            var sv = new StateVector(new Vector3(6800.0, 0.0, 0.0), new Vector3(0.0, 8.0, 0.0), earthScn, new DateTime(2021, 1, 1), IO.Astrodynamics.Models.Frames.Frame.ECLIPTIC);
+            var sv = new StateVector(new Vector3(6800.0, 0.0, 0.0), new Vector3(0.0, 8.0, 0.0), earthScn, new DateTime(2021, 1, 1), Frames.Frame.ECLIPTIC);
             Clock clk1 = new Clock("My clock", 1.0 / 256.0);
             Spacecraft spc1 = new Spacecraft(-1001, "My spacecraft", 1000.0, 10000.0);
 
@@ -60,21 +56,21 @@ namespace IO.Astrodynamics.Models.Tests.Integrator
             CelestialBodyScenario earthScn = new CelestialBodyScenario(earth,
                 new StateVector(new Vector3(-2.679537555216521E+07, 1.327011135216045E+08, 5.752533467064925E+07),
                     new Vector3(2.976558008982104E+01, -5.075339952746913E+00, -2.200929976753953E+00), sunScn, new DateTime(2021, 1, 1),
-                    IO.Astrodynamics.Models.Frames.Frame.ICRF), scenario);
+                    Frames.Frame.ICRF), scenario);
 
             CelestialBody moon = new CelestialBody(301, "moon", 4.902E+3, 6356.7519, 6378.1366);
             CelestialBodyScenario moonScn = new CelestialBodyScenario(moon,
                 new StateVector(new Vector3(2.068864826237993E+05, 2.891146390982051E+05, 1.515746884380044E+05),
                     new Vector3(-8.366764389833921E-01, -5.602543663174073E-01, -1.710459390585548E-01), earthScn, new DateTime(2021, 1, 1),
-                    IO.Astrodynamics.Models.Frames.Frame.ICRF), scenario);
+                    Frames.Frame.ICRF), scenario);
 
             earthScn.AddStateVector(new StateVector(new Vector3(-2.679537555216521E+07, 1.327011135216045E+08, 5.752533467064925E+07),
                 new Vector3(2.976558008982104E+01, -5.075339952746913E+00, -2.200929976753953E+00), sunScn, new DateTime(2021, 1, 1).AddSeconds(1.0),
-                IO.Astrodynamics.Models.Frames.Frame.ICRF));
+                Frames.Frame.ICRF));
             moonScn.AddStateVector(new StateVector(new Vector3(2.068864826237993E+05, 2.891146390982051E+05, 1.515746884380044E+05),
                 new Vector3(-8.366764389833921E-01, -5.602543663174073E-01, -1.710459390585548E-01), earthScn, new DateTime(2021, 1, 1).AddSeconds(1.0),
-                IO.Astrodynamics.Models.Frames.Frame.ICRF));
-            var sv = new StateVector(new Vector3(6800.0, 0.0, 0.0), new Vector3(0.0, 8.0, 0.0), earthScn, new DateTime(2021, 1, 1), IO.Astrodynamics.Models.Frames.Frame.ICRF);
+                Frames.Frame.ICRF));
+            var sv = new StateVector(new Vector3(6800.0, 0.0, 0.0), new Vector3(0.0, 8.0, 0.0), earthScn, new DateTime(2021, 1, 1), Frames.Frame.ICRF);
             Clock clk1 = new Clock("My clock", 1.0 / 256.0);
             Spacecraft spc1 = new Spacecraft(-1001, "My spacecraft", 1000.0, 10000.0);
 

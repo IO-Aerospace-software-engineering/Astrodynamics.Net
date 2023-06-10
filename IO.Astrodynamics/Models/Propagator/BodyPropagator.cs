@@ -1,11 +1,5 @@
-﻿using IO.Astrodynamics.Models.Integrator;
-using IO.Astrodynamics.Models.Mission;
-using IO.Astrodynamics.Models.Time;
+﻿using IO.Astrodynamics.Models.Mission;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace IO.Astrodynamics.Models.Propagator
 {

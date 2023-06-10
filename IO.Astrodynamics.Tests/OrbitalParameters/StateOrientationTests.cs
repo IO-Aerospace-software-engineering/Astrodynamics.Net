@@ -1,10 +1,6 @@
 ﻿using IO.Astrodynamics.Models.Math;
 using IO.Astrodynamics.Models.OrbitalParameters;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace IO.Astrodynamics.Models.Tests.OrbitalParameters

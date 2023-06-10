@@ -5,9 +5,6 @@ using IO.Astrodynamics.Models.Time;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using IO.Astrodynamics.Models.Frames;
 
 namespace IO.Astrodynamics.Models.Maneuver
@@ -17,7 +14,7 @@ namespace IO.Astrodynamics.Models.Maneuver
         public LaunchSite LaunchSite { get; }
         public Site RecoverySite { get; }
         public OrbitalParameters.OrbitalParameters TargetOrbit { get; }
-        public Mission.BodyScenario TargetBody { get; }
+        public BodyScenario TargetBody { get; }
         public bool? LaunchByDay { get; }
         public double Twilight { get; }
         private readonly API _api = new API();
@@ -107,7 +104,7 @@ namespace IO.Astrodynamics.Models.Maneuver
         {
             double vrotx =
                 GetInertialInsertionVelocity(epoch) * System.Math.Sin(GetInertialAscendingAzimuthLaunch(epoch)) -
-                LaunchSite.GetEphemeris(Frames.Frame.ICRF, epoch).Velocity.Magnitude();
+                LaunchSite.GetEphemeris(Frame.ICRF, epoch).Velocity.Magnitude();
             double vroty = GetInertialInsertionVelocity(epoch) *
                            System.Math.Cos(GetInertialAscendingAzimuthLaunch(epoch));
             double az = System.Math.Atan(vrotx / vroty);
@@ -139,7 +136,7 @@ namespace IO.Astrodynamics.Models.Maneuver
         {
             double vrotx =
                 GetInertialInsertionVelocity(epoch) * System.Math.Sin(GetInertialAscendingAzimuthLaunch(epoch)) -
-                LaunchSite.GetEphemeris(Frames.Frame.ICRF, epoch).Velocity.Magnitude();
+                LaunchSite.GetEphemeris(Frame.ICRF, epoch).Velocity.Magnitude();
             double vroty = GetInertialInsertionVelocity(epoch) *
                            System.Math.Cos(GetInertialAscendingAzimuthLaunch(epoch));
             return System.Math.Sqrt(vrotx * vrotx + vroty * vroty);

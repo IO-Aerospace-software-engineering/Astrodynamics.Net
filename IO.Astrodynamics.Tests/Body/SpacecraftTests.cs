@@ -1,7 +1,5 @@
 using System;
-using System.Linq;
 using IO.Astrodynamics.Models.Body.Spacecraft;
-using IO.Astrodynamics.Models.Math;
 using Xunit;
 
 namespace IO.Astrodynamics.Models.Tests.Body

@@ -12,10 +12,10 @@ namespace IO.Astrodynamics.Models.OrbitalParameters
         /// <summary>
         /// Frame from which the rotation is applied
         /// </summary>
-        public Frames.Frame ReferenceFrame { get; }
+        public Frame ReferenceFrame { get; }
         public Vector3 AngularVelocity { get; }
 
-        public StateOrientation(Quaternion orientation, Vector3 angularVelocity, DateTime epoch, Frames.Frame frame)
+        public StateOrientation(Quaternion orientation, Vector3 angularVelocity, DateTime epoch, Frame frame)
         {
             Rotation = orientation;
             AngularVelocity = angularVelocity;
@@ -36,7 +36,7 @@ namespace IO.Astrodynamics.Models.OrbitalParameters
             }
 
             return new StateOrientation(Rotation * ReferenceFrame.ToFrame(frame, Epoch).Rotation,
-                AngularVelocity - Frames.Frame.ICRF.ToFrame(frame, Epoch).AngularVelocity, Epoch, frame);
+                AngularVelocity - Frame.ICRF.ToFrame(frame, Epoch).AngularVelocity, Epoch, frame);
         }
     }
 }

@@ -1,10 +1,8 @@
 using System;
-using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
 using Xunit;
 using System.Linq;
-using IO.Astrodynamics.Converters;
 using IO.Astrodynamics.DTO;
 using IO.Astrodynamics.Models.Body.Spacecraft;
 using IO.Astrodynamics.Models.Frames;
@@ -15,17 +13,8 @@ using IO.Astrodynamics.Models.Surface;
 using IO.Astrodynamics.Models.Tests;
 using IO.Astrodynamics.Models.Time;
 using IO.Astrodynamics.SolarSystemObjects;
-using ApsidalAlignmentManeuver = IO.Astrodynamics.DTO.ApsidalAlignmentManeuver;
-using FuelTank = IO.Astrodynamics.DTO.FuelTank;
-using Instrument = IO.Astrodynamics.DTO.Instrument;
 using NadirAttitude = IO.Astrodynamics.Models.Maneuver.NadirAttitude;
-using Payload = IO.Astrodynamics.DTO.Payload;
-using PhasingManeuver = IO.Astrodynamics.DTO.PhasingManeuver;
-using Quaternion = IO.Astrodynamics.Models.Math.Quaternion;
-using Scenario = IO.Astrodynamics.DTO.Scenario;
-using Site = IO.Astrodynamics.DTO.Site;
-using Spacecraft = IO.Astrodynamics.DTO.Spacecraft;
-using Window = IO.Astrodynamics.DTO.Window;
+using Scenario = IO.Astrodynamics.Models.Mission.Scenario;
 
 namespace IO.Astrodynamics.Tests;
 
@@ -67,7 +56,7 @@ public class APITest
             Models.Constants.CivilTwilight, true);
 
         //Find launch windows
-        var res = api.FindLaunchWindows(launch, window, Constants.OutputPath);
+        var res = api.FindLaunchWindows(launch, window, Constants.OutputPath).ToArray();
 
         //Read results
         Assert.Equal(2, res.Count());
@@ -97,8 +86,8 @@ public class APITest
         DateTime end = DateTimeExtension.CreateUTC(668174400.000000).ToTDB();
 
         Mission mission = new Mission("mission01");
-        Models.Mission.Scenario scenario =
-            new Models.Mission.Scenario("scn1", mission, new Models.Time.Window(startPropagator, end));
+        Scenario scenario =
+            new Scenario("scn1", mission, new Models.Time.Window(startPropagator, end));
         scenario.AddBody(TestHelpers.GetSun());
         scenario.AddBody(TestHelpers.GetEarthAtJ2000());
         scenario.AddBody(TestHelpers.GetMoonAtJ2000());
@@ -136,7 +125,7 @@ public class APITest
                 TimeSpan.Zero, targetOrbit, spacecraftScenario.Engines.First()))
             .SetNextManeuver(new Models.Maneuver.PhasingManeuver(spacecraftScenario, DateTime.MinValue, TimeSpan.Zero,
                 targetOrbit, 1, spacecraftScenario.Engines.First()))
-            .SetNextManeuver(new Models.Maneuver.ApogeeHeightManeuver(spacecraftScenario, DateTime.MinValue,
+            .SetNextManeuver(new ApogeeHeightManeuver(spacecraftScenario, DateTime.MinValue,
                 TimeSpan.Zero, 15866666.666666666,
                 spacecraftScenario.Engines.First()));
         spacecraftScenario.SetStandbyManeuver(planeAlignmentManeuver);
@@ -191,7 +180,7 @@ public class APITest
     [Fact]
     public void CheckSize()
     {
-        var scenario = new Scenario();
+        var scenario = new DTO.Scenario();
         var size = Marshal.SizeOf(scenario);
         Assert.Equal(18776, size);
     }
@@ -211,10 +200,10 @@ public class APITest
             TimeSpan.FromSeconds(86400.0));
         var windows = res as Models.Time.Window[] ?? res.ToArray();
         Assert.Equal(4, windows.Count());
-        Assert.Equal("2007-01-08 00:11:07.628591 (TDB)", windows.ElementAt(0).StartDate.ToFormattedString());
-        Assert.Equal("2007-01-13 06:37:47.948144 (TDB)", windows.ElementAt(0).EndDate.ToFormattedString());
-        Assert.Equal("2007-03-29 22:53:58.151896 (TDB)", windows.ElementAt(3).StartDate.ToFormattedString());
-        Assert.Equal("2007-04-01 00:01:05.185654 (TDB)", windows.ElementAt(3).EndDate.ToFormattedString());
+        Assert.Equal("2007-01-08T00:11:07.6290000 (TDB)", windows.ElementAt(0).StartDate.ToFormattedString());
+        Assert.Equal("2007-01-13T06:37:47.9480000 (TDB)", windows.ElementAt(0).EndDate.ToFormattedString());
+        Assert.Equal("2007-03-29T22:53:58.1520000 (TDB)", windows.ElementAt(3).StartDate.ToFormattedString());
+        Assert.Equal("2007-04-01T00:01:05.1860000 (TDB)", windows.ElementAt(3).EndDate.ToFormattedString());
     }
 
     [Fact]
@@ -227,14 +216,14 @@ public class APITest
         api.LoadKernels(Constants.SolarSystemKernelPath);
 
         //Find time windows when the Sun will be occulted by the moon
-        var res = api.FindWindowsOnOccultationConstraint(new Window(61473664.183390938, 61646464.183445148),
-            PlanetsAndMoons.EARTH.NaifId, Stars.Sun.NaifId,
-            Stars.Sun.Frame, ShapeType.Ellipsoid, PlanetsAndMoons.MOON.NaifId,
-            PlanetsAndMoons.MOON.Frame,
-            ShapeType.Ellipsoid, OccultationType.Any, Aberration.LT, TimeSpan.FromSeconds(3600.0));
-        Assert.Single(res);
-        Assert.Equal("2001-12-14 20:10:15.410588 (TDB)", api.TDBToString(res[0].Start));
-        Assert.Equal("2001-12-14 21:35:49.100520 (TDB)", api.TDBToString(res[0].End));
+        var res = api.FindWindowsOnOccultationConstraint(new Models.Time.Window(DateTimeExtension.CreateTDB(61473664.183390938), DateTimeExtension.CreateTDB(61646464.183445148)),
+            TestHelpers.GetEarthAtJ2000().PhysicalBody, TestHelpers.GetSun().PhysicalBody,
+            TestHelpers.GetSun().Frame, ShapeType.Ellipsoid, TestHelpers.GetMoonAtJ2000().PhysicalBody,
+            TestHelpers.GetMoonAtJ2000().Frame, ShapeType.Ellipsoid, OccultationType.Any, Aberration.LT, TimeSpan.FromSeconds(3600.0));
+        var windows = res as Models.Time.Window[] ?? res.ToArray();
+        Assert.Single(windows);
+        Assert.Equal("2001-12-14T20:10:15.4110000 (TDB)", windows[0].StartDate.ToFormattedString());
+        Assert.Equal("2001-12-14T21:35:49.1010000 (TDB)", windows[0].EndDate.ToFormattedString());
     }
 
     [Fact]
@@ -245,17 +234,18 @@ public class APITest
 
         //Load solar system kernels
         api.LoadKernels(Constants.SolarSystemKernelPath);
-
+        
+        Models.Surface.Site site = new Models.Surface.Site(13, "station13", TestHelpers.GetEarthAtJ2000(),
+            new Models.Coordinates.Geodetic(-116.7944627147624 * Models.Constants.Deg2Rad, 35.2471635434595 * Models.Constants.Deg2Rad, 0.107));
         //Find time windows when the moon will be above the horizon relative to Deep Space Station 13
-        var res = api.FindWindowsOnCoordinateConstraint(new Window(730036800.0, 730123200), 399013,
-            PlanetsAndMoons.MOON.NaifId, GroundStations.DSS_13.Frame,
-            CoordinateSystem.Latitudinal, Coordinate.Latitude,
-            RelationnalOperator.Greater,
+        var res = api.FindWindowsOnCoordinateConstraint(new Models.Time.Window(DateTimeExtension.CreateTDB(730036800.0), DateTimeExtension.CreateTDB(730123200)), site,
+            TestHelpers.GetMoonAtJ2000().PhysicalBody, new Frame(GroundStations.DSS_13.Frame), CoordinateSystem.Latitudinal, Coordinate.Latitude, RelationnalOperator.Greater,
             0.0, 0.0, Aberration.None, TimeSpan.FromSeconds(60.0));
 
-        Assert.Single(res);
-        Assert.Equal("2023-02-19 14:33:08.918098 (TDB)", res[0].Start));
-        Assert.Equal("2023-02-20 00:00:00.000000 (TDB)", res[0].End));
+        var windows = res as Models.Time.Window[] ?? res.ToArray();
+        Assert.Single(windows);
+        Assert.Equal("2023-02-19T14:33:08.9180000 (TDB)", windows[0].StartDate.ToFormattedString());
+        Assert.Equal("2023-02-20T00:00:00.0000000 (TDB)", windows[0].EndDate.ToFormattedString());
     }
 
     [Fact]
@@ -268,17 +258,15 @@ public class APITest
         api.LoadKernels(Constants.SolarSystemKernelPath);
 
         //Find time windows when the geodetic point is illuminated by the sun (Official twilight 0.8° bellow horizon)
-        var res = api.FindWindowsOnIlluminationConstraint(new Window(674524800, 674611200), Stars.Sun.NaifId,
-            PlanetsAndMoons.EARTH.NaifId, PlanetsAndMoons.EARTH.Frame,
-            new Geodetic(2.2 * Constants.DEG_RAD, 48.0 * Constants.DEG_RAD, 0.0),
-            IlluminationAngle.Incidence,
-            RelationnalOperator.Lower, Math.PI * 0.5 - (-0.8 * Constants.DEG_RAD), 0.0, Aberration.CNS,
-            TimeSpan.FromHours(4.5));
-        Assert.Equal(2, res.Length);
-        Assert.Equal("2021-05-17 12:00:00.000000 (TDB)", api.TDBToString(res[0].Start));
-        Assert.Equal("2021-05-17 19:35:24.908834 (TDB)", api.TDBToString(res[0].End));
-        Assert.Equal("2021-05-18 04:18:32.443750 (TDB)", api.TDBToString(res[1].Start));
-        Assert.Equal("2021-05-18 12:00:00.000000 (TDB)", api.TDBToString(res[1].End));
+        var res = api.FindWindowsOnIlluminationConstraint(new Models.Time.Window(DateTimeExtension.CreateTDB(674524800), DateTimeExtension.CreateTDB(674611200)),
+            TestHelpers.GetSun().PhysicalBody, TestHelpers.GetEarthAtJ2000().PhysicalBody, new Frame("ITRF93"), new Geodetic(2.2 * Constants.DEG_RAD, 48.0 * Constants.DEG_RAD, 0.0),
+            IlluminationAngle.Incidence, RelationnalOperator.Lower, Math.PI * 0.5 - (-0.8 * Constants.DEG_RAD), 0.0, Aberration.CNS, TimeSpan.FromHours(4.5));
+        var windows = res as Models.Time.Window[] ?? res.ToArray();
+        Assert.Equal(2, windows.Count());
+        Assert.Equal("2021-05-17T12:00:00.0000000 (TDB)", windows[0].StartDate.ToFormattedString());
+        Assert.Equal("2021-05-17T19:35:24.9090000 (TDB)", windows[0].EndDate.ToFormattedString());
+        Assert.Equal("2021-05-18T04:18:32.4440000 (TDB)", windows[1].StartDate.ToFormattedString());
+        Assert.Equal("2021-05-18T12:00:00.0000000 (TDB)", windows[1].EndDate.ToFormattedString());
     }
 
     [Fact]
@@ -294,7 +282,7 @@ public class APITest
         DateTime end = start.AddSeconds(6448.0);
 
         //Configure scenario
-        Models.Mission.Scenario scenario = new Models.Mission.Scenario("Scenario_A", new Mission("mission01"),
+        Scenario scenario = new Scenario("Scenario_A", new Mission("mission01"),
             new Models.Time.Window(start, end));
         scenario.AddBody(TestHelpers.GetSun());
         scenario.AddBody(TestHelpers.GetEarthAtJ2000());
@@ -331,7 +319,7 @@ public class APITest
             spacecraftScenario.Intruments.First().Instrument,
             TestHelpers.GetEarthAtJ2000().PhysicalBody,
             new Frame(PlanetsAndMoons.EARTH.Frame), ShapeType.Ellipsoid,
-            Aberration.LT, TimeSpan.FromHours(1.0));
+            Aberration.LT, TimeSpan.FromHours(1.0)).ToArray();
 
         //Read results
         Assert.Equal(2, res.Count());
@@ -350,19 +338,20 @@ public class APITest
         //Load solar system kernels
         api.LoadKernels(Constants.SolarSystemKernelPath);
 
-        Window searchWindow = new Window(0.0, 100.0);
-        var res = api.ReadEphemeris(searchWindow, PlanetsAndMoons.EARTH.NaifId, PlanetsAndMoons.MOON.NaifId,
-            InertialFrame.ICRF.GetDescription(), Aberration.LT, TimeSpan.FromSeconds(10.0));
+        var searchWindow = new Models.Time.Window(DateTimeExtension.CreateTDB(0.0), DateTimeExtension.CreateTDB(100.0));
+        var res = api.ReadEphemeris(searchWindow, TestHelpers.GetEarthAtJ2000(), TestHelpers.GetMarsAtJ2000().PhysicalBody, Frame.ICRF, Aberration.LT,
+            TimeSpan.FromSeconds(10.0)).Select(x => x.ToStateVector());
 
-        Assert.Equal(-291569264.48965073, res[0].Position.X);
-        Assert.Equal(-266709187.1624887, res[0].Position.Y);
-        Assert.Equal(-76099155.244104564, res[0].Position.Z);
-        Assert.Equal(643.53061483971885, res[0].Velocity.X);
-        Assert.Equal(-666.08181440799092, res[0].Velocity.Y);
-        Assert.Equal(-301.32283209101018, res[0].Velocity.Z);
-        Assert.Equal(PlanetsAndMoons.EARTH.NaifId, res[0].CenterOfMotionId);
-        Assert.Equal(InertialFrame.ICRF.GetDescription(), res[0].Frame);
-        Assert.Equal(0.0, res[0].Epoch);
+        var stateVectors = res as Models.OrbitalParameters.StateVector[] ?? res.ToArray();
+        Assert.Equal(-291569264.48965073, stateVectors[0].Position.X);
+        Assert.Equal(-266709187.1624887, stateVectors[0].Position.Y);
+        Assert.Equal(-76099155.244104564, stateVectors[0].Position.Z);
+        Assert.Equal(643.53061483971885, stateVectors[0].Velocity.X);
+        Assert.Equal(-666.08181440799092, stateVectors[0].Velocity.Y);
+        Assert.Equal(-301.32283209101018, stateVectors[0].Velocity.Z);
+        Assert.Equal(PlanetsAndMoons.EARTH.NaifId, stateVectors[0].CenterOfMotion.PhysicalBody.NaifId);
+        Assert.Equal(Frame.ICRF, stateVectors[0].Frame);
+        Assert.Equal(0.0, stateVectors[0].Epoch.SecondsFromJ2000TDB());
     }
 
     [Fact]
@@ -379,7 +368,7 @@ public class APITest
         Models.Time.Window window = new Models.Time.Window(start, end);
 
         //Configure scenario
-        Models.Mission.Scenario scenario = new Models.Mission.Scenario("Scenario_B", new Mission("mission01"), window);
+        Scenario scenario = new Scenario("Scenario_B", new Mission("mission01"), window);
         scenario.AddBody(TestHelpers.GetSun());
         scenario.AddBody(TestHelpers.GetEarthAtJ2000());
         scenario.AddBody(TestHelpers.GetMoonAtJ2000());
@@ -413,7 +402,7 @@ public class APITest
         api.LoadKernels(new DirectoryInfo(Path.Combine(Constants.OutputPath.FullName, "Spacecrafts/DRAGONFLY2")));
 
         //Read spacecraft orientation
-        var res = api.ReadOrientation(window, spacecraftScenario, TimeSpan.FromSeconds(10.0), Frame.ICRF, TimeSpan.FromSeconds(10.0));
+        var res = api.ReadOrientation(window, spacecraftScenario, TimeSpan.FromSeconds(10.0), Frame.ICRF, TimeSpan.FromSeconds(10.0)).ToArray();
 
         //Read results
         Assert.Equal(0.7071067811865476, res.ElementAt(0).Rotation.W);
@@ -437,34 +426,36 @@ public class APITest
         //Load solar system kernels
         api.LoadKernels(Constants.SolarSystemKernelPath);
         const int size = 10;
-        StateVector[] sv = new StateVector[size];
+        var spacecraft = new Models.Body.Spacecraft.Spacecraft(-135, "Spc1", 3000.0, 10000.0);
+        var sv = new Models.OrbitalParameters.StateVector[size];
         for (int i = 0; i < size; ++i)
         {
-            sv[i] = new StateVector(PlanetsAndMoons.EARTH.NaifId, i, InertialFrame.ICRF.GetDescription(),
-                new Vector3D(6800 + i, i, i), new Vector3D(i, 8.0 + i * 0.001, i));
+            sv[i] = new Models.OrbitalParameters.StateVector(new Vector3(6800 + i, i, i), new Vector3(i, 8.0 + i * 0.001, i), TestHelpers.GetEarthAtJ2000(),
+                DateTimeExtension.CreateTDB(i), Frame.ICRF);
         }
 
         //Write ephemeris file
         FileInfo file = new FileInfo("EphemerisTestFile.spk");
-        api.WriteEphemeris(file, -135, sv, size);
+
+        api.WriteEphemeris(file, spacecraft, sv);
 
         //Load ephemeris file
         api.LoadKernels(file);
 
-        Window window = new Window(0.0, 9.0);
-        var svResult = api.ReadEphemeris(window, PlanetsAndMoons.EARTH.NaifId, -135,
-            InertialFrame.ICRF.GetDescription(), Aberration.None, TimeSpan.FromSeconds(1.0));
+        var window = new Models.Time.Window(DateTimeExtension.J2000, DateTimeExtension.J2000.AddSeconds(9.0));
+        var stateVectors = api.ReadEphemeris(window, TestHelpers.GetEarthAtJ2000(), spacecraft, Frame.ICRF, Aberration.None, TimeSpan.FromSeconds(1.0))
+            .Select(x => x.ToStateVector()).ToArray();
         for (int i = 0; i < size; ++i)
         {
-            Assert.Equal(6800.0 + i, svResult[i].Position.X);
-            Assert.Equal(i, svResult[i].Position.Y, 12);
-            Assert.Equal(i, svResult[i].Position.Z, 12);
-            Assert.Equal(i, svResult[i].Velocity.X, 12);
-            Assert.Equal(8 + i * 0.001, svResult[i].Velocity.Y, 12);
-            Assert.Equal(i, svResult[i].Velocity.Z, 12);
-            Assert.Equal(i, svResult[i].Epoch);
-            Assert.Equal(PlanetsAndMoons.EARTH.NaifId, svResult[i].CenterOfMotionId);
-            Assert.Equal(InertialFrame.ICRF.GetDescription(), svResult[i].Frame);
+            Assert.Equal(6800.0 + i, stateVectors[i].Position.X);
+            Assert.Equal(i, stateVectors[i].Position.Y, 12);
+            Assert.Equal(i, stateVectors[i].Position.Z, 12);
+            Assert.Equal(i, stateVectors[i].Velocity.X, 12);
+            Assert.Equal(8 + i * 0.001, stateVectors[i].Velocity.Y, 12);
+            Assert.Equal(i, stateVectors[i].Velocity.Z, 12);
+            Assert.Equal(i, stateVectors[i].Epoch.SecondsFromJ2000TDB());
+            Assert.Equal(PlanetsAndMoons.EARTH.NaifId, stateVectors[i].CenterOfMotion.PhysicalBody.NaifId);
+            Assert.Equal(Frame.ICRF, stateVectors[i].Frame);
         }
     }
 
@@ -478,7 +469,7 @@ public class APITest
         api.LoadKernels(Constants.SolarSystemKernelPath);
 
         //Read celestial body information from spice kernels
-        var res = api.GetCelestialBodyInfo(PlanetsAndMoons.EARTH.NaifId);
+        var res = api.GetCelestialBodyInfo(TestHelpers.GetEarthAtJ2000().PhysicalBody);
         Assert.Equal(PlanetsAndMoons.EARTH.NaifId, res.Id);
         Assert.Equal(Stars.Sun.NaifId, res.CenterOfMotionId);
         Assert.Equal(PlanetsAndMoons.EARTH.Name, res.Name);
@@ -509,135 +500,5 @@ public class APITest
         Assert.Equal(-1.9637714059853662e-09, res.AngularVelocity.X);
         Assert.Equal(-2.0389340573814659e-09, res.AngularVelocity.Y);
         Assert.Equal(7.2921150642488516e-05, res.AngularVelocity.Z);
-    }
-
-    [Fact]
-    void ConvertEquinoctialElementsToStateVector()
-    {
-        //Initialize API
-        API api = new API();
-
-        //Load solar system kernels
-        api.LoadKernels(Constants.SolarSystemKernelPath);
-
-        double p = 1.0e7;
-        double ecc = 0.1;
-        double a = p / (1.0 - ecc);
-        double argp = 30.0 * Constants.DEG_RAD;
-        double node = 15.0 * Constants.DEG_RAD;
-        double inc = 10.0 * Constants.DEG_RAD;
-        double m0 = 45.0 * Constants.DEG_RAD;
-
-        //equinoctial elements
-        double h = ecc * Math.Sin(argp + node);
-        double k = ecc * Math.Cos(argp + node);
-        double p2 = Math.Tan(inc / 2.0) * Math.Sin(node);
-        double q = Math.Tan(inc / 2.0) * Math.Cos(node);
-        double L = m0 + argp + node;
-
-        EquinoctialElements eqDTO = new EquinoctialElements();
-        eqDTO.Frame = InertialFrame.ICRF.GetDescription();
-        eqDTO.DeclinationOfThePole = Math.PI * 0.5;
-        eqDTO.RightAscensionOfThePole = -Math.PI * 0.5;
-        eqDTO.AscendingNodeLongitudeRate = 0.0;
-        eqDTO.PeriapsisLongitudeRate = 0.0;
-        eqDTO.H = h;
-        eqDTO.P = p2;
-        eqDTO.SemiMajorAxis = a;
-        eqDTO.Epoch = 10.0;
-        eqDTO.CenterOfMotionId = 399;
-        eqDTO.L = L;
-        eqDTO.K = k;
-        eqDTO.Q = q;
-
-        var sv = api.ConvertToStateVector(eqDTO);
-
-        Assert.Equal(-1557343.2179623565, sv.Position.X);
-        Assert.Equal(10112046.56492505, sv.Position.Y);
-        Assert.Equal(1793343.6111546031, sv.Position.Z);
-        Assert.Equal(-6369.0795341145204, sv.Velocity.X);
-        Assert.Equal(-517.51239201161684, sv.Velocity.Y);
-        Assert.Equal(202.52220483204573, sv.Velocity.Z);
-    }
-
-    [Fact]
-    void ConvertConicElementsToStateVector()
-    {
-        //Initialize API
-        API api = new API();
-
-        //Load solar system kernels
-        api.LoadKernels(Constants.SolarSystemKernelPath);
-
-        double perifocalDist = Math.Sqrt(Math.Pow(-6.116559469556896E+06, 2) + Math.Pow(-1.546174698676721E+06, 2) +
-                                         Math.Pow(2.521950157430313E+06, 2));
-
-        ConicElements conicElements = new ConicElements();
-        conicElements.Frame = InertialFrame.ICRF.GetDescription();
-        conicElements.Epoch = 663724800.00001490; //"2021-01-12T11:58:50.816" UTC
-        conicElements.MeanAnomaly = 4.541224977546975E+01 * Constants.DEG_RAD;
-        conicElements.PeriapsisArgument = 1.062574316262159E+02 * Constants.DEG_RAD;
-        conicElements.AscendingNodeLongitude = 3.257605322534260E+01 * Constants.DEG_RAD;
-        conicElements.Inclination = 5.171921958517460E+01 * Constants.DEG_RAD;
-        conicElements.Eccentricity = 1.353139738203394E-03;
-        conicElements.PerifocalDistance = perifocalDist;
-        conicElements.CenterOfMotionId = 399;
-
-        var sv = api.ConvertToStateVector(conicElements);
-
-        Assert.Equal(-6119034.915639279, sv.Position.X, 8);
-        Assert.Equal(-1546800.4544009243, sv.Position.Y, 6);
-        Assert.Equal(2522970.821362097, sv.Position.Z, 8);
-        Assert.Equal(-807.6748840709542, sv.Velocity.X, 8);
-        Assert.Equal(-5476.5381803473965, sv.Velocity.Y, 8);
-        Assert.Equal(-5296.561721841285, sv.Velocity.Z, 8);
-        Assert.Equal(663724800.00001490, sv.Epoch);
-        Assert.Equal(399, sv.CenterOfMotionId);
-        Assert.Equal(InertialFrame.ICRF.GetDescription(), sv.Frame);
-    }
-
-    [Fact]
-    void ConvertStateVectorToRaDec()
-    {
-        //Initialize API
-        API api = new API();
-
-        //Load solar system kernels
-        api.LoadKernels(Constants.SolarSystemKernelPath);
-
-        var sv = new StateVector(PlanetsAndMoons.EARTH.NaifId, 0.0, InertialFrame.ICRF.GetDescription(),
-            new Vector3D(-291608384.63344, -266716833.39423, -76102487.09990),
-            new Vector3D(643.53139, -666.08768, -301.32570));
-
-        var radec = api.ConvertToEquatorialCoordinates(sv);
-        Assert.Equal(222.4472994995566, radec.RightAscencion * Constants.RAD_DEG);
-        Assert.Equal(-10.900186051699306, radec.Declination * Constants.RAD_DEG);
-        Assert.Equal(402448639.887328, radec.Radius);
-    }
-
-    [Fact]
-    void ConvertConicOrbitalElementsToRaDec()
-    {
-        //Initialize API
-        API api = new API();
-
-        //Load solar system kernels
-        api.LoadKernels(Constants.SolarSystemKernelPath);
-
-        var conics = new ConicElements();
-        conics.CenterOfMotionId = PlanetsAndMoons.EARTH.NaifId;
-        conics.Epoch = 0.0;
-        conics.Frame = InertialFrame.ICRF.GetDescription();
-        conics.PerifocalDistance = 365451161.74144;
-        conics.Eccentricity = 0.05357474;
-        conics.Inclination = 20.94230395 * Constants.DEG_RAD;
-        conics.AscendingNodeLongitude = 12.23643846 * Constants.DEG_RAD;
-        conics.PeriapsisArgument = 68.05335129 * Constants.DEG_RAD;
-        conics.MeanAnomaly = 140.14966394 * Constants.DEG_RAD;
-
-        var radec = api.ConvertToEquatorialCoordinates(conics);
-        Assert.Equal(222.4472992707561, radec.RightAscencion * Constants.RAD_DEG);
-        Assert.Equal(-10.900185977212049, radec.Declination * Constants.RAD_DEG);
-        Assert.Equal(402448637.2542864, radec.Radius);
     }
 }

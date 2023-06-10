@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Serialization;
 
 namespace IO.Astrodynamics.Models.Time;
@@ -45,8 +44,8 @@ public record struct Window
     /// <returns></returns>
     public Window Merge(Window window)
     {
-        DateTime min = this.StartDate < window.StartDate ? this.StartDate : window.StartDate;
-        DateTime max = this.EndDate > window.EndDate ? this.EndDate : window.EndDate;
+        DateTime min = StartDate < window.StartDate ? StartDate : window.StartDate;
+        DateTime max = EndDate > window.EndDate ? EndDate : window.EndDate;
 
         return new Window(min, max);
     }

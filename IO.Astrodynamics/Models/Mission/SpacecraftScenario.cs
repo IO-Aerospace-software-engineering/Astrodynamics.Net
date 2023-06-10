@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using IO.Astrodynamics.Models.Body;
 using IO.Astrodynamics.Models.Body.Spacecraft;
 using IO.Astrodynamics.Models.Math;
 using IO.Astrodynamics.Models.OrbitalParameters;
@@ -74,7 +72,7 @@ namespace IO.Astrodynamics.Models.Mission
         /// <param name="orientation"></param>
         public void AddInstrument(Instrument instrument, Vector3 orientation)
         {
-            this._instruments.Add(new SpacecraftInstrument(this, instrument, orientation));
+            _instruments.Add(new SpacecraftInstrument(this, instrument, orientation));
         }
 
         /// <summary>
@@ -92,7 +90,7 @@ namespace IO.Astrodynamics.Models.Mission
                     "Unknown fuel tank, you must add fuel tank to spacecraft before add engine");
             }
 
-            this._engines.Add(new SpacecraftEngine(this, engine, FuelTanks.First(x => x.FuelTank == fuelTank), serialNumber));
+            _engines.Add(new SpacecraftEngine(this, engine, FuelTanks.First(x => x.FuelTank == fuelTank), serialNumber));
         }
 
         /// <summary>
@@ -103,12 +101,12 @@ namespace IO.Astrodynamics.Models.Mission
         /// <param name="serialNumber"></param>
         public void AddFuelTank(FuelTank fuelTank, double quantity, string serialNumber)
         {
-            this._fuelTanks.Add(new SpacecraftFuelTank(this, fuelTank, quantity, serialNumber));
+            _fuelTanks.Add(new SpacecraftFuelTank(this, fuelTank, quantity, serialNumber));
         }
 
         public void RemoveFuelTank(SpacecraftFuelTank fuelTank)
         {
-            this._fuelTanks.Remove(fuelTank);
+            _fuelTanks.Remove(fuelTank);
         }
 
         /// <summary>
@@ -117,7 +115,7 @@ namespace IO.Astrodynamics.Models.Mission
         /// <param name="payload"></param>
         public void AddPayload(Payload payload)
         {
-            this._payloads.Add(payload);
+            _payloads.Add(payload);
         }
 
         /// <summary>

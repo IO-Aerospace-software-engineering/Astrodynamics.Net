@@ -1,6 +1,5 @@
 ﻿using IO.Astrodynamics.Models.Surface;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using IO.Astrodynamics.Models.Coordinates;
 using IO.Astrodynamics.Models.Math;

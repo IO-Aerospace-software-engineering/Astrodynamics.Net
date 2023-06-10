@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using IO.Astrodynamics.Models.Body;
 using IO.Astrodynamics.Models.Frames;
 using IO.Astrodynamics.Models.Math;
 using IO.Astrodynamics.Models.Mission;
@@ -14,7 +13,7 @@ namespace IO.Astrodynamics.Models.OrbitalParameters
         public Vector3 Velocity { get; set; }
 
         StateVector() : base() { }
-        public StateVector(Vector3 position, Vector3 velocity, CelestialBodyScenario centerOfMotion, DateTime epoch, Frames.Frame frame) : base(centerOfMotion, epoch, frame)
+        public StateVector(Vector3 position, Vector3 velocity, CelestialBodyScenario centerOfMotion, DateTime epoch, Frame frame) : base(centerOfMotion, epoch, frame)
         {
             Position = position;
             Velocity = velocity;
@@ -27,7 +26,7 @@ namespace IO.Astrodynamics.Models.OrbitalParameters
 
         public override double Eccentricity()
         {
-            return this.EccentricityVector().Magnitude();
+            return EccentricityVector().Magnitude();
         }
 
         public override Vector3 EccentricityVector()

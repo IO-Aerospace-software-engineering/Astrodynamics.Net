@@ -43,7 +43,7 @@ namespace IO.Astrodynamics.Models.Tests.Propagator
             SpacecraftPropagator propagator = new SpacecraftPropagator(integrator, sc);
 
             Assert.Equal(sc, propagator.Body);
-            Assert.Equal(new IO.Astrodynamics.Models.Time.Window(new DateTime(2021, 1, 1), TimeSpan.FromSeconds(100.0)), propagator.Body.Scenario.Window);
+            Assert.Equal(new Window(new DateTime(2021, 1, 1), TimeSpan.FromSeconds(100.0)), propagator.Body.Scenario.Window);
         }
 
         [Fact]

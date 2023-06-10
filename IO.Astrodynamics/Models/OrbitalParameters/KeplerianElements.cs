@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using IO.Astrodynamics.Models.Body;
-using IO.Astrodynamics.Models.Math;
 using IO.Astrodynamics.Models.Mission;
 
 namespace IO.Astrodynamics.Models.OrbitalParameters
@@ -37,12 +35,12 @@ namespace IO.Astrodynamics.Models.OrbitalParameters
                 throw new ArgumentException("Mean anomaly must be in range [0.0,2*PI] ");
             }
 
-            this.A = semiMajorAxis;
-            this.E = eccentricity;
-            this.I = inclination;
-            this.RAAN = rigthAscendingNode;
-            this.AOP = argumentOfPeriapsis;
-            this.M = meanAnomaly;
+            A = semiMajorAxis;
+            E = eccentricity;
+            I = inclination;
+            RAAN = rigthAscendingNode;
+            AOP = argumentOfPeriapsis;
+            M = meanAnomaly;
         }
 
         public double A { get; }

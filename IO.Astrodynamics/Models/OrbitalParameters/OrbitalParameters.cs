@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using IO.Astrodynamics.Models.Body;
 using IO.Astrodynamics.Models.Coordinates;
 using IO.Astrodynamics.Models.Math;
 using IO.Astrodynamics.Models.Mission;
@@ -313,7 +312,7 @@ public abstract class OrbitalParameters : IEquatable<OrbitalParameters>
             return this;
         }
 
-        StateVector icrfSv = this.ToStateVector();
+        StateVector icrfSv = ToStateVector();
         var orientation = Frame.ToFrame(frame, Epoch);
         var newPos = icrfSv.Position.Rotate(orientation.Rotation);
         var newVel = icrfSv.Velocity.Rotate(orientation.Rotation) - orientation.AngularVelocity.Cross(newPos);

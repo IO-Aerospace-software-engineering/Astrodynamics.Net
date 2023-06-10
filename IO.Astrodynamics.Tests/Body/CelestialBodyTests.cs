@@ -1,6 +1,5 @@
 using System;
 using IO.Astrodynamics.Models.Body;
-using IO.Astrodynamics.Models.Math;
 using Xunit;
 
 namespace IO.Astrodynamics.Models.Tests.Body;

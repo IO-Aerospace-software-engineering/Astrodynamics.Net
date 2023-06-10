@@ -3,7 +3,6 @@ using System.Linq;
 using IO.Astrodynamics.Models.Body;
 using IO.Astrodynamics.Models.Body.Spacecraft;
 using IO.Astrodynamics.Models.Maneuver;
-using IO.Astrodynamics.Models.Math;
 using IO.Astrodynamics.Models.Mission;
 using IO.Astrodynamics.Models.OrbitalParameters;
 using IO.Astrodynamics.Models.Time;

@@ -1,8 +1,6 @@
 using System;
 using IO.Astrodynamics.Models.Body.Spacecraft;
-using IO.Astrodynamics.Models.Math;
 using IO.Astrodynamics.Models.Mission;
-using IO.Astrodynamics.Models.OrbitalParameters;
 
 namespace IO.Astrodynamics.Models.Maneuver
 {

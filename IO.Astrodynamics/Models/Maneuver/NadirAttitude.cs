@@ -1,7 +1,6 @@
 // Copyright 2023. Sylvain Guillet (sylvain.guillet@tutamail.com)
 
 using System;
-using System.Runtime.InteropServices;
 using IO.Astrodynamics.Models.Body.Spacecraft;
 using IO.Astrodynamics.Models.Mission;
 

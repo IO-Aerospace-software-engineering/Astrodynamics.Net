@@ -4,5 +4,7 @@ namespace IO.Astrodynamics.Models.Body
     {
         int NaifId { get; }
         string Name { get; }
+        
+        //Todo add frame ?
     }
 }

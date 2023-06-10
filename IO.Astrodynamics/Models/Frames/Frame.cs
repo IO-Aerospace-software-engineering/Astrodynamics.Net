@@ -1,8 +1,4 @@
 using System;
-using System.Linq;
-using System.Collections.Generic;
-using System.Numerics;
-using IO.Astrodynamics.Models.Math;
 using IO.Astrodynamics.Models.OrbitalParameters;
 
 

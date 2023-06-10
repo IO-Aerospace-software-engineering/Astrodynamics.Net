@@ -1,6 +1,4 @@
 using Xunit;
-using IO.Astrodynamics.Models.Mission;
-using System;
 
 namespace IO.Astrodynamics.Models.Tests.Mission
 {

@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using IO.Astrodynamics.Models.OrbitalParameters;
 using IO.Astrodynamics.Models.Time;
 
