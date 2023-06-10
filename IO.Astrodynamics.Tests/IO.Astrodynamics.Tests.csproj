@@ -86,6 +86,7 @@
       <Content Include="Data\SolarSystem\pck00011.tpc">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
+      <None Remove="Data\SolarSystem\mar097.bsp" />
     </ItemGroup>
 
 </Project>

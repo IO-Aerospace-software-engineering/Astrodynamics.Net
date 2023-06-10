@@ -339,7 +339,7 @@ public class APITest
         api.LoadKernels(Constants.SolarSystemKernelPath);
 
         var searchWindow = new Models.Time.Window(DateTimeExtension.CreateTDB(0.0), DateTimeExtension.CreateTDB(100.0));
-        var res = api.ReadEphemeris(searchWindow, TestHelpers.GetEarthAtJ2000(), TestHelpers.GetMarsAtJ2000().PhysicalBody, Frame.ICRF, Aberration.LT,
+        var res = api.ReadEphemeris(searchWindow, TestHelpers.GetEarthAtJ2000(), TestHelpers.GetMoonAtJ2000().PhysicalBody, Frame.ICRF, Aberration.LT,
             TimeSpan.FromSeconds(10.0)).Select(x => x.ToStateVector());
 
         var stateVectors = res as Models.OrbitalParameters.StateVector[] ?? res.ToArray();
