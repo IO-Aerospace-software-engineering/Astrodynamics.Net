@@ -13,11 +13,18 @@ public struct Launch
     public bool LaunchByDay;
     public double InitialStepSize;
     public StateVector TargetOrbit;
-    public double InertialAzimuth;
-    public double NonInertialAzimuth;
 
-    public double NonInertialInsertionVelocity;
-    public double InertialInsertionVelocity;
+    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 100)]
+    public double[] InertialAzimuth;
+
+    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 100)]
+    public double[] NonInertialAzimuth;
+    
+    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 100)]
+    public double[] NonInertialInsertionVelocity;
+    
+    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 100)]
+    public double[] InertialInsertionVelocity;
 
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 100)]
     public Window[] Windows;

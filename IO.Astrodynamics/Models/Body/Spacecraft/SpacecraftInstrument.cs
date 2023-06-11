@@ -10,6 +10,8 @@ namespace IO.Astrodynamics.Models.Body.Spacecraft
         public SpacecraftScenario Spacecraft { get; }
         public Instrument Instrument { get; }
         public Vector3 Orientation { get; }
+
+        private API _api = new();
         
 
         private SpacecraftInstrument() { }
@@ -49,7 +51,7 @@ namespace IO.Astrodynamics.Models.Body.Spacecraft
         public bool IsInFieldOfView(OrbitalParameters.OrbitalParameters orbitalParameters)
         {
             //todo implement
-            return false;
+            throw new NotImplementedException();
         }
     }
 }

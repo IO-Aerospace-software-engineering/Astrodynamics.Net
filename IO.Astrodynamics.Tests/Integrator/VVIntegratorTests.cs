@@ -34,7 +34,7 @@ namespace IO.Astrodynamics.Models.Tests.Integrator
 
             var sv = new StateVector(new Vector3(6800.0, 0.0, 0.0), new Vector3(0.0, 8.0, 0.0), earthScn, new DateTime(2021, 1, 1), Frames.Frame.ECLIPTIC);
             Clock clk1 = new Clock("My clock", 1.0 / 256.0);
-            Spacecraft spc1 = new Spacecraft(-1001, "My spacecraft", 1000.0, 10000.0);
+            Spacecraft spc1 = new Spacecraft(-1001, "MySpacecraft", 1000.0, 10000.0);
 
             SpacecraftScenario sc = new SpacecraftScenario(spc1, clk1, sv, scenario);
 
@@ -72,7 +72,7 @@ namespace IO.Astrodynamics.Models.Tests.Integrator
                 Frames.Frame.ICRF));
             var sv = new StateVector(new Vector3(6800.0, 0.0, 0.0), new Vector3(0.0, 8.0, 0.0), earthScn, new DateTime(2021, 1, 1), Frames.Frame.ICRF);
             Clock clk1 = new Clock("My clock", 1.0 / 256.0);
-            Spacecraft spc1 = new Spacecraft(-1001, "My spacecraft", 1000.0, 10000.0);
+            Spacecraft spc1 = new Spacecraft(-1001, "MySpacecraft", 1000.0, 10000.0);
 
             SpacecraftScenario sc = new SpacecraftScenario(spc1, clk1, sv, scenario);
 

@@ -10,9 +10,9 @@ namespace IO.Astrodynamics.Models.Tests.Body
         public void Create()
         {
             Clock clk = new Clock("My clock", 1.0 / 256.0);
-            Spacecraft spc = new Spacecraft(-1001, "My spacecraft", 1000.0, 10000.0);
+            Spacecraft spc = new Spacecraft(-1001, "MySpacecraft", 1000.0, 10000.0);
             Assert.Equal(-1001, spc.NaifId);
-            Assert.Equal("My spacecraft", spc.Name);
+            Assert.Equal("MySpacecraft", spc.Name);
             Assert.Equal(1000.0, spc.DryOperatingMass);
             Assert.Equal(10000.0, spc.MaximumOperatingMass);
         }
@@ -22,8 +22,8 @@ namespace IO.Astrodynamics.Models.Tests.Body
         {
             Clock clk = new Clock("My clock", 1.0 / 256.0);
             Assert.Throws<ArgumentException>(() => new Spacecraft(-1001, "", 1000.0, 10000.0));
-            Assert.Throws<ArgumentException>(() => new Spacecraft(-1001, "My spacecraft", 0.0, 10000.0));
-            Assert.Throws<ArgumentOutOfRangeException>(() => new Spacecraft(-1001, "My spacecraft", 1000.0, 999.0));
+            Assert.Throws<ArgumentException>(() => new Spacecraft(-1001, "MySpacecraft", 0.0, 10000.0));
+            Assert.Throws<ArgumentOutOfRangeException>(() => new Spacecraft(-1001, "MySpacecraft", 1000.0, 999.0));
         }
     }
 }

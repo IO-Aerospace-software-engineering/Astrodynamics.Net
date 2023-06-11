@@ -493,15 +493,16 @@ public class API
         LaunchProxy(ref launchDto);
 
         //Filter result
-        var windows = launchDto.Windows.Where(x => x.Start != 0 && x.End != 0);
+        var windows = launchDto.Windows.Where(x => x.Start != 0 && x.End != 0).ToArray();
 
         //Build result 
         List<LaunchWindow> launchWindows = new List<LaunchWindow>();
-        foreach (var lwindow in windows)
+
+        for (int i = 0; i < windows.Count(); i++)
         {
-            launchWindows.Add(new LaunchWindow(_mapper.Map<Window, Models.Time.Window>(lwindow),
-                launchDto.InertialInsertionVelocity, launchDto.NonInertialInsertionVelocity,
-                launchDto.InertialAzimuth, launchDto.NonInertialAzimuth));
+            launchWindows.Add(new LaunchWindow(_mapper.Map<Window, Models.Time.Window>(windows[i]),
+                launchDto.InertialInsertionVelocity[i], launchDto.NonInertialInsertionVelocity[i],
+                launchDto.InertialAzimuth[i], launchDto.NonInertialAzimuth[i]));
         }
 
         return launchWindows;

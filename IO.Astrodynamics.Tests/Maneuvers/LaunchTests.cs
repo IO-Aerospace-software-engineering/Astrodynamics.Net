@@ -2,6 +2,7 @@
 using System;
 using System.Linq;
 using IO.Astrodynamics.Models.Coordinates;
+using IO.Astrodynamics.Models.Maneuver;
 using IO.Astrodynamics.Models.Math;
 using IO.Astrodynamics.Models.OrbitalParameters;
 using IO.Astrodynamics.Models.Time;
@@ -209,25 +210,26 @@ namespace IO.Astrodynamics.Models.Tests.Maneuvers
             Site recoverySite = new Site(34, "l2", earth, new Geodetic(-81.0 * Constants.Deg2Rad, 28.5 * Constants.Deg2Rad, 0.0));
             //ISS at 2021-06-02 TDB
             Launch launch = new Launch(site, recoverySite,
-                new StateVector(new Vector3(-1.144243683349977E+03, 4.905086030671815E+03, 4.553416875193589E+03),
-                    new Vector3(-5.588288926819989E+00, -4.213222250603758E+00, 3.126518392859475E+00), earth, epoch, Frames.Frame.ICRF), Constants.CivilTwilight, null);
+                new StateVector(new Vector3(-1.144243683349977E+06, 4.905086030671815E+06, 4.553416875193589E+06),
+                    new Vector3(-5.588288926819989E+03, -4.213222250603758E+03, 3.126518392859475E+03), earth, epoch, Frames.Frame.ICRF), Constants.CivilTwilight, false);
             var res = launch.FindLaunchWindows(new Window(epoch, TimeSpan.FromDays(1.0)), Astrodynamics.Tests.Constants.OutputPath);
-            Assert.Equal(2, res.Count());
-            var firstWindow = res.ElementAt(0);
-            Assert.Equal(Convert.ToDateTime("2021-06-02T02:51:54.2908902"), firstWindow.Window.StartDate);
-            Assert.Equal(Convert.ToDateTime("2021-06-02T02:51:54.2908902"), firstWindow.Window.EndDate);
-            Assert.Equal(135.067934, firstWindow.InertialAzimuth * Constants.Rad2Deg, 6);
-            Assert.Equal(137.311593, firstWindow.NonInertialAzimuth * Constants.Rad2Deg, 6);
-            Assert.Equal(7.6670268762217848, firstWindow.InertialInsertionVelocity, 6);
-            Assert.Equal(7.384284, firstWindow.NonInertialInsertionVelocity, 6);
+            var launchWindows = res as LaunchWindow[] ?? res.ToArray();
+            Assert.Equal(2, launchWindows.Count());
+            var firstWindow = launchWindows.ElementAt(0);
+            Assert.Equal(Convert.ToDateTime("2021-06-02T02:51:27.8460000"), firstWindow.Window.StartDate);
+            Assert.Equal(Convert.ToDateTime("2021-06-02T02:51:27.8460000"), firstWindow.Window.EndDate);
+            Assert.Equal(135.195039, firstWindow.InertialAzimuth * Constants.Rad2Deg, 6);
+            Assert.Equal(137.447464, firstWindow.NonInertialAzimuth * Constants.Rad2Deg, 6);
+            Assert.Equal(7667.02685, firstWindow.InertialInsertionVelocity, 6);
+            Assert.Equal(7384.476096, firstWindow.NonInertialInsertionVelocity, 6);
 
-            var secondWindow = res.ElementAt(1);
-            Assert.Equal(Convert.ToDateTime("2021-06-02T18:13:00.9057113"), secondWindow.Window.StartDate);
-            Assert.Equal(Convert.ToDateTime("2021-06-02T18:13:00.9057113"), secondWindow.Window.EndDate);
-            Assert.Equal(44.932076, secondWindow.InertialAzimuth * Constants.Rad2Deg, 6);
-            Assert.Equal(42.685873, secondWindow.NonInertialAzimuth * Constants.Rad2Deg, 6);
-            Assert.Equal(7.6670268762217848, secondWindow.InertialInsertionVelocity, 6);
-            Assert.Equal(7.383981, secondWindow.NonInertialInsertionVelocity, 6);
+            var secondWindow = launchWindows.ElementAt(1);
+            Assert.Equal(Convert.ToDateTime("2021-06-02T18:11:48.1520000"), secondWindow.Window.StartDate);
+            Assert.Equal(Convert.ToDateTime("2021-06-02T18:11:48.1520000"), secondWindow.Window.EndDate);
+            Assert.Equal(44.804961, secondWindow.InertialAzimuth * Constants.Rad2Deg, 6);
+            Assert.Equal(42.552536, secondWindow.NonInertialAzimuth * Constants.Rad2Deg, 6);
+            Assert.Equal(7667.02685, secondWindow.InertialInsertionVelocity, 6);
+            Assert.Equal(7384.476096, secondWindow.NonInertialInsertionVelocity, 6);
         }
 
         [Fact]
@@ -240,17 +242,17 @@ namespace IO.Astrodynamics.Models.Tests.Maneuvers
             Site recoverySite = new Site(34, "l2", earth, new Geodetic(-81.0 * Constants.Deg2Rad, 28.5 * Constants.Deg2Rad, 0.0));
             //ISS at 2021-06-02 TDB
             Launch launch = new Launch(site, recoverySite,
-                new StateVector(new Vector3(-1.144243683349977E+03, 4.905086030671815E+03, 4.553416875193589E+03),
-                    new Vector3(-5.588288926819989E+00, -4.213222250603758E+00, 3.126518392859475E+00), earth, epoch, Frames.Frame.ICRF), Constants.CivilTwilight, true);
+                new StateVector(new Vector3(-1.144243683349977E+06, 4.905086030671815E+06, 4.553416875193589E+06),
+                    new Vector3(-5.588288926819989E+03, -4.213222250603758E+03, 3.126518392859475E+03), earth, epoch, Frames.Frame.ICRF), Constants.CivilTwilight, true);
             var res = launch.FindLaunchWindows(new Window(epoch, TimeSpan.FromDays(1.0)), Astrodynamics.Tests.Constants.OutputPath);
             Assert.Single(res);
             var firstWindow = res.ElementAt(0);
-            Assert.Equal(Convert.ToDateTime("2021-06-02T18:13:01.5352310"), firstWindow.Window.StartDate);
-            Assert.Equal(Convert.ToDateTime("2021-06-02T18:13:01.5352310"), firstWindow.Window.EndDate);
-            Assert.Equal(44.932076, firstWindow.InertialAzimuth * Constants.Rad2Deg, 6);
-            Assert.Equal(42.685873, firstWindow.NonInertialAzimuth * Constants.Rad2Deg, 6);
-            Assert.Equal(7.6670268762217848, firstWindow.InertialInsertionVelocity, 6);
-            Assert.Equal(7.383981, firstWindow.NonInertialInsertionVelocity, 6);
+            Assert.Equal(Convert.ToDateTime("2021-06-02T18:11:08.6170000"), firstWindow.Window.StartDate);
+            Assert.Equal(Convert.ToDateTime("2021-06-02T18:11:08.6170000"), firstWindow.Window.EndDate);
+            Assert.Equal(44.804961, firstWindow.InertialAzimuth * Constants.Rad2Deg, 6);
+            Assert.Equal(42.552536, firstWindow.NonInertialAzimuth * Constants.Rad2Deg, 6);
+            Assert.Equal(7667.02685, firstWindow.InertialInsertionVelocity, 6);
+            Assert.Equal(7384.476096, firstWindow.NonInertialInsertionVelocity, 6);
         }
 
         [Fact]
@@ -263,17 +265,17 @@ namespace IO.Astrodynamics.Models.Tests.Maneuvers
             Site recoverySite = new Site(34, "l2", earth, new Geodetic(-104.0 * Constants.Deg2Rad, -41.0 * Constants.Deg2Rad, 0.0));
             //ISS at 2021-06-02 TDB
             Launch launch = new Launch(site, recoverySite,
-                new StateVector(new Vector3(-1.144243683349977E+03, 4.905086030671815E+03, 4.553416875193589E+03),
-                    new Vector3(-5.588288926819989E+00, -4.213222250603758E+00, 3.126518392859475E+00), earth, epoch, Frames.Frame.ICRF), Constants.CivilTwilight, true);
+                new StateVector(new Vector3(-1.144243683349977E+06, 4.905086030671815E+06, 4.553416875193589E+06),
+                    new Vector3(-5.588288926819989E+03, -4.213222250603758E+03, 3.126518392859475E+03), earth, epoch, Frames.Frame.ICRF), Constants.CivilTwilight, true);
             var res = launch.FindLaunchWindows(new Window(epoch, TimeSpan.FromDays(1.0)), Astrodynamics.Tests.Constants.OutputPath);
             Assert.Single(res);
             var firstWindow = res.ElementAt(0);
-            Assert.Equal(Convert.ToDateTime("2021-06-02 15:09:02.8116989"), firstWindow.Window.StartDate);
-            Assert.Equal(Convert.ToDateTime("2021-06-02 15:09:02.8116989"), firstWindow.Window.EndDate);
-            Assert.Equal(55.559276498467867, firstWindow.InertialAzimuth * Constants.Rad2Deg, 6);
-            Assert.Equal(54.016918589294363, firstWindow.NonInertialAzimuth * Constants.Rad2Deg, 6);
-            Assert.Equal(7.6670268762217848, firstWindow.InertialInsertionVelocity, 6);
-            Assert.Equal(7.3800349363081423, firstWindow.NonInertialInsertionVelocity, 6);
+            Assert.Equal(Convert.ToDateTime("2021-06-02T15:10:04.2760000"), firstWindow.Window.StartDate);
+            Assert.Equal(Convert.ToDateTime("2021-06-02T15:10:04.2760000"), firstWindow.Window.EndDate);
+            Assert.Equal(55.142764, firstWindow.InertialAzimuth * Constants.Rad2Deg, 6);
+            Assert.Equal(53.583073, firstWindow.NonInertialAzimuth * Constants.Rad2Deg, 6);
+            Assert.Equal(7667.02685, firstWindow.InertialInsertionVelocity, 6);
+            Assert.Equal(7381.309245, firstWindow.NonInertialInsertionVelocity, 6);
         }
 
         [Fact]
@@ -287,25 +289,25 @@ namespace IO.Astrodynamics.Models.Tests.Maneuvers
             Site recoverySite = new Site(34, "l2", earth, new Geodetic(-104.0 * Constants.Deg2Rad, -41.0 * Constants.Deg2Rad, 0.0));
             //ISS at 2021-06-02 TDB
             Launch launch = new Launch(site, recoverySite,
-                new StateVector(new Vector3(-1.144243683349977E+03, 4.905086030671815E+03, 4.553416875193589E+03),
-                    new Vector3(-5.588288926819989E+00, -4.213222250603758E+00, 3.126518392859475E+00), earth, epoch, Frames.Frame.ICRF), Constants.CivilTwilight, null);
+                new StateVector(new Vector3(-1.144243683349977E+06, 4.905086030671815E+06, 4.553416875193589E+06),
+                    new Vector3(-5.588288926819989E+03, -4.213222250603758E+03, 3.126518392859475E+03), earth, epoch, Frames.Frame.ICRF), Constants.CivilTwilight, null);
             var res = launch.FindLaunchWindows(new Window(epoch, TimeSpan.FromDays(1.0)), Astrodynamics.Tests.Constants.OutputPath);
             Assert.Equal(2, res.Count());
             var firstWindow = res.ElementAt(0);
-            Assert.Equal(Convert.ToDateTime("2021-06-02T08:58:38.1114556"), firstWindow.Window.StartDate);
-            Assert.Equal(Convert.ToDateTime("2021-06-02 08:58:43.3705101"), firstWindow.Window.EndDate);
-            Assert.Equal(124.74777778701655, firstWindow.InertialAzimuth * Constants.Rad2Deg, 6);
-            Assert.Equal(126.29778811432655, firstWindow.NonInertialAzimuth * Constants.Rad2Deg, 6);
-            Assert.Equal(7.6670268762217848, firstWindow.InertialInsertionVelocity, 6);
-            Assert.Equal(7.38187255762301, firstWindow.NonInertialInsertionVelocity, 6);
+            Assert.Equal(Convert.ToDateTime("2021-06-02T08:56:02.0650000"), firstWindow.Window.StartDate);
+            Assert.Equal(Convert.ToDateTime("2021-06-02T08:56:02.0650000"), firstWindow.Window.EndDate);
+            Assert.Equal(124.857236, firstWindow.InertialAzimuth * Constants.Rad2Deg, 6);
+            Assert.Equal(126.416927, firstWindow.NonInertialAzimuth * Constants.Rad2Deg, 6);
+            Assert.Equal(7667.02685, firstWindow.InertialInsertionVelocity, 6);
+            Assert.Equal(7381.309245, firstWindow.NonInertialInsertionVelocity, 6);
 
             var secondWindow = res.ElementAt(1);
-            Assert.Equal(Convert.ToDateTime("2021-06-02 15:09:03.4969388"), secondWindow.Window.StartDate);
-            Assert.Equal(Convert.ToDateTime("2021-06-02 15:09:03.4969388"), secondWindow.Window.EndDate);
-            Assert.Equal(55.559281941132859, secondWindow.InertialAzimuth * Constants.Rad2Deg, 6);
-            Assert.Equal(54.016924123319619, secondWindow.NonInertialAzimuth * Constants.Rad2Deg, 6);
-            Assert.Equal(7.6670268762217848, secondWindow.InertialInsertionVelocity, 6);
-            Assert.Equal(7.38003489572904, secondWindow.NonInertialInsertionVelocity, 6);
+            Assert.Equal(Convert.ToDateTime("2021-06-02T15:08:42.9120000"), secondWindow.Window.StartDate);
+            Assert.Equal(Convert.ToDateTime("2021-06-02T15:08:42.9120000"), secondWindow.Window.EndDate);
+            Assert.Equal(55.142764, secondWindow.InertialAzimuth * Constants.Rad2Deg, 6);
+            Assert.Equal(53.583073, secondWindow.NonInertialAzimuth * Constants.Rad2Deg, 6);
+            Assert.Equal(7667.02685, secondWindow.InertialInsertionVelocity, 6);
+            Assert.Equal(7381.309245, secondWindow.NonInertialInsertionVelocity, 6);
         }
     }
 }

@@ -34,7 +34,7 @@ namespace IO.Astrodynamics.Models.Tests.Propagator
 
             var sv = new StateVector(new Vector3(6800.0, 0.0, 0.0), new Vector3(0.0, 8.0, 0.0), earthScn, new DateTime(2021, 1, 1), Frames.Frame.ECLIPTIC);
             Clock clk1 = new Clock("My clock", 1.0 / 256.0);
-            Spacecraft spc1 = new Spacecraft(-1001, "My spacecraft", 1000.0,10000.0);
+            Spacecraft spc1 = new Spacecraft(-1001, "MySpacecraft", 1000.0,10000.0);
 
             SpacecraftScenario sc = new SpacecraftScenario(spc1, clk1, sv, scenario);
 
@@ -58,7 +58,7 @@ namespace IO.Astrodynamics.Models.Tests.Propagator
 
             var sv = new StateVector(new Vector3(6800.0, 0.0, 0.0), new Vector3(0.0, 8.0, 0.0), earthScn, start, Frames.Frame.ICRF);
             Clock clk1 = new Clock("My clock", 1.0 / 256.0);
-            Spacecraft spc1 = new Spacecraft(-1001, "My spacecraft", 1000.0,10000.0);
+            Spacecraft spc1 = new Spacecraft(-1001, "MySpacecraft", 1000.0,10000.0);
 
             SpacecraftScenario sc = new SpacecraftScenario(spc1, clk1, sv, scenario);
 
@@ -107,7 +107,7 @@ namespace IO.Astrodynamics.Models.Tests.Propagator
                 new KeplerianElements(6800.0, 0.0, 2.0 * Constants.Deg2Rad, 0.0, 0.0, 0.0, earthScn, scenario.Window.StartDate, Frames.Frame.ICRF);
             TimeSpan duration = originalOrbit.Period();
             Clock clk1 = new Clock("My clock", 1.0 / 256.0);
-            Spacecraft spc1 = new Spacecraft(-1001, "My spacecraft", 1000.0,10000.0);
+            Spacecraft spc1 = new Spacecraft(-1001, "MySpacecraft", 1000.0,10000.0);
             FuelTank fuelTank = new FuelTank("My fuel tank", "ft2021", 4000.0);
             Engine eng = new Engine("My engine", "model 1", 350.0, 50.0);
             SpacecraftScenario sc = new SpacecraftScenario(spc1, clk1, originalOrbit, scenario);
