@@ -550,22 +550,19 @@ public class API
     /// <param name="stepSize"></param>
     /// <param name="observer"></param>
     /// <returns></returns>
-    public IEnumerable<Models.Time.Window> FindWindowsOnOccultationConstraint(Models.Time.Window searchWindow, INaifObject observer, INaifObject target, Frame targetFrame,
-        ShapeType targetShape, INaifObject frontBody, Frame frontFrame,
-        ShapeType frontShape, OccultationType occultationType, Aberration aberration, TimeSpan stepSize)
+    public IEnumerable<Models.Time.Window> FindWindowsOnOccultationConstraint(Models.Time.Window searchWindow, INaifObject observer, INaifObject target,
+        ShapeType targetShape, INaifObject frontBody, ShapeType frontShape, OccultationType occultationType, Aberration aberration, TimeSpan stepSize)
     {
-        //todo remove frame from parameters
-        if (targetFrame == null) throw new ArgumentNullException(nameof(targetFrame));
-        if (frontFrame == null) throw new ArgumentNullException(nameof(frontFrame));
+        string frontFrame = frontShape == ShapeType.Ellipsoid ? (frontBody as CelestialBodyScenario)?.Frame.Name : string.Empty;
+        string targetFrame = targetShape == ShapeType.Ellipsoid ? (target as CelestialBodyScenario)?.Frame.Name : String.Empty;
         var windows = new Window[1000];
         for (var i = 0; i < 1000; i++)
         {
             windows[i] = new Window(double.NaN, double.NaN);
         }
 
-        FindWindowsOnOccultationConstraintProxy(_mapper.Map<Window>(searchWindow), observer.NaifId, target.NaifId, targetFrame.Name, targetShape.GetDescription(),
-            frontBody.NaifId,
-            frontFrame.Name, frontShape.GetDescription(), occultationType.GetDescription(), aberration.GetDescription(), stepSize.TotalSeconds, windows);
+        FindWindowsOnOccultationConstraintProxy(_mapper.Map<Window>(searchWindow), observer.NaifId, target.NaifId, targetFrame, targetShape.GetDescription(),
+            frontBody.NaifId, frontFrame, frontShape.GetDescription(), occultationType.GetDescription(), aberration.GetDescription(), stepSize.TotalSeconds, windows);
         return _mapper.Map<Models.Time.Window[]>(windows.Where(x => !double.IsNaN(x.Start)));
     }
 
@@ -677,12 +674,13 @@ public class API
     /// <param name="stepSize"></param>
     /// <param name="observer"></param>
     /// <returns></returns>
-    public IEnumerable<Models.OrbitalParameters.OrbitalParameters> ReadEphemeris(Models.Time.Window searchWindow, CelestialBodyScenario observer, INaifObject target, Frame frame,
+    public IEnumerable<Models.OrbitalParameters.OrbitalParameters> ReadEphemeris(Models.Time.Window searchWindow, CelestialBodyScenario observer, ILocalizable target, Frame frame,
         Aberration aberration, TimeSpan stepSize)
     {
         if (frame == null) throw new ArgumentNullException(nameof(frame));
-        var stateVectors = new StateVector[5000];
-        ReadEphemerisProxy(_mapper.Map<Window>(searchWindow), observer.PhysicalBody.NaifId, target.NaifId, frame.Name, aberration.GetDescription(), stepSize.TotalSeconds, stateVectors);
+        var stateVectors = new StateVector[10000];
+        ReadEphemerisProxy(_mapper.Map<Window>(searchWindow), observer.PhysicalBody.NaifId, target.NaifId, frame.Name, aberration.GetDescription(), stepSize.TotalSeconds,
+            stateVectors);
         return stateVectors.Select(x =>
             new Models.OrbitalParameters.StateVector(_mapper.Map<Vector3>(x.Position), _mapper.Map<Vector3>(x.Velocity), observer, DateTimeExtension.CreateTDB(x.Epoch), frame));
     }

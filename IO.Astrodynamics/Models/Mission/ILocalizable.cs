@@ -1,11 +1,15 @@
 ﻿using IO.Astrodynamics.Models.OrbitalParameters;
 using System;
+using System.Collections.Generic;
+using IO.Astrodynamics.Models.Body;
+using IO.Astrodynamics.Models.Time;
 
 namespace IO.Astrodynamics.Models.Mission
 {
-    public interface ILocalizable
+    public interface ILocalizable : INaifObject
     {
-        StateVector GetEphemeris(Frames.Frame frame, in DateTime epoch, int accuracy = 9);
-        StateVector RelativeStateVector(Frames.Frame frame, BodyScenario targetBody, in DateTime epoch);
+        IEnumerable<OrbitalParameters.OrbitalParameters> GetEphemeris(Window searchWindow, CelestialBodyScenario observer, Frames.Frame frame, Aberration aberration,
+            TimeSpan stepSize);
+
     }
 }

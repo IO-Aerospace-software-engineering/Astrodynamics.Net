@@ -31,27 +31,5 @@ namespace IO.Astrodynamics.Models.Body.Spacecraft
             Instrument = instrument;
             Orientation = orientation;
         }
-
-        /// <summary>
-        /// Know if body is in field of view
-        /// </summary>
-        /// <param name="bodyScenario">Target</param>
-        /// <param name="epoch">AT epoch</param>
-        /// <returns></returns>
-        public bool IsInFieldOfView(BodyScenario bodyScenario, in DateTime epoch)
-        {
-            return IsInFieldOfView(Spacecraft.RelativeStateVector(bodyScenario, epoch));
-        }
-
-        /// <summary>
-        /// Know if these orbital parameters are in field of view
-        /// </summary>
-        /// <param name="orbitalParameters">Target orbital parameters</param>
-        /// <returns></returns>
-        public bool IsInFieldOfView(OrbitalParameters.OrbitalParameters orbitalParameters)
-        {
-            //todo implement
-            throw new NotImplementedException();
-        }
     }
 }
