@@ -44,7 +44,7 @@ public abstract class Body : ILocalizable
         NaifId = naifId;
         Name = name;
         Mass = mass;
-        InitialOrbitalParameters = initialOrbitalParameters ?? throw new ArgumentNullException(nameof(initialOrbitalParameters));
+        InitialOrbitalParameters = initialOrbitalParameters;
         Frame = frame ?? throw new ArgumentNullException(nameof(frame));
     }
 
