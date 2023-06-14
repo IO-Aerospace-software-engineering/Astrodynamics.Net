@@ -1,14 +1,12 @@
-﻿using IO.Astrodynamics.Models.Surface;
-using System;
+﻿using System;
 using System.Linq;
 using IO.Astrodynamics.Models.Coordinates;
 using IO.Astrodynamics.Models.Maneuver;
 using IO.Astrodynamics.Models.Math;
 using IO.Astrodynamics.Models.OrbitalParameters;
+using IO.Astrodynamics.Models.Surface;
 using IO.Astrodynamics.Models.Time;
 using Xunit;
-using Launch = IO.Astrodynamics.Models.Maneuver.Launch;
-using Site = IO.Astrodynamics.Models.Surface.Site;
 
 namespace IO.Astrodynamics.Models.Tests.Maneuvers
 {

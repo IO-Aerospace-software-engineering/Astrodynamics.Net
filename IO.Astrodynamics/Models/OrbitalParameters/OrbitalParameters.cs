@@ -2,20 +2,19 @@ using System;
 using System.Collections.Generic;
 using IO.Astrodynamics.Models.Body;
 using IO.Astrodynamics.Models.Coordinates;
+using IO.Astrodynamics.Models.Frames;
 using IO.Astrodynamics.Models.Math;
-using IO.Astrodynamics.Models.Mission;
-
 using IO.Astrodynamics.Models.Time;
 
 namespace IO.Astrodynamics.Models.OrbitalParameters;
 
 public abstract class OrbitalParameters : IEquatable<OrbitalParameters>
 {
-    public Body.CelestialBody CenterOfMotion { get; protected set; }
+    public CelestialBody CenterOfMotion { get; protected set; }
 
     public DateTime Epoch { get; }
 
-    public Frames.Frame Frame { get; }
+    public Frame Frame { get; }
 
     protected OrbitalParameters() { }
     /// <summary>
@@ -24,7 +23,7 @@ public abstract class OrbitalParameters : IEquatable<OrbitalParameters>
     /// <param name="centerOfMotion"></param>
     /// <param name="epoch"></param>
     /// <param name="frame"></param>
-    protected OrbitalParameters(Body.CelestialBody centerOfMotion, DateTime epoch, Frames.Frame frame)
+    protected OrbitalParameters(CelestialBody centerOfMotion, DateTime epoch, Frame frame)
     {
         CenterOfMotion = centerOfMotion;
         Epoch = epoch;
@@ -308,7 +307,7 @@ public abstract class OrbitalParameters : IEquatable<OrbitalParameters>
     
     
 
-    public virtual OrbitalParameters ToFrame(Frames.Frame frame)
+    public virtual OrbitalParameters ToFrame(Frame frame)
     {
         if (frame == Frame)
         {
@@ -348,7 +347,7 @@ public abstract class OrbitalParameters : IEquatable<OrbitalParameters>
                base.Equals(other) || (
                EqualityComparer<CelestialBody>.Default.Equals(CenterOfMotion, other.CenterOfMotion) &&
                Epoch == other.Epoch &&
-               EqualityComparer<Frames.Frame>.Default.Equals(Frame, other.Frame));
+               EqualityComparer<Frame>.Default.Equals(Frame, other.Frame));
     }
 
     public override int GetHashCode()

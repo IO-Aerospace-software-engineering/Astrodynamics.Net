@@ -1,6 +1,6 @@
-using Xunit;
 using System;
 using IO.Astrodynamics.Models.Body.Spacecraft;
+using Xunit;
 
 namespace IO.Astrodynamics.Models.Tests.Body
 {

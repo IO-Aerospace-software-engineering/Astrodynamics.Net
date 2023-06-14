@@ -1,6 +1,4 @@
 using System;
-using IO.Astrodynamics.Models.Mission;
-
 
 namespace IO.Astrodynamics.Models.Body.Spacecraft
 {

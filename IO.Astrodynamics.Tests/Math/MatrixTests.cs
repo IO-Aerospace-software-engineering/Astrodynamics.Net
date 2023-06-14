@@ -1,5 +1,5 @@
-using Xunit;
 using IO.Astrodynamics.Models.Math;
+using Xunit;
 
 namespace IO.Astrodynamics.Models.Tests.Math;
 

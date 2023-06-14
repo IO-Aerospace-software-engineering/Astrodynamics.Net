@@ -1,4 +1,5 @@
-﻿using IO.Astrodynamics.Models.OrbitalParameters;
+﻿using IO.Astrodynamics.Models.Frames;
+using IO.Astrodynamics.Models.OrbitalParameters;
 
 namespace IO.Astrodynamics.Models.Coordinates
 {
@@ -13,7 +14,7 @@ namespace IO.Astrodynamics.Models.Coordinates
 
         public Equatorial(StateVector stateVector)
         {
-            var sv = stateVector.ToFrame(Frames.Frame.ICRF).ToStateVector();
+            var sv = stateVector.ToFrame(Frame.ICRF).ToStateVector();
 
             Distance = sv.Position.Magnitude();
             RightAscencion = System.Math.Atan2(sv.Position.Y , sv.Position.X);

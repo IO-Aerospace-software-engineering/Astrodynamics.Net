@@ -1,11 +1,11 @@
-﻿using IO.Astrodynamics.Models.Body;
+﻿using System;
+using IO.Astrodynamics.Models.Body;
 using IO.Astrodynamics.Models.Coordinates;
 using IO.Astrodynamics.Models.Math;
 using IO.Astrodynamics.Models.Mission;
 using IO.Astrodynamics.Models.OrbitalParameters;
 using IO.Astrodynamics.Models.Surface;
 using IO.Astrodynamics.Models.Time;
-using System;
 using Xunit;
 
 namespace IO.Astrodynamics.Models.Tests.Surface

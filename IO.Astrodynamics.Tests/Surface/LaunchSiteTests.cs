@@ -1,6 +1,6 @@
-﻿using IO.Astrodynamics.Models.Surface;
-using System.Linq;
+﻿using System.Linq;
 using IO.Astrodynamics.Models.Coordinates;
+using IO.Astrodynamics.Models.Surface;
 using Xunit;
 
 namespace IO.Astrodynamics.Models.Tests.Surface

@@ -9,6 +9,13 @@ namespace IO.Astrodynamics.Models.Tests.Body;
 
 public class CelestialBodyTests
 {
+    private API _api;
+
+    public CelestialBodyTests()
+    {
+        _api = new API();
+        _api.LoadKernels(Astrodynamics.Tests.Constants.SolarSystemKernelPath);
+    }
     [Fact]
     public void Create()
     {
@@ -24,7 +31,7 @@ public class CelestialBodyTests
         Assert.Equal(6356.7519, earth.PolarRadius);
         Assert.Equal(6378.1366, earth.EquatorialRadius);
         Assert.Equal(0.0033528131084554717, earth.Flatenning);
-        Assert.Equal(1, earth.Satellites.Count);
+        Assert.Equal(1, sun.Satellites.Count);
     }
 
     [Fact]
@@ -45,9 +52,9 @@ public class CelestialBodyTests
         var moon = TestHelpers.GetMoonAt20011214();
         var earth = moon.InitialOrbitalParameters.CenterOfMotion;
         var sun = earth.InitialOrbitalParameters.CenterOfMotion;
-        var res = Enumerable.ToArray(earth.FindOccultations(
-            new Models.Time.Window(DateTimeExtension.CreateTDB(61473664.183390938), DateTimeExtension.CreateTDB(61646464.183445148)), moon,
-            ShapeType.Ellipsoid, sun, ShapeType.Ellipsoid, OccultationType.Any, Aberration.None, TimeSpan.FromMinutes(1.0)));
+        var res = earth.FindOccultations(
+            new Window(DateTimeExtension.CreateTDB(61473664.183390938), DateTimeExtension.CreateTDB(61646464.183445148)), moon,
+            ShapeType.Ellipsoid, sun, ShapeType.Ellipsoid, OccultationType.Any, Aberration.None, TimeSpan.FromMinutes(1.0)).ToArray();
         Assert.Single(res);
 
         Assert.Equal(new DateTime(2001, 12, 14, 20, 10, 50, 573), res[0].StartDate);

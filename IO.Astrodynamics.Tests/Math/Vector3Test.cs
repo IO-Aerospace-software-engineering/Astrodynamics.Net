@@ -1,8 +1,8 @@
 using System;
-using Xunit;
 using IO.Astrodynamics.Models.Math;
 using IO.Astrodynamics.Models.Mission;
 using IO.Astrodynamics.Models.Time;
+using Xunit;
 
 namespace IO.Astrodynamics.Models.Tests.Math;
 

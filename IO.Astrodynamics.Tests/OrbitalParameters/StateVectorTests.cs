@@ -1,11 +1,11 @@
 using System;
-using Xunit;
-using IO.Astrodynamics.Models.OrbitalParameters;
 using IO.Astrodynamics.Models.Body;
 using IO.Astrodynamics.Models.Math;
 using IO.Astrodynamics.Models.Mission;
+using IO.Astrodynamics.Models.OrbitalParameters;
 using IO.Astrodynamics.Models.Time;
 using IO.Astrodynamics.SolarSystemObjects;
+using Xunit;
 
 namespace IO.Astrodynamics.Models.Tests.OrbitalParameters
 {
@@ -239,7 +239,7 @@ namespace IO.Astrodynamics.Models.Tests.OrbitalParameters
         public void ToNonInertialFrame()
         {
             API api = new API();
-            api.LoadKernels(IO.Astrodynamics.Tests.Constants.SolarSystemKernelPath);
+            api.LoadKernels(Astrodynamics.Tests.Constants.SolarSystemKernelPath);
             Models.Mission.Mission mission = new Models.Mission.Mission("mission1");
             Scenario scenario = new Scenario("scn1", mission,new Window(new DateTime(2021, 1, 1), new DateTime(2021, 1, 2)));
             CelestialBody earth = new CelestialBody(399, "earth", 3.986004418E+5, 6356.7519, 6378.1366);

@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using IO.Astrodynamics.Models.Mission;
-
 
 namespace IO.Astrodynamics.Models.Body.Spacecraft
 {

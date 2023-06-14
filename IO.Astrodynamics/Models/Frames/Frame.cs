@@ -1,7 +1,6 @@
 using System;
 using IO.Astrodynamics.Models.OrbitalParameters;
 
-
 namespace IO.Astrodynamics.Models.Frames;
 
 public class Frame

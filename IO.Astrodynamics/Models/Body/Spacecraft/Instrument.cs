@@ -1,7 +1,6 @@
 using System;
 using IO.Astrodynamics.Models.Math;
 
-
 namespace IO.Astrodynamics.Models.Body.Spacecraft
 {
     public class Instrument : INaifObject

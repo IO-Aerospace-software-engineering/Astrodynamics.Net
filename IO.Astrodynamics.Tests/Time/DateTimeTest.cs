@@ -1,6 +1,6 @@
-using Xunit;
-using IO.Astrodynamics.Models.Time;
 using System;
+using IO.Astrodynamics.Models.Time;
+using Xunit;
 
 namespace IO.Astrodynamics.Models.Tests.Time;
 

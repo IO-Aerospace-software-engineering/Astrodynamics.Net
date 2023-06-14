@@ -1,13 +1,11 @@
-﻿using IO.Astrodynamics.Models.Body;
+﻿using System;
+using System.Collections.Generic;
+using IO.Astrodynamics.Models.Body;
 using IO.Astrodynamics.Models.Coordinates;
+using IO.Astrodynamics.Models.Frames;
 using IO.Astrodynamics.Models.Math;
 using IO.Astrodynamics.Models.Mission;
-using IO.Astrodynamics.Models.OrbitalParameters;
 using IO.Astrodynamics.Models.Time;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using IO.Astrodynamics.Models.Frames;
 
 namespace IO.Astrodynamics.Models.Surface
 {
@@ -42,9 +40,9 @@ namespace IO.Astrodynamics.Models.Surface
         /// <returns></returns>
         public Horizontal GetHorizontalCoordinates(DateTime epoch, ILocalizable localizableObject, Aberration aberration)
         {
-            var bodySv = localizableObject.GetEphemeris(epoch, this.Body, this.Body.Frame, aberration).ToStateVector();
+            var bodySv = localizableObject.GetEphemeris(epoch, Body, Body.Frame, aberration).ToStateVector();
             var r = bodySv.Position.Normalize();
-            var z = GetEphemeris(epoch, this.Body, this.Body.Frame, aberration).ToStateVector().Position.Normalize();
+            var z = GetEphemeris(epoch, Body, Body.Frame, aberration).ToStateVector().Position.Normalize();
             var e = z.Cross(Vector3.VectorZ).Normalize().Inverse();
             var n = z.Cross(e).Normalize().Inverse();
 

@@ -1,8 +1,7 @@
-﻿using IO.Astrodynamics.Models.Coordinates;
-using IO.Astrodynamics.Models.Mission;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using IO.Astrodynamics.Models.Body;
+using IO.Astrodynamics.Models.Coordinates;
 
 namespace IO.Astrodynamics.Models.Surface
 {

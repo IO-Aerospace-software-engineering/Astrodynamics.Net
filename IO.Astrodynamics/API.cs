@@ -6,23 +6,34 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using IO.Astrodynamics.DTO;
-using IO.Astrodynamics.Models.Frames;
-using IO.Astrodynamics.Models.Maneuver;
-using IO.Astrodynamics.Models.Mission;
-using IO.Astrodynamics.Models.Time;
 using AutoMapper;
 using IO.Astrodynamics.Converters;
+using IO.Astrodynamics.DTO;
 using IO.Astrodynamics.Models.Body;
+using IO.Astrodynamics.Models.Frames;
+using IO.Astrodynamics.Models.Maneuver;
 using IO.Astrodynamics.Models.Math;
-using ApsidalAlignmentManeuver = IO.Astrodynamics.DTO.ApsidalAlignmentManeuver;
+using IO.Astrodynamics.Models.Mission;
+using IO.Astrodynamics.Models.OrbitalParameters;
+using IO.Astrodynamics.Models.Time;
+using ApsidalAlignmentManeuver = IO.Astrodynamics.Models.Maneuver.ApsidalAlignmentManeuver;
 using CelestialBody = IO.Astrodynamics.DTO.CelestialBody;
-using CombinedManeuver = IO.Astrodynamics.DTO.CombinedManeuver;
+using CombinedManeuver = IO.Astrodynamics.Models.Maneuver.CombinedManeuver;
+using EquinoctialElements = IO.Astrodynamics.DTO.EquinoctialElements;
+using Instrument = IO.Astrodynamics.Models.Body.Spacecraft.Instrument;
+using InstrumentPointingToAttitude = IO.Astrodynamics.Models.Maneuver.InstrumentPointingToAttitude;
 using Launch = IO.Astrodynamics.DTO.Launch;
-using PhasingManeuver = IO.Astrodynamics.DTO.PhasingManeuver;
+using NadirAttitude = IO.Astrodynamics.Models.Maneuver.NadirAttitude;
+using PhasingManeuver = IO.Astrodynamics.Models.Maneuver.PhasingManeuver;
+using ProgradeAttitude = IO.Astrodynamics.Models.Maneuver.ProgradeAttitude;
 using Quaternion = IO.Astrodynamics.Models.Math.Quaternion;
+using RetrogradeAttitude = IO.Astrodynamics.Models.Maneuver.RetrogradeAttitude;
 using Scenario = IO.Astrodynamics.DTO.Scenario;
+using Spacecraft = IO.Astrodynamics.Models.Body.Spacecraft.Spacecraft;
+using StateOrientation = IO.Astrodynamics.DTO.StateOrientation;
+using StateVector = IO.Astrodynamics.DTO.StateVector;
 using Window = IO.Astrodynamics.DTO.Window;
+using ZenithAttitude = IO.Astrodynamics.Models.Maneuver.ZenithAttitude;
 
 namespace IO.Astrodynamics;
 
@@ -174,7 +185,7 @@ public class API
             }
         }
 
-        foreach (var spacecraft in scenario.Bodies.OfType<Models.Body.Spacecraft.Spacecraft>())
+        foreach (var spacecraft in scenario.Bodies.OfType<Spacecraft>())
         {
             for (int j = 0; j < scenario.Bodies.OfType<Models.Body.CelestialBody>().Count(); j++)
             {
@@ -185,7 +196,7 @@ public class API
             StateVector parkingOrbit = _mapper.Map<StateVector>(spacecraft.InitialOrbitalParameters.ToStateVector());
 
             //Create and configure spacecraft
-            scenarioDto.Spacecraft = new Spacecraft(spacecraft.NaifId, spacecraft.Name,
+            scenarioDto.Spacecraft = new DTO.Spacecraft(spacecraft.NaifId, spacecraft.Name,
                 spacecraft.DryOperatingMass,
                 spacecraft.MaximumOperatingMass, parkingOrbit,
                 outputDirectory.CreateSubdirectory("Spacecrafts").FullName);
@@ -213,7 +224,7 @@ public class API
             for (int j = 0; j < spacecraft.Intruments.Count; j++)
             {
                 var instrument = spacecraft.Intruments.ElementAt(j);
-                scenarioDto.Spacecraft.Instruments[j] = new Instrument(instrument.Instrument.NaifId,
+                scenarioDto.Spacecraft.Instruments[j] = new DTO.Instrument(instrument.Instrument.NaifId,
                     instrument.Instrument.Name, instrument.Instrument.Shape.GetDescription(),
                     _mapper.Map<Vector3D>(instrument.Orientation),
                     _mapper.Map<Vector3D>(instrument.Instrument.Boresight),
@@ -257,13 +268,13 @@ public class API
                             maneuver.Engines.ElementAt(k).SerialNumber;
                     }
                 }
-                else if (maneuver is IO.Astrodynamics.Models.Maneuver.ApsidalAlignmentManeuver)
+                else if (maneuver is ApsidalAlignmentManeuver)
                 {
                     StateVector target = _mapper.Map<StateVector>(maneuver.TargetOrbit.ToStateVector());
                     int idx = scenarioDto.Spacecraft.ApsidalAlignmentManeuvers.Count(x => x.ManeuverOrder > -1);
                     scenarioDto.Spacecraft.ApsidalAlignmentManeuvers[
                             scenarioDto.Spacecraft.ApsidalAlignmentManeuvers.Count(x => x.ManeuverOrder > -1)] =
-                        new ApsidalAlignmentManeuver(order, maneuver.ManeuverHoldDuration.TotalSeconds,
+                        new DTO.ApsidalAlignmentManeuver(order, maneuver.ManeuverHoldDuration.TotalSeconds,
                             maneuver.MinimumEpoch.SecondsFromJ2000TDB(), target);
 
                     //Add engines
@@ -273,12 +284,12 @@ public class API
                             maneuver.Engines.ElementAt(k).SerialNumber;
                     }
                 }
-                else if (maneuver is IO.Astrodynamics.Models.Maneuver.CombinedManeuver)
+                else if (maneuver is CombinedManeuver)
                 {
                     int idx = scenarioDto.Spacecraft.CombinedManeuvers.Count(x => x.ManeuverOrder > -1);
                     scenarioDto.Spacecraft.CombinedManeuvers[
                             scenarioDto.Spacecraft.CombinedManeuvers.Count(x => x.ManeuverOrder > -1)] =
-                        new CombinedManeuver(order,
+                        new DTO.CombinedManeuver(order,
                             maneuver.ManeuverHoldDuration.TotalSeconds, maneuver.MinimumEpoch.SecondsFromJ2000TDB(),
                             maneuver.TargetOrbit.ApogeeVector().Magnitude(),
                             maneuver.TargetOrbit.Inclination());
@@ -305,15 +316,15 @@ public class API
                             maneuver.Engines.ElementAt(k).SerialNumber;
                     }
                 }
-                else if (maneuver is IO.Astrodynamics.Models.Maneuver.PhasingManeuver)
+                else if (maneuver is PhasingManeuver)
                 {
                     StateVector target = _mapper.Map<StateVector>(maneuver.TargetOrbit.ToStateVector());
                     int idx = scenarioDto.Spacecraft.PhasingManeuver.Count(x => x.ManeuverOrder > -1);
                     scenarioDto.Spacecraft.PhasingManeuver[
-                        scenarioDto.Spacecraft.PhasingManeuver.Count(x => x.ManeuverOrder > -1)] = new PhasingManeuver(
+                        scenarioDto.Spacecraft.PhasingManeuver.Count(x => x.ManeuverOrder > -1)] = new DTO.PhasingManeuver(
                         order,
                         maneuver.ManeuverHoldDuration.TotalSeconds, maneuver.MinimumEpoch.SecondsFromJ2000TDB(),
-                        (int)(maneuver as IO.Astrodynamics.Models.Maneuver.PhasingManeuver).RevolutionNumber, target);
+                        (int)(maneuver as PhasingManeuver).RevolutionNumber, target);
                     //Add engines
                     for (int k = 0; k < maneuver.Engines.Count; k++)
                     {
@@ -321,10 +332,10 @@ public class API
                             maneuver.Engines.ElementAt(k).SerialNumber;
                     }
                 }
-                else if (maneuver is Models.Maneuver.InstrumentPointingToAttitude)
+                else if (maneuver is InstrumentPointingToAttitude)
                 {
                     int idx = scenarioDto.Spacecraft.PointingToAttitudes.Count(x => x.ManeuverOrder > -1);
-                    var instManeuver = maneuver as Models.Maneuver.InstrumentPointingToAttitude;
+                    var instManeuver = maneuver as InstrumentPointingToAttitude;
                     scenarioDto.Spacecraft.PointingToAttitudes[
                             scenarioDto.Spacecraft.PointingToAttitudes.Count(x => x.ManeuverOrder > -1)] =
                         new DTO.InstrumentPointingToAttitude(order, instManeuver.Instrument.Instrument.NaifId,
@@ -338,7 +349,7 @@ public class API
                             maneuver.Engines.ElementAt(k).SerialNumber;
                     }
                 }
-                else if (maneuver is Models.Maneuver.ProgradeAttitude)
+                else if (maneuver is ProgradeAttitude)
                 {
                     int idx = scenarioDto.Spacecraft.ProgradeAttitudes.Count(x => x.ManeuverOrder > -1);
                     scenarioDto.Spacecraft.ProgradeAttitudes[
@@ -352,7 +363,7 @@ public class API
                             maneuver.Engines.ElementAt(k).SerialNumber;
                     }
                 }
-                else if (maneuver is Models.Maneuver.RetrogradeAttitude)
+                else if (maneuver is RetrogradeAttitude)
                 {
                     int idx = scenarioDto.Spacecraft.RetrogradeAttitudes.Count(x => x.ManeuverOrder > -1);
                     scenarioDto.Spacecraft.RetrogradeAttitudes[
@@ -366,7 +377,7 @@ public class API
                             maneuver.Engines.ElementAt(k).SerialNumber;
                     }
                 }
-                else if (maneuver is Models.Maneuver.NadirAttitude)
+                else if (maneuver is NadirAttitude)
                 {
                     int idx = scenarioDto.Spacecraft.NadirAttitudes.Count(x => x.ManeuverOrder > -1);
                     scenarioDto.Spacecraft.NadirAttitudes[
@@ -380,7 +391,7 @@ public class API
                             maneuver.Engines.ElementAt(k).SerialNumber;
                     }
                 }
-                else if (maneuver is Models.Maneuver.ZenithAttitude)
+                else if (maneuver is ZenithAttitude)
                 {
                     int idx = scenarioDto.Spacecraft.ZenithAttitudes.Count(x => x.ManeuverOrder > -1);
                     scenarioDto.Spacecraft.ZenithAttitudes[
@@ -400,7 +411,7 @@ public class API
             }
 
             PropagateProxy(ref scenarioDto);
-            //Todo load kernels
+            LoadKernels(outputDirectory);
 
             foreach (var maneuverResult in scenarioDto.Spacecraft.CombinedManeuvers.Where(x => x.ManeuverOrder > -1))
             {
@@ -483,7 +494,7 @@ public class API
     /// <param name="launch"></param>
     /// <param name="window"></param>
     /// <param name="outputDirectory"></param>
-    public IEnumerable<LaunchWindow> FindLaunchWindows(IO.Astrodynamics.Models.Maneuver.Launch launch,
+    public IEnumerable<LaunchWindow> FindLaunchWindows(Models.Maneuver.Launch launch,
         in Models.Time.Window window, DirectoryInfo outputDirectory)
     {
         //Convert data
@@ -649,7 +660,7 @@ public class API
     /// <param name="aberration"></param>
     /// <param name="stepSize"></param>
     /// <returns></returns>
-    public IEnumerable<Models.Time.Window> FindWindowsInFieldOfViewConstraint(Models.Time.Window searchWindow, INaifObject observerId, Models.Body.Spacecraft.Instrument instrument,
+    public IEnumerable<Models.Time.Window> FindWindowsInFieldOfViewConstraint(Models.Time.Window searchWindow, INaifObject observerId, Instrument instrument,
         INaifObject targetId, Frame targetFrame, ShapeType targetShape, Aberration aberration, TimeSpan stepSize)
     {
         if (targetFrame == null) throw new ArgumentNullException(nameof(targetFrame));
@@ -677,7 +688,7 @@ public class API
     /// <param name="stepSize"></param>
     /// <param name="observer"></param>
     /// <returns></returns>
-    public IEnumerable<Models.OrbitalParameters.OrbitalParameters> ReadEphemeris(Models.Time.Window searchWindow, Models.Body.CelestialBody observer, ILocalizable target, Frame frame,
+    public IEnumerable<OrbitalParameters> ReadEphemeris(Models.Time.Window searchWindow, Models.Body.CelestialBody observer, ILocalizable target, Frame frame,
         Aberration aberration, TimeSpan stepSize)
     {
         if (frame == null) throw new ArgumentNullException(nameof(frame));
@@ -698,7 +709,7 @@ public class API
     /// <param name="aberration"></param>
     /// <returns></returns>
     /// <exception cref="ArgumentNullException"></exception>
-    public Models.OrbitalParameters.OrbitalParameters ReadEphemeris(DateTime epoch, Models.Body.CelestialBody observer, ILocalizable target, Frame frame,
+    public OrbitalParameters ReadEphemeris(DateTime epoch, Models.Body.CelestialBody observer, ILocalizable target, Frame frame,
         Aberration aberration)
     {
         if (frame == null) throw new ArgumentNullException(nameof(frame));
@@ -715,7 +726,7 @@ public class API
     /// <param name="referenceFrame"></param>
     /// <param name="stepSize"></param>
     /// <returns></returns>
-    public IEnumerable<Models.OrbitalParameters.StateOrientation> ReadOrientation(Models.Time.Window searchWindow, Models.Body.Spacecraft.Spacecraft spacecraft, TimeSpan tolerance,
+    public IEnumerable<Models.OrbitalParameters.StateOrientation> ReadOrientation(Models.Time.Window searchWindow, Spacecraft spacecraft, TimeSpan tolerance,
         Frame referenceFrame, TimeSpan stepSize)
     {
         if (referenceFrame == null) throw new ArgumentNullException(nameof(referenceFrame));

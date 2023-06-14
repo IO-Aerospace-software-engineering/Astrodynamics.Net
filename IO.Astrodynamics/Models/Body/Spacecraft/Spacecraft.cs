@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using IO.Astrodynamics.Models.Frames;
 using IO.Astrodynamics.Models.Math;
-using IO.Astrodynamics.Models.Mission;
 
 namespace IO.Astrodynamics.Models.Body.Spacecraft
 {
@@ -39,9 +39,10 @@ namespace IO.Astrodynamics.Models.Body.Spacecraft
         //TODO Check if the MOM is not exceeded
         public double MaximumOperatingMass { get; }
 
-        public Spacecraft(int naifId, string name, double mass, double maximumOperatingMass,Clock clock, OrbitalParameters.OrbitalParameters initialOrbitalParameters) : base(naifId, name, mass,initialOrbitalParameters,new Frames.Frame($"{name}_SPACECRAFT"))
+        public Spacecraft(int naifId, string name, double mass, double maximumOperatingMass,Clock clock, OrbitalParameters.OrbitalParameters initialOrbitalParameters) : base(naifId, name, mass,initialOrbitalParameters,new Frame($"{name}_SPACECRAFT"))
         {
             if (maximumOperatingMass < mass) throw new ArgumentOutOfRangeException(nameof(maximumOperatingMass));
+            if (naifId >= 0) throw new ArgumentOutOfRangeException(nameof(naifId));
             MaximumOperatingMass = maximumOperatingMass;
             Clock = clock ?? throw new ArgumentNullException(nameof(clock));
         }

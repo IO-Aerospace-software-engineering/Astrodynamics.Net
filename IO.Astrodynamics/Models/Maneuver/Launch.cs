@@ -1,11 +1,8 @@
-﻿using IO.Astrodynamics.Models.Math;
-using IO.Astrodynamics.Models.Mission;
-using IO.Astrodynamics.Models.Surface;
-using IO.Astrodynamics.Models.Time;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using IO.Astrodynamics.Models.Frames;
+using IO.Astrodynamics.Models.Surface;
+using IO.Astrodynamics.Models.Time;
 
 namespace IO.Astrodynamics.Models.Maneuver
 {

@@ -5,7 +5,6 @@ using IO.Astrodynamics.Models.Mission;
 using IO.Astrodynamics.Models.OrbitalParameters;
 using IO.Astrodynamics.Models.Time;
 
-
 namespace IO.Astrodynamics.Models.Body;
 
 public abstract class Body : ILocalizable
@@ -15,7 +14,7 @@ public abstract class Body : ILocalizable
     public double Mass { get; private set; }
 
     public OrbitalParameters.OrbitalParameters InitialOrbitalParameters { get; private set; }
-    public Frames.Frame Frame { get; }
+    public Frame Frame { get; }
     private readonly HashSet<Body> _satellites = new();
     public IReadOnlyCollection<Body> Satellites => _satellites;
 
@@ -46,6 +45,10 @@ public abstract class Body : ILocalizable
         Mass = mass;
         InitialOrbitalParameters = initialOrbitalParameters;
         Frame = frame ?? throw new ArgumentNullException(nameof(frame));
+        if (InitialOrbitalParameters != null)
+        {
+            initialOrbitalParameters.CenterOfMotion._satellites.Add(this);
+        }
     }
 
     /// <summary>
@@ -57,7 +60,7 @@ public abstract class Body : ILocalizable
     /// <param name="aberration"></param>
     /// <param name="stepSize"></param>
     /// <returns></returns>
-    public IEnumerable<OrbitalParameters.OrbitalParameters> GetEphemeris(Window searchWindow,Models.Body.CelestialBody observer, Frames.Frame frame, Aberration aberration,
+    public IEnumerable<OrbitalParameters.OrbitalParameters> GetEphemeris(Window searchWindow, CelestialBody observer, Frame frame, Aberration aberration,
         TimeSpan stepSize)
     {
         return _api.ReadEphemeris(searchWindow, observer, this, frame, aberration, stepSize);
@@ -68,9 +71,15 @@ public abstract class Body : ILocalizable
         return _api.ReadEphemeris(epoch, observer, this, frame, aberration);
     }
 
-    public StateOrientation GetOrientationFromICRF(in DateTime epoch)
+    /// <summary>
+    /// Get orientation relative to reference frame
+    /// </summary>
+    /// <param name="referenceFrame"></param>
+    /// <param name="epoch"></param>
+    /// <returns></returns>
+    public StateOrientation GetOrientation(Frame referenceFrame, in DateTime epoch)
     {
-        return Frames.Frame.ICRF.ToFrame(Frame, epoch);
+        return referenceFrame.ToFrame(Frame, epoch);
     }
 
     public virtual void SetInitialOrbitalParameters(OrbitalParameters.OrbitalParameters orbitalParameters)

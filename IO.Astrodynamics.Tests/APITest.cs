@@ -1,21 +1,19 @@
 using System;
 using System.IO;
-using System.Runtime.InteropServices;
-using Xunit;
 using System.Linq;
-using IO.Astrodynamics.DTO;
+using System.Runtime.InteropServices;
 using IO.Astrodynamics.Models.Body.Spacecraft;
+using IO.Astrodynamics.Models.Coordinates;
 using IO.Astrodynamics.Models.Frames;
 using IO.Astrodynamics.Models.Maneuver;
 using IO.Astrodynamics.Models.Math;
 using IO.Astrodynamics.Models.Mission;
+using IO.Astrodynamics.Models.OrbitalParameters;
 using IO.Astrodynamics.Models.Surface;
 using IO.Astrodynamics.Models.Tests;
 using IO.Astrodynamics.Models.Time;
 using IO.Astrodynamics.SolarSystemObjects;
-using NadirAttitude = IO.Astrodynamics.Models.Maneuver.NadirAttitude;
-using Scenario = IO.Astrodynamics.Models.Mission.Scenario;
-using Window = IO.Astrodynamics.Models.Time.Window;
+using Xunit;
 
 namespace IO.Astrodynamics.Tests;
 
@@ -40,20 +38,20 @@ public class APITest
         var start = DateTime.Parse("2021-03-02 00:00:00.000000").ToTDB();
         var end = DateTime.Parse("2021-03-05 00:00:00.000000").ToTDB();
 
-        Models.Time.Window window = new Models.Time.Window(start, end);
+        Window window = new Window(start, end);
 
         //Define launch site
         LaunchSite launchSite = new LaunchSite(399303, "S3", TestHelpers.GetEarthAtJ2000(),
-            new Models.Coordinates.Geodetic(-81.0 * Constants.DEG_RAD, 28.5 * Constants.DEG_RAD, 0.0));
+            new Geodetic(-81.0 * Constants.DEG_RAD, 28.5 * Constants.DEG_RAD, 0.0));
 
         //Define the targeted parking orbit
-        Models.OrbitalParameters.StateVector parkingOrbit = new Models.OrbitalParameters.StateVector(
+        StateVector parkingOrbit = new StateVector(
             new Vector3(5056554.1874925727, 4395595.4942363985, 0.0),
             new Vector3(-3708.6305608890916, 4266.2914313011433, 6736.8538488755494), TestHelpers.GetEarthAtJ2000(),
             start, Frame.ICRF);
 
         //Create launch object
-        Models.Maneuver.Launch launch = new Models.Maneuver.Launch(launchSite, launchSite, parkingOrbit,
+        Launch launch = new Launch(launchSite, launchSite, parkingOrbit,
             Models.Constants.CivilTwilight, true);
 
         //Find launch windows
@@ -62,10 +60,10 @@ public class APITest
         //Read results
         Assert.Equal(2, res.Count());
         Assert.Equal(
-            new Models.Time.Window(DateTime.Parse("2021-03-03 23:09:15.971").ToTDB(),
+            new Window(DateTime.Parse("2021-03-03 23:09:15.971").ToTDB(),
                 DateTime.Parse("2021-03-03 23:09:15.971").ToTDB()), res.ElementAt(0).Window);
         Assert.Equal(
-            new Models.Time.Window(DateTime.Parse("2021-03-04 23:05:19.447").ToTDB(),
+            new Window(DateTime.Parse("2021-03-04 23:05:19.447").ToTDB(),
                 DateTime.Parse("2021-03-04 23:05:19.447").ToTDB()), res.ElementAt(1).Window);
         Assert.Equal(47.00587579161426, res.ElementAt(0).InertialAzimuth * Constants.RAD_DEG);
         Assert.Equal(45.125224583051406, res.ElementAt(0).NonInertialAzimuth * Constants.RAD_DEG);
@@ -88,43 +86,43 @@ public class APITest
 
         Mission mission = new Mission("mission01");
         Scenario scenario =
-            new Scenario("scn1", mission, new Models.Time.Window(startPropagator, end));
+            new Scenario("scn1", mission, new Window(startPropagator, end));
         scenario.AddBody(TestHelpers.GetSun());
         scenario.AddBody(TestHelpers.GetEarthAtJ2000());
         scenario.AddBody(TestHelpers.GetMoonAtJ2000());
 
         //Define parking orbit
-        Models.OrbitalParameters.StateVector parkingOrbit = new Models.OrbitalParameters.StateVector(
+        StateVector parkingOrbit = new StateVector(
             new Vector3(5056554.1874925727, 4395595.4942363985, 0.0),
             new Vector3(-3708.6305608890916, 4266.2914313011433, 6736.8538488755494), TestHelpers.GetEarthAtJ2000(),
             start, Frame.ICRF);
 
         //Define target orbit
-        Models.OrbitalParameters.StateVector targetOrbit = new Models.OrbitalParameters.StateVector(
+        StateVector targetOrbit = new StateVector(
             new Vector3(4390853.7278876612, 5110607.0005866792, 917659.86391987884),
             new Vector3(-4979.4693432656513, 3033.2639866911495, 6933.1803797017265), TestHelpers.GetEarthAtJ2000(),
             start, Frame.ICRF);
 
         //Create and configure spacecraft
         Clock clock = new Clock("clk1", Math.Pow(2.0, 16.0));
-        Models.Body.Spacecraft.Spacecraft spacecraft =
-            new Models.Body.Spacecraft.Spacecraft(-178, "DRAGONFLY", 1000.0, 10000.0, clock, parkingOrbit);
+        Spacecraft spacecraft =
+            new Spacecraft(-178, "DRAGONFLY", 1000.0, 10000.0, clock, parkingOrbit);
 
-        Models.Body.Spacecraft.FuelTank fuelTank = new Models.Body.Spacecraft.FuelTank("ft1", "model1", 9000.0);
+        FuelTank fuelTank = new FuelTank("ft1", "model1", 9000.0);
         Engine engine = new Engine("engine1", "model1", 450.0, 50.0);
         spacecraft.AddFuelTank(fuelTank, 9000.0, "fuelTank1");
         spacecraft.AddEngine(engine, fuelTank, "serialNumber1");
-        spacecraft.AddPayload(new Models.Body.Spacecraft.Payload("payload1", 50.0, "pay01"));
+        spacecraft.AddPayload(new Payload("payload1", 50.0, "pay01"));
         spacecraft.AddInstrument(
-            new Models.Body.Spacecraft.Instrument(600, "CAM600", "mod1", 80.0 * Constants.DEG_RAD,
+            new Instrument(600, "CAM600", "mod1", 80.0 * Constants.DEG_RAD,
                 InstrumentShape.Circular, Vector3.VectorZ, Vector3.VectorX), Vector3.VectorX);
 
         var planeAlignmentManeuver = new PlaneAlignmentManeuver(spacecraft, DateTime.MinValue, TimeSpan.Zero,
             targetOrbit, spacecraft.Engines.First());
         planeAlignmentManeuver
-            .SetNextManeuver(new Models.Maneuver.ApsidalAlignmentManeuver(spacecraft, DateTime.MinValue,
+            .SetNextManeuver(new ApsidalAlignmentManeuver(spacecraft, DateTime.MinValue,
                 TimeSpan.Zero, targetOrbit, spacecraft.Engines.First()))
-            .SetNextManeuver(new Models.Maneuver.PhasingManeuver(spacecraft, DateTime.MinValue, TimeSpan.Zero,
+            .SetNextManeuver(new PhasingManeuver(spacecraft, DateTime.MinValue, TimeSpan.Zero,
                 targetOrbit, 1, spacecraft.Engines.First()))
             .SetNextManeuver(new ApogeeHeightManeuver(spacecraft, DateTime.MinValue,
                 TimeSpan.Zero, 15866666.666666666,
@@ -197,10 +195,10 @@ public class APITest
         api.LoadKernels(Constants.SolarSystemKernelPath);
 
         //Find time windows when the moon will be 400000 km away from the Earth
-        var res = api.FindWindowsOnDistanceConstraint(new Models.Time.Window(DateTimeExtension.CreateTDB(220881665.18391809), DateTimeExtension.CreateTDB(228657665.18565452)),
+        var res = api.FindWindowsOnDistanceConstraint(new Window(DateTimeExtension.CreateTDB(220881665.18391809), DateTimeExtension.CreateTDB(228657665.18565452)),
             TestHelpers.GetEarthAtJ2000(), TestHelpers.GetMoonAtJ2000(), RelationnalOperator.Greater, 400000000, Aberration.None,
             TimeSpan.FromSeconds(86400.0));
-        var windows = res as Models.Time.Window[] ?? res.ToArray();
+        var windows = res as Window[] ?? res.ToArray();
         Assert.Equal(4, windows.Count());
         Assert.Equal("2007-01-08T00:11:07.6290000 (TDB)", windows.ElementAt(0).StartDate.ToFormattedString());
         Assert.Equal("2007-01-13T06:37:47.9480000 (TDB)", windows.ElementAt(0).EndDate.ToFormattedString());
@@ -218,10 +216,10 @@ public class APITest
         api.LoadKernels(Constants.SolarSystemKernelPath);
 
         //Find time windows when the Sun will be occulted by the moon
-        var res = api.FindWindowsOnOccultationConstraint(new Models.Time.Window(DateTimeExtension.CreateTDB(61473664.183390938), DateTimeExtension.CreateTDB(61646464.183445148)),
+        var res = api.FindWindowsOnOccultationConstraint(new Window(DateTimeExtension.CreateTDB(61473664.183390938), DateTimeExtension.CreateTDB(61646464.183445148)),
             TestHelpers.GetEarthAtJ2000(), TestHelpers.GetSun(), ShapeType.Ellipsoid, TestHelpers.GetMoonAtJ2000(), ShapeType.Ellipsoid,
             OccultationType.Any, Aberration.LT, TimeSpan.FromSeconds(3600.0));
-        var windows = res as Models.Time.Window[] ?? res.ToArray();
+        var windows = res as Window[] ?? res.ToArray();
         Assert.Single(windows);
         Assert.Equal("2001-12-14T20:10:15.4110000 (TDB)", windows[0].StartDate.ToFormattedString());
         Assert.Equal("2001-12-14T21:35:49.1010000 (TDB)", windows[0].EndDate.ToFormattedString());
@@ -236,14 +234,14 @@ public class APITest
         //Load solar system kernels
         api.LoadKernels(Constants.SolarSystemKernelPath);
 
-        Models.Surface.Site site = new Models.Surface.Site(13, "station13", TestHelpers.GetEarthAtJ2000(),
-            new Models.Coordinates.Geodetic(-116.7944627147624 * Models.Constants.Deg2Rad, 35.2471635434595 * Models.Constants.Deg2Rad, 0.107));
+        Site site = new Site(13, "station13", TestHelpers.GetEarthAtJ2000(),
+            new Geodetic(-116.7944627147624 * Models.Constants.Deg2Rad, 35.2471635434595 * Models.Constants.Deg2Rad, 0.107));
         //Find time windows when the moon will be above the horizon relative to Deep Space Station 13
-        var res = api.FindWindowsOnCoordinateConstraint(new Models.Time.Window(DateTimeExtension.CreateTDB(730036800.0), DateTimeExtension.CreateTDB(730123200)), site,
+        var res = api.FindWindowsOnCoordinateConstraint(new Window(DateTimeExtension.CreateTDB(730036800.0), DateTimeExtension.CreateTDB(730123200)), site,
             TestHelpers.GetMoonAtJ2000(), new Frame(GroundStations.DSS_13.Frame), CoordinateSystem.Latitudinal, Coordinate.Latitude, RelationnalOperator.Greater,
             0.0, 0.0, Aberration.None, TimeSpan.FromSeconds(60.0));
 
-        var windows = res as Models.Time.Window[] ?? res.ToArray();
+        var windows = res as Window[] ?? res.ToArray();
         Assert.Single(windows);
         Assert.Equal("2023-02-19T14:33:08.9180000 (TDB)", windows[0].StartDate.ToFormattedString());
         Assert.Equal("2023-02-20T00:00:00.0000000 (TDB)", windows[0].EndDate.ToFormattedString());
@@ -259,11 +257,11 @@ public class APITest
         api.LoadKernels(Constants.SolarSystemKernelPath);
 
         //Find time windows when the geodetic point is illuminated by the sun (Official twilight 0.8° bellow horizon)
-        var res = api.FindWindowsOnIlluminationConstraint(new Models.Time.Window(DateTimeExtension.CreateTDB(674524800), DateTimeExtension.CreateTDB(674611200)),
+        var res = api.FindWindowsOnIlluminationConstraint(new Window(DateTimeExtension.CreateTDB(674524800), DateTimeExtension.CreateTDB(674611200)),
             TestHelpers.GetSun(), TestHelpers.GetEarthAtJ2000(), new Frame("ITRF93"),
-            new Geodetic(2.2 * Constants.DEG_RAD, 48.0 * Constants.DEG_RAD, 0.0),
+            new DTO.Geodetic(2.2 * Constants.DEG_RAD, 48.0 * Constants.DEG_RAD, 0.0),
             IlluminationAngle.Incidence, RelationnalOperator.Lower, Math.PI * 0.5 - (-0.8 * Constants.DEG_RAD), 0.0, Aberration.CNS, TimeSpan.FromHours(4.5));
-        var windows = res as Models.Time.Window[] ?? res.ToArray();
+        var windows = res as Window[] ?? res.ToArray();
         Assert.Equal(2, windows.Count());
         Assert.Equal("2021-05-17T12:00:00.0000000 (TDB)", windows[0].StartDate.ToFormattedString());
         Assert.Equal("2021-05-17T19:35:24.9090000 (TDB)", windows[0].EndDate.ToFormattedString());
@@ -285,39 +283,36 @@ public class APITest
 
         //Configure scenario
         Scenario scenario = new Scenario("Scenario_A", new Mission("mission01"),
-            new Models.Time.Window(start, end));
+            new Window(start, end));
         scenario.AddBody(TestHelpers.GetSun());
         scenario.AddBody(TestHelpers.GetEarthAtJ2000());
         scenario.AddBody(TestHelpers.GetMoonAtJ2000());
 
         //Define parking orbit
 
-        Models.OrbitalParameters.StateVector parkingOrbit = new Models.OrbitalParameters.StateVector(
+        StateVector parkingOrbit = new StateVector(
             new Vector3(6800000.0, 0.0, 0.0), new Vector3(0.0, 7656.2204182967143, 0.0), TestHelpers.GetEarthAtJ2000(),
             start, Frame.ICRF);
 
         //Configure spacecraft
         Clock clock = new Clock("clk1", Math.Pow(2.0, 16.0));
-        Models.Body.Spacecraft.Spacecraft spacecraft =
-            new Models.Body.Spacecraft.Spacecraft(-178, "DRAGONFLY", 1000.0, 10000.0, clock, parkingOrbit);
+        Spacecraft spacecraft =
+            new Spacecraft(-178, "DRAGONFLY", 1000.0, 10000.0, clock, parkingOrbit);
 
-        Models.Body.Spacecraft.FuelTank fuelTank = new Models.Body.Spacecraft.FuelTank("ft1", "model1", 9000.0);
+        FuelTank fuelTank = new FuelTank("ft1", "model1", 9000.0);
         Engine engine = new Engine("engine1", "model1", 450.0, 50.0);
         spacecraft.AddFuelTank(fuelTank, 9000.0, "fuelTank1");
         spacecraft.AddEngine(engine, fuelTank, "serialNumber1");
-        spacecraft.AddPayload(new Models.Body.Spacecraft.Payload("payload1", 50.0, "pay01"));
-        spacecraft.AddInstrument(new Models.Body.Spacecraft.Instrument(600, "CAM600", "mod1", 1.5,
+        spacecraft.AddPayload(new Payload("payload1", 50.0, "pay01"));
+        spacecraft.AddInstrument(new Instrument(600, "CAM600", "mod1", 1.5,
             InstrumentShape.Circular, Vector3.VectorZ, Vector3.VectorX), Vector3.VectorX);
         scenario.AddBody(spacecraft);
 
         //Execute scenario
         api.PropagateScenario(scenario, Constants.OutputPath);
 
-        //Load generated kernels
-        api.LoadKernels(new DirectoryInfo(Path.Combine(Constants.OutputPath.FullName, "Spacecrafts/DRAGONFLY")));
-
         //Find windows when the earth is in field of view of camera 600 
-        var res = api.FindWindowsInFieldOfViewConstraint(new Models.Time.Window(DateTimeExtension.CreateTDB(676555200.0), DateTimeExtension.CreateTDB(676561647.0)), spacecraft,
+        var res = api.FindWindowsInFieldOfViewConstraint(new Window(DateTimeExtension.CreateTDB(676555200.0), DateTimeExtension.CreateTDB(676561647.0)), spacecraft,
             spacecraft.Intruments.First().Instrument,
             TestHelpers.GetEarthAtJ2000(),
             new Frame(PlanetsAndMoons.EARTH.Frame), ShapeType.Ellipsoid,
@@ -344,7 +339,7 @@ public class APITest
         var res = api.ReadEphemeris(searchWindow, TestHelpers.GetEarthAtJ2000(), TestHelpers.GetMoonAtJ2000(), Frame.ICRF, Aberration.LT,
             TimeSpan.FromSeconds(10.0)).Select(x => x.ToStateVector());
 
-        var stateVectors = res as Models.OrbitalParameters.StateVector[] ?? res.ToArray();
+        var stateVectors = res as StateVector[] ?? res.ToArray();
         Assert.Equal(-291569264.48965073, stateVectors[0].Position.X);
         Assert.Equal(-266709187.1624887, stateVectors[0].Position.Y);
         Assert.Equal(-76099155.244104564, stateVectors[0].Position.Z);
@@ -367,7 +362,7 @@ public class APITest
 
         DateTime start = DateTimeExtension.CreateTDB(662778000.0);
         DateTime end = start.AddSeconds(60.0);
-        Models.Time.Window window = new Models.Time.Window(start, end);
+        Window window = new Window(start, end);
 
         //Configure scenario
         Scenario scenario = new Scenario("Scenario_B", new Mission("mission01"), window);
@@ -377,21 +372,21 @@ public class APITest
 
         //Define parking orbit
 
-        Models.OrbitalParameters.StateVector parkingOrbit = new Models.OrbitalParameters.StateVector(
+        StateVector parkingOrbit = new StateVector(
             new Vector3(6800000.0, 0.0, 0.0), new Vector3(0.0, 7656.2204182967143, 0.0), TestHelpers.GetEarthAtJ2000(),
             start, Frame.ICRF);
 
         //Configure spacecraft
         Clock clock = new Clock("clk1", Math.Pow(2.0, 16.0));
-        Models.Body.Spacecraft.Spacecraft spacecraft =
-            new Models.Body.Spacecraft.Spacecraft(-179, "DRAGONFLY2", 1000.0, 10000.0, clock, parkingOrbit);
+        Spacecraft spacecraft =
+            new Spacecraft(-179, "DRAGONFLY2", 1000.0, 10000.0, clock, parkingOrbit);
 
-        Models.Body.Spacecraft.FuelTank fuelTank = new Models.Body.Spacecraft.FuelTank("ft1", "model1", 9000.0);
+        FuelTank fuelTank = new FuelTank("ft1", "model1", 9000.0);
         Engine engine = new Engine("engine1", "model1", 450.0, 50.0);
         spacecraft.AddFuelTank(fuelTank, 9000.0, "fuelTank1");
         spacecraft.AddEngine(engine, fuelTank, "serialNumber1");
-        spacecraft.AddPayload(new Models.Body.Spacecraft.Payload("payload1", 50.0, "pay01"));
-        spacecraft.AddInstrument(new Models.Body.Spacecraft.Instrument(600, "CAM600", "mod1", 1.5,
+        spacecraft.AddPayload(new Payload("payload1", 50.0, "pay01"));
+        spacecraft.AddInstrument(new Instrument(600, "CAM600", "mod1", 1.5,
             InstrumentShape.Circular, Vector3.VectorZ, Vector3.VectorX), Vector3.VectorX);
 
         spacecraft.SetStandbyManeuver(new NadirAttitude(spacecraft, DateTime.MinValue, TimeSpan.Zero, spacecraft.Engines.First()));
@@ -432,15 +427,15 @@ public class APITest
         Scenario scenario = new Scenario("scn1", mission, new Window(DateTimeExtension.CreateTDB(0.0), DateTimeExtension.CreateTDB(10.0)));
         const int size = 10;
         Clock clock = new Clock("clk1", Math.Pow(2.0, 16.0));
-        var spacecraft = new Models.Body.Spacecraft.Spacecraft(-135, "Spc1", 3000.0, 10000.0, clock, new Models.OrbitalParameters.StateVector(new Vector3(6800, 0, 0),
+        var spacecraft = new Spacecraft(-135, "Spc1", 3000.0, 10000.0, clock, new StateVector(new Vector3(6800, 0, 0),
             new Vector3(0, 8.0, 0),
             TestHelpers.GetEarthAtJ2000(),
             DateTimeExtension.CreateTDB(0.0), Frame.ICRF));
 
-        var sv = new Models.OrbitalParameters.StateVector[size];
+        var sv = new StateVector[size];
         for (int i = 0; i < size; ++i)
         {
-            sv[i] = new Models.OrbitalParameters.StateVector(new Vector3(6800 + i, i, i), new Vector3(i, 8.0 + i * 0.001, i), TestHelpers.GetEarthAtJ2000(),
+            sv[i] = new StateVector(new Vector3(6800 + i, i, i), new Vector3(i, 8.0 + i * 0.001, i), TestHelpers.GetEarthAtJ2000(),
                 DateTimeExtension.CreateTDB(i), Frame.ICRF);
         }
 
@@ -452,7 +447,7 @@ public class APITest
         //Load ephemeris file
         api.LoadKernels(file);
 
-        var window = new Models.Time.Window(DateTimeExtension.J2000, DateTimeExtension.J2000.AddSeconds(9.0));
+        var window = new Window(DateTimeExtension.J2000, DateTimeExtension.J2000.AddSeconds(9.0));
         var stateVectors = api.ReadEphemeris(window, TestHelpers.GetEarthAtJ2000(), spacecraft, Frame.ICRF, Aberration.None, TimeSpan.FromSeconds(1.0))
             .Select(x => x.ToStateVector()).ToArray();
         for (int i = 0; i < size; ++i)
