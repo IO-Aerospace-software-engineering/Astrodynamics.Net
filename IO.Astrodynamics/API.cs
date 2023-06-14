@@ -176,7 +176,7 @@ public class API
 
         foreach (var spacecraft in scenario.Bodies.OfType<Models.Body.Spacecraft.Spacecraft>())
         {
-            for (int j = 0; j < scenario.Bodies.OfType<CelestialBody>().Count(); j++)
+            for (int j = 0; j < scenario.Bodies.OfType<Models.Body.CelestialBody>().Count(); j++)
             {
                 scenarioDto.CelestialBodiesId[j] = scenario.Bodies.ElementAt(j).NaifId;
             }

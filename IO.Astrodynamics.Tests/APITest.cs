@@ -108,8 +108,8 @@ public class APITest
         //Create and configure spacecraft
         Clock clock = new Clock("clk1", Math.Pow(2.0, 16.0));
         Models.Body.Spacecraft.Spacecraft spacecraft =
-            new Models.Body.Spacecraft.Spacecraft(-178, "DRAGONFLY", 1000.0, 10000.0,clock,parkingOrbit);
-        
+            new Models.Body.Spacecraft.Spacecraft(-178, "DRAGONFLY", 1000.0, 10000.0, clock, parkingOrbit);
+
         Models.Body.Spacecraft.FuelTank fuelTank = new Models.Body.Spacecraft.FuelTank("ft1", "model1", 9000.0);
         Engine engine = new Engine("engine1", "model1", 450.0, 50.0);
         spacecraft.AddFuelTank(fuelTank, 9000.0, "fuelTank1");
@@ -131,6 +131,7 @@ public class APITest
                 spacecraft.Engines.First()));
         spacecraft.SetStandbyManeuver(planeAlignmentManeuver);
 
+        scenario.AddBody(spacecraft);
         api.PropagateScenario(scenario, Constants.OutputPath);
 
         // Read maneuver results
@@ -298,8 +299,8 @@ public class APITest
         //Configure spacecraft
         Clock clock = new Clock("clk1", Math.Pow(2.0, 16.0));
         Models.Body.Spacecraft.Spacecraft spacecraft =
-            new Models.Body.Spacecraft.Spacecraft(-178, "DRAGONFLY", 1000.0, 10000.0,clock,parkingOrbit);
-        
+            new Models.Body.Spacecraft.Spacecraft(-178, "DRAGONFLY", 1000.0, 10000.0, clock, parkingOrbit);
+
         Models.Body.Spacecraft.FuelTank fuelTank = new Models.Body.Spacecraft.FuelTank("ft1", "model1", 9000.0);
         Engine engine = new Engine("engine1", "model1", 450.0, 50.0);
         spacecraft.AddFuelTank(fuelTank, 9000.0, "fuelTank1");
@@ -307,7 +308,7 @@ public class APITest
         spacecraft.AddPayload(new Models.Body.Spacecraft.Payload("payload1", 50.0, "pay01"));
         spacecraft.AddInstrument(new Models.Body.Spacecraft.Instrument(600, "CAM600", "mod1", 1.5,
             InstrumentShape.Circular, Vector3.VectorZ, Vector3.VectorX), Vector3.VectorX);
-
+        scenario.AddBody(spacecraft);
 
         //Execute scenario
         api.PropagateScenario(scenario, Constants.OutputPath);
@@ -383,8 +384,8 @@ public class APITest
         //Configure spacecraft
         Clock clock = new Clock("clk1", Math.Pow(2.0, 16.0));
         Models.Body.Spacecraft.Spacecraft spacecraft =
-            new Models.Body.Spacecraft.Spacecraft(-179, "DRAGONFLY2", 1000.0, 10000.0,clock,parkingOrbit);
-        
+            new Models.Body.Spacecraft.Spacecraft(-179, "DRAGONFLY2", 1000.0, 10000.0, clock, parkingOrbit);
+
         Models.Body.Spacecraft.FuelTank fuelTank = new Models.Body.Spacecraft.FuelTank("ft1", "model1", 9000.0);
         Engine engine = new Engine("engine1", "model1", 450.0, 50.0);
         spacecraft.AddFuelTank(fuelTank, 9000.0, "fuelTank1");
@@ -431,10 +432,11 @@ public class APITest
         Scenario scenario = new Scenario("scn1", mission, new Window(DateTimeExtension.CreateTDB(0.0), DateTimeExtension.CreateTDB(10.0)));
         const int size = 10;
         Clock clock = new Clock("clk1", Math.Pow(2.0, 16.0));
-        var spacecraft = new Models.Body.Spacecraft.Spacecraft(-135, "Spc1", 3000.0, 10000.0,clock,new Models.OrbitalParameters.StateVector(new Vector3(6800, 0, 0), new Vector3(0, 8.0, 0),
+        var spacecraft = new Models.Body.Spacecraft.Spacecraft(-135, "Spc1", 3000.0, 10000.0, clock, new Models.OrbitalParameters.StateVector(new Vector3(6800, 0, 0),
+            new Vector3(0, 8.0, 0),
             TestHelpers.GetEarthAtJ2000(),
             DateTimeExtension.CreateTDB(0.0), Frame.ICRF));
-        
+
         var sv = new Models.OrbitalParameters.StateVector[size];
         for (int i = 0; i < size; ++i)
         {
