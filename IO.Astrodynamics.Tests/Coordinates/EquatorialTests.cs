@@ -25,8 +25,7 @@ namespace IO.Astrodynamics.Models.Tests.Coordinates
             Scenario scenario = new Scenario("scn1", mission,new Window(new DateTime(2021, 1, 1), new DateTime(2021, 1, 2)));
             var epoch = DateTime.MinValue;
             CelestialBody earth = new CelestialBody(399, "earth", 3.986004418E+5, 6356.7519, 6378.1366);
-            CelestialBodyScenario earthScn = new CelestialBodyScenario(earth, scenario);
-            Equatorial eq = new Equatorial(new StateVector(new Vector3(-291608.38463344, -266716.83339423, -76102.48709990), new Vector3(), earthScn, epoch, Frames.Frame.ICRF));
+            Equatorial eq = new Equatorial(new StateVector(new Vector3(-291608.38463344, -266716.83339423, -76102.48709990), new Vector3(), earth, epoch, Frames.Frame.ICRF));
             Assert.Equal(new Equatorial(-0.19024413568211371, 3.8824377884371972, 402448.63988732797), eq);
         }
 

@@ -14,12 +14,12 @@ namespace IO.Astrodynamics.Models.Maneuver
             get { return !(ExecuteAtAscendingNode ?? null); }
         }
 
-        protected PlaneAlignmentManeuver(SpacecraftScenario spacecraft, DateTime minimumEpoch, TimeSpan maneuverHoldDuration, params SpacecraftEngine[] engines) : base(spacecraft,
+        protected PlaneAlignmentManeuver(Spacecraft spacecraft, DateTime minimumEpoch, TimeSpan maneuverHoldDuration, params SpacecraftEngine[] engines) : base(spacecraft,
             minimumEpoch, maneuverHoldDuration, engines)
         {
         }
 
-        public PlaneAlignmentManeuver(SpacecraftScenario spacecraft, DateTime minimumEpoch, TimeSpan maneuverHoldDuration, OrbitalParameters.OrbitalParameters targetOrbit,
+        public PlaneAlignmentManeuver(Spacecraft spacecraft, DateTime minimumEpoch, TimeSpan maneuverHoldDuration, OrbitalParameters.OrbitalParameters targetOrbit,
             params SpacecraftEngine[] engines) : base(spacecraft, minimumEpoch, maneuverHoldDuration, targetOrbit,
             engines)
         {

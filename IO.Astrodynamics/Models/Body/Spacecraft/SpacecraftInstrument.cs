@@ -7,7 +7,7 @@ namespace IO.Astrodynamics.Models.Body.Spacecraft
 {
     public class SpacecraftInstrument 
     {
-        public SpacecraftScenario Spacecraft { get; }
+        public Spacecraft Spacecraft { get; }
         public Instrument Instrument { get; }
         public Vector3 Orientation { get; }
 
@@ -15,7 +15,7 @@ namespace IO.Astrodynamics.Models.Body.Spacecraft
         
 
         private SpacecraftInstrument() { }
-        public SpacecraftInstrument(SpacecraftScenario spacecraft, Instrument instrument, Vector3 orientation)
+        public SpacecraftInstrument(Spacecraft spacecraft, Instrument instrument, Vector3 orientation)
         {
             if (spacecraft == null)
             {

@@ -15,16 +15,15 @@ public class EquinoctialElementsTests
         Models.Mission.Mission mission = new Models.Mission.Mission("mission1");
         Scenario scenario = new Scenario("scn1", mission,new Window(new DateTime(2021, 1, 1), new DateTime(2021, 1, 2)));
         CelestialBody earth = new CelestialBody(399, "earth", 3.986004418E+5, 6356.7519, 6378.1366);
-        CelestialBodyScenario earthScn = new CelestialBodyScenario(earth, scenario);
         var epoch = DateTime.UtcNow;
-        EquinoctialElements equ = new EquinoctialElements(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, earthScn, epoch, Frames.Frame.ICRF);
+        EquinoctialElements equ = new EquinoctialElements(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, earth, epoch, Frames.Frame.ICRF);
         Assert.Equal(1.0, equ.P);
         Assert.Equal(2.0, equ.F);
         Assert.Equal(3.0, equ.G);
         Assert.Equal(4.0, equ.H);
         Assert.Equal(5.0, equ.K);
         Assert.Equal(6.0, equ.L0);
-        Assert.Equal(earthScn, equ.CenterOfMotion);
+        Assert.Equal(earth, equ.CenterOfMotion);
         Assert.Equal(epoch, equ.Epoch);
         Assert.Equal(Frames.Frame.ICRF, equ.Frame);
     }
@@ -35,8 +34,7 @@ public class EquinoctialElementsTests
         Models.Mission.Mission mission = new Models.Mission.Mission("mission1");
         Scenario scenario = new Scenario("scn1", mission,new Window(new DateTime(2021, 1, 1), new DateTime(2021, 1, 2)));
         CelestialBody earth = new CelestialBody(399, "earth", 3.986004418E+5, 6356.7519, 6378.1366);
-        CelestialBodyScenario earthScn = new CelestialBodyScenario(earth, scenario);
-        KeplerianElements ke = new KeplerianElements(6800.81178582, 0.00134, 51.71 * Constants.Deg2Rad, 32.57 * Constants.Deg2Rad, 105.64 * Constants.Deg2Rad, 46.029 * Constants.Deg2Rad, earthScn, DateTime.UtcNow, Frames.Frame.ICRF);
+        KeplerianElements ke = new KeplerianElements(6800.81178582, 0.00134, 51.71 * Constants.Deg2Rad, 32.57 * Constants.Deg2Rad, 105.64 * Constants.Deg2Rad, 46.029 * Constants.Deg2Rad, earth, DateTime.UtcNow, Frames.Frame.ICRF);
         EquinoctialElements equ = ke.ToEquinoctial();
         Assert.Equal(equ.SemiMajorAxis(), ke.A);
         Assert.Equal(equ.Eccentricity(), ke.E);

@@ -11,8 +11,8 @@ namespace IO.Astrodynamics.Models.Mission
         public string Name { get; private set; }
         public Window Window { get; private set; }
         public Mission Mission { get; private set; }
-        private readonly HashSet<BodyScenario> _bodies = new();
-        public IReadOnlyCollection<BodyScenario> Bodies => _bodies;
+        private readonly HashSet<Body.Body> _bodies = new();
+        public IReadOnlyCollection<Body.Body> Bodies => _bodies;
         private readonly HashSet<Site> _sites = new();
         public IReadOnlyCollection<Site> Sites => _sites;
         private readonly API _api;
@@ -30,7 +30,7 @@ namespace IO.Astrodynamics.Models.Mission
             Window = window;
         }
 
-        public void AddBody(BodyScenario body)
+        public void AddBody(Body.Body body)
         {
             if (body == null) throw new ArgumentNullException(nameof(body));
             _bodies.Add(body);

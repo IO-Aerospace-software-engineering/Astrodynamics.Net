@@ -8,7 +8,7 @@ namespace IO.Astrodynamics.Models.Maneuver;
 
 public class ProgradeAttitude : Maneuver
 {
-    public ProgradeAttitude(SpacecraftScenario spacecraft, DateTime minimumEpoch, TimeSpan maneuverHoldDuration, params SpacecraftEngine[] engines) : base(spacecraft, minimumEpoch, maneuverHoldDuration, engines)
+    public ProgradeAttitude(Spacecraft spacecraft, DateTime minimumEpoch, TimeSpan maneuverHoldDuration, params SpacecraftEngine[] engines) : base(spacecraft, minimumEpoch, maneuverHoldDuration, engines)
     {
     }
 }

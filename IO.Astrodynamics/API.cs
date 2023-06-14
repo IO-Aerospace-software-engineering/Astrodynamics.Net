@@ -125,6 +125,9 @@ public class API
     [DllImport(@"IO.Astrodynamics", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     private static extern RaDec ConvertStateVectorToEquatorialCoordinatesProxy(StateVector stateVector);
 
+    [DllImport(@"IO.Astrodynamics", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+    private static extern StateVector ReadEphemerisAtGivenEpochProxy(double epoch, int observerId, int targetId, string frame, string aberration);
+
     private static IntPtr Resolver(string libraryName, Assembly assembly, DllImportSearchPath? searchPath)
     {
         var libHandle = IntPtr.Zero;
@@ -171,20 +174,20 @@ public class API
             }
         }
 
-        foreach (var spacecraft in scenario.Bodies.OfType<SpacecraftScenario>())
+        foreach (var spacecraft in scenario.Bodies.OfType<Models.Body.Spacecraft.Spacecraft>())
         {
-            for (int j = 0; j < scenario.Bodies.OfType<CelestialBodyScenario>().Count(); j++)
+            for (int j = 0; j < scenario.Bodies.OfType<CelestialBody>().Count(); j++)
             {
-                scenarioDto.CelestialBodiesId[j] = scenario.Bodies.ElementAt(j).PhysicalBody.NaifId;
+                scenarioDto.CelestialBodiesId[j] = scenario.Bodies.ElementAt(j).NaifId;
             }
 
             //Define parking orbit
             StateVector parkingOrbit = _mapper.Map<StateVector>(spacecraft.InitialOrbitalParameters.ToStateVector());
 
             //Create and configure spacecraft
-            scenarioDto.Spacecraft = new Spacecraft(spacecraft.PhysicalBody.NaifId, spacecraft.PhysicalBody.Name,
-                spacecraft.PhysicalBody.DryOperatingMass,
-                spacecraft.PhysicalBody.MaximumOperatingMass, parkingOrbit,
+            scenarioDto.Spacecraft = new Spacecraft(spacecraft.NaifId, spacecraft.Name,
+                spacecraft.DryOperatingMass,
+                spacecraft.MaximumOperatingMass, parkingOrbit,
                 outputDirectory.CreateSubdirectory("Spacecrafts").FullName);
             for (int j = 0; j < spacecraft.FuelTanks.Count; j++)
             {
@@ -553,8 +556,8 @@ public class API
     public IEnumerable<Models.Time.Window> FindWindowsOnOccultationConstraint(Models.Time.Window searchWindow, INaifObject observer, INaifObject target,
         ShapeType targetShape, INaifObject frontBody, ShapeType frontShape, OccultationType occultationType, Aberration aberration, TimeSpan stepSize)
     {
-        string frontFrame = frontShape == ShapeType.Ellipsoid ? (frontBody as CelestialBodyScenario)?.Frame.Name : string.Empty;
-        string targetFrame = targetShape == ShapeType.Ellipsoid ? (target as CelestialBodyScenario)?.Frame.Name : String.Empty;
+        string frontFrame = frontShape == ShapeType.Ellipsoid ? (frontBody as Models.Body.CelestialBody)?.Frame.Name : string.Empty;
+        string targetFrame = targetShape == ShapeType.Ellipsoid ? (target as Models.Body.CelestialBody)?.Frame.Name : String.Empty;
         var windows = new Window[1000];
         for (var i = 0; i < 1000; i++)
         {
@@ -674,15 +677,33 @@ public class API
     /// <param name="stepSize"></param>
     /// <param name="observer"></param>
     /// <returns></returns>
-    public IEnumerable<Models.OrbitalParameters.OrbitalParameters> ReadEphemeris(Models.Time.Window searchWindow, CelestialBodyScenario observer, ILocalizable target, Frame frame,
+    public IEnumerable<Models.OrbitalParameters.OrbitalParameters> ReadEphemeris(Models.Time.Window searchWindow, Models.Body.CelestialBody observer, ILocalizable target, Frame frame,
         Aberration aberration, TimeSpan stepSize)
     {
         if (frame == null) throw new ArgumentNullException(nameof(frame));
         var stateVectors = new StateVector[10000];
-        ReadEphemerisProxy(_mapper.Map<Window>(searchWindow), observer.PhysicalBody.NaifId, target.NaifId, frame.Name, aberration.GetDescription(), stepSize.TotalSeconds,
+        ReadEphemerisProxy(_mapper.Map<Window>(searchWindow), observer.NaifId, target.NaifId, frame.Name, aberration.GetDescription(), stepSize.TotalSeconds,
             stateVectors);
         return stateVectors.Select(x =>
             new Models.OrbitalParameters.StateVector(_mapper.Map<Vector3>(x.Position), _mapper.Map<Vector3>(x.Velocity), observer, DateTimeExtension.CreateTDB(x.Epoch), frame));
+    }
+    
+    /// <summary>
+    /// Return state vector at given epoch
+    /// </summary>
+    /// <param name="epoch"></param>
+    /// <param name="observer"></param>
+    /// <param name="target"></param>
+    /// <param name="frame"></param>
+    /// <param name="aberration"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentNullException"></exception>
+    public Models.OrbitalParameters.OrbitalParameters ReadEphemeris(DateTime epoch, Models.Body.CelestialBody observer, ILocalizable target, Frame frame,
+        Aberration aberration)
+    {
+        if (frame == null) throw new ArgumentNullException(nameof(frame));
+        var stateVector=ReadEphemerisAtGivenEpochProxy(epoch.SecondsFromJ2000TDB(), observer.NaifId, target.NaifId, frame.Name, aberration.GetDescription());
+        return new Models.OrbitalParameters.StateVector(_mapper.Map<Vector3>(stateVector.Position), _mapper.Map<Vector3>(stateVector.Velocity), observer, DateTimeExtension.CreateTDB(stateVector.Epoch), frame);
     }
 
     /// <summary>
@@ -694,12 +715,12 @@ public class API
     /// <param name="referenceFrame"></param>
     /// <param name="stepSize"></param>
     /// <returns></returns>
-    public IEnumerable<Models.OrbitalParameters.StateOrientation> ReadOrientation(Models.Time.Window searchWindow, SpacecraftScenario spacecraft, TimeSpan tolerance,
+    public IEnumerable<Models.OrbitalParameters.StateOrientation> ReadOrientation(Models.Time.Window searchWindow, Models.Body.Spacecraft.Spacecraft spacecraft, TimeSpan tolerance,
         Frame referenceFrame, TimeSpan stepSize)
     {
         if (referenceFrame == null) throw new ArgumentNullException(nameof(referenceFrame));
         var stateOrientations = new StateOrientation[10000];
-        ReadOrientationProxy(_mapper.Map<Window>(searchWindow), spacecraft.PhysicalBody.NaifId, tolerance.TotalSeconds, referenceFrame.Name, stepSize.TotalSeconds,
+        ReadOrientationProxy(_mapper.Map<Window>(searchWindow), spacecraft.NaifId, tolerance.TotalSeconds, referenceFrame.Name, stepSize.TotalSeconds,
             stateOrientations);
         return stateOrientations.Select(x => new Models.OrbitalParameters.StateOrientation(_mapper.Map<Quaternion>(x.Rotation), _mapper.Map<Vector3>(x.AngularVelocity),
             DateTimeExtension.CreateTDB(x.Epoch), referenceFrame));

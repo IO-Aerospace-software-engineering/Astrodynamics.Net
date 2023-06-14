@@ -8,8 +8,8 @@ namespace IO.Astrodynamics.Models.Body.Spacecraft
     //TODO create spacecraft payload
     public class Payload
     {
-        private HashSet<SpacecraftScenario> _spacecrafts = new();
-        public IReadOnlyCollection<SpacecraftScenario> Spacecrafts { get; private set; }
+        private HashSet<Spacecraft> _spacecrafts = new();
+        public IReadOnlyCollection<Spacecraft> Spacecrafts { get; private set; }
         public string Name { get; private set; }
         public string SerialNumber { get; private set; }
         public double Mass { get; private set; }

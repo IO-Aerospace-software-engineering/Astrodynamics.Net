@@ -1,3 +1,4 @@
+using IO.Astrodynamics.Models.Body.Spacecraft;
 using IO.Astrodynamics.Models.Math;
 using IO.Astrodynamics.Models.Mission;
 using Xunit;
@@ -63,7 +64,7 @@ namespace IO.Astrodynamics.Models.Tests.Math
         [Fact]
         public void Multiply3()
         {
-            Vector3 instrumentVector = SpacecraftScenario.Front;
+            Vector3 instrumentVector = Spacecraft.Front;
 
             Quaternion spacecraftOrientation = new Quaternion(Vector3.VectorZ, Constants.PI2);
             Quaternion instrumentOrientation = new Quaternion(Vector3.VectorZ, Constants.PI2);
@@ -81,7 +82,7 @@ namespace IO.Astrodynamics.Models.Tests.Math
         [Fact]
         public void Multiply4()
         {
-            Vector3 instrumentVector = SpacecraftScenario.Front;
+            Vector3 instrumentVector = Spacecraft.Front;
 
             Quaternion spacecraftOrientation = new Quaternion(Vector3.VectorZ, Constants.PI2);
             Quaternion instrumentOrientation = new Quaternion(Vector3.VectorX, Constants.PI2 * 0.5);

@@ -1,15 +1,16 @@
 using System;
+using IO.Astrodynamics.Models.Frames;
 
 namespace IO.Astrodynamics.Models.Body;
 
 public class CelestialBody : Body
 {
     public const int SunNaifId = 10;
-    public string FrameName { get; private set; }
     public double PolarRadius { get; private set; }
     public double EquatorialRadius { get; private set; }
     public double Flatenning { get; }
     public double GM { get; }
+    public double SphereOfInfluence { get; private set; }
 
     /// <summary>
     /// 
@@ -21,12 +22,12 @@ public class CelestialBody : Body
     /// <param name="equatorialRadius"></param>
     /// <returns></returns>
     public CelestialBody(int naifId, string name, double GM, double polarRadius, double equatorialRadius) : this(naifId,
-        name, GM, polarRadius, equatorialRadius, naifId == 399 ? "ITRF93" : "IAU_" + name.ToUpper())
+        name, GM, polarRadius, equatorialRadius, new Frame(naifId == 399 ? "ITRF93" : "IAU_" + name.ToUpper()), null)
     {
     }
 
-    public CelestialBody(int naifId, string name, double GM, double polarRadius, double equatorialRadius,
-        string frameName) : base(naifId, name, GM / Constants.G)
+    public CelestialBody(int naifId, string name, double GM, double polarRadius, double equatorialRadius, Frame frame, OrbitalParameters.OrbitalParameters initialOrbitalParameters)
+        : base(naifId, name, GM / Constants.G, initialOrbitalParameters, frame)
     {
         if (naifId < 0)
         {
@@ -48,7 +49,6 @@ public class CelestialBody : Body
             throw new ArgumentException("Invalid equatorial Radius");
         }
 
-        FrameName = frameName;
         PolarRadius = polarRadius;
         EquatorialRadius = equatorialRadius;
         Flatenning = (equatorialRadius - polarRadius) / equatorialRadius;
@@ -57,6 +57,24 @@ public class CelestialBody : Body
         {
             Flatenning = double.PositiveInfinity;
         }
+
+        SphereOfInfluence = initialOrbitalParameters != null
+            ? SphereOfInluence(initialOrbitalParameters.SemiMajorAxis(), Mass,
+                initialOrbitalParameters.CenterOfMotion.Mass)
+            : double.PositiveInfinity;
+    }
+
+    private double SphereOfInluence(double a, double minorMass, double majorMass)
+    {
+        return a * System.Math.Pow(minorMass / majorMass, 2.0 / 5.0);
+    }
+
+    public override void SetInitialOrbitalParameters(OrbitalParameters.OrbitalParameters orbitalParameters)
+    {
+        if (orbitalParameters == null) throw new ArgumentNullException(nameof(orbitalParameters));
+        base.SetInitialOrbitalParameters(orbitalParameters);
+        SphereOfInfluence = SphereOfInluence(orbitalParameters.SemiMajorAxis(), Mass,
+            orbitalParameters.CenterOfMotion.Mass);
     }
 
     public override double GetTotalMass()

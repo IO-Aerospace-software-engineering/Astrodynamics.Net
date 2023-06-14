@@ -19,7 +19,7 @@ namespace IO.Astrodynamics.Models.OrbitalParameters
         /// <param name="epoch">Epoch</param>
         /// <param name="frame">Reference frame</param>
         /// <returns></returns>
-        public EquinoctialElements(double p, double f, double g, double h, double k, double l0, CelestialBodyScenario centerOfMotion, DateTime epoch, Frames.Frame frame) : base(centerOfMotion, epoch, frame)
+        public EquinoctialElements(double p, double f, double g, double h, double k, double l0, Body.CelestialBody centerOfMotion, DateTime epoch, Frames.Frame frame) : base(centerOfMotion, epoch, frame)
         {
             P = p;
             F = f;

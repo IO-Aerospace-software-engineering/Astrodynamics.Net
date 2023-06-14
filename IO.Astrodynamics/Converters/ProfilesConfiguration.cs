@@ -30,7 +30,7 @@ public class ProfilesConfiguration
                 .ForMember(x => x.Z, o => o.Ignore());
             cfg.CreateMap<DTO.Quaternion, Quaternion>().ConstructUsing(x => new Quaternion(x.W, x.X, x.Y, x.Z));
 
-            cfg.CreateMap<StateVector, DTO.StateVector>().ConstructUsing(x => new DTO.StateVector(x.CenterOfMotion.PhysicalBody.NaifId, x.Epoch.SecondsFromJ2000TDB(), x.Frame.Name,
+            cfg.CreateMap<StateVector, DTO.StateVector>().ConstructUsing(x => new DTO.StateVector(x.CenterOfMotion.NaifId, x.Epoch.SecondsFromJ2000TDB(), x.Frame.Name,
                 Mapper.Map<Vector3D>(x.Position), Mapper.Map<Vector3D>(x.Velocity)));
 
             cfg.CreateMap<StateOrientation, DTO.StateOrientation>()
@@ -45,8 +45,8 @@ public class ProfilesConfiguration
             cfg.CreateMap<Models.Coordinates.Geodetic, Geodetic>().ConstructUsing(x => new Geodetic(x.Longitude, x.Latitude, x.Altitude));
 
             cfg.CreateMap<Site, DTO.Site>()
-                .ConstructUsing(x => new DTO.Site(x.NaifId, x.Body.PhysicalBody.NaifId, Mapper.Map<Geodetic>(x.Geodetic), x.Name, string.Empty))
-                .ForMember(x => x.BodyId, o => o.MapFrom(x => x.Body.PhysicalBody.NaifId))
+                .ConstructUsing(x => new DTO.Site(x.NaifId, x.Body.NaifId, Mapper.Map<Geodetic>(x.Geodetic), x.Name, string.Empty))
+                .ForMember(x => x.BodyId, o => o.MapFrom(x => x.Body.NaifId))
                 .ForMember(x => x.Coordinates, o => o.MapFrom(x => x.Geodetic))
                 .ForMember(x => x.Ranges, o => o.Ignore())
                 .ForMember(x => x.Id, o => o.MapFrom(x => x.NaifId))

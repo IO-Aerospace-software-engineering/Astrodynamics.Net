@@ -18,13 +18,13 @@ namespace IO.Astrodynamics.Models.Maneuver
         public Maneuver NextManeuver { get; protected set; }
 
         //todo Maybe could I remove it
-        public SpacecraftScenario Spacecraft { get; private set; }
+        public Spacecraft Spacecraft { get; private set; }
 
         public OrbitalParameters.OrbitalParameters TargetOrbit { get; }
 
         public double FuelBurned { get; internal set; }
 
-        protected Maneuver(SpacecraftScenario spacecraft, DateTime minimumEpoch, TimeSpan maneuverHoldDuration, OrbitalParameters.OrbitalParameters targetOrbit,
+        protected Maneuver(Spacecraft spacecraft, DateTime minimumEpoch, TimeSpan maneuverHoldDuration, OrbitalParameters.OrbitalParameters targetOrbit,
             params SpacecraftEngine[] engines)
         {
             if (spacecraft == null)
@@ -44,7 +44,7 @@ namespace IO.Astrodynamics.Models.Maneuver
             TargetOrbit = targetOrbit;
         }
 
-        protected Maneuver(SpacecraftScenario spacecraft, DateTime minimumEpoch, TimeSpan maneuverHoldDuration, params SpacecraftEngine[] engines)
+        protected Maneuver(Spacecraft spacecraft, DateTime minimumEpoch, TimeSpan maneuverHoldDuration, params SpacecraftEngine[] engines)
         {
             if (spacecraft == null)
             {

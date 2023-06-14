@@ -10,13 +10,13 @@ namespace IO.Astrodynamics.Models.Maneuver
         public bool IntersectionAtP { get; private set; }
         public bool IntersectionAtQ { get; private set; }
 
-        protected ApsidalAlignmentManeuver(SpacecraftScenario spacecraft, DateTime minimumEpoch,
+        protected ApsidalAlignmentManeuver(Spacecraft spacecraft, DateTime minimumEpoch,
             TimeSpan maneuverHoldDuration, params SpacecraftEngine[] engines) : base(spacecraft, minimumEpoch,
             maneuverHoldDuration, engines)
         {
         }
 
-        public ApsidalAlignmentManeuver(SpacecraftScenario spacecraft, DateTime minimumEpoch,
+        public ApsidalAlignmentManeuver(Spacecraft spacecraft, DateTime minimumEpoch,
             TimeSpan maneuverHoldDuration, OrbitalParameters.OrbitalParameters targetOrbit,
             params SpacecraftEngine[] engines) : base(spacecraft, minimumEpoch, maneuverHoldDuration, targetOrbit,
             engines)

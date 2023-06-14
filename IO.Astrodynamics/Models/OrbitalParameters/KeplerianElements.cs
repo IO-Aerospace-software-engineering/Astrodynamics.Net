@@ -6,7 +6,7 @@ namespace IO.Astrodynamics.Models.OrbitalParameters
 {
     public class KeplerianElements : OrbitalParameters, IEquatable<KeplerianElements>
     {
-        public KeplerianElements(double semiMajorAxis, double eccentricity, double inclination, double rigthAscendingNode, double argumentOfPeriapsis, double meanAnomaly, CelestialBodyScenario centerOfMotion, DateTime epoch, Frames.Frame frame) : base(centerOfMotion, epoch, frame)
+        public KeplerianElements(double semiMajorAxis, double eccentricity, double inclination, double rigthAscendingNode, double argumentOfPeriapsis, double meanAnomaly, Body.CelestialBody centerOfMotion, DateTime epoch, Frames.Frame frame) : base(centerOfMotion, epoch, frame)
         {
             if (semiMajorAxis <= 0.0)
             {

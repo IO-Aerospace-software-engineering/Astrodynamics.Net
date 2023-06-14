@@ -2,6 +2,7 @@
 using IO.Astrodynamics.Models.Mission;
 using System.Collections.Generic;
 using System.Linq;
+using IO.Astrodynamics.Models.Body;
 
 namespace IO.Astrodynamics.Models.Surface
 {
@@ -13,11 +14,12 @@ namespace IO.Astrodynamics.Models.Surface
         /// <summary>
         /// Create launch site
         /// </summary>
+        /// <param name="id"></param>
         /// <param name="name">Site name</param>
         /// <param name="body">Celestial body</param>
         /// <param name="geodetic">Geodetic coordinates</param>
         /// <param name="launchAzimuths">Allowed launch azimuths</param>
-        public LaunchSite(int id, string name, CelestialBodyScenario body, in Geodetic geodetic, params AzimuthRange[] launchAzimuths) : base(id, name,
+        public LaunchSite(int id, string name, CelestialBody body, in Geodetic geodetic, params AzimuthRange[] launchAzimuths) : base(id, name,
             body, geodetic)
         {
             _azimuthRanges = new List<AzimuthRange>(launchAzimuths);

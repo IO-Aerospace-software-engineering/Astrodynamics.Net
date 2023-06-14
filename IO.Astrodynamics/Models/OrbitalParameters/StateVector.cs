@@ -13,7 +13,7 @@ namespace IO.Astrodynamics.Models.OrbitalParameters
         public Vector3 Velocity { get; set; }
 
         StateVector() : base() { }
-        public StateVector(Vector3 position, Vector3 velocity, CelestialBodyScenario centerOfMotion, DateTime epoch, Frame frame) : base(centerOfMotion, epoch, frame)
+        public StateVector(Vector3 position, Vector3 velocity, Models.Body.CelestialBody centerOfMotion, DateTime epoch, Frame frame) : base(centerOfMotion, epoch, frame)
         {
             Position = position;
             Velocity = velocity;
@@ -31,7 +31,7 @@ namespace IO.Astrodynamics.Models.OrbitalParameters
 
         public override Vector3 EccentricityVector()
         {
-            return (Velocity.Cross(SpecificAngularMomentum()) / CenterOfMotion.PhysicalBody.GM) - (Position / Position.Magnitude());
+            return (Velocity.Cross(SpecificAngularMomentum()) / CenterOfMotion.GM) - (Position / Position.Magnitude());
         }
 
         public override double Inclination()
@@ -42,12 +42,12 @@ namespace IO.Astrodynamics.Models.OrbitalParameters
 
         public override double SpecificOrbitalEnergy()
         {
-            return System.Math.Pow(Velocity.Magnitude(), 2.0) / 2.0 - (CenterOfMotion.PhysicalBody.GM / Position.Magnitude());
+            return System.Math.Pow(Velocity.Magnitude(), 2.0) / 2.0 - (CenterOfMotion.GM / Position.Magnitude());
         }
 
         public override double SemiMajorAxis()
         {
-            return -(CenterOfMotion.PhysicalBody.GM / (2.0 * SpecificOrbitalEnergy()));
+            return -(CenterOfMotion.GM / (2.0 * SpecificOrbitalEnergy()));
         }
 
         public override Vector3 AscendingNodeVector()
@@ -112,35 +112,6 @@ namespace IO.Astrodynamics.Models.OrbitalParameters
         public override double MeanAnomaly()
         {
             return EccentricAnomaly() - Eccentricity() * System.Math.Sin(EccentricAnomaly());
-        }
-
-        /// <summary>
-        /// Check if center of motion has changed. If yes this state vector will be update with Position and velocity relative to the new center of motion
-        /// </summary>
-        public void CheckAndUpdateCenterOfMotion(BodyScenario body)
-        {
-            if (Position.Magnitude() < CenterOfMotion.SphereOfInfluence)
-            {
-                foreach (var sat in CenterOfMotion.Satellites.OfType<CelestialBodyScenario>().Where(x => x != body))
-                {
-                    var satEphemeris = sat.GetEphemeris(Epoch);
-                    var relativePosition = Position - satEphemeris.Position;
-                    if (relativePosition.Magnitude() < sat.SphereOfInfluence)
-                    {
-                        Position = relativePosition;
-                        Velocity = Velocity - satEphemeris.Velocity;
-                        CenterOfMotion = sat;
-                        return;
-                    }
-                }
-            }
-            else
-            {
-                var parentEphemeris = CenterOfMotion.InitialOrbitalParameters.CenterOfMotion.GetEphemeris(Epoch);
-                Position += parentEphemeris.Position;
-                Velocity += parentEphemeris.Velocity;
-                CenterOfMotion = parentEphemeris.CenterOfMotion;
-            }
         }
 
         public static StateVector operator +(StateVector sv1, StateVector sv2)

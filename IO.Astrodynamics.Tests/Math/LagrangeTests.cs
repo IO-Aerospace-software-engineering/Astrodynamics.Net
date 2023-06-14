@@ -58,12 +58,11 @@ namespace IO.Astrodynamics.Models.Tests.Math
             Scenario scenario = new Scenario("scn1", mission,new Window(new DateTime(2021, 1, 1), new DateTime(2021, 1, 2)));
             //Interpolate square function
             CelestialBody earth = new CelestialBody(399, "earth", 3.986004418E+5, 6356.7519, 6378.1366);
-            CelestialBodyScenario earthScenario = new CelestialBodyScenario(earth, scenario);
             StateVector[] data = new StateVector[10];
             var start = new DateTime(2021, 01, 01, 0, 0, 0);
             for (int i = 0; i < 10; i++)
             {
-                data[i] = new StateVector(new Vector3(i * i, 0.0, 0.0), new Vector3(i * i, 0.0, 0.0), earthScenario, start.AddSeconds(i), Frames.Frame.ICRF);
+                data[i] = new StateVector(new Vector3(i * i, 0.0, 0.0), new Vector3(i * i, 0.0, 0.0), earth, start.AddSeconds(i), Frames.Frame.ICRF);
             }
 
             var res = Lagrange.Interpolate(data, start.AddSeconds(3));
@@ -90,12 +89,11 @@ namespace IO.Astrodynamics.Models.Tests.Math
             Scenario scenario = new Scenario("scn1", mission,new Window(new DateTime(2021, 1, 1), new DateTime(2021, 1, 2)));
             //Interpolate square function
             CelestialBody earth = new CelestialBody(399, "earth", 3.986004418E+5, 6356.7519, 6378.1366);
-            CelestialBodyScenario earthScenario = new CelestialBodyScenario(earth, scenario);
             StateVector[] data = new StateVector[10];
             var start = new DateTime(2021, 01, 01, 0, 0, 0);
             for (int i = 0; i < 10; i++)
             {
-                data[i] = new StateVector(new Vector3(i * i * i, 0.0, 0.0), new Vector3(i * i * i, 0.0, 0.0), earthScenario, start.AddSeconds(i), Frames.Frame.ICRF);
+                data[i] = new StateVector(new Vector3(i * i * i, 0.0, 0.0), new Vector3(i * i * i, 0.0, 0.0), earth, start.AddSeconds(i), Frames.Frame.ICRF);
             }
 
             var res = Lagrange.Interpolate(data, start.AddSeconds(3));

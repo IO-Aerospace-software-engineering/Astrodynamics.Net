@@ -14,7 +14,7 @@ namespace IO.Astrodynamics.Models.Maneuver
         public LaunchSite LaunchSite { get; }
         public Site RecoverySite { get; }
         public OrbitalParameters.OrbitalParameters TargetOrbit { get; }
-        public BodyScenario TargetBody { get; }
+        public Body.Body TargetBody { get; }
         public bool? LaunchByDay { get; }
         public double Twilight { get; }
         private readonly API _api = new API();
@@ -25,9 +25,10 @@ namespace IO.Astrodynamics.Models.Maneuver
         /// <param name="launchSite">Launch from</param>
         /// <param name="recoverySite">Recovery site</param>
         /// <param name="targetBody">Body in orbit to reach</param>
+        /// <param name="twilight">Twilight definition</param>
         /// <param name="launchByDay">Define if launch should occur by day. If undefined launch can occur everytime</param>
         /// <exception cref="ArgumentNullException"></exception>
-        public Launch(LaunchSite launchSite, Site recoverySite, BodyScenario targetBody, double twilight,
+        public Launch(LaunchSite launchSite, Site recoverySite, Body.Body targetBody, double twilight,
             bool? launchByDay)
         {
             LaunchSite = launchSite ?? throw new ArgumentNullException(nameof(launchSite));
@@ -53,93 +54,6 @@ namespace IO.Astrodynamics.Models.Maneuver
             TargetOrbit = targetOrbit ?? throw new ArgumentNullException(nameof(targetOrbit));
             LaunchByDay = launchByDay;
             Twilight = twilight;
-        }
-
-        OrbitalParameters.OrbitalParameters GetOrbitalParameters(in DateTime epoch)
-        {
-            if (TargetBody != null)
-            {
-                return TargetBody.GetEphemeris(epoch);
-            }
-
-            return TargetOrbit.AtEpoch(epoch);
-        }
-
-        double GetDeltaL(in DateTime epoch)
-        {
-            return System.Math.Asin(System.Math.Tan(LaunchSite.Geodetic.Latitude) /
-                                    System.Math.Tan(GetInclination(epoch)));
-        }
-
-        double GetInclination(in DateTime epoch)
-        {
-            return Vector3.VectorZ.Rotate(LaunchSite.Body.Frame.ToFrame(Frame.ICRF, epoch).Rotation)
-                .Angle(GetOrbitalParameters(epoch).ToFrame(Frame.ICRF).SpecificAngularMomentum());
-        }
-
-        public double GetInertialAscendingAzimuthLaunch(in DateTime epoch)
-        {
-            double azimuth = System.Math.Asin(System.Math.Cos(GetInclination(epoch)) /
-                                              System.Math.Cos(LaunchSite.Geodetic.Latitude));
-            if (azimuth < 0.0)
-            {
-                azimuth += System.Math.Tau;
-            }
-
-            return azimuth;
-        }
-
-        public double GetInertialDescendingAzimuthLaunch(in DateTime epoch)
-        {
-            double azimuth = Constants.PI - GetInertialAscendingAzimuthLaunch(epoch);
-            if (azimuth < 0.0)
-            {
-                azimuth += System.Math.Tau;
-            }
-
-            return azimuth;
-        }
-
-        public double GetNonInertialAscendingAzimuthLaunch(in DateTime epoch)
-        {
-            double vrotx =
-                GetInertialInsertionVelocity(epoch) * System.Math.Sin(GetInertialAscendingAzimuthLaunch(epoch)) -
-                LaunchSite.GetEphemeris(Frame.ICRF, epoch).Velocity.Magnitude();
-            double vroty = GetInertialInsertionVelocity(epoch) *
-                           System.Math.Cos(GetInertialAscendingAzimuthLaunch(epoch));
-            double az = System.Math.Atan(vrotx / vroty);
-            if (az < 0.0)
-            {
-                az += Constants._2PI;
-            }
-
-            return az;
-        }
-
-        public double GetNonInertialDescendingAzimuthLaunch(in DateTime epoch)
-        {
-            var az = Constants.PI - GetNonInertialAscendingAzimuthLaunch(epoch);
-            if (az < 0.0)
-            {
-                az += Constants._2PI;
-            }
-
-            return az;
-        }
-
-        public double GetInertialInsertionVelocity(in DateTime epoch)
-        {
-            return GetOrbitalParameters(epoch).PerigeeVelocity();
-        }
-
-        public double GetNonInertialInsertionVelocity(in DateTime epoch)
-        {
-            double vrotx =
-                GetInertialInsertionVelocity(epoch) * System.Math.Sin(GetInertialAscendingAzimuthLaunch(epoch)) -
-                LaunchSite.GetEphemeris(Frame.ICRF, epoch).Velocity.Magnitude();
-            double vroty = GetInertialInsertionVelocity(epoch) *
-                           System.Math.Cos(GetInertialAscendingAzimuthLaunch(epoch));
-            return System.Math.Sqrt(vrotx * vrotx + vroty * vroty);
         }
 
         /// <summary>
