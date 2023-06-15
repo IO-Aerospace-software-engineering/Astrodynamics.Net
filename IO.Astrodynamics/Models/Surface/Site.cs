@@ -16,9 +16,11 @@ namespace IO.Astrodynamics.Models.Surface
         public string Name { get; }
         public CelestialBody Body { get; }
         public Geodetic Geodetic { get; }
+        public Frame Frame { get; }
+
         private readonly API _api = new API();
 
-        public Site(int id, string name, CelestialBody body, in Geodetic geodetic)
+        public Site(int id, string name, CelestialBody body, in Geodetic geodetic = new Geodetic())
         {
             if (body == null) throw new ArgumentNullException(nameof(body));
             if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id));
@@ -29,18 +31,7 @@ namespace IO.Astrodynamics.Models.Surface
             Geodetic = geodetic;
             Id = id;
             NaifId = body.NaifId * 1000 + id;
-        }
-        
-        public Site(int id, string name, CelestialBody body)
-        {
-            if (body == null) throw new ArgumentNullException(nameof(body));
-            if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id));
-            if (body == null) throw new ArgumentNullException(nameof(body));
-            if (string.IsNullOrEmpty(name)) throw new ArgumentException("Value cannot be null or empty.", nameof(name));
-            Name = name;
-            Body = body;
-            Id = id;
-            NaifId = body.NaifId * 1000 + id;
+            Frame = new Frame(name.ToUpper() + "_TOPO");
         }
 
         /// <summary>
@@ -52,14 +43,10 @@ namespace IO.Astrodynamics.Models.Surface
         /// <returns></returns>
         public Horizontal GetHorizontalCoordinates(DateTime epoch, ILocalizable localizableObject, Aberration aberration)
         {
-            var bodySv = localizableObject.GetEphemeris(epoch, Body, Body.Frame, aberration).ToStateVector();
-            var r = bodySv.Position.Normalize();
-            var z = GetEphemeris(epoch, Body, Body.Frame, aberration).ToStateVector().Position.Normalize();
-            var e = z.Cross(Vector3.VectorZ).Normalize().Inverse();
-            var n = z.Cross(e).Normalize().Inverse();
+            var bodySv = localizableObject.GetEphemeris(epoch, Body, Frame, aberration).ToStateVector() - GetEphemeris(epoch, Body, Frame, aberration).ToStateVector();
 
-            var az = System.Math.Atan((r * e) / (r * n));
-            var el = System.Math.Asin(r * z);
+            var az = System.Math.Atan2(bodySv.Position.Y,bodySv.Position.X);
+            var el = System.Math.Asin(bodySv.Position.Z / bodySv.Position.Magnitude());
 
             return new Horizontal(az, el, bodySv.Position.Magnitude());
         }

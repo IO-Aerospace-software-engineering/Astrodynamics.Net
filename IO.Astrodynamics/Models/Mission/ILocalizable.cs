@@ -8,9 +8,8 @@ namespace IO.Astrodynamics.Models.Mission
 {
     public interface ILocalizable : INaifObject
     {
-        IEnumerable<OrbitalParameters.OrbitalParameters> GetEphemeris(Window searchWindow, CelestialBody observer, Frame frame, Aberration aberration,
-            TimeSpan stepSize);
+        IEnumerable<OrbitalParameters.OrbitalParameters> GetEphemeris(Window searchWindow, CelestialBody observer, Frame frame, Aberration aberration, TimeSpan stepSize);
         OrbitalParameters.OrbitalParameters GetEphemeris(DateTime epoch, CelestialBody observer, Frame frame, Aberration aberration);
-
+        Frame Frame { get; }
     }
 }

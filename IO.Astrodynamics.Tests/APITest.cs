@@ -139,7 +139,7 @@ public class APITest
         Assert.Equal("2021-03-04T00:32:42.8530000 (TDB)", maneuver.ThrustWindow.StartDate.ToFormattedString());
         Assert.Equal("2021-03-04T00:32:51.1750000 (TDB)", maneuver.ThrustWindow.EndDate.ToFormattedString());
         Assert.Equal(8.322, maneuver.ThrustWindow.Length.TotalSeconds);
-        Assert.Equal(new Vector3(-96.24969153329536, 106.87570557408037, -118.85491757561407), ((ImpulseManeuver)maneuver).DeltaV);
+        Assert.Equal(new Vector3(-96.24969153329532, 106.87570557408036, -118.8549175756141), ((ImpulseManeuver)maneuver).DeltaV);
         Assert.Equal(416.05846464958046, maneuver.FuelBurned);
 
         maneuver = maneuver.NextManeuver;
@@ -389,6 +389,8 @@ public class APITest
             InstrumentShape.Circular, Vector3.VectorZ, Vector3.VectorX), Vector3.VectorX);
 
         spacecraft.SetStandbyManeuver(new NadirAttitude(spacecraft, DateTime.MinValue, TimeSpan.Zero, spacecraft.Engines.First()));
+        
+        scenario.AddBody(spacecraft);
 
         //Execute scenario
         api.PropagateScenario(scenario, Constants.OutputPath);
