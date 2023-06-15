@@ -30,6 +30,18 @@ namespace IO.Astrodynamics.Models.Surface
             Id = id;
             NaifId = body.NaifId * 1000 + id;
         }
+        
+        public Site(int id, string name, CelestialBody body)
+        {
+            if (body == null) throw new ArgumentNullException(nameof(body));
+            if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id));
+            if (body == null) throw new ArgumentNullException(nameof(body));
+            if (string.IsNullOrEmpty(name)) throw new ArgumentException("Value cannot be null or empty.", nameof(name));
+            Name = name;
+            Body = body;
+            Id = id;
+            NaifId = body.NaifId * 1000 + id;
+        }
 
         /// <summary>
         /// Get horizontal coordinates
