@@ -139,8 +139,7 @@ public class APITest
         Assert.Equal("2021-03-04T00:32:42.8530000 (TDB)", maneuver.ThrustWindow.StartDate.ToFormattedString());
         Assert.Equal("2021-03-04T00:32:51.1750000 (TDB)", maneuver.ThrustWindow.EndDate.ToFormattedString());
         Assert.Equal(8.322, maneuver.ThrustWindow.Length.TotalSeconds);
-        Assert.Equal(new Vector3(-96.24969153329532, 106.87570557408036, -118.8549175756141),
-            ((ImpulseManeuver)maneuver).DeltaV);
+        Assert.Equal(new Vector3(-96.24969153329536, 106.87570557408037, -118.85491757561407), ((ImpulseManeuver)maneuver).DeltaV);
         Assert.Equal(416.05846464958046, maneuver.FuelBurned);
 
         maneuver = maneuver.NextManeuver;
@@ -305,7 +304,7 @@ public class APITest
         spacecraft.AddEngine(engine, fuelTank, "serialNumber1");
         spacecraft.AddPayload(new Payload("payload1", 50.0, "pay01"));
         spacecraft.AddInstrument(new Instrument(600, "CAM600", "mod1", 1.5,
-            InstrumentShape.Circular, Vector3.VectorZ, Vector3.VectorX), Vector3.VectorX);
+            InstrumentShape.Circular, Vector3.VectorZ, Vector3.VectorY), new Vector3(0.0, -Math.PI * 0.5, 0.0));
         scenario.AddBody(spacecraft);
 
         //Execute scenario
@@ -321,8 +320,8 @@ public class APITest
         //Read results
         Assert.Equal(2, res.Count());
         Assert.Equal("2021-06-10T00:00:00.0000000 (TDB)", res.ElementAt(0).StartDate.ToFormattedString());
-        Assert.Equal("2021-06-10T00:30:12.4450000 (TDB)", res.ElementAt(0).EndDate.ToFormattedString());
-        Assert.Equal("2021-06-10T01:02:53.8290000 (TDB)", res.ElementAt(1).StartDate.ToFormattedString());
+        Assert.Equal("2021-06-10T00:29:03.3090000 (TDB)", res.ElementAt(0).EndDate.ToFormattedString());
+        Assert.Equal("2021-06-10T01:04:03.5060000 (TDB)", res.ElementAt(1).StartDate.ToFormattedString());
         Assert.Equal("2021-06-10T01:47:27.0000000 (TDB)", res.ElementAt(1).EndDate.ToFormattedString());
     }
 
@@ -391,12 +390,8 @@ public class APITest
 
         spacecraft.SetStandbyManeuver(new NadirAttitude(spacecraft, DateTime.MinValue, TimeSpan.Zero, spacecraft.Engines.First()));
 
-
         //Execute scenario
         api.PropagateScenario(scenario, Constants.OutputPath);
-
-        //Load generated kernels
-        api.LoadKernels(new DirectoryInfo(Path.Combine(Constants.OutputPath.FullName, "Spacecrafts/DRAGONFLY2")));
 
         //Read spacecraft orientation
         var res = api.ReadOrientation(window, spacecraft, TimeSpan.FromSeconds(10.0), Frame.ICRF, TimeSpan.FromSeconds(10.0)).ToArray();
