@@ -1,9 +1,9 @@
 ﻿using System;
-using IO.Astrodynamics.Models.Math;
-using IO.Astrodynamics.Models.OrbitalParameters;
+using IO.Astrodynamics.Math;
+using IO.Astrodynamics.OrbitalParameters;
 using Xunit;
 
-namespace IO.Astrodynamics.Models.Tests.OrbitalParameters
+namespace IO.Astrodynamics.Tests.OrbitalParameters
 {
     public class StateOrientationTests
     {
@@ -21,7 +21,7 @@ namespace IO.Astrodynamics.Models.Tests.OrbitalParameters
         [Fact]
         public void RelativeToICRF()
         {
-            var so = new StateOrientation(new Quaternion(Vector3.VectorX, 10.0 * Constants.Deg2Rad),Vector3.Zero, DateTime.MaxValue, Frames.Frame.ECLIPTIC);
+            var so = new StateOrientation(new Quaternion(Vector3.VectorX, 10.0 *IO.Astrodynamics.Constants.Deg2Rad),Vector3.Zero, DateTime.MaxValue, Frames.Frame.ECLIPTIC);
             var res = so.RelativeToICRF();
             Assert.NotNull(so);
 

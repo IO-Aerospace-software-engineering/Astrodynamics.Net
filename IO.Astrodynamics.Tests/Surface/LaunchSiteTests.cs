@@ -1,9 +1,9 @@
 ﻿using System.Linq;
-using IO.Astrodynamics.Models.Coordinates;
-using IO.Astrodynamics.Models.Surface;
+using IO.Astrodynamics.Coordinates;
+using IO.Astrodynamics.Surface;
 using Xunit;
 
-namespace IO.Astrodynamics.Models.Tests.Surface
+namespace IO.Astrodynamics.Tests.Surface
 {
     public class LaunchSiteTests
     {

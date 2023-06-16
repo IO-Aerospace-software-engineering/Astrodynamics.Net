@@ -1,7 +1,7 @@
 ﻿using System;
 using Xunit;
 
-namespace IO.Astrodynamics.Models.Tests.Maneuvers
+namespace IO.Astrodynamics.Tests.Maneuvers
 {
     public class TsiolkovskiTests
     {

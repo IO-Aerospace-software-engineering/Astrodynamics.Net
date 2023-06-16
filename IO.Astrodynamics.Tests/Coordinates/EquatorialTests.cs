@@ -1,13 +1,13 @@
 ﻿using System;
-using IO.Astrodynamics.Models.Body;
-using IO.Astrodynamics.Models.Coordinates;
-using IO.Astrodynamics.Models.Math;
-using IO.Astrodynamics.Models.Mission;
-using IO.Astrodynamics.Models.OrbitalParameters;
-using IO.Astrodynamics.Models.Time;
+using IO.Astrodynamics.Body;
+using IO.Astrodynamics.Coordinates;
+using IO.Astrodynamics.Math;
+using IO.Astrodynamics.Mission;
+using IO.Astrodynamics.OrbitalParameters;
+using IO.Astrodynamics.Time;
 using Xunit;
 
-namespace IO.Astrodynamics.Models.Tests.Coordinates
+namespace IO.Astrodynamics.Tests.Coordinates
 {
     public class EquatorialTests
     {
@@ -21,8 +21,8 @@ namespace IO.Astrodynamics.Models.Tests.Coordinates
         [Fact]
         public void CreateFromStateVector()
         {
-            Models.Mission.Mission mission = new Models.Mission.Mission("mission1");
-            Scenario scenario = new Scenario("scn1", mission,new Window(new DateTime(2021, 1, 1), new DateTime(2021, 1, 2)));
+            Astrodynamics.Mission.Mission mission = new Astrodynamics.Mission.Mission("mission1");
+            new Scenario("scn1", mission,new Window(new DateTime(2021, 1, 1), new DateTime(2021, 1, 2)));
             var epoch = DateTime.MinValue;
             CelestialBody earth = new CelestialBody(399, "earth", 3.986004418E+5, 6356.7519, 6378.1366);
             Equatorial eq = new Equatorial(new StateVector(new Vector3(-291608.38463344, -266716.83339423, -76102.48709990), new Vector3(), earth, epoch, Frames.Frame.ICRF));

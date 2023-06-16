@@ -1,11 +1,11 @@
 using System;
 using System.Linq;
-using IO.Astrodynamics.Models.Body;
-using IO.Astrodynamics.Models.OrbitalParameters;
-using IO.Astrodynamics.Models.Time;
+using IO.Astrodynamics.Body;
+using IO.Astrodynamics.OrbitalParameters;
+using IO.Astrodynamics.Time;
 using Xunit;
 
-namespace IO.Astrodynamics.Models.Tests.Body;
+namespace IO.Astrodynamics.Tests.Body;
 
 public class CelestialBodyTests
 {
@@ -13,9 +13,9 @@ public class CelestialBodyTests
 
     public CelestialBodyTests()
     {
-        _api = new API();
-        _api.LoadKernels(Astrodynamics.Tests.Constants.SolarSystemKernelPath);
+        _api = API.Instance;
     }
+
     [Fact]
     public void Create()
     {
@@ -47,8 +47,6 @@ public class CelestialBodyTests
     [Fact]
     public void FindOccultationsEclipse()
     {
-        var epoch = new DateTime(2000, 1, 1);
-
         var moon = TestHelpers.GetMoonAt20011214();
         var earth = moon.InitialOrbitalParameters.CenterOfMotion;
         var sun = earth.InitialOrbitalParameters.CenterOfMotion;
@@ -64,9 +62,6 @@ public class CelestialBodyTests
     [Fact]
     public void AngularSize()
     {
-        var epoch = new DateTime(2000, 1, 1);
-
-        var moon = TestHelpers.GetMoonAtJ2000();
         var sun = TestHelpers.GetSun();
         var earth = TestHelpers.GetEarthAtJ2000();
         var res = sun.AngularSize(earth.InitialOrbitalParameters.ToStateVector().Position.Magnitude());

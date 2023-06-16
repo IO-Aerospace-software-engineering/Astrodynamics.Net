@@ -1,31 +1,28 @@
 using System;
-using IO.Astrodynamics.Models.Body;
-using IO.Astrodynamics.Models.Math;
-using IO.Astrodynamics.Models.Mission;
-using IO.Astrodynamics.Models.OrbitalParameters;
-using IO.Astrodynamics.Models.Time;
+using IO.Astrodynamics.Body;
+using IO.Astrodynamics.Math;
+using IO.Astrodynamics.Mission;
+using IO.Astrodynamics.OrbitalParameters;
+using IO.Astrodynamics.Time;
 using Xunit;
 
-namespace IO.Astrodynamics.Models.Tests.OrbitalParameters
+namespace IO.Astrodynamics.Tests.OrbitalParameters
 {
     public class KeplerianElementsTests
     {
         [Fact]
         public void Create()
         {
-            Models.Mission.Mission mission = new Models.Mission.Mission("mission1");
-            Scenario scenario = new Scenario("scn1", mission,
-                new Window(new DateTime(2021, 1, 1), new DateTime(2021, 1, 2)));
             CelestialBody earth = new CelestialBody(399, "earth", 3.986004418E+5, 6356.7519, 6378.1366);
             DateTime epoch = DateTime.Now;
-            KeplerianElements ke = new KeplerianElements(20000, 0.5, 30.0 * Constants.Deg2Rad, 40.0 * Constants.Deg2Rad,
-                50.0 * Constants.Deg2Rad, 10.0 * Constants.Deg2Rad, earth, epoch, Frames.Frame.ICRF);
+            KeplerianElements ke = new KeplerianElements(20000, 0.5, 30.0 *IO.Astrodynamics.Constants.Deg2Rad, 40.0 *IO.Astrodynamics.Constants.Deg2Rad,
+                50.0 *IO.Astrodynamics.Constants.Deg2Rad, 10.0 *IO.Astrodynamics.Constants.Deg2Rad, earth, epoch, Frames.Frame.ICRF);
             Assert.Equal(20000.0, ke.SemiMajorAxis());
             Assert.Equal(0.5, ke.Eccentricity());
-            Assert.Equal(30.0, ke.Inclination() * Constants.Rad2Deg, 14);
-            Assert.Equal(40.0, ke.AscendingNode() * Constants.Rad2Deg);
-            Assert.Equal(50.0, ke.ArgumentOfPeriapsis() * Constants.Rad2Deg);
-            Assert.Equal(10.0, ke.MeanAnomaly() * Constants.Rad2Deg);
+            Assert.Equal(30.0, ke.Inclination() *IO.Astrodynamics.Constants.Rad2Deg, 14);
+            Assert.Equal(40.0, ke.AscendingNode() *IO.Astrodynamics.Constants.Rad2Deg);
+            Assert.Equal(50.0, ke.ArgumentOfPeriapsis() *IO.Astrodynamics.Constants.Rad2Deg);
+            Assert.Equal(10.0, ke.MeanAnomaly() *IO.Astrodynamics.Constants.Rad2Deg);
             Assert.Equal(earth, ke.CenterOfMotion);
             Assert.Equal(epoch, ke.Epoch);
             Assert.Equal(Frames.Frame.ICRF, ke.Frame);
@@ -34,13 +31,10 @@ namespace IO.Astrodynamics.Models.Tests.OrbitalParameters
         [Fact]
         public void ToStateVector()
         {
-            Models.Mission.Mission mission = new Models.Mission.Mission("mission1");
-            Scenario scenario = new Scenario("scn1", mission,
-                new Window(new DateTime(2021, 1, 1), new DateTime(2021, 1, 2)));
             CelestialBody earth = new CelestialBody(399, "earth", 3.986004418E+5, 6356.7519, 6378.1366);
             
-            KeplerianElements ke = new KeplerianElements(2E4, 0.43336, 30.193 * Constants.Deg2Rad,
-                44.6017 * Constants.Deg2Rad, 30.68 * Constants.Deg2Rad, 356.73 * Constants.Deg2Rad, earth,
+            KeplerianElements ke = new KeplerianElements(2E4, 0.43336, 30.193 *IO.Astrodynamics.Constants.Deg2Rad,
+                44.6017 *IO.Astrodynamics.Constants.Deg2Rad, 30.68 *IO.Astrodynamics.Constants.Deg2Rad, 356.73 *IO.Astrodynamics.Constants.Deg2Rad, earth,
                 DateTime.UtcNow, Frames.Frame.ICRF);
             StateVector sv = ke.ToStateVector();
             Assert.Equal(5001.878051605426, sv.Position.X);
@@ -55,70 +49,65 @@ namespace IO.Astrodynamics.Models.Tests.OrbitalParameters
         [Fact]
         public void TrueAnomaly10()
         {
-            Models.Mission.Mission mission = new Models.Mission.Mission("mission1");
-            Scenario scenario = new Scenario("scn1", mission,
-                new Window(new DateTime(2021, 1, 1), new DateTime(2021, 1, 2)));
+            
+            
             CelestialBody earth = new CelestialBody(399, "earth", 3.986004418E+5, 6356.7519, 6378.1366);
             
-            KeplerianElements ke = new KeplerianElements(20000, 0.5, 30.0 * Constants.Deg2Rad, 40.0 * Constants.Deg2Rad,
-                50.0 * Constants.Deg2Rad, 10.0 * Constants.Deg2Rad, earth, DateTime.UtcNow, Frames.Frame.ICRF);
+            KeplerianElements ke = new KeplerianElements(20000, 0.5, 30.0 *IO.Astrodynamics.Constants.Deg2Rad, 40.0 *IO.Astrodynamics.Constants.Deg2Rad,
+                50.0 *IO.Astrodynamics.Constants.Deg2Rad, 10.0 *IO.Astrodynamics.Constants.Deg2Rad, earth, DateTime.UtcNow, Frames.Frame.ICRF);
             double v = ke.TrueAnomaly();
-            Assert.Equal(33.342843885635396, v * Constants.Rad2Deg);
+            Assert.Equal(33.342843885635396, v *IO.Astrodynamics.Constants.Rad2Deg);
         }
 
         [Fact]
         public void TrueAnomaly0()
         {
-            Models.Mission.Mission mission = new Models.Mission.Mission("mission1");
-            Scenario scenario = new Scenario("scn1", mission,
-                new Window(new DateTime(2021, 1, 1), new DateTime(2021, 1, 2)));
+            
+            
             CelestialBody earth = new CelestialBody(399, "earth", 3.986004418E+5, 6356.7519, 6378.1366);
             
-            KeplerianElements ke = new KeplerianElements(20000, 0.5, 30.0 * Constants.Deg2Rad, 40.0 * Constants.Deg2Rad,
-                50.0 * Constants.Deg2Rad, 0.0 * Constants.Deg2Rad, earth, DateTime.UtcNow, Frames.Frame.ICRF);
+            KeplerianElements ke = new KeplerianElements(20000, 0.5, 30.0 *IO.Astrodynamics.Constants.Deg2Rad, 40.0 *IO.Astrodynamics.Constants.Deg2Rad,
+                50.0 *IO.Astrodynamics.Constants.Deg2Rad, 0.0 *IO.Astrodynamics.Constants.Deg2Rad, earth, DateTime.UtcNow, Frames.Frame.ICRF);
             double v = ke.TrueAnomaly();
-            Assert.Equal(0.0, v * Constants.Rad2Deg);
+            Assert.Equal(0.0, v *IO.Astrodynamics.Constants.Rad2Deg);
         }
 
         [Fact]
         public void TrueAnomaly180()
         {
-            Models.Mission.Mission mission = new Models.Mission.Mission("mission1");
-            Scenario scenario = new Scenario("scn1", mission,
-                new Window(new DateTime(2021, 1, 1), new DateTime(2021, 1, 2)));
+            
+            
             CelestialBody earth = new CelestialBody(399, "earth", 3.986004418E+5, 6356.7519, 6378.1366);
             
-            KeplerianElements ke = new KeplerianElements(20000, 0.5, 30.0 * Constants.Deg2Rad, 40.0 * Constants.Deg2Rad,
-                50.0 * Constants.Deg2Rad, 180.0 * Constants.Deg2Rad, earth, DateTime.UtcNow,
+            KeplerianElements ke = new KeplerianElements(20000, 0.5, 30.0 *IO.Astrodynamics.Constants.Deg2Rad, 40.0 *IO.Astrodynamics.Constants.Deg2Rad,
+                50.0 *IO.Astrodynamics.Constants.Deg2Rad, 180.0 *IO.Astrodynamics.Constants.Deg2Rad, earth, DateTime.UtcNow,
                 Frames.Frame.ICRF);
             double v = ke.TrueAnomaly();
-            Assert.Equal(180.0, v * Constants.Rad2Deg);
+            Assert.Equal(180.0, v *IO.Astrodynamics.Constants.Rad2Deg);
         }
 
         [Fact]
         public void TrueAnomaly300()
         {
-            Models.Mission.Mission mission = new Models.Mission.Mission("mission1");
-            Scenario scenario = new Scenario("scn1", mission,
-                new Window(new DateTime(2021, 1, 1), new DateTime(2021, 1, 2)));
+            
+            
             CelestialBody earth = new CelestialBody(399, "earth", 3.986004418E+5, 6356.7519, 6378.1366);
             
-            KeplerianElements ke = new KeplerianElements(20000, 0.5, 30.0 * Constants.Deg2Rad, 40.0 * Constants.Deg2Rad,
-                50.0 * Constants.Deg2Rad, 300.0 * Constants.Deg2Rad, earth, DateTime.UtcNow,
+            KeplerianElements ke = new KeplerianElements(20000, 0.5, 30.0 *IO.Astrodynamics.Constants.Deg2Rad, 40.0 *IO.Astrodynamics.Constants.Deg2Rad,
+                50.0 *IO.Astrodynamics.Constants.Deg2Rad, 300.0 *IO.Astrodynamics.Constants.Deg2Rad, earth, DateTime.UtcNow,
                 Frames.Frame.ICRF);
             double v = ke.TrueAnomaly();
-            Assert.Equal(241.18499907498312, v * Constants.Rad2Deg);
+            Assert.Equal(241.18499907498312, v *IO.Astrodynamics.Constants.Rad2Deg);
         }
 
         [Fact]
         public void ExcentricityVector()
         {
-            Models.Mission.Mission mission = new Models.Mission.Mission("mission1");
-            Scenario scenario = new Scenario("scn1", mission,
-                new Window(new DateTime(2021, 1, 1), new DateTime(2021, 1, 2)));
+            
+            
             CelestialBody earth = new CelestialBody(399, "earth", 3.986004418E+5, 6356.7519, 6378.1366);
             
-            KeplerianElements ke = new KeplerianElements(7487.36, 0.0918, 0.0, 0.0, 0.0, 0.0 * Constants.Deg2Rad,
+            KeplerianElements ke = new KeplerianElements(7487.36, 0.0918, 0.0, 0.0, 0.0, 0.0 *IO.Astrodynamics.Constants.Deg2Rad,
                 earth, DateTime.UtcNow, Frames.Frame.ICRF);
             Vector3 ev = ke.EccentricityVector();
             Assert.Equal(0.0918000000000001, ev.Magnitude());
@@ -130,13 +119,12 @@ namespace IO.Astrodynamics.Models.Tests.OrbitalParameters
         [Fact]
         public void AscendingNodeVector()
         {
-            Models.Mission.Mission mission = new Models.Mission.Mission("mission1");
-            Scenario scenario =
-                new Scenario("scn1", mission, new Window(new DateTime(2021, 1, 1), new DateTime(2021, 1, 2)));
+            
+            
             CelestialBody earth = new CelestialBody(399, "earth", 3.986004418E+5, 6356.7519, 6378.1366);
             
-            KeplerianElements ke = new KeplerianElements(8811.47, 0.228, Constants.PI2 * 0.5, 0.0, 0.0,
-                0.0 * Constants.Deg2Rad, earth, DateTime.UtcNow, Frames.Frame.ICRF);
+            KeplerianElements ke = new KeplerianElements(8811.47, 0.228,IO.Astrodynamics.Constants.PI2 * 0.5, 0.0, 0.0,
+                0.0 *IO.Astrodynamics.Constants.Deg2Rad, earth, DateTime.UtcNow, Frames.Frame.ICRF);
             Vector3 anv = ke.AscendingNodeVector().Normalize();
             Assert.Equal(1.0, anv.Magnitude());
             Assert.Equal(1.0, anv.X);
@@ -147,13 +135,12 @@ namespace IO.Astrodynamics.Models.Tests.OrbitalParameters
         [Fact]
         public void DescendingNodeVector()
         {
-            Models.Mission.Mission mission = new Models.Mission.Mission("mission1");
-            Scenario scenario = new Scenario("scn1", mission,
-                new Window(new DateTime(2021, 1, 1), new DateTime(2021, 1, 2)));
+            
+            
             CelestialBody earth = new CelestialBody(399, "earth", 3.986004418E+5, 6356.7519, 6378.1366);
             
-            KeplerianElements ke = new KeplerianElements(8811.47, 0.228, Constants.PI2 * 0.5, 0.0, 0.0,
-                0.0 * Constants.Deg2Rad, earth, DateTime.UtcNow, Frames.Frame.ICRF);
+            KeplerianElements ke = new KeplerianElements(8811.47, 0.228,IO.Astrodynamics.Constants.PI2 * 0.5, 0.0, 0.0,
+                0.0 *IO.Astrodynamics.Constants.Deg2Rad, earth, DateTime.UtcNow, Frames.Frame.ICRF);
             Vector3 anv = ke.DescendingNodeVector().Normalize();
             Assert.Equal(1.0, anv.Magnitude());
             Assert.Equal(-1.0, anv.X);
@@ -164,22 +151,22 @@ namespace IO.Astrodynamics.Models.Tests.OrbitalParameters
         [Fact]
         public void EccentricAnomaly()
         {
-            Models.Mission.Mission mission = new Models.Mission.Mission("mission1");
-            Scenario scenario = new Scenario("scn1", mission, new Window(new DateTime(2021, 1, 1), new DateTime(2021, 1, 2)));
+            
+            
             CelestialBody earth = new CelestialBody(399, "earth", 3.986004418E+5, 6356.7519, 6378.1366);
             
-            KeplerianElements ke = new KeplerianElements(20000, 0.5, 30.0 * Constants.Deg2Rad, 40.0 * Constants.Deg2Rad,
-                50.0 * Constants.Deg2Rad, 180.0 * Constants.Deg2Rad, earth, DateTime.UtcNow,
+            KeplerianElements ke = new KeplerianElements(20000, 0.5, 30.0 *IO.Astrodynamics.Constants.Deg2Rad, 40.0 *IO.Astrodynamics.Constants.Deg2Rad,
+                50.0 *IO.Astrodynamics.Constants.Deg2Rad, 180.0 *IO.Astrodynamics.Constants.Deg2Rad, earth, DateTime.UtcNow,
                 Frames.Frame.ICRF);
             double ea = ke.EccentricAnomaly();
-            Assert.Equal(Constants.PI, ea);
+            Assert.Equal(IO.Astrodynamics.Constants.PI, ea);
         }
 
         [Fact]
         public void SpecificAngularMomentum()
         {
-            Models.Mission.Mission mission = new Models.Mission.Mission("mission1");
-            Scenario scenario = new Scenario("scn1", mission, new Window(new DateTime(2021, 1, 1), new DateTime(2021, 1, 2)));
+            
+            
             CelestialBody sun = new CelestialBody(10, "sun", 1.32712440018E+11, 695508.0, 695508.0);
             
             KeplerianElements ke = new KeplerianElements(149753367.81178582, 0.0010241359778564595, 0.0, 0.0, 0.0, 0.0,
@@ -193,12 +180,12 @@ namespace IO.Astrodynamics.Models.Tests.OrbitalParameters
         [Fact]
         public void SpecificOrbitalEnergyMomentum()
         {
-            Models.Mission.Mission mission = new Models.Mission.Mission("mission1");
-            Scenario scenario = new Scenario("scn1", mission, new Window(new DateTime(2021, 1, 1), new DateTime(2021, 1, 2)));
+            
+            
             CelestialBody earth = new CelestialBody(399, "earth", 3.986004418E+5, 6356.7519, 6378.1366);
             
-            KeplerianElements ke = new KeplerianElements(6800.81178582, 0.00134, 51.71 * Constants.Deg2Rad,
-                32.57 * Constants.Deg2Rad, 105.64 * Constants.Deg2Rad, 46.029 * Constants.Deg2Rad, earth,
+            KeplerianElements ke = new KeplerianElements(6800.81178582, 0.00134, 51.71 *IO.Astrodynamics.Constants.Deg2Rad,
+                32.57 *IO.Astrodynamics.Constants.Deg2Rad, 105.64 *IO.Astrodynamics.Constants.Deg2Rad, 46.029 *IO.Astrodynamics.Constants.Deg2Rad, earth,
                 DateTime.UtcNow, Frames.Frame.ICRF);
             double energy = ke.SpecificOrbitalEnergy();
             Assert.Equal(-29.30535753328009, energy);
@@ -207,12 +194,12 @@ namespace IO.Astrodynamics.Models.Tests.OrbitalParameters
         [Fact]
         public void PerigeeVectorAnomaly()
         {
-            Models.Mission.Mission mission = new Models.Mission.Mission("mission1");
-            Scenario scenario = new Scenario("scn1", mission, new Window(new DateTime(2021, 1, 1), new DateTime(2021, 1, 2)));
+            
+            
             CelestialBody earth = new CelestialBody(399, "earth", 3.986004418E+5, 6356.7519, 6378.1366);
             
-            KeplerianElements ke = new KeplerianElements(20000, 0.5, 30.0 * Constants.Deg2Rad, 40.0 * Constants.Deg2Rad,
-                50.0 * Constants.Deg2Rad, 180.0 * Constants.Deg2Rad, earth, DateTime.UtcNow,
+            KeplerianElements ke = new KeplerianElements(20000, 0.5, 30.0 *IO.Astrodynamics.Constants.Deg2Rad, 40.0 *IO.Astrodynamics.Constants.Deg2Rad,
+                50.0 *IO.Astrodynamics.Constants.Deg2Rad, 180.0 *IO.Astrodynamics.Constants.Deg2Rad, earth, DateTime.UtcNow,
                 Frames.Frame.ICRF);
             var pv = ke.PerigeeVector();
             Assert.Equal(10000.0, pv.Magnitude(), 9);
@@ -224,12 +211,12 @@ namespace IO.Astrodynamics.Models.Tests.OrbitalParameters
         [Fact]
         public void ApogeeVectorAnomaly()
         {
-            Models.Mission.Mission mission = new Models.Mission.Mission("mission1");
-            Scenario scenario = new Scenario("scn1", mission, new Window(new DateTime(2021, 1, 1), new DateTime(2021, 1, 2)));
+            
+            
             CelestialBody earth = new CelestialBody(399, "earth", 3.986004418E+5, 6356.7519, 6378.1366);
             
-            KeplerianElements ke = new KeplerianElements(20000, 0.5, 30.0 * Constants.Deg2Rad, 40.0 * Constants.Deg2Rad,
-                50.0 * Constants.Deg2Rad, 180.0 * Constants.Deg2Rad, earth, DateTime.UtcNow,
+            KeplerianElements ke = new KeplerianElements(20000, 0.5, 30.0 *IO.Astrodynamics.Constants.Deg2Rad, 40.0 *IO.Astrodynamics.Constants.Deg2Rad,
+                50.0 *IO.Astrodynamics.Constants.Deg2Rad, 180.0 *IO.Astrodynamics.Constants.Deg2Rad, earth, DateTime.UtcNow,
                 Frames.Frame.ICRF);
             var av = ke.ApogeeVector();
             Assert.Equal(30000.0, av.Magnitude(), 9);
@@ -241,17 +228,17 @@ namespace IO.Astrodynamics.Models.Tests.OrbitalParameters
         [Fact]
         public void TrueAnomalyToMeanAnomaly()
         {
-            Models.Mission.Mission mission = new Models.Mission.Mission("mission1");
-            Scenario scenario = new Scenario("scn1", mission, new Window(new DateTime(2021, 1, 1), new DateTime(2021, 1, 2)));
+            
+            
             CelestialBody earth = new CelestialBody(399, "earth", 3.986004418E+5, 6356.7519, 6378.1366);
             
             KeplerianElements km0 = new KeplerianElements(20000, 0.3, 0.0, 0.0, 0.0, 0.0, earth, DateTime.UtcNow,
                 Frames.Frame.ICRF);
-            KeplerianElements km90 = new KeplerianElements(20000, 0.3, 0.0, 0.0, 0.0, 90.0 * Constants.Deg2Rad,
+            KeplerianElements km90 = new KeplerianElements(20000, 0.3, 0.0, 0.0, 0.0, 90.0 *IO.Astrodynamics.Constants.Deg2Rad,
                 earth, DateTime.UtcNow, Frames.Frame.ICRF);
-            KeplerianElements km180 = new KeplerianElements(20000, 0.3, 0.0, 0.0, 0.0, 180.0 * Constants.Deg2Rad,
+            KeplerianElements km180 = new KeplerianElements(20000, 0.3, 0.0, 0.0, 0.0, 180.0 *IO.Astrodynamics.Constants.Deg2Rad,
                 earth, DateTime.UtcNow, Frames.Frame.ICRF);
-            KeplerianElements km270 = new KeplerianElements(20000, 0.3, 0.0, 0.0, 0.0, 270.0 * Constants.Deg2Rad,
+            KeplerianElements km270 = new KeplerianElements(20000, 0.3, 0.0, 0.0, 0.0, 270.0 *IO.Astrodynamics.Constants.Deg2Rad,
                 earth, DateTime.UtcNow, Frames.Frame.ICRF);
 
             double v0 = km0.TrueAnomaly();
@@ -263,13 +250,13 @@ namespace IO.Astrodynamics.Models.Tests.OrbitalParameters
             Assert.Equal(0.0, m);
 
             m = km90.MeanAnomaly(v90);
-            Assert.Equal(89.99999997471907, m * Constants.Rad2Deg, 12);
+            Assert.Equal(89.99999997471907, m *IO.Astrodynamics.Constants.Rad2Deg, 12);
 
             m = km0.MeanAnomaly(v180);
-            Assert.Equal(180.0, m * Constants.Rad2Deg);
+            Assert.Equal(180.0, m *IO.Astrodynamics.Constants.Rad2Deg);
 
             m = km0.MeanAnomaly(v270);
-            Assert.Equal(270.0000000252809, m * Constants.Rad2Deg);
+            Assert.Equal(270.0000000252809, m *IO.Astrodynamics.Constants.Rad2Deg);
         }
     }
 }

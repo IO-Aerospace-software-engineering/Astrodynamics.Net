@@ -2,16 +2,16 @@
 
 using AutoMapper;
 using IO.Astrodynamics.DTO;
-using IO.Astrodynamics.Models.Math;
-using IO.Astrodynamics.Models.Surface;
-using IO.Astrodynamics.Models.Time;
-using Geodetic = IO.Astrodynamics.Models.Coordinates.Geodetic;
-using Launch = IO.Astrodynamics.Models.Maneuver.Launch;
-using Quaternion = IO.Astrodynamics.Models.Math.Quaternion;
-using Site = IO.Astrodynamics.Models.Surface.Site;
-using StateOrientation = IO.Astrodynamics.Models.OrbitalParameters.StateOrientation;
-using StateVector = IO.Astrodynamics.Models.OrbitalParameters.StateVector;
-using Window = IO.Astrodynamics.Models.Time.Window;
+using IO.Astrodynamics.Math;
+using IO.Astrodynamics.Surface;
+using IO.Astrodynamics.Time;
+using Geodetic = IO.Astrodynamics.Coordinates.Geodetic;
+using Launch = IO.Astrodynamics.Maneuver.Launch;
+using Quaternion = IO.Astrodynamics.Math.Quaternion;
+using Site = IO.Astrodynamics.Surface.Site;
+using StateOrientation = IO.Astrodynamics.OrbitalParameters.StateOrientation;
+using StateVector = IO.Astrodynamics.OrbitalParameters.StateVector;
+using Window = IO.Astrodynamics.Time.Window;
 
 namespace IO.Astrodynamics.Converters;
 

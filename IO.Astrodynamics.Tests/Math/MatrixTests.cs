@@ -1,7 +1,7 @@
-using IO.Astrodynamics.Models.Math;
+using IO.Astrodynamics.Math;
 using Xunit;
 
-namespace IO.Astrodynamics.Models.Tests.Math;
+namespace IO.Astrodynamics.Tests.Math;
 
 public class MatirxTests
 {

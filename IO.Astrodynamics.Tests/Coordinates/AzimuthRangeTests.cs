@@ -1,7 +1,7 @@
-﻿using IO.Astrodynamics.Models.Coordinates;
+﻿using IO.Astrodynamics.Coordinates;
 using Xunit;
 
-namespace IO.Astrodynamics.Models.Tests.Coordinates
+namespace IO.Astrodynamics.Tests.Coordinates
 {
     public class AzimuthRangeTests
     {

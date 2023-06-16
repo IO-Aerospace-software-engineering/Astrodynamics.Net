@@ -1,18 +1,18 @@
-using IO.Astrodynamics.Models.Math;
-using IO.Astrodynamics.Models.OrbitalParameters;
-using IO.Astrodynamics.Models.Time;
+using IO.Astrodynamics.Math;
+using IO.Astrodynamics.OrbitalParameters;
+using IO.Astrodynamics.Time;
 using IO.Astrodynamics.SolarSystemObjects;
 using Xunit;
 
-namespace IO.Astrodynamics.Models.Tests.Frame;
+namespace IO.Astrodynamics.Tests.Frame;
 
 public class FrameTests
 {
     private API _api;
     public FrameTests()
     {
-        _api = new API();
-        _api.LoadKernels(Astrodynamics.Tests.Constants.SolarSystemKernelPath);
+        _api = API.Instance;
+        
     }
     [Fact]
     public void ToInertialFrame()

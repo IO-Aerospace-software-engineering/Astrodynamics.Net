@@ -1,12 +1,13 @@
 ﻿using System;
-using IO.Astrodynamics.Models.Body;
-using IO.Astrodynamics.Models.Math;
-using IO.Astrodynamics.Models.OrbitalParameters;
+using IO.Astrodynamics.Body;
+using IO.Astrodynamics.Math;
+using IO.Astrodynamics.OrbitalParameters;
 
-namespace IO.Astrodynamics.Models.Tests
+namespace IO.Astrodynamics.Tests
 {
     internal static class TestHelpers
     {
+        
         internal static CelestialBody GetSun()
         {
             return new CelestialBody(10, "sun", 1.32712440018E+11, 695508.0, 695508.0);

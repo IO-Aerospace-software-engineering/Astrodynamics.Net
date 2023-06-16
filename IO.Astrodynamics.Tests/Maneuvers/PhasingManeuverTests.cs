@@ -1,22 +1,20 @@
 using System;
 using System.Linq;
-using IO.Astrodynamics.Models.Body;
-using IO.Astrodynamics.Models.Body.Spacecraft;
-using IO.Astrodynamics.Models.Maneuver;
-using IO.Astrodynamics.Models.Mission;
-using IO.Astrodynamics.Models.OrbitalParameters;
-using IO.Astrodynamics.Models.Time;
+using IO.Astrodynamics.Body;
+using IO.Astrodynamics.Body.Spacecraft;
+using IO.Astrodynamics.Maneuver;
+using IO.Astrodynamics.Mission;
+using IO.Astrodynamics.OrbitalParameters;
+using IO.Astrodynamics.Time;
 using Xunit;
 
-namespace IO.Astrodynamics.Models.Tests.Maneuvers
+namespace IO.Astrodynamics.Tests.Maneuvers
 {
     public class PhasingManeuverTests
     {
         [Fact]
         public void Create()
         {
-            Models.Mission.Mission mission = new Models.Mission.Mission("mission1");
-            Scenario scenario = new Scenario("scn1", mission, new Window(new DateTime(2021, 1, 1), new DateTime(2021, 1, 2)));
             CelestialBody sun = new CelestialBody(10, "sun", 1.32712440018E+11, 695508.0, 695508.0);
 
             var ke = new KeplerianElements(150000000.0, 0.0, 0.0, 0.0, 0.0, 0.0, sun, DateTime.UtcNow, Frames.Frame.ECLIPTIC);

@@ -1,13 +1,13 @@
 using Xunit;
 
-namespace IO.Astrodynamics.Models.Tests.Mission
+namespace IO.Astrodynamics.Tests.Mission
 {
     public class MissionTests
     {
         [Fact]
         public void Create()
         {
-            Models.Mission.Mission mission = new Models.Mission.Mission("Mission1");
+            Astrodynamics.Mission.Mission mission = new Astrodynamics.Mission.Mission("Mission1");
             Assert.Equal("Mission1", mission.Name);
         }
     }

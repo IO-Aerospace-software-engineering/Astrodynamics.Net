@@ -1,10 +1,10 @@
 using System;
-using IO.Astrodynamics.Models.Math;
-using IO.Astrodynamics.Models.Mission;
-using IO.Astrodynamics.Models.Time;
+using IO.Astrodynamics.Math;
+using IO.Astrodynamics.Mission;
+using IO.Astrodynamics.Time;
 using Xunit;
 
-namespace IO.Astrodynamics.Models.Tests.Math;
+namespace IO.Astrodynamics.Tests.Math;
 
 public class VectorTests
 {
@@ -53,9 +53,6 @@ public class VectorTests
     [Fact]
     public void Dot()
     {
-
-        Models.Mission.Mission mission = new Models.Mission.Mission("mission1");
-        Scenario scenario = new Scenario("scn1", mission,new Window(new DateTime(2021, 1, 1), new DateTime(2021, 1, 2)));
         Vector3 m1 = new Vector3(2, 3, 4);
         Vector3 m2 = new Vector3(5, 6, 7);
         double res = m1 * m2;

@@ -32,61 +32,62 @@
     <ItemGroup>
       <None Remove="Data\SolarSystem\de440s.bsp" />
       <Content Include="Data\SolarSystem\de440s.bsp">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
       <None Remove="Data\SolarSystem\earth_assoc_itrf93.tf" />
       <Content Include="Data\SolarSystem\earth_assoc_itrf93.tf">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
       <None Remove="Data\SolarSystem\earth_fixed.tf" />
       <Content Include="Data\SolarSystem\earth_fixed.tf">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
       <None Remove="Data\SolarSystem\earth_latest_high_prec.bpc" />
       <Content Include="Data\SolarSystem\earth_latest_high_prec.bpc">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
       <None Remove="Data\SolarSystem\earth_topo_201023.tf" />
       <Content Include="Data\SolarSystem\earth_topo_201023.tf">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
       <None Remove="Data\SolarSystem\earthstns_itrf93_201023.bsp" />
       <Content Include="Data\SolarSystem\earthstns_itrf93_201023.bsp">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
       <None Remove="Data\SolarSystem\geophysical.ker" />
       <Content Include="Data\SolarSystem\geophysical.ker">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
       <None Remove="Data\SolarSystem\gm_de431.tpc" />
       <Content Include="Data\SolarSystem\gm_de431.tpc">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
       <None Remove="Data\SolarSystem\latest_leapseconds.tls.pc" />
-      <Content Include="Data\SolarSystem\latest_leapseconds.tls.pc">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
       <None Remove="Data\SolarSystem\moon_080317.tf" />
       <Content Include="Data\SolarSystem\moon_080317.tf">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
       <None Remove="Data\SolarSystem\moon_assoc_me.tf" />
       <Content Include="Data\SolarSystem\moon_assoc_me.tf">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
       <None Remove="Data\SolarSystem\moon_assoc_pa.tf" />
       <Content Include="Data\SolarSystem\moon_assoc_pa.tf">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
       <None Remove="Data\SolarSystem\moon_pa_de421_1900-2050.bpc" />
       <Content Include="Data\SolarSystem\moon_pa_de421_1900-2050.bpc">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
       <None Remove="Data\SolarSystem\pck00011.tpc" />
       <Content Include="Data\SolarSystem\pck00011.tpc">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
       <None Remove="Data\SolarSystem\mar097.bsp" />
+      <None Remove="Data\SolarSystem\latest_leapseconds.tls" />
+      <Content Include="Data\SolarSystem\latest_leapseconds.tls">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
     </ItemGroup>
 
 </Project>

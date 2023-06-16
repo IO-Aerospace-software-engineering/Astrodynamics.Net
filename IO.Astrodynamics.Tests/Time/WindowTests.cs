@@ -1,8 +1,8 @@
 using System;
-using IO.Astrodynamics.Models.Time;
+using IO.Astrodynamics.Time;
 using Xunit;
 
-namespace IO.Astrodynamics.Models.Tests.Time;
+namespace IO.Astrodynamics.Tests.Time;
 public class WindowTests
 {
     [Fact]

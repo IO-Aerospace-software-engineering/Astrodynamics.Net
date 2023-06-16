@@ -1,12 +1,12 @@
 using System;
 using System.Linq;
-using IO.Astrodynamics.Models.Body;
-using IO.Astrodynamics.Models.Body.Spacecraft;
-using IO.Astrodynamics.Models.Maneuver;
-using IO.Astrodynamics.Models.OrbitalParameters;
+using IO.Astrodynamics.Body;
+using IO.Astrodynamics.Body.Spacecraft;
+using IO.Astrodynamics.Maneuver;
+using IO.Astrodynamics.OrbitalParameters;
 using Xunit;
 
-namespace IO.Astrodynamics.Models.Tests.Maneuvers
+namespace IO.Astrodynamics.Tests.Maneuvers
 {
     public class ApogeeHeightManeuverTests
     {

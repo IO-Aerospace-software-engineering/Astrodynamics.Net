@@ -1,8 +1,8 @@
 using System;
-using IO.Astrodynamics.Models.Body.Spacecraft;
+using IO.Astrodynamics.Body.Spacecraft;
 using Xunit;
 
-namespace IO.Astrodynamics.Models.Tests.Body
+namespace IO.Astrodynamics.Tests.Body
 {
     public class EngineTests
     {

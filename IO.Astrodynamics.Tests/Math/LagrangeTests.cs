@@ -1,12 +1,12 @@
 using System;
-using IO.Astrodynamics.Models.Body;
-using IO.Astrodynamics.Models.Math;
-using IO.Astrodynamics.Models.Mission;
-using IO.Astrodynamics.Models.OrbitalParameters;
-using IO.Astrodynamics.Models.Time;
+using IO.Astrodynamics.Body;
+using IO.Astrodynamics.Math;
+using IO.Astrodynamics.Mission;
+using IO.Astrodynamics.OrbitalParameters;
+using IO.Astrodynamics.Time;
 using Xunit;
 
-namespace IO.Astrodynamics.Models.Tests.Math
+namespace IO.Astrodynamics.Tests.Math
 {
     public class LagrangeTests
     {
@@ -54,8 +54,6 @@ namespace IO.Astrodynamics.Models.Tests.Math
         public void InterpolateStateVectorSquare()
         {
 
-            Models.Mission.Mission mission = new Models.Mission.Mission("mission1");
-            Scenario scenario = new Scenario("scn1", mission,new Window(new DateTime(2021, 1, 1), new DateTime(2021, 1, 2)));
             //Interpolate square function
             CelestialBody earth = new CelestialBody(399, "earth", 3.986004418E+5, 6356.7519, 6378.1366);
             StateVector[] data = new StateVector[10];
@@ -84,9 +82,6 @@ namespace IO.Astrodynamics.Models.Tests.Math
         [Fact]
         public void InterpolateStateVectorCubic()
         {
-
-            Models.Mission.Mission mission = new Models.Mission.Mission("mission1");
-            Scenario scenario = new Scenario("scn1", mission,new Window(new DateTime(2021, 1, 1), new DateTime(2021, 1, 2)));
             //Interpolate square function
             CelestialBody earth = new CelestialBody(399, "earth", 3.986004418E+5, 6356.7519, 6378.1366);
             StateVector[] data = new StateVector[10];
