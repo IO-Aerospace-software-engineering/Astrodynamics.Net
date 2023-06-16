@@ -261,14 +261,14 @@ public class APITest
         //Configure spacecraft
         Clock clock = new Clock("clk1", System.Math.Pow(2.0, 16.0));
         Spacecraft spacecraft =
-            new Spacecraft(-1782, "DRAGONFLY2", 1000.0, 10000.0, clock, parkingOrbit);
+            new Spacecraft(-172, "DRAGONFLY2", 1000.0, 10000.0, clock, parkingOrbit);
 
         FuelTank fuelTank = new FuelTank("ft1", "model1", 9000.0);
         Engine engine = new Engine("engine1", "model1", 450.0, 50.0);
         spacecraft.AddFuelTank(fuelTank, 9000.0, "fuelTank1");
         spacecraft.AddEngine(engine, fuelTank, "serialNumber1");
         spacecraft.AddPayload(new Payload("payload1", 50.0, "pay01"));
-        spacecraft.AddInstrument(new Instrument(-1782600, "CAM600", "mod1", 1.5,
+        spacecraft.AddInstrument(new Instrument(-172600, "CAM602", "mod1", 1.5,
             InstrumentShape.Circular, Vector3.VectorZ, Vector3.VectorY), new Vector3(0.0, -System.Math.PI * 0.5, 0.0));
         scenario.AddBody(spacecraft);
 
