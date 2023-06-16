@@ -24,11 +24,11 @@ namespace IO.Astrodynamics.Body.Spacecraft
         private HashSet<SpacecraftInstrument> _instruments = new();
         public IReadOnlyCollection<SpacecraftInstrument> Intruments => _instruments;
 
-        private HashSet<SpacecraftFuelTank> _fuelTanks = new();
-        public IReadOnlyCollection<SpacecraftFuelTank> FuelTanks => _fuelTanks;
+        private HashSet<FuelTank> _fuelTanks = new();
+        public IReadOnlyCollection<FuelTank> FuelTanks => _fuelTanks;
 
-        private HashSet<SpacecraftEngine> _engines = new();
-        public IReadOnlyCollection<SpacecraftEngine> Engines => _engines;
+        private HashSet<Engine> _engines = new();
+        public IReadOnlyCollection<Engine> Engines => _engines;
 
         private HashSet<Payload> _payloads = new();
         public IReadOnlyCollection<Payload> Payloads => _payloads;
@@ -71,34 +71,35 @@ namespace IO.Astrodynamics.Body.Spacecraft
         /// Add engine to spacecraft
         /// </summary>
         /// <param name="engine"></param>
-        /// <param name="fuelTank"></param>
-        /// <param name="serialNumber"></param>
+        /// <exception cref="ArgumentException"></exception>
         /// <exception cref="InvalidOperationException"></exception>
-        public void AddEngine(Engine engine, FuelTank fuelTank, string serialNumber)
+        public void AddEngine(Engine engine)
         {
-            if (!FuelTanks.Select(x => x.FuelTank).Contains(fuelTank))
+            if (engine == null) throw new ArgumentNullException(nameof(engine));
+            if (!FuelTanks.Contains(engine.FuelTank))
             {
                 throw new InvalidOperationException(
                     "Unknown fuel tank, you must add fuel tank to spacecraft before add engine");
             }
 
-            _engines.Add(new SpacecraftEngine(this, engine, FuelTanks.First(x => x.FuelTank == fuelTank), serialNumber));
+            if (!_engines.Add(engine))
+            {
+                throw new ArgumentException("Engine already added to spacecraft");
+            }
         }
 
         /// <summary>
         /// Add fuel tank to spacecraft
         /// </summary>
         /// <param name="fuelTank"></param>
-        /// <param name="quantity"></param>
-        /// <param name="serialNumber"></param>
-        public void AddFuelTank(FuelTank fuelTank, double quantity, string serialNumber)
+        /// <exception cref="ArgumentException"></exception>
+        public void AddFuelTank(FuelTank fuelTank)
         {
-            _fuelTanks.Add(new SpacecraftFuelTank(this, fuelTank, quantity, serialNumber));
-        }
-
-        public void RemoveFuelTank(SpacecraftFuelTank fuelTank)
-        {
-            _fuelTanks.Remove(fuelTank);
+            if (fuelTank == null) throw new ArgumentNullException(nameof(fuelTank));
+            if (!_fuelTanks.Add(fuelTank))
+            {
+                throw new ArgumentException("Fuel tank already added to spacecraft");
+            }
         }
 
         /// <summary>
@@ -143,7 +144,7 @@ namespace IO.Astrodynamics.Body.Spacecraft
         /// <returns></returns>
         public override double GetTotalMass()
         {
-            return DryOperatingMass + FuelTanks.Sum(x => x.Quantity) + Payloads.Sum(x => x.Mass) +
+            return DryOperatingMass + FuelTanks.Sum(x => x.InitialQuantity) + Payloads.Sum(x => x.Mass) +
                    (Child != null ? Child.GetTotalMass() : 0.0);
         }
 
@@ -153,7 +154,7 @@ namespace IO.Astrodynamics.Body.Spacecraft
         /// <returns></returns>
         public double GetTotalISP()
         {
-            return (Engines.Where(x => x.FuelTank.Quantity > 0.0).Sum(x => x.Engine.Thrust) /Constants.g0) /
+            return (Engines.Where(x => x.FuelTank.InitialQuantity > 0.0).Sum(x => x.Thrust) /Constants.g0) /
                    GetTotalFuelFlow();
         }
 
@@ -163,7 +164,7 @@ namespace IO.Astrodynamics.Body.Spacecraft
         /// <returns></returns>
         public double GetTotalFuelFlow()
         {
-            return Engines.Where(x => x.FuelTank.Quantity > 0.0).Sum(x => x.Engine.FuelFlow);
+            return Engines.Where(x => x.FuelTank.InitialQuantity > 0.0).Sum(x => x.FuelFlow);
         }
 
         /// <summary>
@@ -172,7 +173,7 @@ namespace IO.Astrodynamics.Body.Spacecraft
         /// <returns></returns>
         public double GetTotalFuel()
         {
-            return FuelTanks.Sum(x => x.Quantity);
+            return FuelTanks.Sum(x => x.InitialQuantity);
         }
 
         /// <summary>

@@ -11,14 +11,14 @@ namespace IO.Astrodynamics.Maneuver
         public bool IntersectionAtQ { get; private set; }
 
         protected ApsidalAlignmentManeuver(Spacecraft spacecraft, DateTime minimumEpoch,
-            TimeSpan maneuverHoldDuration, params SpacecraftEngine[] engines) : base(spacecraft, minimumEpoch,
+            TimeSpan maneuverHoldDuration, params Engine[] engines) : base(spacecraft, minimumEpoch,
             maneuverHoldDuration, engines)
         {
         }
 
         public ApsidalAlignmentManeuver(Spacecraft spacecraft, DateTime minimumEpoch,
             TimeSpan maneuverHoldDuration, OrbitalParameters.OrbitalParameters targetOrbit,
-            params SpacecraftEngine[] engines) : base(spacecraft, minimumEpoch, maneuverHoldDuration, targetOrbit,
+            params Engine[] engines) : base(spacecraft, minimumEpoch, maneuverHoldDuration, targetOrbit,
             engines)
         {
         }

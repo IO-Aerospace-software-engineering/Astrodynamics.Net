@@ -10,7 +10,9 @@ namespace IO.Astrodynamics.Body.Spacecraft
         public double ISP { get; private set; }
         public double FuelFlow { get; private set; }
         public double Thrust { get; private set; }
-        public Engine(string name, string model, double isp, double fuelFlow) 
+        public FuelTank FuelTank { get; }
+        public string SerialNumber { get;}
+        public Engine(string name, string model,  string serialNumber,double isp, double fuelFlow, FuelTank fuelTank) 
         {
             if (string.IsNullOrEmpty(name))
             {
@@ -36,6 +38,8 @@ namespace IO.Astrodynamics.Body.Spacecraft
             Model = model;
             ISP = isp;
             FuelFlow = fuelFlow;
+            FuelTank = fuelTank;
+            SerialNumber = serialNumber;
             Thrust = isp * fuelFlow *Constants.g0;
         }
     }

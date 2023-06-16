@@ -13,7 +13,7 @@ namespace IO.Astrodynamics.Maneuver
         public Window ManeuverWindow { get; internal set; }
         public DateTime MinimumEpoch { get; }
         public TimeSpan ManeuverHoldDuration { get; }
-        public IReadOnlyCollection<SpacecraftEngine> Engines { get; private set; }
+        public IReadOnlyCollection<Engine> Engines { get; private set; }
         public Maneuver NextManeuver { get; protected set; }
 
         //todo Maybe could I remove it
@@ -24,7 +24,7 @@ namespace IO.Astrodynamics.Maneuver
         public double FuelBurned { get; internal set; }
 
         protected Maneuver(Spacecraft spacecraft, DateTime minimumEpoch, TimeSpan maneuverHoldDuration, OrbitalParameters.OrbitalParameters targetOrbit,
-            params SpacecraftEngine[] engines)
+            params Engine[] engines)
         {
             if (spacecraft == null)
             {
@@ -43,7 +43,7 @@ namespace IO.Astrodynamics.Maneuver
             TargetOrbit = targetOrbit;
         }
 
-        protected Maneuver(Spacecraft spacecraft, DateTime minimumEpoch, TimeSpan maneuverHoldDuration, params SpacecraftEngine[] engines)
+        protected Maneuver(Spacecraft spacecraft, DateTime minimumEpoch, TimeSpan maneuverHoldDuration, params Engine[] engines)
         {
             if (spacecraft == null)
             {

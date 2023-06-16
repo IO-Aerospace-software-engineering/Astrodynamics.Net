@@ -47,8 +47,6 @@ namespace IO.Astrodynamics.Body.Spacecraft
         /// </summary>
         public Vector3 RefVector { get; }
 
-        public Spacecraft Spacecraft { get; }
-
         /// <summary>
         /// Instrument constructor
         /// </summary>

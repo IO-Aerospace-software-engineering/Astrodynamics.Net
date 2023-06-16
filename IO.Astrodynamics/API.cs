@@ -210,16 +210,16 @@ public class API
                 for (int j = 0; j < spacecraft.FuelTanks.Count; j++)
                 {
                     var fuelTank = spacecraft.FuelTanks.ElementAt(j);
-                    scenarioDto.Spacecraft.FuelTanks[j] = new FuelTank(j + 1, capacity: fuelTank.FuelTank.Capacity,
-                        quantity: fuelTank.Quantity, serialNumber: fuelTank.SerialNumber);
+                    scenarioDto.Spacecraft.FuelTanks[j] = new FuelTank(j + 1, capacity: fuelTank.Capacity,
+                        quantity: fuelTank.InitialQuantity, serialNumber: fuelTank.SerialNumber);
                 }
 
                 for (int j = 0; j < spacecraft.Engines.Count; j++)
                 {
                     var engine = spacecraft.Engines.ElementAt(j);
-                    scenarioDto.Spacecraft.Engines[j] = new EngineDTO(id: j + 1, name: engine.Engine.Name,
-                        fuelFlow: engine.Engine.FuelFlow, serialNumber: engine.SerialNumber,
-                        fuelTankSerialNumber: engine.FuelTank.SerialNumber, isp: engine.Engine.ISP);
+                    scenarioDto.Spacecraft.Engines[j] = new EngineDTO(id: j + 1, name: engine.Name,
+                        fuelFlow: engine.FuelFlow, serialNumber: engine.SerialNumber,
+                        fuelTankSerialNumber: engine.FuelTank.SerialNumber, isp: engine.ISP);
                 }
 
                 for (int j = 0; j < spacecraft.Payloads.Count; j++)

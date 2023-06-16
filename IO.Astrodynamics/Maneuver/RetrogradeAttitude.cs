@@ -7,7 +7,7 @@ namespace IO.Astrodynamics.Maneuver;
 
 public class RetrogradeAttitude : Maneuver
 {
-    public RetrogradeAttitude(Spacecraft spacecraft, DateTime minimumEpoch, TimeSpan maneuverHoldDuration, params SpacecraftEngine[] engines) : base(spacecraft,
+    public RetrogradeAttitude(Spacecraft spacecraft, DateTime minimumEpoch, TimeSpan maneuverHoldDuration, params Engine[] engines) : base(spacecraft,
         minimumEpoch, maneuverHoldDuration, engines)
     {
     }

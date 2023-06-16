@@ -50,10 +50,10 @@ namespace IO.Astrodynamics.Tests.Body
             Clock clk1 = new Clock("My clock", 1.0 / 256.0);
             Payload pl1 = new Payload("pl1", 300, "sn1");
             Spacecraft spc1 = new Spacecraft(-1001, "MySpacecraft", 1000.0, 10000.0, clk1, ke);
-            FuelTank fuelTank10 = new FuelTank("My fuel tank10", "ft2021", 4000.0);
-            FuelTank fuelTank11 = new FuelTank("My fuel tank11", "ft2021", 4000.0);
-            spc1.AddFuelTank(fuelTank10, 3000.0, "sn0");
-            spc1.AddFuelTank(fuelTank11, 4000.0, "sn1");
+            FuelTank fuelTank10 = new FuelTank("My fuel tank10", "ft2021", "sn0",4000.0,3000);
+            FuelTank fuelTank11 = new FuelTank("My fuel tank11", "ft2021", "sn1",4000.0,4000.0);
+            spc1.AddFuelTank(fuelTank10);
+            spc1.AddFuelTank(fuelTank11);
             spc1.AddPayload(pl1);
             Assert.Null(spc1.StandbyManeuver);
             Assert.Equal(ke, spc1.InitialOrbitalParameters);

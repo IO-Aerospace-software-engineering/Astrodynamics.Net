@@ -7,7 +7,7 @@ namespace IO.Astrodynamics.Maneuver;
 
 public class ZenithAttitude : Maneuver
 {
-    public ZenithAttitude(Spacecraft spacecraft, DateTime minimumEpoch, TimeSpan maneuverHoldDuration, params SpacecraftEngine[] engines) : base(spacecraft, minimumEpoch, maneuverHoldDuration, engines)
+    public ZenithAttitude(Spacecraft spacecraft, DateTime minimumEpoch, TimeSpan maneuverHoldDuration, params Engine[] engines) : base(spacecraft, minimumEpoch, maneuverHoldDuration, engines)
     {
     }
 }

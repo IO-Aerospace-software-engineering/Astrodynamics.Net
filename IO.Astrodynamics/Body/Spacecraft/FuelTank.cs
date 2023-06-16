@@ -8,8 +8,10 @@ namespace IO.Astrodynamics.Body.Spacecraft
         public string Name { get; private set; }
         public string Model { get; private set; }
         public double Capacity { get; private set; }
+        public double InitialQuantity { get; private set; }
+        public string SerialNumber { get; }
 
-        public FuelTank(string name, string model, double capacity) 
+        public FuelTank(string name, string model, string serialNumber,  double capacity, double initialQuantity) 
         {
             if (string.IsNullOrEmpty(name))
             {
@@ -29,6 +31,8 @@ namespace IO.Astrodynamics.Body.Spacecraft
             Name = name;
             Model = model;
             Capacity = capacity;
+            InitialQuantity = initialQuantity;
+            SerialNumber = serialNumber;
         }
 
     }

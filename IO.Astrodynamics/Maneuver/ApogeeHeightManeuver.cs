@@ -7,16 +7,15 @@ namespace IO.Astrodynamics.Maneuver
     {
         public double TargetApogee { get; }
 
-
         public ApogeeHeightManeuver(Spacecraft spacecraft, DateTime minimumEpoch, TimeSpan maneuverHoldDuration,
-            OrbitalParameters.OrbitalParameters targetOrbit, params SpacecraftEngine[] engines) : base(spacecraft,
+            OrbitalParameters.OrbitalParameters targetOrbit, params Engine[] engines) : base(spacecraft,
             minimumEpoch, maneuverHoldDuration, targetOrbit, engines)
         {
             TargetApogee = targetOrbit.ApogeeVector().Magnitude();
         }
 
         public ApogeeHeightManeuver(Spacecraft spacecraft, DateTime minimumEpoch, TimeSpan maneuverHoldDuration,
-            double apogeeRadius, params SpacecraftEngine[] engines) : base(spacecraft, minimumEpoch,
+            double apogeeRadius, params Engine[] engines) : base(spacecraft, minimumEpoch,
             maneuverHoldDuration, engines)
         {
             TargetApogee = apogeeRadius;

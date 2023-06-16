@@ -11,7 +11,7 @@ public class InstrumentPointingToAttitude : Maneuver
     public SpacecraftInstrument Instrument { get; }
     public INaifObject TargetId { get; }
     
-    public InstrumentPointingToAttitude(Spacecraft spacecraft, DateTime minimumEpoch, TimeSpan maneuverHoldDuration, SpacecraftEngine[] engines,
+    public InstrumentPointingToAttitude(Spacecraft spacecraft, DateTime minimumEpoch, TimeSpan maneuverHoldDuration, Engine[] engines,
         SpacecraftInstrument instrument, INaifObject targetId) : base(spacecraft, minimumEpoch, maneuverHoldDuration, engines)
     {
         Instrument = instrument ?? throw new ArgumentNullException(nameof(instrument));
