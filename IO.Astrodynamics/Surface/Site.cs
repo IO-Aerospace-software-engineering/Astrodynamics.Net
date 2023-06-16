@@ -90,32 +90,32 @@ namespace IO.Astrodynamics.Surface
             var target2Position = target2.GetPosition(epoch, this, Frame.ICRF, aberration);
             return target1Position.Angle(target2Position);
         }
-        public IEnumerable<Window> FindWindowsOnDistanceConstraint(Window searchWindow, INaifObject observer, INaifObject target, RelationnalOperator relationalOperator, double value,
+        public IEnumerable<Window> FindWindowsOnDistanceConstraint(Window searchWindow, INaifObject observer, RelationnalOperator relationalOperator, double value,
         Aberration aberration, TimeSpan stepSize)
     {
-        return _api.FindWindowsOnDistanceConstraint(searchWindow, observer, target, relationalOperator, value, aberration, stepSize);
+        return _api.FindWindowsOnDistanceConstraint(searchWindow, observer, this, relationalOperator, value, aberration, stepSize);
     }
 
-    public IEnumerable<Window> FindWindowsOnOccultationConstraint(Window searchWindow, INaifObject observer, INaifObject target, ShapeType targetShape, INaifObject frontBody,
+    public IEnumerable<Window> FindWindowsOnOccultationConstraint(Window searchWindow, INaifObject observer, ShapeType targetShape, INaifObject frontBody,
         ShapeType frontShape,
         OccultationType occultationType, Aberration aberration, TimeSpan stepSize)
     {
-        return _api.FindWindowsOnOccultationConstraint(searchWindow, observer, target, targetShape, frontBody, frontShape, occultationType, aberration, stepSize);
+        return _api.FindWindowsOnOccultationConstraint(searchWindow, observer, this, targetShape, frontBody, frontShape, occultationType, aberration, stepSize);
     }
 
-    public IEnumerable<Window> FindWindowsOnCoordinateConstraint(Window searchWindow, INaifObject observer, INaifObject target, Frame frame, CoordinateSystem coordinateSystem,
+    public IEnumerable<Window> FindWindowsOnCoordinateConstraint(Window searchWindow, INaifObject observer, Frame frame, CoordinateSystem coordinateSystem,
         Coordinate coordinate,
         RelationnalOperator relationalOperator, double value, double adjustValue, Aberration aberration, TimeSpan stepSize)
     {
-        return _api.FindWindowsOnCoordinateConstraint(searchWindow, observer, target, frame, coordinateSystem, coordinate, relationalOperator, value, adjustValue, aberration,
+        return _api.FindWindowsOnCoordinateConstraint(searchWindow, observer, this, frame, coordinateSystem, coordinate, relationalOperator, value, adjustValue, aberration,
             stepSize);
     }
 
-    public IEnumerable<Window> FindWindowsOnIlluminationConstraint(Window searchWindow, INaifObject observer, INaifObject targetBody, Frame fixedFrame, Geodetic geodetic,
+    public IEnumerable<Window> FindWindowsOnIlluminationConstraint(Window searchWindow, INaifObject observer, Geodetic geodetic,
         IlluminationAngle illuminationType, RelationnalOperator relationalOperator, double value, double adjustValue, Aberration aberration, TimeSpan stepSize,
         INaifObject illuminationSource, string method = "Ellipsoid")
     {
-        return _api.FindWindowsOnIlluminationConstraint(searchWindow, observer, targetBody, fixedFrame, geodetic, illuminationType, relationalOperator, value, adjustValue,
+        return _api.FindWindowsOnIlluminationConstraint(searchWindow, observer, this, Frame, geodetic, illuminationType, relationalOperator, value, adjustValue,
             aberration, stepSize, illuminationSource, method);
     }
     }

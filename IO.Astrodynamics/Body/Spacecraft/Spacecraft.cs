@@ -37,7 +37,6 @@ namespace IO.Astrodynamics.Body.Spacecraft
             get => Mass;
         }
 
-        //TODO Check if the MOM is not exceeded
         public double MaximumOperatingMass { get; }
 
         public Spacecraft(int naifId, string name, double mass, double maximumOperatingMass,Clock clock, OrbitalParameters.OrbitalParameters initialOrbitalParameters) : base(naifId, name, mass,initialOrbitalParameters,new Frame($"{name}_SPACECRAFT"))

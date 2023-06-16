@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using IO.Astrodynamics.Frames;
 using IO.Astrodynamics.Math;
 
 namespace IO.Astrodynamics.Body.Spacecraft
@@ -87,6 +89,24 @@ namespace IO.Astrodynamics.Body.Spacecraft
             RefVector = refVector;
             CrossAngle = crossAngle;
             NaifId = naifId;
+        }
+
+        /// <summary>
+        ///     Find time window when a target is in instrument's field of view
+        /// </summary>
+        /// <param name="searchWindow"></param>
+        /// <param name="observer"></param>
+        /// <param name="instrument"></param>
+        /// <param name="target"></param>
+        /// <param name="targetFrame"></param>
+        /// <param name="targetShape"></param>
+        /// <param name="aberration"></param>
+        /// <param name="stepSize"></param>
+        /// <returns></returns>
+        public IEnumerable<Time.Window> FindWindowsInFieldOfViewConstraint(Time.Window searchWindow, Spacecraft observer, Instrument instrument, INaifObject target,
+            Frame targetFrame, ShapeType targetShape, Aberration aberration, TimeSpan stepSize)
+        {
+            return API.Instance.FindWindowsInFieldOfViewConstraint(searchWindow, observer, this, target, targetFrame, targetShape, aberration, stepSize);
         }
     }
 }

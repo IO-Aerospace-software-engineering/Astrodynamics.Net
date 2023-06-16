@@ -27,7 +27,7 @@ namespace IO.Astrodynamics.Body
         /// <param name="aberration"></param>
         /// <param name="stepSize"></param>
         /// <returns></returns>
-        IEnumerable<Window> FindWindowsOnDistanceConstraint(Window searchWindow, INaifObject observer, INaifObject target, RelationnalOperator relationalOperator, double value,
+        IEnumerable<Window> FindWindowsOnDistanceConstraint(Window searchWindow, INaifObject observer, RelationnalOperator relationalOperator, double value,
             Aberration aberration, TimeSpan stepSize);
 
         /// <summary>
@@ -43,7 +43,7 @@ namespace IO.Astrodynamics.Body
         /// <param name="stepSize"></param>
         /// <param name="observer"></param>
         /// <returns></returns>
-        IEnumerable<Window> FindWindowsOnOccultationConstraint(Window searchWindow, INaifObject observer, INaifObject target, ShapeType targetShape, INaifObject frontBody,
+        IEnumerable<Window> FindWindowsOnOccultationConstraint(Window searchWindow, INaifObject observer, ShapeType targetShape, INaifObject frontBody,
             ShapeType frontShape, OccultationType occultationType, Aberration aberration, TimeSpan stepSize);
 
         /// <summary>
@@ -60,7 +60,7 @@ namespace IO.Astrodynamics.Body
         /// <param name="stepSize"></param>
         /// <param name="observer"></param>
         /// <returns></returns>
-        public IEnumerable<Window> FindWindowsOnCoordinateConstraint(Window searchWindow, INaifObject observer, INaifObject target, Frame frame, CoordinateSystem coordinateSystem,
+        public IEnumerable<Window> FindWindowsOnCoordinateConstraint(Window searchWindow, INaifObject observer, Frame frame, CoordinateSystem coordinateSystem,
             Coordinate coordinate, RelationnalOperator relationalOperator, double value, double adjustValue, Aberration aberration, TimeSpan stepSize);
 
         /// <summary>
@@ -80,7 +80,7 @@ namespace IO.Astrodynamics.Body
         /// <param name="stepSize"></param>
         /// <param name="method"></param>
         /// <returns></returns>
-        public IEnumerable<Window> FindWindowsOnIlluminationConstraint(Window searchWindow, INaifObject observer, INaifObject targetBody, Frame fixedFrame,
+        public IEnumerable<Window> FindWindowsOnIlluminationConstraint(Window searchWindow, INaifObject observer,
             Geodetic geodetic, IlluminationAngle illuminationType, RelationnalOperator relationalOperator, double value, double adjustValue, Aberration aberration,
             TimeSpan stepSize, INaifObject illuminationSource, string method = "Ellipsoid");
     }
