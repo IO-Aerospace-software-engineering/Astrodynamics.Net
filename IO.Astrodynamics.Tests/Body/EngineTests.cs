@@ -29,7 +29,7 @@ namespace IO.Astrodynamics.Tests.Body
             Assert.Throws<ArgumentException>(() => new Engine("eng", "model", "sn1", 0.0, 50.0, ft));
             Assert.Throws<ArgumentException>(() => new Engine("eng", "model", "sn1", 350.0, 0.0, ft));
             Assert.Throws<ArgumentException>(() => new Engine("eng", "model", "", 350.0, 50.0, ft));
-            Assert.Throws<ArgumentException>(() => new Engine("eng", "model", "sn1", 350.0, 50.0, null));
+            Assert.Throws<ArgumentNullException>(() => new Engine("eng", "model", "sn1", 350.0, 50.0, null));
         }
     }
 }

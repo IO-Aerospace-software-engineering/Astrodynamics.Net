@@ -5,8 +5,8 @@ namespace IO.Astrodynamics.Maneuver
 {
     public class PlaneAlignmentManeuver : ImpulseManeuver
     {
-        public double? RelativeInclination { get; private set; }
-        public bool? ExecuteAtAscendingNode { get; private set; }
+        public double? RelativeInclination { get; }
+        public bool? ExecuteAtAscendingNode { get; }
 
         public bool? ExecuteAtDescendingNode
         {

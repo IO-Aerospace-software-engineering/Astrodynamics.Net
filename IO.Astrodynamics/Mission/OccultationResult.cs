@@ -4,8 +4,8 @@ namespace IO.Astrodynamics.Mission
 {
     public class OccultationResult
     {
-        public OccultationType OccultationType { get; private set; }
-        public Window Window { get; private set; }
+        public OccultationType OccultationType { get; }
+        public Window Window { get; }
 
         public OccultationResult(in OccultationType occultationType, in Window window)
         {

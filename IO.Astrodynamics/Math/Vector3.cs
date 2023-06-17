@@ -11,7 +11,7 @@ namespace IO.Astrodynamics.Math
         public static Vector3 VectorX { get; } = new Vector3(1.0, 0.0, 0.0);
         public static Vector3 VectorY { get; } = new Vector3(0.0, 1.0, 0.0);
         public static Vector3 VectorZ { get; } = new Vector3(0.0, 0.0, 1.0);
-        public static Vector3 Zero { get; private set; } = new Vector3(0.0, 0.0, 0.0);
+        public static Vector3 Zero { get; } = new Vector3(0.0, 0.0, 0.0);
 
         [JsonConstructor]
         public Vector3(double x, double y, double z)

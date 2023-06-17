@@ -21,8 +21,8 @@ namespace IO.Astrodynamics.Body.Spacecraft
         public Spacecraft Child { get; private set; }
         public Clock Clock { get; private set; }
 
-        private HashSet<SpacecraftInstrument> _instruments = new();
-        public IReadOnlyCollection<SpacecraftInstrument> Intruments => _instruments;
+        private HashSet<Instrument> _instruments = new();
+        public IReadOnlyCollection<Instrument> Intruments => _instruments;
 
         private HashSet<FuelTank> _fuelTanks = new();
         public IReadOnlyCollection<FuelTank> FuelTanks => _fuelTanks;
@@ -61,10 +61,13 @@ namespace IO.Astrodynamics.Body.Spacecraft
         /// Add instrument to spacecraft
         /// </summary>
         /// <param name="instrument"></param>
-        /// <param name="orientation"></param>
-        public void AddInstrument(Instrument instrument, Vector3 orientation)
+        public void AddInstrument(Instrument instrument)
         {
-            _instruments.Add(new SpacecraftInstrument(this, instrument, orientation));
+            if (instrument == null) throw new ArgumentNullException(nameof(instrument));
+            if (!_instruments.Add(instrument))
+            {
+                throw new ArgumentException("Instrument already added to spacecraft");
+            }
         }
 
         /// <summary>

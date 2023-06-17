@@ -6,9 +6,9 @@ namespace IO.Astrodynamics.Maneuver
 {
     public class ApsidalAlignmentManeuver : ImpulseManeuver
     {
-        public double Theta { get; private set; }
-        public bool IntersectionAtP { get; private set; }
-        public bool IntersectionAtQ { get; private set; }
+        public double Theta { get; }
+        public bool IntersectionAtP { get; }
+        public bool IntersectionAtQ { get; }
 
         protected ApsidalAlignmentManeuver(Spacecraft spacecraft, DateTime minimumEpoch,
             TimeSpan maneuverHoldDuration, params Engine[] engines) : base(spacecraft, minimumEpoch,

@@ -5,8 +5,8 @@ namespace IO.Astrodynamics.Maneuver
 {
     public class CombinedManeuver : ImpulseManeuver
     {
-        public double TargetPerigeeHeight { get; private set; } = double.NaN;
-        public double TargetInclination { get; private set; } = double.NaN;
+        public double TargetPerigeeHeight { get; } = double.NaN;
+        public double TargetInclination { get; } = double.NaN;
 
         public CombinedManeuver(Spacecraft spacecraft, DateTime minimumEpoch, TimeSpan maneuverHoldDuration, OrbitalParameters.OrbitalParameters targetOrbit, params Engine[] engines) : base(spacecraft, minimumEpoch, maneuverHoldDuration, targetOrbit, engines)
         {

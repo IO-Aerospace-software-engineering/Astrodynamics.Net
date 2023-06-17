@@ -5,8 +5,10 @@ using IO.Astrodynamics.Math;
 
 namespace IO.Astrodynamics.Body.Spacecraft
 {
-    public class Instrument : INaifObject
+    public class Instrument : INaifObject, IEquatable<Instrument>
     {
+        
+
         /// <summary>
         /// Naif identifier
         /// </summary>
@@ -46,6 +48,11 @@ namespace IO.Astrodynamics.Body.Spacecraft
         /// Ref vector in the boresight plane
         /// </summary>
         public Vector3 RefVector { get; }
+        
+        /// <summary>
+        /// Instrument rotation relative to instrument platform. The orientation is expressed in euler angles
+        /// </summary>
+        public Vector3 Orientation { get; }
 
         /// <summary>
         /// Instrument constructor
@@ -59,8 +66,7 @@ namespace IO.Astrodynamics.Body.Spacecraft
         /// <param name="refVector"></param>
         /// <param name="crossAngle"></param>
         /// <exception cref="ArgumentException"></exception>
-        public Instrument(int naifId, string name, string model, double fieldOfView, InstrumentShape shape, Vector3 boresight, Vector3 refVector,
-            double crossAngle = double.NaN)
+        public Instrument(int naifId, string name, string model, double fieldOfView, InstrumentShape shape, Vector3 boresight, Vector3 refVector, Vector3 orientation, double crossAngle = double.NaN)
         {
             if (string.IsNullOrEmpty(name))
             {
@@ -85,6 +91,7 @@ namespace IO.Astrodynamics.Body.Spacecraft
             Shape = shape;
             Boresight = boresight;
             RefVector = refVector;
+            Orientation = orientation;
             CrossAngle = crossAngle;
             NaifId = naifId;
         }
@@ -94,17 +101,46 @@ namespace IO.Astrodynamics.Body.Spacecraft
         /// </summary>
         /// <param name="searchWindow"></param>
         /// <param name="observer"></param>
-        /// <param name="instrument"></param>
         /// <param name="target"></param>
         /// <param name="targetFrame"></param>
         /// <param name="targetShape"></param>
         /// <param name="aberration"></param>
         /// <param name="stepSize"></param>
         /// <returns></returns>
-        public IEnumerable<Time.Window> FindWindowsInFieldOfViewConstraint(Time.Window searchWindow, Spacecraft observer, Instrument instrument, INaifObject target,
+        public IEnumerable<Time.Window> FindWindowsInFieldOfViewConstraint(Time.Window searchWindow, Spacecraft observer, INaifObject target,
             Frame targetFrame, ShapeType targetShape, Aberration aberration, TimeSpan stepSize)
         {
             return API.Instance.FindWindowsInFieldOfViewConstraint(searchWindow, observer, this, target, targetFrame, targetShape, aberration, stepSize);
+        }
+        
+        public bool Equals(Instrument other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return NaifId == other.NaifId;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((Instrument)obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return NaifId;
+        }
+
+        public static bool operator ==(Instrument left, Instrument right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(Instrument left, Instrument right)
+        {
+            return !Equals(left, right);
         }
     }
 }

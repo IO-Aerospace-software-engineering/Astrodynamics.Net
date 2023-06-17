@@ -2,17 +2,19 @@ using System;
 
 namespace IO.Astrodynamics.Body.Spacecraft
 {
-    public class Engine 
+    public class Engine : IEquatable<Engine>
     {
+        
 
-        public string Name { get; private set; }
-        public string Model { get; private set; }
-        public double ISP { get; private set; }
-        public double FuelFlow { get; private set; }
-        public double Thrust { get; private set; }
+        public string Name { get; }
+        public string Model { get; }
+        public double ISP { get; }
+        public double FuelFlow { get; }
+        public double Thrust { get; }
         public FuelTank FuelTank { get; }
-        public string SerialNumber { get;}
-        public Engine(string name, string model,  string serialNumber,double isp, double fuelFlow, FuelTank fuelTank) 
+        public string SerialNumber { get; }
+
+        public Engine(string name, string model, string serialNumber, double isp, double fuelFlow, FuelTank fuelTank)
         {
             if (string.IsNullOrEmpty(name))
             {
@@ -34,13 +36,47 @@ namespace IO.Astrodynamics.Body.Spacecraft
                 throw new ArgumentException("Fuel flow must be a positive number");
             }
 
+            if (string.IsNullOrEmpty(name)) throw new ArgumentException("Value cannot be null or empty.", nameof(name));
+            if (string.IsNullOrEmpty(model)) throw new ArgumentException("Value cannot be null or empty.", nameof(model));
+            if (string.IsNullOrEmpty(serialNumber)) throw new ArgumentException("Value cannot be null or empty.", nameof(serialNumber));
+
             Name = name;
             Model = model;
             ISP = isp;
             FuelFlow = fuelFlow;
-            FuelTank = fuelTank;
+            FuelTank = fuelTank ?? throw new ArgumentNullException(nameof(fuelTank));
             SerialNumber = serialNumber;
-            Thrust = isp * fuelFlow *Constants.g0;
+            Thrust = isp * fuelFlow * Constants.g0;
+        }
+        
+        public bool Equals(Engine other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return Name == other.Name && Model == other.Model && SerialNumber == other.SerialNumber;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((Engine)obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Name, Model, SerialNumber);
+        }
+
+        public static bool operator ==(Engine left, Engine right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(Engine left, Engine right)
+        {
+            return !Equals(left, right);
         }
     }
 }

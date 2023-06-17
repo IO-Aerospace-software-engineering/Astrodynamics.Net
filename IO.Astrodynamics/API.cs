@@ -231,12 +231,12 @@ public class API
                 for (int j = 0; j < spacecraft.Intruments.Count; j++)
                 {
                     var instrument = spacecraft.Intruments.ElementAt(j);
-                    scenarioDto.Spacecraft.Instruments[j] = new DTO.Instrument(instrument.Instrument.NaifId,
-                        instrument.Instrument.Name, instrument.Instrument.Shape.GetDescription(),
+                    scenarioDto.Spacecraft.Instruments[j] = new DTO.Instrument(instrument.NaifId,
+                        instrument.Name, instrument.Shape.GetDescription(),
                         _mapper.Map<Vector3D>(instrument.Orientation),
-                        _mapper.Map<Vector3D>(instrument.Instrument.Boresight),
-                        _mapper.Map<Vector3D>(instrument.Instrument.RefVector),
-                        instrument.Instrument.FieldOfView, instrument.Instrument.CrossAngle);
+                        _mapper.Map<Vector3D>(instrument.Boresight),
+                        _mapper.Map<Vector3D>(instrument.RefVector),
+                        instrument.FieldOfView, instrument.CrossAngle);
                 }
 
                 //Build maneuvers
@@ -345,7 +345,7 @@ public class API
                         var instManeuver = maneuver as InstrumentPointingToAttitude;
                         scenarioDto.Spacecraft.PointingToAttitudes[
                                 scenarioDto.Spacecraft.PointingToAttitudes.Count(x => x.ManeuverOrder > -1)] =
-                            new DTO.InstrumentPointingToAttitude(order, instManeuver.Instrument.Instrument.NaifId,
+                            new DTO.InstrumentPointingToAttitude(order, instManeuver.Instrument.NaifId,
                                 instManeuver.TargetId.NaifId,
                                 instManeuver.ManeuverHoldDuration.TotalSeconds,
                                 instManeuver.MinimumEpoch.SecondsFromJ2000TDB());

@@ -8,9 +8,9 @@ namespace IO.Astrodynamics.Mission
 {
     public class Scenario
     {
-        public string Name { get; private set; }
-        public Window Window { get; private set; }
-        public Mission Mission { get; private set; }
+        public string Name { get; }
+        public Window Window { get; }
+        public Mission Mission { get; }
         private readonly HashSet<Body.Body> _bodies = new();
         public IReadOnlyCollection<Body.Body> Bodies => _bodies;
         private readonly HashSet<Site> _sites = new();

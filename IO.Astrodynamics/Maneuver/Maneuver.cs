@@ -13,11 +13,11 @@ namespace IO.Astrodynamics.Maneuver
         public Window ManeuverWindow { get; internal set; }
         public DateTime MinimumEpoch { get; }
         public TimeSpan ManeuverHoldDuration { get; }
-        public IReadOnlyCollection<Engine> Engines { get; private set; }
+        public IReadOnlyCollection<Engine> Engines { get; }
         public Maneuver NextManeuver { get; protected set; }
 
         //todo Maybe could I remove it
-        public Spacecraft Spacecraft { get; private set; }
+        public Spacecraft Spacecraft { get; }
 
         public OrbitalParameters.OrbitalParameters TargetOrbit { get; }
 

@@ -7,8 +7,8 @@ namespace IO.Astrodynamics.Body;
 public class CelestialBody : Body
 {
     public const int SunNaifId = 10;
-    public double PolarRadius { get; private set; }
-    public double EquatorialRadius { get; private set; }
+    public double PolarRadius { get; }
+    public double EquatorialRadius { get; }
     public double Flatenning { get; }
     public double GM { get; }
     public double SphereOfInfluence { get; private set; }

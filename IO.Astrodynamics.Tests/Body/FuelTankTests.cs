@@ -22,9 +22,11 @@ namespace IO.Astrodynamics.Tests.Body
         {
             Assert.Throws<ArgumentException>(() => new FuelTank("", "model", "sn1", 4000.0, 2000.0));
             Assert.Throws<ArgumentException>(() => new FuelTank("ft", "", "sn1", 4000.0, 2000.0));
-            Assert.Throws<ArgumentException>(() => new FuelTank("ft", "model", "sn1", 0.0, 2000.0));
+            Assert.Throws<ArgumentOutOfRangeException>(() => new FuelTank("ft", "model", "sn1", 0.0, 2000.0));
             Assert.Throws<ArgumentException>(() => new FuelTank("ft", "model", "", 4000.0, 2000.0));
-            Assert.Throws<ArgumentException>(() => new FuelTank("ft", "model", "sn1", 4000.0, -10.0));
+            Assert.Throws<ArgumentOutOfRangeException>(() => new FuelTank("ft", "model", "sn1", 4000.0, -10.0));
+            Assert.Throws<ArgumentOutOfRangeException>(() => new FuelTank("ft", "model", "sn1", -4000.0, 10.0));
+            Assert.Throws<ArgumentOutOfRangeException>(() => new FuelTank("ft", "model", "sn1", 4000.0, 5000.0));
         }
     }
 }

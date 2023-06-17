@@ -7,10 +7,10 @@ namespace IO.Astrodynamics.Body.Spacecraft
     public class Payload
     {
         private HashSet<Spacecraft> _spacecrafts = new();
-        public IReadOnlyCollection<Spacecraft> Spacecrafts { get; private set; }
-        public string Name { get; private set; }
-        public string SerialNumber { get; private set; }
-        public double Mass { get; private set; }
+        public IReadOnlyCollection<Spacecraft> Spacecrafts { get; }
+        public string Name { get; }
+        public string SerialNumber { get; }
+        public double Mass { get; }
 
         public Payload(string name, double mass, string serialNumber)
         {

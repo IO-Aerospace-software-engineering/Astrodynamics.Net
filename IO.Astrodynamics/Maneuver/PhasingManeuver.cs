@@ -5,8 +5,8 @@ namespace IO.Astrodynamics.Maneuver
 {
     public class PhasingManeuver : ImpulseManeuver
     {
-        public double TargetTrueLongitude { get; private set; } = double.NaN;
-        public uint RevolutionNumber { get; private set; }
+        public double TargetTrueLongitude { get; } = double.NaN;
+        public uint RevolutionNumber { get; }
 
         public PhasingManeuver(Spacecraft spacecraft, DateTime minimumEpoch, TimeSpan maneuverHoldDuration, OrbitalParameters.OrbitalParameters targetOrbit, uint revolutionNumber, params Engine[] engines) : base(spacecraft, minimumEpoch, maneuverHoldDuration, targetOrbit, engines)
         {

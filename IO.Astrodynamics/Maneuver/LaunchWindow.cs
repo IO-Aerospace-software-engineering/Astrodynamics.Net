@@ -5,11 +5,11 @@ namespace IO.Astrodynamics.Maneuver
 {
     public class LaunchWindow 
     {
-        public Window Window { get; private set; }
-        public double InertialInsertionVelocity { get; private set; }
-        public double NonInertialInsertionVelocity { get; private set; }
-        public double InertialAzimuth { get; private set; }
-        public double NonInertialAzimuth { get; private set; }
+        public Window Window { get; }
+        public double InertialInsertionVelocity { get; }
+        public double NonInertialInsertionVelocity { get; }
+        public double InertialAzimuth { get; }
+        public double NonInertialAzimuth { get; }
 
         public LaunchWindow(Window window, double inertialInsertionVelocity, double nonInertialInsertionVelocity, double inertialAzimuth, double nonInertialAzimuth)
         {

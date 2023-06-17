@@ -102,14 +102,13 @@ public class APITest
         Spacecraft spacecraft =
             new Spacecraft(-1783, "DRAGONFLY3", 1000.0, 10000.0, clock, parkingOrbit);
 
-        FuelTank fuelTank = new FuelTank("ft1", "model1", 9000.0);
-        Engine engine = new Engine("engine1", "model1", 450.0, 50.0);
-        spacecraft.AddFuelTank(fuelTank, 9000.0, "fuelTank1");
-        spacecraft.AddEngine(engine, fuelTank, "serialNumber1");
+        FuelTank fuelTank = new FuelTank("ft1", "model1","sn1", 9000.0,9000.0);
+        Engine engine = new Engine("engine1", "model1", "sn1", 450.0, 50.0, fuelTank);
+        spacecraft.AddFuelTank(fuelTank);
+        spacecraft.AddEngine(engine);
         spacecraft.AddPayload(new Payload("payload1", 50.0, "pay01"));
         spacecraft.AddInstrument(
-            new Instrument(-1783601, "CAM601", "mod1", 80.0 * IO.Astrodynamics.Constants.Deg2Rad,
-                InstrumentShape.Circular, Vector3.VectorZ, Vector3.VectorX), Vector3.VectorX);
+            new Instrument(-1783601, "CAM601", "mod1", 80.0 * IO.Astrodynamics.Constants.Deg2Rad, InstrumentShape.Circular, Vector3.VectorZ, Vector3.VectorX,Vector3.VectorX));
 
         var planeAlignmentManeuver = new PlaneAlignmentManeuver(spacecraft, DateTime.MinValue, TimeSpan.Zero,
             targetOrbit, spacecraft.Engines.First());
@@ -263,13 +262,12 @@ public class APITest
         Spacecraft spacecraft =
             new Spacecraft(-172, "DRAGONFLY2", 1000.0, 10000.0, clock, parkingOrbit);
 
-        FuelTank fuelTank = new FuelTank("ft1", "model1", 9000.0);
-        Engine engine = new Engine("engine1", "model1", 450.0, 50.0);
-        spacecraft.AddFuelTank(fuelTank, 9000.0, "fuelTank1");
-        spacecraft.AddEngine(engine, fuelTank, "serialNumber1");
+        FuelTank fuelTank = new FuelTank("ft1", "model1","sn1", 9000.0,9000.0);
+        Engine engine = new Engine("engine1", "model1", "sn1", 450.0, 50.0, fuelTank);
+        spacecraft.AddFuelTank(fuelTank);
+        spacecraft.AddEngine(engine);
         spacecraft.AddPayload(new Payload("payload1", 50.0, "pay01"));
-        spacecraft.AddInstrument(new Instrument(-172600, "CAM602", "mod1", 1.5,
-            InstrumentShape.Circular, Vector3.VectorZ, Vector3.VectorY), new Vector3(0.0, -System.Math.PI * 0.5, 0.0));
+        spacecraft.AddInstrument(new Instrument(-172600, "CAM602", "mod1", 1.5, InstrumentShape.Circular, Vector3.VectorZ, Vector3.VectorY,new Vector3(0.0, -System.Math.PI * 0.5, 0.0)));
         scenario.AddBody(spacecraft);
 
         //Execute scenario
@@ -277,7 +275,7 @@ public class APITest
 
         //Find windows when the earth is in field of view of camera 600 
         var res = _api.FindWindowsInFieldOfViewConstraint(new Window(DateTimeExtension.CreateTDB(676555200.0), DateTimeExtension.CreateTDB(676561647.0)), spacecraft,
-            spacecraft.Intruments.First().Instrument, TestHelpers.GetEarthAtJ2000(), TestHelpers.GetEarthAtJ2000().Frame, ShapeType.Ellipsoid, Aberration.LT,
+            spacecraft.Intruments.First(), TestHelpers.GetEarthAtJ2000(), TestHelpers.GetEarthAtJ2000().Frame, ShapeType.Ellipsoid, Aberration.LT,
             TimeSpan.FromHours(1.0)).ToArray();
 
         //Read results
@@ -331,13 +329,12 @@ public class APITest
         Spacecraft spacecraft =
             new Spacecraft(-179, "DRAGONFLY2", 1000.0, 10000.0, clock, parkingOrbit);
 
-        FuelTank fuelTank = new FuelTank("ft1", "model1", 9000.0);
-        Engine engine = new Engine("engine1", "model1", 450.0, 50.0);
-        spacecraft.AddFuelTank(fuelTank, 9000.0, "fuelTank1");
-        spacecraft.AddEngine(engine, fuelTank, "serialNumber1");
+        FuelTank fuelTank = new FuelTank("ft1", "model1","sn1", 9000.0,9000.0);
+        Engine engine = new Engine("engine1", "model1", "sn1", 450.0, 50.0, fuelTank);
+        spacecraft.AddFuelTank(fuelTank);
+        spacecraft.AddEngine(engine);
         spacecraft.AddPayload(new Payload("payload1", 50.0, "pay01"));
-        spacecraft.AddInstrument(new Instrument(-179600, "CAM600", "mod1", 1.5,
-            InstrumentShape.Circular, Vector3.VectorZ, Vector3.VectorX), Vector3.VectorX);
+        spacecraft.AddInstrument(new Instrument(-179600, "CAM600", "mod1", 1.5, InstrumentShape.Circular, Vector3.VectorZ, Vector3.VectorX, Vector3.VectorX));
 
         spacecraft.SetStandbyManeuver(new NadirAttitude(spacecraft, DateTime.MinValue, TimeSpan.Zero, spacecraft.Engines.First()));
 

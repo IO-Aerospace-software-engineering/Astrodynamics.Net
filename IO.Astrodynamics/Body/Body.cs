@@ -11,7 +11,7 @@ public abstract class Body : ILocalizable
 {
     public int NaifId { get; }
     public string Name { get; }
-    public double Mass { get; private set; }
+    public double Mass { get; }
 
     public OrbitalParameters.OrbitalParameters InitialOrbitalParameters { get; private set; }
     public Frame Frame { get; }
