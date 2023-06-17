@@ -36,7 +36,6 @@ namespace IO.Astrodynamics.Tests.Maneuvers
             Assert.Single(planeAlignmentManeuver.Engines);
             Assert.Equal(TimeSpan.FromDays(1.0), planeAlignmentManeuver.ManeuverHoldDuration);
             Assert.Equal(new DateTime(2021, 01, 01), planeAlignmentManeuver.MinimumEpoch);
-            Assert.Equal(spc1, planeAlignmentManeuver.Spacecraft);
             Assert.Equal(targetOrbit, planeAlignmentManeuver.TargetOrbit.AtEpoch(new DateTime(2021, 01, 01)));
         }
     }

@@ -16,27 +16,18 @@ namespace IO.Astrodynamics.Maneuver
         public IReadOnlyCollection<Engine> Engines { get; }
         public Maneuver NextManeuver { get; protected set; }
 
-        //todo Maybe could I remove it
-        public Spacecraft Spacecraft { get; }
-
         public OrbitalParameters.OrbitalParameters TargetOrbit { get; }
 
         public double FuelBurned { get; internal set; }
 
-        protected Maneuver(Spacecraft spacecraft, DateTime minimumEpoch, TimeSpan maneuverHoldDuration, OrbitalParameters.OrbitalParameters targetOrbit,
+        protected Maneuver(DateTime minimumEpoch, TimeSpan maneuverHoldDuration, OrbitalParameters.OrbitalParameters targetOrbit,
             params Engine[] engines)
         {
-            if (spacecraft == null)
-            {
-                throw new ArgumentNullException(nameof(spacecraft));
-            }
-
             if (targetOrbit == null)
             {
                 throw new ArgumentException("Target orbit must be define");
             }
 
-            Spacecraft = spacecraft;
             MinimumEpoch = minimumEpoch;
             ManeuverHoldDuration = maneuverHoldDuration;
             Engines = engines;
@@ -50,7 +41,6 @@ namespace IO.Astrodynamics.Maneuver
                 throw new ArgumentNullException(nameof(spacecraft));
             }
 
-            Spacecraft = spacecraft;
             MinimumEpoch = minimumEpoch;
             ManeuverHoldDuration = maneuverHoldDuration;
             Engines = engines;

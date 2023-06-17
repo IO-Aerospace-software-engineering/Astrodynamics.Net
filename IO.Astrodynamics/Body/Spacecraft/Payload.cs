@@ -3,11 +3,9 @@ using System.Collections.Generic;
 
 namespace IO.Astrodynamics.Body.Spacecraft
 {
-    //TODO create spacecraft payload
-    public class Payload
+    public class Payload : IEquatable<Payload>
     {
-        private HashSet<Spacecraft> _spacecrafts = new();
-        public IReadOnlyCollection<Spacecraft> Spacecrafts { get; }
+        
         public string Name { get; }
         public string SerialNumber { get; }
         public double Mass { get; }
@@ -24,5 +22,36 @@ namespace IO.Astrodynamics.Body.Spacecraft
             Mass = mass;
             SerialNumber = serialNumber;
         }
+        
+        public bool Equals(Payload other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return Name == other.Name && SerialNumber == other.SerialNumber && Mass.Equals(other.Mass);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((Payload)obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Name, SerialNumber, Mass);
+        }
+
+        public static bool operator ==(Payload left, Payload right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(Payload left, Payload right)
+        {
+            return !Equals(left, right);
+        }
+
     }
 }

@@ -3,8 +3,10 @@ using IO.Astrodynamics.OrbitalParameters;
 
 namespace IO.Astrodynamics.Frames;
 
-public class Frame
+public class Frame : IEquatable<Frame>
 {
+    
+
     public string Name { get; }
 
     private readonly API _api;
@@ -31,5 +33,35 @@ public class Frame
     public override string ToString()
     {
         return Name;
+    }
+    
+    public bool Equals(Frame other)
+    {
+        if (ReferenceEquals(null, other)) return false;
+        if (ReferenceEquals(this, other)) return true;
+        return Name == other.Name;
+    }
+
+    public override bool Equals(object obj)
+    {
+        if (ReferenceEquals(null, obj)) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        if (obj.GetType() != this.GetType()) return false;
+        return Equals((Frame)obj);
+    }
+
+    public override int GetHashCode()
+    {
+        return (Name != null ? Name.GetHashCode() : 0);
+    }
+
+    public static bool operator ==(Frame left, Frame right)
+    {
+        return Equals(left, right);
+    }
+
+    public static bool operator !=(Frame left, Frame right)
+    {
+        return !Equals(left, right);
     }
 }

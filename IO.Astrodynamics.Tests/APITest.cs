@@ -15,7 +15,6 @@ using Xunit;
 
 namespace IO.Astrodynamics.Tests;
 
-//todo profile performance
 public class APITest
 {
     private API _api = API.Instance;

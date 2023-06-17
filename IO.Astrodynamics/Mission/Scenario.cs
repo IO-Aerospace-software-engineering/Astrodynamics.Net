@@ -6,7 +6,7 @@ using IO.Astrodynamics.Time;
 
 namespace IO.Astrodynamics.Mission
 {
-    public class Scenario
+    public class Scenario : IEquatable<Scenario>
     {
         public string Name { get; }
         public Window Window { get; }
@@ -45,6 +45,36 @@ namespace IO.Astrodynamics.Mission
         public void Propagate(DirectoryInfo outputDirectory)
         {
             _api.PropagateScenario(this, outputDirectory);
+        }
+        
+        public bool Equals(Scenario other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return Name == other.Name;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((Scenario)obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return (Name != null ? Name.GetHashCode() : 0);
+        }
+
+        public static bool operator ==(Scenario left, Scenario right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(Scenario left, Scenario right)
+        {
+            return !Equals(left, right);
         }
     }
 }

@@ -32,10 +32,7 @@ namespace IO.Astrodynamics.Body.Spacecraft
 
         private HashSet<Payload> _payloads = new();
         public IReadOnlyCollection<Payload> Payloads => _payloads;
-        public double DryOperatingMass
-        {
-            get => Mass;
-        }
+        public double DryOperatingMass => Mass;
 
         public double MaximumOperatingMass { get; }
 

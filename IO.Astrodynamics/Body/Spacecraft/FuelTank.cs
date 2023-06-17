@@ -2,8 +2,38 @@ using System;
 
 namespace IO.Astrodynamics.Body.Spacecraft
 {
-    public class FuelTank
+    public class FuelTank : IEquatable<FuelTank>
     {
+        public bool Equals(FuelTank other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return Name == other.Name && Model == other.Model && SerialNumber == other.SerialNumber;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((FuelTank)obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Name, Model, SerialNumber);
+        }
+
+        public static bool operator ==(FuelTank left, FuelTank right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(FuelTank left, FuelTank right)
+        {
+            return !Equals(left, right);
+        }
+
         public string Name { get; }
         public string Model { get; }
         public double Capacity { get; }

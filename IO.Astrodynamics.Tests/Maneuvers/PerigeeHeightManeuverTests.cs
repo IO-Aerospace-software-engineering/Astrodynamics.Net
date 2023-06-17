@@ -35,7 +35,6 @@ namespace IO.Astrodynamics.Tests.Maneuvers
             Assert.Single(perigeeHeightManeuver.Engines);
             Assert.Equal(TimeSpan.FromDays(1.0), perigeeHeightManeuver.ManeuverHoldDuration);
             Assert.Equal(new DateTime(2021, 01, 01), perigeeHeightManeuver.MinimumEpoch);
-            Assert.Equal(spc1, perigeeHeightManeuver.Spacecraft);
             Assert.Equal(151000000.0, perigeeHeightManeuver.TargetPerigeeHeight);
         }
     }

@@ -7,7 +7,7 @@ using IO.Astrodynamics.Time;
 
 namespace IO.Astrodynamics.Body;
 
-public abstract class Body : ILocalizable
+public abstract class Body : ILocalizable, IEquatable<Body>
 {
     public int NaifId { get; }
     public string Name { get; }
@@ -200,30 +200,35 @@ public abstract class Body : ILocalizable
     }
 
     public abstract double GetTotalMass();
+    
+    public bool Equals(Body other)
+    {
+        if (ReferenceEquals(null, other)) return false;
+        if (ReferenceEquals(this, other)) return true;
+        return NaifId == other.NaifId;
+    }
 
     public override bool Equals(object obj)
     {
-        return Equals(obj as Body);
-    }
-
-    bool Equals(Body other)
-    {
-        return base.Equals(other) ||
-               NaifId == other.NaifId;
+        if (ReferenceEquals(null, obj)) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        if (obj.GetType() != this.GetType()) return false;
+        return Equals((Body)obj);
     }
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(base.GetHashCode(), NaifId);
+        return NaifId;
     }
 
     public static bool operator ==(Body left, Body right)
     {
-        return EqualityComparer<Body>.Default.Equals(left, right);
+        return Equals(left, right);
     }
 
     public static bool operator !=(Body left, Body right)
     {
-        return !(left == right);
+        return !Equals(left, right);
     }
+
 }
