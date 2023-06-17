@@ -405,17 +405,17 @@ public class APITest
     void GetCelestialBodyInformation()
     {
         //Read celestial body information from spice kernels
-        var res = _api.GetCelestialBodyInfo(TestHelpers.GetEarthAtJ2000());
+        var res = _api.GetCelestialBodyInfo(TestHelpers.GetEarthAtJ2000().NaifId);
         Assert.Equal(PlanetsAndMoons.EARTH.NaifId, res.Id);
         Assert.Equal(Stars.Sun.NaifId, res.CenterOfMotionId);
         Assert.Equal(PlanetsAndMoons.EARTH.Name, res.Name);
         Assert.Equal("", res.Error);
         Assert.Equal(13000, res.FrameId);
         Assert.Equal("ITRF93", res.FrameName);
-        Assert.Equal(398600.43543609593, res.GM);
-        Assert.Equal(6378.1365999999998, res.Radii.X);
-        Assert.Equal(6378.1365999999998, res.Radii.Y);
-        Assert.Equal(6356.7519000000002, res.Radii.Z);
+        Assert.Equal(398600435436095.93, res.GM);
+        Assert.Equal(6378136.5999999998, res.Radii.X);
+        Assert.Equal(6378136.5999999998, res.Radii.Y);
+        Assert.Equal(6356751.9000000002, res.Radii.Z);
     }
 
     [Fact]

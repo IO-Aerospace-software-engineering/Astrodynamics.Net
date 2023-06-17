@@ -4,5 +4,5 @@ namespace IO.Astrodynamics.SolarSystemObjects;
 
 public static class Stars
 {
-    public static SolarSytemObject Sun = new(10, "SUN", "IAU_SUN");
+    public static NaifObject Sun = new(10, "SUN", "IAU_SUN");
 }

@@ -10,17 +10,20 @@ namespace IO.Astrodynamics.Body;
 public abstract class Body : ILocalizable, IEquatable<Body>
 {
     public int NaifId { get; }
-    public string Name { get; }
-    public double Mass { get; }
+    public string Name { get; protected set; }
+    public double Mass { get; protected set; }
 
-    public OrbitalParameters.OrbitalParameters InitialOrbitalParameters { get; private set; }
-    public Frame Frame { get; }
+    public OrbitalParameters.OrbitalParameters InitialOrbitalParameters { get; protected set; }
+    public Frame Frame { get; protected set; }
 
-    private readonly HashSet<Body> _satellites = new();
+    protected readonly HashSet<Body> _satellites = new();
     public IReadOnlyCollection<Body> Satellites => _satellites;
 
-    private readonly API _api = API.Instance;
-
+    protected Body(int naifId)
+    {
+        NaifId = naifId;
+    }
+    
     /// <summary>
     /// Constructor
     /// </summary>
@@ -64,12 +67,12 @@ public abstract class Body : ILocalizable, IEquatable<Body>
     public IEnumerable<OrbitalParameters.OrbitalParameters> GetEphemeris(Window searchWindow, CelestialBody observer, Frame frame, Aberration aberration,
         TimeSpan stepSize)
     {
-        return _api.ReadEphemeris(searchWindow, observer, this, frame, aberration, stepSize);
+        return API.Instance.ReadEphemeris(searchWindow, observer, this, frame, aberration, stepSize);
     }
 
     public OrbitalParameters.OrbitalParameters GetEphemeris(DateTime epoch, CelestialBody observer, Frame frame, Aberration aberration)
     {
-        return _api.ReadEphemeris(epoch, observer, this, frame, aberration);
+        return API.Instance.ReadEphemeris(epoch, observer, this, frame, aberration);
     }
 
     public Math.Vector3 GetPosition(DateTime epoch, ILocalizable observer, Frame frame, Aberration aberration)
@@ -136,7 +139,7 @@ public abstract class Body : ILocalizable, IEquatable<Body>
     public IEnumerable<Window> FindOccultations(in Window searchWindow, INaifObject by, ShapeType byShape, INaifObject target, ShapeType targetShape,
         OccultationType occultationType, Aberration aberration, in TimeSpan coarseStepSize)
     {
-        return _api.FindWindowsOnOccultationConstraint(searchWindow, this, target, targetShape, by, byShape, occultationType, aberration, coarseStepSize);
+        return API.Instance.FindWindowsOnOccultationConstraint(searchWindow, this, target, targetShape, by, byShape, occultationType, aberration, coarseStepSize);
     }
 
     /// <summary>
@@ -169,20 +172,20 @@ public abstract class Body : ILocalizable, IEquatable<Body>
     public IEnumerable<Window> FindWindowsOnDistanceConstraint(Window searchWindow, INaifObject observer, RelationnalOperator relationalOperator, double value,
         Aberration aberration, TimeSpan stepSize)
     {
-        return _api.FindWindowsOnDistanceConstraint(searchWindow, observer, this, relationalOperator, value, aberration, stepSize);
+        return API.Instance.FindWindowsOnDistanceConstraint(searchWindow, observer, this, relationalOperator, value, aberration, stepSize);
     }
 
     public IEnumerable<Window> FindWindowsOnOccultationConstraint(Window searchWindow, INaifObject observer, ShapeType targetShape, INaifObject frontBody,
         ShapeType frontShape, OccultationType occultationType, Aberration aberration, TimeSpan stepSize)
     {
-        return _api.FindWindowsOnOccultationConstraint(searchWindow, observer, this, targetShape, frontBody, frontShape, occultationType, aberration, stepSize);
+        return API.Instance.FindWindowsOnOccultationConstraint(searchWindow, observer, this, targetShape, frontBody, frontShape, occultationType, aberration, stepSize);
     }
 
     public IEnumerable<Window> FindWindowsOnCoordinateConstraint(Window searchWindow, INaifObject observer, Frame frame, CoordinateSystem coordinateSystem,
         Coordinate coordinate,
         RelationnalOperator relationalOperator, double value, double adjustValue, Aberration aberration, TimeSpan stepSize)
     {
-        return _api.FindWindowsOnCoordinateConstraint(searchWindow, observer, this, frame, coordinateSystem, coordinate, relationalOperator, value, adjustValue, aberration,
+        return API.Instance.FindWindowsOnCoordinateConstraint(searchWindow, observer, this, frame, coordinateSystem, coordinate, relationalOperator, value, adjustValue, aberration,
             stepSize);
     }
 
@@ -190,7 +193,7 @@ public abstract class Body : ILocalizable, IEquatable<Body>
         IlluminationAngle illuminationType, RelationnalOperator relationalOperator, double value, double adjustValue, Aberration aberration, TimeSpan stepSize,
         INaifObject illuminationSource, string method = "Ellipsoid")
     {
-        return _api.FindWindowsOnIlluminationConstraint(searchWindow, observer, this, Frame, geodetic, illuminationType, relationalOperator, value, adjustValue,
+        return API.Instance.FindWindowsOnIlluminationConstraint(searchWindow, observer, this, Frame, geodetic, illuminationType, relationalOperator, value, adjustValue,
             aberration, stepSize, illuminationSource, method);
     }
 

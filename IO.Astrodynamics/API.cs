@@ -804,11 +804,11 @@ public class API
     /// </summary>
     /// <param name="celestialBody"></param>
     /// <returns></returns>
-    public CelestialBody GetCelestialBodyInfo(Body.CelestialBody celestialBody)
+    public CelestialBody GetCelestialBodyInfo(int naifId)
     {
         lock (lockObject)
         {
-            return GetCelestialBodyInfoProxy(celestialBody.NaifId);
+            return GetCelestialBodyInfoProxy(naifId);
         }
     }
 

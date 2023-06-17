@@ -2,4 +2,4 @@
 
 namespace IO.Astrodynamics.SolarSystemObjects;
 
-public readonly record struct SolarSytemObject(int NaifId, string Name, string Frame);
+public readonly record struct NaifObject(int NaifId, string Name, string Frame);

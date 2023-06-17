@@ -3,9 +3,9 @@ namespace IO.Astrodynamics;
 public class Constants
 {
     /// <summary>
-    /// Gravitational constant km3/kg/s2
+    /// Gravitational constant m3/kg/s2
     /// </summary>
-    public const double G = 6.67430e-20;
+    public const double G = 6.67430e-11;
 
     public const double Deg2Rad = System.Math.PI / 180.0;
     public const double Rad2Deg = 180.0 / System.Math.PI;

@@ -1,17 +1,48 @@
 using System;
 using IO.Astrodynamics.Frames;
+using IO.Astrodynamics.Time;
 
 
 namespace IO.Astrodynamics.Body;
 
 public class CelestialBody : Body
 {
-    public const int SunNaifId = 10;
     public double PolarRadius { get; }
     public double EquatorialRadius { get; }
     public double Flatenning { get; }
     public double GM { get; }
     public double SphereOfInfluence { get; private set; }
+
+    public CelestialBody(int naifId) : base(naifId)
+    {
+        var info = API.Instance.GetCelestialBodyInfo(naifId);
+        Name = info.Name;
+        Frame = new Frame(info.FrameName);
+        GM = info.GM;
+        PolarRadius = info.Radii.Z;
+        EquatorialRadius = info.Radii.X;
+        Flatenning = (EquatorialRadius - PolarRadius) / EquatorialRadius;
+        Mass = GM / Constants.G;
+        if (double.IsNaN(Flatenning))
+        {
+            Flatenning = double.PositiveInfinity;
+        }
+
+        if (NaifId != 10)
+        {
+            InitialOrbitalParameters = this.GetEphemeris(DateTimeExtension.J2000, new CelestialBody(info.CenterOfMotionId), Frame.ECLIPTIC, Aberration.None);
+
+            if (InitialOrbitalParameters != null)
+            {
+                InitialOrbitalParameters.CenterOfMotion._satellites.Add(this);
+            }
+        }
+
+        SphereOfInfluence = InitialOrbitalParameters != null
+            ? SphereOfInluence(InitialOrbitalParameters.SemiMajorAxis(), Mass,
+                InitialOrbitalParameters.CenterOfMotion.Mass)
+            : double.PositiveInfinity;
+    }
 
     /// <summary>
     /// 
@@ -28,7 +59,7 @@ public class CelestialBody : Body
     }
 
     public CelestialBody(int naifId, string name, double GM, double polarRadius, double equatorialRadius, Frame frame, OrbitalParameters.OrbitalParameters initialOrbitalParameters)
-        : base(naifId, name, GM /Constants.G, initialOrbitalParameters, frame)
+        : base(naifId, name, GM / Constants.G, initialOrbitalParameters, frame)
     {
         if (naifId < 0)
         {
