@@ -13,8 +13,6 @@ using IO.Astrodynamics.Body;
 using IO.Astrodynamics.Frames;
 using IO.Astrodynamics.Maneuver;
 using IO.Astrodynamics.Math;
-using IO.Astrodynamics.Mission;
-using IO.Astrodynamics.OrbitalParameters;
 using IO.Astrodynamics.Time;
 using ApsidalAlignmentManeuver = IO.Astrodynamics.Maneuver.ApsidalAlignmentManeuver;
 using CelestialBody = IO.Astrodynamics.DTO.CelestialBody;

@@ -1,10 +1,8 @@
 using System;
 using IO.Astrodynamics.Body;
 using IO.Astrodynamics.Math;
-using IO.Astrodynamics.Mission;
 using IO.Astrodynamics.OrbitalParameters;
 using IO.Astrodynamics.SolarSystemObjects;
-using IO.Astrodynamics.Time;
 using Xunit;
 
 namespace IO.Astrodynamics.Tests.Math

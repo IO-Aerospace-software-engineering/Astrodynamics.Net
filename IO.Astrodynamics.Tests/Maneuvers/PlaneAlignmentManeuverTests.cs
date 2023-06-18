@@ -3,10 +3,8 @@ using System.Linq;
 using IO.Astrodynamics.Body;
 using IO.Astrodynamics.Body.Spacecraft;
 using IO.Astrodynamics.Maneuver;
-using IO.Astrodynamics.Mission;
 using IO.Astrodynamics.OrbitalParameters;
 using IO.Astrodynamics.SolarSystemObjects;
-using IO.Astrodynamics.Time;
 using Xunit;
 
 namespace IO.Astrodynamics.Tests.Maneuvers

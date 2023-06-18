@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using IO.Astrodynamics.Body;
 using IO.Astrodynamics.Coordinates;
 using IO.Astrodynamics.Frames;
 using IO.Astrodynamics.Time;

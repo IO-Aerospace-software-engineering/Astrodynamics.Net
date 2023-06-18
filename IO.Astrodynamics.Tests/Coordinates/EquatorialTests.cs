@@ -1,5 +1,4 @@
 ﻿using System;
-using AutoMapper.Configuration;
 using IO.Astrodynamics.Body;
 using IO.Astrodynamics.Coordinates;
 using IO.Astrodynamics.Math;

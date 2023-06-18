@@ -1,6 +1,5 @@
 using System;
 using IO.Astrodynamics.Frames;
-using IO.Astrodynamics.SolarSystemObjects;
 using IO.Astrodynamics.Time;
 
 
