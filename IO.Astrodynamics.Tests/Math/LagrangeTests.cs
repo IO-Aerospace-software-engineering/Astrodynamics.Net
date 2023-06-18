@@ -11,6 +11,10 @@ namespace IO.Astrodynamics.Tests.Math
 {
     public class LagrangeTests
     {
+        public LagrangeTests()
+        {
+            API.Instance.LoadKernels(Constants.SolarSystemKernelPath);
+        }
         [Fact]
         public void InterpolateSquare()
         {

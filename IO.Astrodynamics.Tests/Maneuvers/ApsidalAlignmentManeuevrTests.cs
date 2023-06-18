@@ -11,6 +11,10 @@ namespace IO.Astrodynamics.Tests.Maneuvers
 {
     public class ApsidalAlignmentManeuevrTests
     {
+        public ApsidalAlignmentManeuevrTests()
+        {
+            API.Instance.LoadKernels(Constants.SolarSystemKernelPath);
+        }
         [Fact]
         public void Create()
         {

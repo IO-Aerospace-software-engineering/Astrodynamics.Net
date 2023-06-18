@@ -13,6 +13,10 @@ namespace IO.Astrodynamics.Tests.Maneuvers
 {
     public class PhasingManeuverTests
     {
+        public PhasingManeuverTests()
+        {
+            API.Instance.LoadKernels(Constants.SolarSystemKernelPath);
+        }
         [Fact]
         public void Create()
         {

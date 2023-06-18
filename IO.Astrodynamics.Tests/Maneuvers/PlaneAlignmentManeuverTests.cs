@@ -13,6 +13,10 @@ namespace IO.Astrodynamics.Tests.Maneuvers
 {
     public class PlaneAlignmentManeuverTests
     {
+        public PlaneAlignmentManeuverTests()
+        {
+            API.Instance.LoadKernels(Constants.SolarSystemKernelPath);
+        }
         [Fact]
         public void Create()
         {
