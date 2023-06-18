@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using IO.Astrodynamics.Body;
+using IO.Astrodynamics.Math;
 using IO.Astrodynamics.OrbitalParameters;
 using IO.Astrodynamics.SolarSystemObjects;
 using IO.Astrodynamics.Time;
@@ -37,7 +38,19 @@ public class CelestialBodyTests
     public void CreateFromNaifObject()
     {
         CelestialBody moon = new CelestialBody(PlanetsAndMoons.MOON.NaifId);
-        throw new NotImplementedException();
+        Assert.Equal("MOON", moon.Name);
+        Assert.Equal(301, moon.NaifId);
+        Assert.Equal(0.0, moon.Flatenning);
+        Assert.Equal(1737400.0, moon.EquatorialRadius);
+        Assert.Equal(4902800066163.796, moon.GM);
+        Assert.Equal(1737400.0, moon.PolarRadius);
+        Assert.Equal(66482231.94758831, moon.SphereOfInfluence);
+        Assert.Equal(7.345789170645306E+22, moon.Mass);
+        Assert.NotNull(moon.InitialOrbitalParameters);
+        Assert.Equal(399, moon.InitialOrbitalParameters.CenterOfMotion.NaifId);
+        Assert.Equal(new Vector3(-291608384.6334355, -274979741.16904783, 36271196.6337128), moon.InitialOrbitalParameters.ToStateVector().Position);
+        Assert.Equal(new Vector3(643.5313877190328, -730.9839838563024, -11.506464582342058), moon.InitialOrbitalParameters.ToStateVector().Velocity);
+        Assert.Equal(Frames.Frame.ECLIPTIC, moon.InitialOrbitalParameters.Frame);
     }
 
     [Fact]

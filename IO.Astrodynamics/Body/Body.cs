@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using IO.Astrodynamics.Coordinates;
 using IO.Astrodynamics.Frames;
 using IO.Astrodynamics.OrbitalParameters;
+using IO.Astrodynamics.SolarSystemObjects;
 using IO.Astrodynamics.Time;
 
 namespace IO.Astrodynamics.Body;
@@ -10,18 +11,33 @@ namespace IO.Astrodynamics.Body;
 public abstract class Body : ILocalizable, IEquatable<Body>
 {
     public int NaifId { get; }
-    public string Name { get; protected set; }
-    public double Mass { get; protected set; }
+    public string Name { get; }
+    public double Mass { get; }
 
-    public OrbitalParameters.OrbitalParameters InitialOrbitalParameters { get; protected set; }
-    public Frame Frame { get; protected set; }
+    public OrbitalParameters.OrbitalParameters InitialOrbitalParameters { get; private set; }
+    public Frame Frame { get; }
 
-    protected readonly HashSet<Body> _satellites = new();
+    private readonly HashSet<Body> _satellites = new();
     public IReadOnlyCollection<Body> Satellites => _satellites;
 
     protected Body(int naifId)
     {
+        
+        var info = API.Instance.GetCelestialBodyInfo(naifId);
         NaifId = naifId;
+        Name = info.Name;
+        Frame = new Frame(info.FrameName);
+        Mass = info.GM / Constants.G;
+
+        if (NaifId != Stars.Sun.NaifId)
+        {
+            InitialOrbitalParameters = this.GetEphemeris(DateTimeExtension.J2000, new CelestialBody(info.CenterOfMotionId), Frame.ECLIPTIC, Aberration.None);
+
+            if (InitialOrbitalParameters != null)
+            {
+                InitialOrbitalParameters.CenterOfMotion._satellites.Add(this);
+            }
+        }
     }
     
     /// <summary>

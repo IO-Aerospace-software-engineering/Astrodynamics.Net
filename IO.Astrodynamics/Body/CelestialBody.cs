@@ -1,5 +1,6 @@
 using System;
 using IO.Astrodynamics.Frames;
+using IO.Astrodynamics.SolarSystemObjects;
 using IO.Astrodynamics.Time;
 
 
@@ -16,26 +17,13 @@ public class CelestialBody : Body
     public CelestialBody(int naifId) : base(naifId)
     {
         var info = API.Instance.GetCelestialBodyInfo(naifId);
-        Name = info.Name;
-        Frame = new Frame(info.FrameName);
         GM = info.GM;
         PolarRadius = info.Radii.Z;
         EquatorialRadius = info.Radii.X;
         Flatenning = (EquatorialRadius - PolarRadius) / EquatorialRadius;
-        Mass = GM / Constants.G;
         if (double.IsNaN(Flatenning))
         {
             Flatenning = double.PositiveInfinity;
-        }
-
-        if (NaifId != 10)
-        {
-            InitialOrbitalParameters = this.GetEphemeris(DateTimeExtension.J2000, new CelestialBody(info.CenterOfMotionId), Frame.ECLIPTIC, Aberration.None);
-
-            if (InitialOrbitalParameters != null)
-            {
-                InitialOrbitalParameters.CenterOfMotion._satellites.Add(this);
-            }
         }
 
         SphereOfInfluence = InitialOrbitalParameters != null
