@@ -3,6 +3,7 @@ using IO.Astrodynamics.Body;
 using IO.Astrodynamics.Math;
 using IO.Astrodynamics.Mission;
 using IO.Astrodynamics.OrbitalParameters;
+using IO.Astrodynamics.SolarSystemObjects;
 using IO.Astrodynamics.Time;
 using Xunit;
 
@@ -55,7 +56,7 @@ namespace IO.Astrodynamics.Tests.Math
         {
 
             //Interpolate square function
-            CelestialBody earth = new CelestialBody(399, "earth", 3.986004418E+5, 6356.7519, 6378.1366);
+            CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH.NaifId);
             StateVector[] data = new StateVector[10];
             var start = new DateTime(2021, 01, 01, 0, 0, 0);
             for (int i = 0; i < 10; i++)
@@ -83,7 +84,7 @@ namespace IO.Astrodynamics.Tests.Math
         public void InterpolateStateVectorCubic()
         {
             //Interpolate square function
-            CelestialBody earth = new CelestialBody(399, "earth", 3.986004418E+5, 6356.7519, 6378.1366);
+            CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH.NaifId);
             StateVector[] data = new StateVector[10];
             var start = new DateTime(2021, 01, 01, 0, 0, 0);
             for (int i = 0; i < 10; i++)

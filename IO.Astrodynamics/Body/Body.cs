@@ -28,6 +28,12 @@ public abstract class Body : ILocalizable, IEquatable<Body>
         
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="naifId">Naif identifier</param>
+    /// <param name="frame">Initial orbital parameters frame</param>
+    /// <param name="epoch">Epoch</param>
     protected Body(int naifId, Frame frame, DateTime epoch)
     {
         ExtendedInformation = API.Instance.GetCelestialBodyInfo(naifId);
@@ -38,7 +44,7 @@ public abstract class Body : ILocalizable, IEquatable<Body>
 
         if (NaifId != Stars.Sun.NaifId)
         {
-            InitialOrbitalParameters = this.GetEphemeris(epoch, new CelestialBody(ExtendedInformation.CenterOfMotionId), frame, Aberration.None);
+            InitialOrbitalParameters = GetEphemeris(epoch, new CelestialBody(ExtendedInformation.CenterOfMotionId), frame, Aberration.None);
 
             if (InitialOrbitalParameters != null)
             {

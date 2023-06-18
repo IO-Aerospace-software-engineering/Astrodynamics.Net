@@ -42,13 +42,13 @@ public class APITest
         Window window = new Window(start, end);
 
         //Define launch site
-        LaunchSite launchSite = new LaunchSite(399303, "S3", TestHelpers.GetEarthAtJ2000(),
+        LaunchSite launchSite = new LaunchSite(399303, "S3", TestHelpers.EarthAtJ2000,
             new Geodetic(-81.0 * IO.Astrodynamics.Constants.Deg2Rad, 28.5 * IO.Astrodynamics.Constants.Deg2Rad, 0.0));
 
         //Define the targeted parking orbit
         StateVector parkingOrbit = new StateVector(
             new Vector3(5056554.1874925727, 4395595.4942363985, 0.0),
-            new Vector3(-3708.6305608890916, 4266.2914313011433, 6736.8538488755494), TestHelpers.GetEarthAtJ2000(),
+            new Vector3(-3708.6305608890916, 4266.2914313011433, 6736.8538488755494), TestHelpers.EarthAtJ2000,
             start, Frames.Frame.ICRF);
 
         //Create launch object
@@ -80,20 +80,20 @@ public class APITest
 
         Astrodynamics.Mission.Mission mission = new Astrodynamics.Mission.Mission("mission01");
         Scenario scenario = new Scenario("scn1", mission, new Window(startPropagator, end));
-        scenario.AddBody(TestHelpers.GetSun());
-        scenario.AddBody(TestHelpers.GetEarthAtJ2000());
-        scenario.AddBody(TestHelpers.GetMoonAtJ2000());
+        scenario.AddBody(TestHelpers.Sun);
+        scenario.AddBody(TestHelpers.EarthAtJ2000);
+        scenario.AddBody(TestHelpers.MoonAtJ2000);
 
         //Define parking orbit
         StateVector parkingOrbit = new StateVector(
             new Vector3(5056554.1874925727, 4395595.4942363985, 0.0),
-            new Vector3(-3708.6305608890916, 4266.2914313011433, 6736.8538488755494), TestHelpers.GetEarthAtJ2000(),
+            new Vector3(-3708.6305608890916, 4266.2914313011433, 6736.8538488755494), TestHelpers.EarthAtJ2000,
             start, Frames.Frame.ICRF);
 
         //Define target orbit
         StateVector targetOrbit = new StateVector(
             new Vector3(4390853.7278876612, 5110607.0005866792, 917659.86391987884),
-            new Vector3(-4979.4693432656513, 3033.2639866911495, 6933.1803797017265), TestHelpers.GetEarthAtJ2000(),
+            new Vector3(-4979.4693432656513, 3033.2639866911495, 6933.1803797017265), TestHelpers.EarthAtJ2000,
             start, Frames.Frame.ICRF);
 
         //Create and configure spacecraft
@@ -181,7 +181,7 @@ public class APITest
     {
         //Find time windows when the moon will be 400000 km away from the Earth
         var res = _api.FindWindowsOnDistanceConstraint(new Window(DateTimeExtension.CreateTDB(220881665.18391809), DateTimeExtension.CreateTDB(228657665.18565452)),
-            TestHelpers.GetEarthAtJ2000(), TestHelpers.GetMoonAtJ2000(), RelationnalOperator.Greater, 400000000, Aberration.None,
+            TestHelpers.EarthAtJ2000, TestHelpers.MoonAtJ2000, RelationnalOperator.Greater, 400000000, Aberration.None,
             TimeSpan.FromSeconds(86400.0));
         var windows = res as Window[] ?? res.ToArray();
         Assert.Equal(4, windows.Count());
@@ -196,7 +196,7 @@ public class APITest
     {
         //Find time windows when the Sun will be occulted by the moon
         var res = _api.FindWindowsOnOccultationConstraint(new Window(DateTimeExtension.CreateTDB(61473664.183390938), DateTimeExtension.CreateTDB(61646464.183445148)),
-            TestHelpers.GetEarthAtJ2000(), TestHelpers.GetSun(), ShapeType.Ellipsoid, TestHelpers.GetMoonAtJ2000(), ShapeType.Ellipsoid,
+            TestHelpers.EarthAtJ2000, TestHelpers.Sun, ShapeType.Ellipsoid, TestHelpers.MoonAtJ2000, ShapeType.Ellipsoid,
             OccultationType.Any, Aberration.LT, TimeSpan.FromSeconds(3600.0));
         var windows = res as Window[] ?? res.ToArray();
         Assert.Single(windows);
@@ -207,11 +207,11 @@ public class APITest
     [Fact]
     public void FindWindowsOnCoordinateConstraint()
     {
-        Site site = new Site(13, "DSS-13", TestHelpers.GetEarthAtJ2000(),
+        Site site = new Site(13, "DSS-13", TestHelpers.EarthAtJ2000,
             new Geodetic(-116.7944627147624 * IO.Astrodynamics.Constants.Deg2Rad, 35.2471635434595 * IO.Astrodynamics.Constants.Deg2Rad, 0.107));
         //Find time windows when the moon will be above the horizon relative to Deep Space Station 13
         var res = _api.FindWindowsOnCoordinateConstraint(new Window(DateTimeExtension.CreateTDB(730036800.0), DateTimeExtension.CreateTDB(730123200)), site,
-            TestHelpers.GetMoonAtJ2000(), site.Frame, CoordinateSystem.Latitudinal, Coordinate.Latitude, RelationnalOperator.Greater,
+            TestHelpers.MoonAtJ2000, site.Frame, CoordinateSystem.Latitudinal, Coordinate.Latitude, RelationnalOperator.Greater,
             0.0, 0.0, Aberration.None, TimeSpan.FromSeconds(60.0));
 
         var windows = res as Window[] ?? res.ToArray();
@@ -225,10 +225,10 @@ public class APITest
     {
         //Find time windows when the geodetic point is illuminated by the sun (Official twilight 0.8° bellow horizon)
         var res = _api.FindWindowsOnIlluminationConstraint(new Window(DateTimeExtension.CreateTDB(674524800), DateTimeExtension.CreateTDB(674611200)),
-            TestHelpers.GetSun(), TestHelpers.GetEarthAtJ2000(), new Frames.Frame("ITRF93"),
+            TestHelpers.Sun, TestHelpers.EarthAtJ2000, new Frames.Frame("ITRF93"),
             new Geodetic(2.2 * IO.Astrodynamics.Constants.Deg2Rad, 48.0 * IO.Astrodynamics.Constants.Deg2Rad, 0.0),
             IlluminationAngle.Incidence, RelationnalOperator.Lower, System.Math.PI * 0.5 - (-0.8 * IO.Astrodynamics.Constants.Deg2Rad), 0.0, Aberration.CNS,
-            TimeSpan.FromHours(4.5), TestHelpers.GetSun());
+            TimeSpan.FromHours(4.5), TestHelpers.Sun);
         var windows = res as Window[] ?? res.ToArray();
         Assert.Equal(2, windows.Count());
         Assert.Equal("2021-05-17T12:00:00.0000000 (TDB)", windows[0].StartDate.ToFormattedString());
@@ -246,14 +246,14 @@ public class APITest
         //Configure scenario
         Scenario scenario = new Scenario("Scenario_A", new Astrodynamics.Mission.Mission("mission01"),
             new Window(start, end));
-        scenario.AddBody(TestHelpers.GetSun());
-        scenario.AddBody(TestHelpers.GetEarthAtJ2000());
-        scenario.AddBody(TestHelpers.GetMoonAtJ2000());
+        scenario.AddBody(TestHelpers.Sun);
+        scenario.AddBody(TestHelpers.EarthAtJ2000);
+        scenario.AddBody(TestHelpers.MoonAtJ2000);
 
         //Define parking orbit
 
         StateVector parkingOrbit = new StateVector(
-            new Vector3(6800000.0, 0.0, 0.0), new Vector3(0.0, 7656.2204182967143, 0.0), TestHelpers.GetEarthAtJ2000(),
+            new Vector3(6800000.0, 0.0, 0.0), new Vector3(0.0, 7656.2204182967143, 0.0), TestHelpers.EarthAtJ2000,
             start, Frames.Frame.ICRF);
 
         //Configure spacecraft
@@ -274,7 +274,7 @@ public class APITest
 
         //Find windows when the earth is in field of view of camera 600 
         var res = _api.FindWindowsInFieldOfViewConstraint(new Window(DateTimeExtension.CreateTDB(676555200.0), DateTimeExtension.CreateTDB(676561647.0)), spacecraft,
-            spacecraft.Intruments.First(), TestHelpers.GetEarthAtJ2000(), TestHelpers.GetEarthAtJ2000().Frame, ShapeType.Ellipsoid, Aberration.LT,
+            spacecraft.Intruments.First(), TestHelpers.EarthAtJ2000, TestHelpers.EarthAtJ2000.Frame, ShapeType.Ellipsoid, Aberration.LT,
             TimeSpan.FromHours(1.0)).ToArray();
 
         //Read results
@@ -289,7 +289,7 @@ public class APITest
     public void ReadEphemeris()
     {
         var searchWindow = new Window(DateTimeExtension.CreateTDB(0.0), DateTimeExtension.CreateTDB(100.0));
-        var res = _api.ReadEphemeris(searchWindow, TestHelpers.GetEarthAtJ2000(), TestHelpers.GetMoonAtJ2000(), Frames.Frame.ICRF, Aberration.LT,
+        var res = _api.ReadEphemeris(searchWindow, TestHelpers.EarthAtJ2000, TestHelpers.MoonAtJ2000, Frames.Frame.ICRF, Aberration.LT,
             TimeSpan.FromSeconds(10.0)).Select(x => x.ToStateVector());
 
         var stateVectors = res as StateVector[] ?? res.ToArray();
@@ -313,14 +313,14 @@ public class APITest
 
         //Configure scenario
         Scenario scenario = new Scenario("Scenario_B", new Astrodynamics.Mission.Mission("mission01"), window);
-        scenario.AddBody(TestHelpers.GetSun());
-        scenario.AddBody(TestHelpers.GetEarthAtJ2000());
-        scenario.AddBody(TestHelpers.GetMoonAtJ2000());
+        scenario.AddBody(TestHelpers.Sun);
+        scenario.AddBody(TestHelpers.EarthAtJ2000);
+        scenario.AddBody(TestHelpers.MoonAtJ2000);
 
         //Define parking orbit
 
         StateVector parkingOrbit = new StateVector(
-            new Vector3(6800000.0, 0.0, 0.0), new Vector3(0.0, 7656.2204182967143, 0.0), TestHelpers.GetEarthAtJ2000(),
+            new Vector3(6800000.0, 0.0, 0.0), new Vector3(0.0, 7656.2204182967143, 0.0), TestHelpers.EarthAtJ2000,
             start, Frames.Frame.ICRF);
 
         //Configure spacecraft
@@ -366,13 +366,13 @@ public class APITest
         Clock clock = new Clock("clk1", System.Math.Pow(2.0, 16.0));
         var spacecraft = new Spacecraft(-135, "Spc1", 3000.0, 10000.0, clock, new StateVector(new Vector3(6800, 0, 0),
             new Vector3(0, 8.0, 0),
-            TestHelpers.GetEarthAtJ2000(),
+            TestHelpers.EarthAtJ2000,
             DateTimeExtension.CreateTDB(0.0), Frames.Frame.ICRF));
 
         var sv = new StateVector[size];
         for (int i = 0; i < size; ++i)
         {
-            sv[i] = new StateVector(new Vector3(6800 + i, i, i), new Vector3(i, 8.0 + i * 0.001, i), TestHelpers.GetEarthAtJ2000(),
+            sv[i] = new StateVector(new Vector3(6800 + i, i, i), new Vector3(i, 8.0 + i * 0.001, i), TestHelpers.EarthAtJ2000,
                 DateTimeExtension.CreateTDB(i), Frames.Frame.ICRF);
         }
 
@@ -385,7 +385,7 @@ public class APITest
         _api.LoadKernels(file);
 
         var window = new Window(DateTimeExtension.J2000, DateTimeExtension.J2000.AddSeconds(9.0));
-        var stateVectors = _api.ReadEphemeris(window, TestHelpers.GetEarthAtJ2000(), spacecraft, Frames.Frame.ICRF, Aberration.None, TimeSpan.FromSeconds(1.0))
+        var stateVectors = _api.ReadEphemeris(window, TestHelpers.EarthAtJ2000, spacecraft, Frames.Frame.ICRF, Aberration.None, TimeSpan.FromSeconds(1.0))
             .Select(x => x.ToStateVector()).ToArray();
         for (int i = 0; i < size; ++i)
         {
@@ -405,7 +405,7 @@ public class APITest
     void GetCelestialBodyInformation()
     {
         //Read celestial body information from spice kernels
-        var res = _api.GetCelestialBodyInfo(TestHelpers.GetEarthAtJ2000().NaifId);
+        var res = _api.GetCelestialBodyInfo(TestHelpers.EarthAtJ2000.NaifId);
         Assert.Equal(PlanetsAndMoons.EARTH.NaifId, res.Id);
         Assert.Equal(Stars.Sun.NaifId, res.CenterOfMotionId);
         Assert.Equal(PlanetsAndMoons.EARTH.Name, res.Name);

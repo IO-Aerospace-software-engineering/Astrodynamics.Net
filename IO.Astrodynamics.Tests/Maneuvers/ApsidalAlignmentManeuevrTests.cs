@@ -4,6 +4,7 @@ using IO.Astrodynamics.Body;
 using IO.Astrodynamics.Body.Spacecraft;
 using IO.Astrodynamics.Maneuver;
 using IO.Astrodynamics.OrbitalParameters;
+using IO.Astrodynamics.SolarSystemObjects;
 using Xunit;
 
 namespace IO.Astrodynamics.Tests.Maneuvers
@@ -13,7 +14,7 @@ namespace IO.Astrodynamics.Tests.Maneuvers
         [Fact]
         public void Create()
         {
-            CelestialBody sun = new CelestialBody(10, "sun", 1.32712440018E+11, 695508.0, 695508.0);
+            CelestialBody sun = new CelestialBody(Stars.Sun.NaifId);
 
             var ke = new KeplerianElements(150000000.0, 0.0, 0.0, 0.0, 0.0, 0.0, sun, new DateTime(2021, 01, 01), Frames.Frame.ECLIPTIC);
             Clock clk1 = new Clock("My clock", 1.0 / 256.0);

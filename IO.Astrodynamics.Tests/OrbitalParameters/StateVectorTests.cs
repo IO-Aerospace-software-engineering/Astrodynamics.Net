@@ -18,7 +18,7 @@ namespace IO.Astrodynamics.Tests.OrbitalParameters
         [Fact]
         public void Create()
         {
-            CelestialBody earth = new CelestialBody(399, "earth", 3.986004418E+5, 6356.7519, 6378.1366);
+            CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH.NaifId);
 
             Vector3 pos = new Vector3(1.0, 2.0, 3.0);
             Vector3 vel = new Vector3(4.0, 5.0, 6.0);
@@ -34,21 +34,21 @@ namespace IO.Astrodynamics.Tests.OrbitalParameters
         [Fact]
         public void Eccentricity()
         {
-            CelestialBody earth = new CelestialBody(399, "earth", 3.986004418E+5, 6356.7519, 6378.1366);
+            CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH.NaifId);
             
-            StateVector sv = new StateVector(new Vector3(-6.116559469556896E+03, -1.546174698676721E+03, 2.521950157430313E+03), new Vector3(-8.078523150700097E-01, -5.477647950892673, -5.297615757935174), earth, DateTime.UtcNow, Frames.Frame.ICRF);
-            Assert.Equal(1.3532064672852535E-03, sv.Eccentricity());
+            StateVector sv = new StateVector(new Vector3(-6.116559469556896E+06, -1.546174698676721E+06, 2.521950157430313E+06), new Vector3(-8.078523150700097E+02, -5.477647950892673E+03, -5.297615757935174E+03), earth, DateTime.UtcNow, Frames.Frame.ICRF);
+            Assert.Equal(1.3532176446914895E-03, sv.Eccentricity());
         }
 
         [Fact]
         public void EccentricityVector()
         {
-            CelestialBody earth = new CelestialBody(399, "earth", 3.986004418E+5, 6356.7519, 6378.1366);
+            CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH.NaifId);
             
-            StateVector sv = new StateVector(new Vector3(6800.0, 0.0, 0.0), new Vector3(0.0, 8.0, 0.0), earth, DateTime.UtcNow, Frames.Frame.ICRF);
+            StateVector sv = new StateVector(new Vector3(6800000.0, 0.0, 0.0), new Vector3(0.0, 8000.0, 0.0), earth, DateTime.UtcNow, Frames.Frame.ICRF);
             Vector3 ev = sv.EccentricityVector();
-            Assert.Equal(0.09182016466094156, ev.Magnitude());
-            Assert.Equal(0.09182016466094156, ev.X);
+            Assert.Equal(0.09182018209252996, ev.Magnitude());
+            Assert.Equal(0.09182018209252996, ev.X);
             Assert.Equal(0.0, ev.Y);
             Assert.Equal(0.0, ev.Z);
         }
@@ -56,7 +56,7 @@ namespace IO.Astrodynamics.Tests.OrbitalParameters
         [Fact]
         public void SpecificAngularMomentum()
         {
-            CelestialBody sun = new CelestialBody(10, "sun", 1.32712440018E+11, 695508.0, 695508.0);
+            CelestialBody sun = new CelestialBody(Stars.Sun.NaifId);
             
             StateVector sv = new StateVector(new Vector3(149600000.0, 0.0, 0.0), new Vector3(0.0, 29.8, 0.0), sun, DateTime.UtcNow, Frames.Frame.ICRF);
 
@@ -69,17 +69,17 @@ namespace IO.Astrodynamics.Tests.OrbitalParameters
         [Fact]
         public void SpecificOrbitalEnergyMomentum()
         {
-            CelestialBody earth = new CelestialBody(399, "earth", 3.986004418E+5, 6356.7519, 6378.1366);
+            CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH.NaifId);
             
-            StateVector sv = new StateVector(new Vector3(-6.116559469556896E+03, -1.546174698676721E+03, 2.521950157430313E+03), new Vector3(-8.078523150700097E-01, -5.477647950892673, -5.297615757935174), earth, DateTime.UtcNow, Frames.Frame.ICRF);
+            StateVector sv = new StateVector(new Vector3(-6.116559469556896E+06, -1.546174698676721E+06, 2.521950157430313E+06), new Vector3(-8.078523150700097E+02, -5.477647950892673E+03, -5.297615757935174E+03), earth, DateTime.UtcNow, Frames.Frame.ICRF);
 
-            Assert.Equal(-29.305466524713985, sv.SpecificOrbitalEnergy()); //ISS orbital energy in MJ
+            Assert.Equal(-29305465.58806747, sv.SpecificOrbitalEnergy()); //ISS orbital energy in MJ
         }
 
         [Fact]
         public void Inclination()
         {
-            CelestialBody earth = new CelestialBody(399, "earth", 3.986004418E+5, 6356.7519, 6378.1366);
+            CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH.NaifId);
             
             StateVector sv = new StateVector(new Vector3(6800.0, 0.0, 0.0), new Vector3(0.0, 5.0, 5.0), earth, DateTime.UtcNow, Frames.Frame.ICRF);
             Assert.Equal(System.Math.PI / 4.0, sv.Inclination());
@@ -88,16 +88,16 @@ namespace IO.Astrodynamics.Tests.OrbitalParameters
         [Fact]
         public void SemiMajorAxis()
         {
-            CelestialBody earth = new CelestialBody(399, "earth", 3.986004418E+5, 6356.7519, 6378.1366);
+            CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH.NaifId);
             
-            StateVector sv = new StateVector(new Vector3(8000.0, 0.0, 0.0), new Vector3(0.0, 6.0, 6.0), earth, DateTime.UtcNow, Frames.Frame.ICRF);
-            Assert.Equal(14415.871593742577, sv.SemiMajorAxis());
+            StateVector sv = new StateVector(new Vector3(8000000.0, 0.0, 0.0), new Vector3(0.0, 6000.0, 6000.0), earth, DateTime.UtcNow, Frames.Frame.ICRF);
+            Assert.Equal(14415872.19306759, sv.SemiMajorAxis());
         }
 
         [Fact]
         public void AscendingNodeVector()
         {
-            CelestialBody earth = new CelestialBody(399, "earth", 3.986004418E+5, 6356.7519, 6378.1366);
+            CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH.NaifId);
             
             StateVector sv = new StateVector(new Vector3(8000.0, 0.0, 0.0), new Vector3(0.0, 6.0, 6.0), earth, DateTime.UtcNow, Frames.Frame.ICRF);
             var v = sv.AscendingNodeVector().Normalize();
@@ -109,7 +109,7 @@ namespace IO.Astrodynamics.Tests.OrbitalParameters
         [Fact]
         public void AscendingNode()
         {
-            CelestialBody earth = new CelestialBody(399, "earth", 3.986004418E+5, 6356.7519, 6378.1366);
+            CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH.NaifId);
             
             StateVector sv = new StateVector(new Vector3(9208.0, 3352, 0.0), new Vector3(-1.75, 4.83, 5.14), earth, DateTime.UtcNow, Frames.Frame.ICRF);
             Assert.Equal(20.0030883092998, sv.AscendingNode() *IO.Astrodynamics.Constants.Rad2Deg);
@@ -121,75 +121,75 @@ namespace IO.Astrodynamics.Tests.OrbitalParameters
         [Fact]
         public void ArgumentOfPeriapis()
         {
-            CelestialBody earth = new CelestialBody(399, "earth", 3.986004418E+5, 6356.7519, 6378.1366);
+            CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH.NaifId);
             
-            StateVector sv = new StateVector(new Vector3(8237.0, 17.0, 5308.0), new Vector3(-2.0, 6.0, 3.0), earth, DateTime.UtcNow, Frames.Frame.ICRF);
+            StateVector sv = new StateVector(new Vector3(8237000.0, 17000.0, 5308000.0), new Vector3(-2000.0, 6000.0, 3000.0), earth, DateTime.UtcNow, Frames.Frame.ICRF);
 
-            Assert.Equal(53.62182047159395, sv.ArgumentOfPeriapsis() *IO.Astrodynamics.Constants.Rad2Deg);
+            Assert.Equal(53.621820299859436, sv.ArgumentOfPeriapsis() *IO.Astrodynamics.Constants.Rad2Deg);
 
-            sv = new StateVector(new Vector3(3973.0, -4881.0, -931.0), new Vector3(5.4, 3.36, 5.89), earth, DateTime.UtcNow, Frames.Frame.ICRF);
+            sv = new StateVector(new Vector3(3973000.0, -4881000.0, -931000.0), new Vector3(5400.0, 3360.0, 5890.0), earth, DateTime.UtcNow, Frames.Frame.ICRF);
 
-            Assert.Equal(350.5106160942597, sv.ArgumentOfPeriapsis() *IO.Astrodynamics.Constants.Rad2Deg);
+            Assert.Equal(350.51061587951995, sv.ArgumentOfPeriapsis() *IO.Astrodynamics.Constants.Rad2Deg);
         }
 
         [Fact]
         public void TrueAnomaly()
         {
-            CelestialBody earth = new CelestialBody(399, "earth", 3.986004418E+5, 6356.7519, 6378.1366);
+            CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH.NaifId);
             
-            StateVector sv = new StateVector(new Vector3(5070.0, -2387.0, 1430.0), new Vector3(2.45, 6.35, 6.44), earth, DateTime.UtcNow, Frames.Frame.ICRF);
+            StateVector sv = new StateVector(new Vector3(5070000.0, -2387000.0, 1430000.0), new Vector3(2450.0, 6350.0, 6440.0), earth, DateTime.UtcNow, Frames.Frame.ICRF);
 
-            Assert.Equal(30.575383721029773, sv.TrueAnomaly() *IO.Astrodynamics.Constants.Rad2Deg);
+            Assert.Equal(30.57538215436613, sv.TrueAnomaly() *IO.Astrodynamics.Constants.Rad2Deg);
 
-            sv = new StateVector(new Vector3(1664.0, -4862.0, -2655.0), new Vector3(7.52, 0.89, 5.52), earth, DateTime.UtcNow, Frames.Frame.ICRF);
+            sv = new StateVector(new Vector3(1664000.0, -4862000.0, -2655000.0), new Vector3(7520.0, 890, 5520.0), earth, DateTime.UtcNow, Frames.Frame.ICRF);
 
-            Assert.Equal(329.4769992556316, sv.TrueAnomaly() *IO.Astrodynamics.Constants.Rad2Deg);
+            Assert.Equal(329.477000818209, sv.TrueAnomaly() *IO.Astrodynamics.Constants.Rad2Deg);
         }
 
         [Fact]
         public void EccentricAnomaly()
         {
-            CelestialBody earth = new CelestialBody(399, "earth", 3.986004418E+5, 6356.7519, 6378.1366);
+            CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH.NaifId);
             
-            StateVector sv = new StateVector(new Vector3(6700.0, 2494.0, 0.0), new Vector3(-2.15, 8.85, 0.0), earth, DateTime.UtcNow, Frames.Frame.ICRF);
+            StateVector sv = new StateVector(new Vector3(6700000.0, 2494000.0, 0.0), new Vector3(-2150.0, 8850.0, 0.0), earth, DateTime.UtcNow, Frames.Frame.ICRF);
 
-            Assert.Equal(0.2077617460590267, sv.EccentricAnomaly());
+            Assert.Equal(0.20776173316152752, sv.EccentricAnomaly());
         }
 
         [Fact]
         public void MeanAnomaly()
         {
-            CelestialBody earth = new CelestialBody(399, "earth", 3.986004418E+5, 6356.7519, 6378.1366);
+            CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH.NaifId);
             
-            StateVector sv = new StateVector(new Vector3(-5775.068936894231, -3372.353197848874, 651.695854037289), new Vector3(-0.661469579672604, -7.147573777688288, -2.915719736461653), earth, DateTime.UtcNow, Frames.Frame.ICRF);
+            StateVector sv = new StateVector(new Vector3(-5775.068936894231E+03, -3372.353197848874E+03, 651.695854037289E+03), new Vector3(-0.661469579672604E+03, -7.147573777688288E+03, -2.915719736461653E+03), earth, DateTime.UtcNow, Frames.Frame.ICRF);
 
-            Assert.Equal(59.99823682142395, sv.MeanAnomaly() *IO.Astrodynamics.Constants.Rad2Deg);
+            Assert.Equal(59.99823497591805, sv.MeanAnomaly() *IO.Astrodynamics.Constants.Rad2Deg);
         }
 
         [Fact]
         public void Period()
         {
-            CelestialBody earth = new CelestialBody(399, "earth", 3.986004418E+5, 6356.7519, 6378.1366);
+            CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH.NaifId);
             
-            StateVector sv = new StateVector(new Vector3(-5775.068936894231, -3372.353197848874, 651.695854037289), new Vector3(-0.661469579672604, -7.147573777688288, -2.915719736461653), earth, DateTime.UtcNow, Frames.Frame.ICRF);
+            StateVector sv = new StateVector(new Vector3(-5775.068936894231E+03, -3372.353197848874E+03, 651.695854037289E+03), new Vector3(-0.661469579672604E+03, -7.147573777688288E+03, -2.915719736461653E+03), earth, DateTime.UtcNow, Frames.Frame.ICRF);
 
-            Assert.Equal(1.5501796250555555, sv.Period().TotalHours);
+            Assert.Equal(1.5501796754722221, sv.Period().TotalHours);
         }
 
         [Fact]
         public void MeanMotion()
         {
-            CelestialBody earth = new CelestialBody(399, "earth", 3.986004418E+5, 6356.7519, 6378.1366);
+            CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH.NaifId);
             
-            StateVector sv = new StateVector(new Vector3(-5775.068936894231, -3372.353197848874, 651.695854037289), new Vector3(-0.661469579672604, -7.147573777688288, -2.915719736461653), earth, DateTime.UtcNow, Frames.Frame.ICRF);
+            StateVector sv = new StateVector(new Vector3(-5775.068936894231E+03, -3372.353197848874E+03, 651.695854037289E+03), new Vector3(-0.661469579672604E+03, -7.147573777688288E+03, -2.915719736461653E+03), earth, DateTime.UtcNow, Frames.Frame.ICRF);
 
-            Assert.Equal(0.0011258883962765153, sv.MeanMotion());
+            Assert.Equal(0.0011258883596591215, sv.MeanMotion());
         }
 
         [Fact]
         public void ToFrame()
         {
-            CelestialBody earth = new CelestialBody(399, "earth", 3.986004418E+5, 6356.7519, 6378.1366);
+            CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH.NaifId);
 
             //J2000->Ecliptic
             //Earth from sun at 0 TDB
@@ -207,7 +207,7 @@ namespace IO.Astrodynamics.Tests.OrbitalParameters
         [Fact]
         public void ToNonInertialFrame()
         {
-            CelestialBody earth = new CelestialBody(399, "earth", 3.986004418E+5, 6356.7519, 6378.1366);
+            CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH.NaifId);
             
             var epoch = new DateTime(2000, 1, 1, 12, 0, 0);
             var earthFrame = new Frames.Frame(PlanetsAndMoons.EARTH.Frame);
@@ -229,9 +229,9 @@ namespace IO.Astrodynamics.Tests.OrbitalParameters
         public void PerigeeVelocity()
         {
             
-            var earth = TestHelpers.GetEarthAtJ2000();
-            var sv = new StateVector(new Vector3(6800.0, 0.0, 0.0), new Vector3(0.0, 8.0, 0.0), earth, earth.InitialOrbitalParameters.Epoch, Frames.Frame.ICRF);
-            Assert.Equal(8.0, sv.PerigeeVelocity());
+            var earth = TestHelpers.EarthAtJ2000;
+            var sv = new StateVector(new Vector3(6800000.0, 0.0, 0.0), new Vector3(0.0, 8000.0, 0.0), earth, earth.InitialOrbitalParameters.Epoch, Frames.Frame.ICRF);
+            Assert.Equal(8000.0, sv.PerigeeVelocity(),6);
             
         }
 
@@ -239,9 +239,9 @@ namespace IO.Astrodynamics.Tests.OrbitalParameters
         public void ApogeeVelocity()
         {
             
-            var earth = TestHelpers.GetEarthAtJ2000();
-            var sv = new StateVector(new Vector3(6800.0, 0.0, 0.0), new Vector3(0.0, 8.0, 0.0), earth, earth.InitialOrbitalParameters.Epoch, Frames.Frame.ICRF);
-            Assert.Equal(6.65442800735294, sv.ApogeeVelocity());
+            var earth = TestHelpers.EarthAtJ2000;
+            var sv = new StateVector(new Vector3(6800000.0, 0.0, 0.0), new Vector3(0.0, 8000.0, 0.0), earth, earth.InitialOrbitalParameters.Epoch, Frames.Frame.ICRF);
+            Assert.Equal(6654.42777338588, sv.ApogeeVelocity());
 
         }
     }

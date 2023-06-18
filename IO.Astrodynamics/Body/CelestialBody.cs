@@ -14,7 +14,11 @@ public class CelestialBody : Body
     public double GM { get; }
     public double SphereOfInfluence { get; private set; }
 
-    public CelestialBody(int naifId) : base(naifId)
+    public CelestialBody(int naifId) : this(naifId, Frame.ECLIPTIC, DateTimeExtension.J2000)
+    {
+    }
+
+    public CelestialBody(int naifId, Frame frame, DateTime epoch) : base(naifId, frame, epoch)
     {
         GM = ExtendedInformation.GM;
         PolarRadius = ExtendedInformation.Radii.Z;
@@ -50,7 +54,8 @@ public class CelestialBody : Body
     {
     }
 
-    private CelestialBody(int naifId, string name, double GM, double polarRadius, double equatorialRadius, Frame frame, OrbitalParameters.OrbitalParameters initialOrbitalParameters)
+    private CelestialBody(int naifId, string name, double GM, double polarRadius, double equatorialRadius, Frame frame,
+        OrbitalParameters.OrbitalParameters initialOrbitalParameters)
         : base(naifId, name, GM / Constants.G, initialOrbitalParameters, frame)
     {
         if (naifId < 0)

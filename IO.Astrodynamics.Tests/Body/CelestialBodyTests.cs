@@ -22,10 +22,10 @@ public class CelestialBodyTests
         CelestialBody earth = new CelestialBody(399);
 
         Assert.Equal(399, earth.NaifId);
-        Assert.Equal("earth", earth.Name);
+        Assert.Equal("EARTH", earth.Name);
         Assert.Equal("ITRF93", earth.Frame.Name);
-        Assert.Equal(3.986004418E+14, earth.GM);
-        Assert.Equal(5.972168494074286E+24, earth.Mass);
+        Assert.Equal(3.9860043543609594E+14, earth.GM);
+        Assert.Equal(5.972168398724899E+24, earth.Mass);
         Assert.Equal(6356751.9, earth.PolarRadius);
         Assert.Equal(6378136.6, earth.EquatorialRadius);
         Assert.Equal(0.0033528131084554157, earth.Flatenning);
@@ -60,7 +60,7 @@ public class CelestialBodyTests
     [Fact]
     public void FindOccultationsEclipse()
     {
-        var moon = TestHelpers.GetMoonAt20011214();
+        var moon = TestHelpers.MoonAt20011214;
         var earth = moon.InitialOrbitalParameters.CenterOfMotion;
         var sun = earth.InitialOrbitalParameters.CenterOfMotion;
         var res = earth.FindOccultations(
@@ -75,9 +75,9 @@ public class CelestialBodyTests
     [Fact]
     public void AngularSize()
     {
-        var sun = TestHelpers.GetSun();
-        var earth = TestHelpers.GetEarthAtJ2000();
+        var sun = TestHelpers.Sun;
+        var earth = TestHelpers.EarthAtJ2000;
         var res = sun.AngularSize(earth.InitialOrbitalParameters.ToStateVector().Position.Magnitude());
-        Assert.Equal(0.009456, res, 6);
+        Assert.Equal(0.009459, res, 6);
     }
 }

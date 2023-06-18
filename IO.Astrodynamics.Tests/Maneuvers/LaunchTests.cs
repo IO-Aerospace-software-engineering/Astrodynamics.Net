@@ -23,28 +23,28 @@ namespace IO.Astrodynamics.Tests.Maneuvers
         [Fact]
         public void CreateWithBody()
         {
-            LaunchSite site = new LaunchSite(33, "l1", TestHelpers.GetEarthAtJ2000(), new Geodetic(1.0, 2.0, 3.0), default, new AzimuthRange(1.0, 2.0));
-            Site recoverySite = new Site(34, "l2", TestHelpers.GetEarthAtJ2000(), new Geodetic(1.0, 2.0, 3.0));
-            Launch launch = new Launch(site, recoverySite, TestHelpers.GetMoon(), IO.Astrodynamics.Constants.CivilTwilight, true);
+            LaunchSite site = new LaunchSite(33, "l1", TestHelpers.EarthAtJ2000, new Geodetic(1.0, 2.0, 3.0), default, new AzimuthRange(1.0, 2.0));
+            Site recoverySite = new Site(34, "l2", TestHelpers.EarthAtJ2000, new Geodetic(1.0, 2.0, 3.0));
+            Launch launch = new Launch(site, recoverySite, TestHelpers.Moon, IO.Astrodynamics.Constants.CivilTwilight, true);
             Assert.NotNull(launch);
             Assert.Equal(site, launch.LaunchSite);
             Assert.Equal(recoverySite, launch.RecoverySite);
             Assert.True(launch.LaunchByDay);
-            Assert.Equal(TestHelpers.GetMoon(), launch.TargetBody);
+            Assert.Equal(TestHelpers.Moon, launch.TargetBody);
             Assert.Null(launch.TargetOrbit);
         }
 
         [Fact]
         public void CreateWithOrbitalParameter()
         {
-            LaunchSite site = new LaunchSite(33, "l1", TestHelpers.GetEarthAtJ2000(), new Geodetic(1.0, 2.0, 3.0), default, new AzimuthRange(1.0, 2.0));
-            Site recoverySite = new Site(34, "l2", TestHelpers.GetEarthAtJ2000(), new Geodetic(1.0, 2.0, 3.0));
-            Launch launch = new Launch(site, recoverySite, TestHelpers.GetMoon().InitialOrbitalParameters, IO.Astrodynamics.Constants.CivilTwilight, true);
+            LaunchSite site = new LaunchSite(33, "l1", TestHelpers.EarthAtJ2000, new Geodetic(1.0, 2.0, 3.0), default, new AzimuthRange(1.0, 2.0));
+            Site recoverySite = new Site(34, "l2", TestHelpers.EarthAtJ2000, new Geodetic(1.0, 2.0, 3.0));
+            Launch launch = new Launch(site, recoverySite, TestHelpers.Moon.InitialOrbitalParameters, IO.Astrodynamics.Constants.CivilTwilight, true);
             Assert.NotNull(launch);
             Assert.Equal(site, launch.LaunchSite);
             Assert.Equal(recoverySite, launch.RecoverySite);
             Assert.True(launch.LaunchByDay);
-            Assert.Equal(TestHelpers.GetMoon().InitialOrbitalParameters, launch.TargetOrbit);
+            Assert.Equal(TestHelpers.Moon.InitialOrbitalParameters, launch.TargetOrbit);
             Assert.Null(launch.TargetBody);
         }
 
@@ -53,7 +53,7 @@ namespace IO.Astrodynamics.Tests.Maneuvers
         {
             var epoch = new DateTime(2021, 6, 2);
 
-            var earth = TestHelpers.GetEarth();
+            var earth = TestHelpers.Earth;
             LaunchSite site = new LaunchSite(33, "l1", earth, new Geodetic(-81.0 *IO.Astrodynamics.Constants.Deg2Rad, 28.5 *IO.Astrodynamics.Constants.Deg2Rad, 0.0), default, new AzimuthRange(0.0, 6.0));
             Site recoverySite = new Site(34, "l2", earth, new Geodetic(-81.0 *IO.Astrodynamics.Constants.Deg2Rad, 28.5 *IO.Astrodynamics.Constants.Deg2Rad, 0.0));
             //ISS at 2021-06-02 TDB
@@ -85,7 +85,7 @@ namespace IO.Astrodynamics.Tests.Maneuvers
         {
             var epoch = new DateTime(2021, 6, 2);
 
-            var earth = TestHelpers.GetEarth();
+            var earth = TestHelpers.Earth;
             LaunchSite site = new LaunchSite(33, "l1", earth, new Geodetic(-81.0 *IO.Astrodynamics.Constants.Deg2Rad, 28.5 *IO.Astrodynamics.Constants.Deg2Rad, 0.0), default, new AzimuthRange(0.0, 6.0));
             Site recoverySite = new Site(34, "l2", earth, new Geodetic(-81.0 *IO.Astrodynamics.Constants.Deg2Rad, 28.5 *IO.Astrodynamics.Constants.Deg2Rad, 0.0));
             //ISS at 2021-06-02 TDB
@@ -108,7 +108,7 @@ namespace IO.Astrodynamics.Tests.Maneuvers
         {
             var epoch = new DateTime(2021, 6, 2);
 
-            var earth = TestHelpers.GetEarth();
+            var earth = TestHelpers.Earth;
             LaunchSite site = new LaunchSite(33, "l1", earth, new Geodetic(-104.0 *IO.Astrodynamics.Constants.Deg2Rad, -41.0 *IO.Astrodynamics.Constants.Deg2Rad, 0.0), default, new AzimuthRange(0.0, 6.0));
             Site recoverySite = new Site(34, "l2", earth, new Geodetic(-104.0 *IO.Astrodynamics.Constants.Deg2Rad, -41.0 *IO.Astrodynamics.Constants.Deg2Rad, 0.0));
             //ISS at 2021-06-02 TDB
@@ -131,7 +131,7 @@ namespace IO.Astrodynamics.Tests.Maneuvers
         {
             var epoch = new DateTime(2021, 6, 2);
 
-            var earth = TestHelpers.GetEarth();
+            var earth = TestHelpers.Earth;
             LaunchSite site = new LaunchSite(33, "l1", earth, new Geodetic(-104.0 *IO.Astrodynamics.Constants.Deg2Rad, -41.0 *IO.Astrodynamics.Constants.Deg2Rad, 0.0),
                 new AzimuthRange(0.0, 6.0));
             Site recoverySite = new Site(34, "l2", earth, new Geodetic(-104.0 *IO.Astrodynamics.Constants.Deg2Rad, -41.0 *IO.Astrodynamics.Constants.Deg2Rad, 0.0));

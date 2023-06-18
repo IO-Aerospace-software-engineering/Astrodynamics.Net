@@ -2,6 +2,7 @@ using System;
 using IO.Astrodynamics.Body;
 using IO.Astrodynamics.Mission;
 using IO.Astrodynamics.OrbitalParameters;
+using IO.Astrodynamics.SolarSystemObjects;
 using IO.Astrodynamics.Time;
 using Xunit;
 
@@ -12,7 +13,7 @@ public class EquinoctialElementsTests
     [Fact]
     public void Create()
     {
-        CelestialBody earth = new CelestialBody(399, "earth", 3.986004418E+5, 6356.7519, 6378.1366);
+        CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH.NaifId);
         var epoch = DateTime.UtcNow;
         EquinoctialElements equ = new EquinoctialElements(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, earth, epoch, Frames.Frame.ICRF);
         Assert.Equal(1.0, equ.P);
@@ -29,7 +30,7 @@ public class EquinoctialElementsTests
     [Fact]
     public void ToEquinoctial()
     {
-        CelestialBody earth = new CelestialBody(399, "earth", 3.986004418E+5, 6356.7519, 6378.1366);
+        CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH.NaifId);
         KeplerianElements ke = new KeplerianElements(6800.81178582, 0.00134, 51.71 *IO.Astrodynamics.Constants.Deg2Rad, 32.57 *IO.Astrodynamics.Constants.Deg2Rad, 105.64 *IO.Astrodynamics.Constants.Deg2Rad, 46.029 *IO.Astrodynamics.Constants.Deg2Rad, earth, DateTime.UtcNow, Frames.Frame.ICRF);
         EquinoctialElements equ = ke.ToEquinoctial();
         Assert.Equal(equ.SemiMajorAxis(), ke.A);
