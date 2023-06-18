@@ -10,7 +10,7 @@ namespace IO.Astrodynamics.Tests
         
         internal static CelestialBody GetSun()
         {
-            return new CelestialBody(10, "sun", 1.32712440018E+11, 695508.0, 695508.0);
+            return new CelestialBody(10);
         }
 
         internal static CelestialBody GetEarth()

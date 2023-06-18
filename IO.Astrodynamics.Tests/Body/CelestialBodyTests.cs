@@ -19,9 +19,7 @@ public class CelestialBodyTests
     [Fact]
     public void Create()
     {
-        CelestialBody sun = new CelestialBody(10, "sun", 1.32712440018E+11, 695508.0, 695508.0);
-        var ke = new KeplerianElements(1500000.0, 0.0, 0.0, 0.0, 0.0, 0.0, sun, DateTime.UtcNow, Frames.Frame.ECLIPTIC);
-        CelestialBody earth = new CelestialBody(399, "earth", 3.986004418E+14, 6356751.9, 6378136.6, new Frames.Frame("ITRF93"), ke);
+        CelestialBody earth = new CelestialBody(399);
 
         Assert.Equal(399, earth.NaifId);
         Assert.Equal("earth", earth.Name);
@@ -31,7 +29,7 @@ public class CelestialBodyTests
         Assert.Equal(6356751.9, earth.PolarRadius);
         Assert.Equal(6378136.6, earth.EquatorialRadius);
         Assert.Equal(0.0033528131084554157, earth.Flatenning);
-        Assert.Equal(1, sun.Satellites.Count);
+        Assert.Equal(1, earth.InitialOrbitalParameters.CenterOfMotion.Satellites.Count);
     }
 
     [Fact]
@@ -56,11 +54,7 @@ public class CelestialBodyTests
     [Fact]
     public void CreateExceptions()
     {
-        Assert.Throws<ArgumentException>(() => new CelestialBody(-399, "earth", 3.986004418E+5, 6356.7519, 6378.1366));
-        Assert.Throws<ArgumentException>(() => new CelestialBody(399, "", 3.986004418E+5, 6356.7519, 6378.1366));
-        Assert.Throws<ArgumentException>(() => new CelestialBody(399, "earth", -3.986004418E+5, 6356.7519, 6378.1366));
-        Assert.Throws<ArgumentException>(() => new CelestialBody(399, "earth", 3.986004418E+5, -6356.7519, 6378.1366));
-        Assert.Throws<ArgumentException>(() => new CelestialBody(399, "earth", 3.986004418E+5, 6356.7519, -6378.1366));
+        Assert.Throws<ArgumentException>(() => new CelestialBody(-399));
     }
 
     [Fact]

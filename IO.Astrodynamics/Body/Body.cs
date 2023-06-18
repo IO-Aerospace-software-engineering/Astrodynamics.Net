@@ -20,18 +20,25 @@ public abstract class Body : ILocalizable, IEquatable<Body>
     private readonly HashSet<Body> _satellites = new();
     public IReadOnlyCollection<Body> Satellites => _satellites;
 
-    protected Body(int naifId)
+    //Used for performance improvement
+    protected DTO.CelestialBody ExtendedInformation;
+
+    protected Body(int naifId) : this(naifId, Frame.ECLIPTIC, DateTimeExtension.J2000)
     {
         
-        var info = API.Instance.GetCelestialBodyInfo(naifId);
+    }
+
+    protected Body(int naifId, Frame frame, DateTime epoch)
+    {
+        ExtendedInformation = API.Instance.GetCelestialBodyInfo(naifId);
         NaifId = naifId;
-        Name = info.Name;
-        Frame = new Frame(info.FrameName);
-        Mass = info.GM / Constants.G;
+        Name = ExtendedInformation.Name;
+        Frame = new Frame(ExtendedInformation.FrameName);
+        Mass = ExtendedInformation.GM / Constants.G;
 
         if (NaifId != Stars.Sun.NaifId)
         {
-            InitialOrbitalParameters = this.GetEphemeris(DateTimeExtension.J2000, new CelestialBody(info.CenterOfMotionId), Frame.ECLIPTIC, Aberration.None);
+            InitialOrbitalParameters = this.GetEphemeris(epoch, new CelestialBody(ExtendedInformation.CenterOfMotionId), frame, Aberration.None);
 
             if (InitialOrbitalParameters != null)
             {
@@ -39,7 +46,7 @@ public abstract class Body : ILocalizable, IEquatable<Body>
             }
         }
     }
-    
+
     /// <summary>
     /// Constructor
     /// </summary>
@@ -130,13 +137,13 @@ public abstract class Body : ILocalizable, IEquatable<Body>
 
     public virtual void SetInitialOrbitalParameters(OrbitalParameters.OrbitalParameters orbitalParameters)
     {
-        if (InitialOrbitalParameters.CenterOfMotion != null)
+        if (InitialOrbitalParameters?.CenterOfMotion != null)
         {
             InitialOrbitalParameters.CenterOfMotion._satellites.Remove(this);
         }
 
         InitialOrbitalParameters = orbitalParameters;
-        InitialOrbitalParameters.CenterOfMotion._satellites.Add(this);
+        InitialOrbitalParameters?.CenterOfMotion._satellites.Add(this);
     }
 
 
@@ -219,7 +226,7 @@ public abstract class Body : ILocalizable, IEquatable<Body>
     }
 
     public abstract double GetTotalMass();
-    
+
     public bool Equals(Body other)
     {
         if (ReferenceEquals(null, other)) return false;
@@ -249,5 +256,4 @@ public abstract class Body : ILocalizable, IEquatable<Body>
     {
         return !Equals(left, right);
     }
-
 }

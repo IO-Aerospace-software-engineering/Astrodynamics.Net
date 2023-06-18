@@ -492,6 +492,9 @@ public class API
     /// </summary>
     /// <param name="path">Path where kernels are located. This could be a file path or a directory path</param>
     private object lockObject = new object();
+    
+    
+    // private object lockLoadKernels = new object();
 
     public void LoadKernels(FileSystemInfo path)
     {
