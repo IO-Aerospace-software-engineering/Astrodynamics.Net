@@ -101,24 +101,19 @@ public class APITest
         Spacecraft spacecraft =
             new Spacecraft(-1783, "DRAGONFLY3", 1000.0, 10000.0, clock, parkingOrbit);
 
-        FuelTank fuelTank = new FuelTank("ft1", "model1","sn1", 9000.0,9000.0);
+        FuelTank fuelTank = new FuelTank("ft1", "model1", "sn1", 9000.0, 9000.0);
         Engine engine = new Engine("engine1", "model1", "sn1", 450.0, 50.0, fuelTank);
         spacecraft.AddFuelTank(fuelTank);
         spacecraft.AddEngine(engine);
         spacecraft.AddPayload(new Payload("payload1", 50.0, "pay01"));
         spacecraft.AddInstrument(
-            new Instrument(-1783601, "CAM601", "mod1", 80.0 * IO.Astrodynamics.Constants.Deg2Rad, InstrumentShape.Circular, Vector3.VectorZ, Vector3.VectorX,Vector3.VectorX));
+            new Instrument(-1783601, "CAM601", "mod1", 80.0 * IO.Astrodynamics.Constants.Deg2Rad, InstrumentShape.Circular, Vector3.VectorZ, Vector3.VectorX, Vector3.VectorX));
 
         var planeAlignmentManeuver = new PlaneAlignmentManeuver(spacecraft, DateTime.MinValue, TimeSpan.Zero,
             targetOrbit, spacecraft.Engines.First());
-        planeAlignmentManeuver
-            .SetNextManeuver(new ApsidalAlignmentManeuver(spacecraft, DateTime.MinValue,
-                TimeSpan.Zero, targetOrbit, spacecraft.Engines.First()))
-            .SetNextManeuver(new PhasingManeuver(spacecraft, DateTime.MinValue, TimeSpan.Zero,
-                targetOrbit, 1, spacecraft.Engines.First()))
-            .SetNextManeuver(new ApogeeHeightManeuver(spacecraft, DateTime.MinValue,
-                TimeSpan.Zero, 15866666.666666666,
-                spacecraft.Engines.First()));
+        planeAlignmentManeuver.SetNextManeuver(new ApsidalAlignmentManeuver(spacecraft, DateTime.MinValue, TimeSpan.Zero, targetOrbit, spacecraft.Engines.First()))
+            .SetNextManeuver(new PhasingManeuver(spacecraft, DateTime.MinValue, TimeSpan.Zero, targetOrbit, 1, spacecraft.Engines.First()))
+            .SetNextManeuver(new ApogeeHeightManeuver(spacecraft, DateTime.MinValue, TimeSpan.Zero, 15866666.666666666, spacecraft.Engines.First()));
         spacecraft.SetStandbyManeuver(planeAlignmentManeuver);
 
         scenario.AddBody(spacecraft);
@@ -131,7 +126,12 @@ public class APITest
         Assert.Equal("2021-03-04T00:32:42.8530000 (TDB)", maneuver.ThrustWindow.StartDate.ToFormattedString());
         Assert.Equal("2021-03-04T00:32:51.1750000 (TDB)", maneuver.ThrustWindow.EndDate.ToFormattedString());
         Assert.Equal(8.322, maneuver.ThrustWindow.Length.TotalSeconds);
-        Assert.Equal(new Vector3(-96.24969153329532, 106.87570557408036, -118.8549175756141), ((ImpulseManeuver)maneuver).DeltaV);
+        Assert.Equal(
+            OperatingSystem.IsWindows()
+                ? new Vector3(-96.24969153329536, 106.87570557408037, -118.85491757561407)
+                : new Vector3(-96.24969153329532, 106.87570557408036, -118.8549175756141), ((ImpulseManeuver)maneuver).DeltaV);
+
+
         Assert.Equal(416.05846464958046, maneuver.FuelBurned);
 
         maneuver = maneuver.NextManeuver;
@@ -141,8 +141,7 @@ public class APITest
         Assert.Equal("2021-03-04T01:15:43.9380000 (TDB)", maneuver.ThrustWindow.StartDate.ToFormattedString());
         Assert.Equal("2021-03-04T01:16:06.4120000 (TDB)", maneuver.ThrustWindow.EndDate.ToFormattedString());
         Assert.Equal(22.4740000, maneuver.ThrustWindow.Length.TotalSeconds);
-        Assert.Equal(new Vector3(-463.85710999496314, -168.44268760441446, 236.66234186526253),
-            ((ImpulseManeuver)maneuver).DeltaV);
+        Assert.Equal(new Vector3(-463.85710999496314, -168.44268760441446, 236.66234186526253), ((ImpulseManeuver)maneuver).DeltaV);
         Assert.Equal(1123.6976200120396, maneuver.FuelBurned);
 
         maneuver = maneuver.NextManeuver;
@@ -152,8 +151,7 @@ public class APITest
         Assert.Equal("2021-03-04T01:16:14.6390000 (TDB)", maneuver.ThrustWindow.StartDate.ToFormattedString());
         Assert.Equal("2021-03-04T01:16:24.1840000 (TDB)", maneuver.ThrustWindow.EndDate.ToFormattedString());
         Assert.Equal(9.545, maneuver.ThrustWindow.Length.TotalSeconds);
-        Assert.Equal(new Vector3(-139.7485096203384, 85.58601299692951, 194.985748375168),
-            ((ImpulseManeuver)maneuver).DeltaV);
+        Assert.Equal(new Vector3(-139.7485096203384, 85.58601299692951, 194.985748375168), ((ImpulseManeuver)maneuver).DeltaV);
         Assert.Equal(477.27816776049883, maneuver.FuelBurned);
 
         maneuver = maneuver.NextManeuver;
@@ -163,8 +161,7 @@ public class APITest
         Assert.Equal("2021-03-04T05:24:43.8920000 (TDB)", maneuver.ThrustWindow.StartDate.ToFormattedString());
         Assert.Equal("2021-03-04T05:24:52.4760000 (TDB)", maneuver.ThrustWindow.EndDate.ToFormattedString());
         Assert.Equal(8.584, maneuver.ThrustWindow.Length.TotalSeconds);
-        Assert.Equal(new Vector3(134.61069118237498, -81.41939868308344, -184.2992402533224),
-            ((ImpulseManeuver)maneuver).DeltaV);
+        Assert.Equal(new Vector3(134.61069118237498, -81.41939868308344, -184.2992402533224), ((ImpulseManeuver)maneuver).DeltaV);
         Assert.Equal(429.19025843695215, maneuver.FuelBurned);
     }
 
@@ -261,12 +258,13 @@ public class APITest
         Spacecraft spacecraft =
             new Spacecraft(-172, "DRAGONFLY2", 1000.0, 10000.0, clock, parkingOrbit);
 
-        FuelTank fuelTank = new FuelTank("ft1", "model1","sn1", 9000.0,9000.0);
+        FuelTank fuelTank = new FuelTank("ft1", "model1", "sn1", 9000.0, 9000.0);
         Engine engine = new Engine("engine1", "model1", "sn1", 450.0, 50.0, fuelTank);
         spacecraft.AddFuelTank(fuelTank);
         spacecraft.AddEngine(engine);
         spacecraft.AddPayload(new Payload("payload1", 50.0, "pay01"));
-        spacecraft.AddInstrument(new Instrument(-172600, "CAM602", "mod1", 1.5, InstrumentShape.Circular, Vector3.VectorZ, Vector3.VectorY,new Vector3(0.0, -System.Math.PI * 0.5, 0.0)));
+        spacecraft.AddInstrument(new Instrument(-172600, "CAM602", "mod1", 1.5, InstrumentShape.Circular, Vector3.VectorZ, Vector3.VectorY,
+            new Vector3(0.0, -System.Math.PI * 0.5, 0.0)));
         scenario.AddBody(spacecraft);
 
         //Execute scenario
@@ -326,14 +324,14 @@ public class APITest
         //Configure spacecraft
         Clock clock = new Clock("clk1", System.Math.Pow(2.0, 16.0));
         Spacecraft spacecraft =
-            new Spacecraft(-179, "DRAGONFLY2", 1000.0, 10000.0, clock, parkingOrbit);
+            new Spacecraft(-1794, "DRAGONFLY4", 1000.0, 10000.0, clock, parkingOrbit);
 
-        FuelTank fuelTank = new FuelTank("ft1", "model1","sn1", 9000.0,9000.0);
+        FuelTank fuelTank = new FuelTank("ft1", "model1", "sn1", 9000.0, 9000.0);
         Engine engine = new Engine("engine1", "model1", "sn1", 450.0, 50.0, fuelTank);
         spacecraft.AddFuelTank(fuelTank);
         spacecraft.AddEngine(engine);
         spacecraft.AddPayload(new Payload("payload1", 50.0, "pay01"));
-        spacecraft.AddInstrument(new Instrument(-179600, "CAM600", "mod1", 1.5, InstrumentShape.Circular, Vector3.VectorZ, Vector3.VectorX, Vector3.VectorX));
+        spacecraft.AddInstrument(new Instrument(-1794600, "CAM600", "mod1", 1.5, InstrumentShape.Circular, Vector3.VectorZ, Vector3.VectorX, Vector3.VectorX));
 
         spacecraft.SetStandbyManeuver(new NadirAttitude(spacecraft, DateTime.MinValue, TimeSpan.Zero, spacecraft.Engines.First()));
 
