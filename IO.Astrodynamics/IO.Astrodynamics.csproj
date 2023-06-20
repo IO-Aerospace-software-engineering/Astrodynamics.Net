@@ -12,21 +12,18 @@
         <None Update="resources\libIO.Astrodynamics.so">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
+        <None Update="resources\IO.Astrodynamics.dll">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+        <None Update="resources\IO.Astrodynamics.lib">
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
     </ItemGroup>
 
     <ItemGroup>
         <None Remove="resources\IO.SDK.dll" />
         <None Remove="resources\IO.SDK.exp" />
         <None Remove="resources\IO.SDK.lib" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Content Include="..\..\SDK\cmake-build-release\IO.Astrodynamics\IO.Astrodynamics.dll">
-        <Link>resources/IO.Astrodynamics.dll</Link>
-      </Content>
-      <Content Include="..\..\SDK\cmake-build-release\IO.Astrodynamics\IO.Astrodynamics.lib">
-        <Link>resources/IO.Astrodynamics.lib</Link>
-      </Content>
     </ItemGroup>
 
     <ItemGroup>
