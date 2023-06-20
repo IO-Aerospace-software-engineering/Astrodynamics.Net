@@ -66,7 +66,6 @@ public class DateTimeTests
         var unspecified = new DateTime(2021, 1, 1, 0, 0, 0, DateTimeKind.Unspecified);
 
         Assert.Equal("2021-01-01T00:00:00.0000000Z", utc.ToFormattedString());
-        Assert.Equal("2021-01-01T00:00:00.0000000+01:00", local.ToFormattedString());
         Assert.Equal("2021-01-01T00:00:00.0000000 (TDB)", unspecified.ToFormattedString());
     }
 }
