@@ -305,54 +305,61 @@ public class APITest
     [Fact]
     public void ReadOrientation()
     {
-        DateTime start = DateTimeExtension.CreateTDB(662778000.0);
-        DateTime end = start.AddSeconds(60.0);
-        Window window = new Window(start, end);
+        {
+            DateTime start = DateTimeExtension.CreateTDB(662778000.0);
+            DateTime end = start.AddSeconds(60.0);
+            Window window = new Window(start, end);
 
-        //Configure scenario
-        Scenario scenario = new Scenario("Scenario_B", new Astrodynamics.Mission.Mission("mission01"), window);
-        scenario.AddBody(TestHelpers.Sun);
-        scenario.AddBody(TestHelpers.EarthAtJ2000);
-        scenario.AddBody(TestHelpers.MoonAtJ2000);
+            //Configure scenario
+            Scenario scenario = new Scenario("Scenario_B", new Astrodynamics.Mission.Mission("mission01"), window);
+            scenario.AddBody(TestHelpers.Sun);
+            scenario.AddBody(TestHelpers.EarthAtJ2000);
+            scenario.AddBody(TestHelpers.MoonAtJ2000);
 
-        //Define parking orbit
+            //Define parking orbit
 
-        StateVector parkingOrbit = new StateVector(
-            new Vector3(6800000.0, 0.0, 0.0), new Vector3(0.0, 7656.2204182967143, 0.0), TestHelpers.EarthAtJ2000,
-            start, Frames.Frame.ICRF);
+            StateVector parkingOrbit = new StateVector(
+                new Vector3(6800000.0, 0.0, 0.0), new Vector3(0.0, 7656.2204182967143, 0.0), TestHelpers.EarthAtJ2000,
+                start, Frames.Frame.ICRF);
 
-        //Configure spacecraft
-        Clock clock = new Clock("clk1", System.Math.Pow(2.0, 16.0));
-        Spacecraft spacecraft =
-            new Spacecraft(-1794, "DRAGONFLY4", 1000.0, 10000.0, clock, parkingOrbit);
+            //Configure spacecraft
+            Clock clock = new Clock("clk1", System.Math.Pow(2.0, 16.0));
+            Spacecraft spacecraft =
+                new Spacecraft(-1794, "DRAGONFLY4", 1000.0, 10000.0, clock, parkingOrbit);
 
-        FuelTank fuelTank = new FuelTank("ft1", "model1", "sn1", 9000.0, 9000.0);
-        Engine engine = new Engine("engine1", "model1", "sn1", 450.0, 50.0, fuelTank);
-        spacecraft.AddFuelTank(fuelTank);
-        spacecraft.AddEngine(engine);
-        spacecraft.AddPayload(new Payload("payload1", 50.0, "pay01"));
-        spacecraft.AddInstrument(new Instrument(-1794600, "CAM600", "mod1", 1.5, InstrumentShape.Circular, Vector3.VectorZ, Vector3.VectorX, Vector3.VectorX));
+            FuelTank fuelTank = new FuelTank("ft1", "model1", "sn1", 9000.0, 9000.0);
+            Engine engine = new Engine("engine1", "model1", "sn1", 450.0, 50.0, fuelTank);
+            spacecraft.AddFuelTank(fuelTank);
+            spacecraft.AddEngine(engine);
+            spacecraft.AddPayload(new Payload("payload1", 50.0, "pay01"));
+            spacecraft.AddInstrument(new Instrument(-1794600, "CAM600", "mod1", 1.5, InstrumentShape.Circular,
+                Vector3.VectorZ, Vector3.VectorX, Vector3.VectorX));
 
-        spacecraft.SetStandbyManeuver(new NadirAttitude(spacecraft, DateTime.MinValue, TimeSpan.Zero, spacecraft.Engines.First()));
+            spacecraft.SetStandbyManeuver(new NadirAttitude(spacecraft, DateTime.MinValue, TimeSpan.Zero,
+                spacecraft.Engines.First()));
 
-        scenario.AddBody(spacecraft);
+            scenario.AddBody(spacecraft);
 
-        //Execute scenario
-        _api.PropagateScenario(scenario, Constants.OutputPath);
+            //Execute scenario
+            _api.PropagateScenario(scenario, Constants.OutputPath);
 
-        //Read spacecraft orientation
-        var res = _api.ReadOrientation(window, spacecraft, TimeSpan.FromSeconds(10.0), Frames.Frame.ICRF, TimeSpan.FromSeconds(10.0)).ToArray();
+            //Read spacecraft orientation
+            var res = _api.ReadOrientation(window, spacecraft, TimeSpan.FromSeconds(10.0), Frames.Frame.ICRF,
+                TimeSpan.FromSeconds(10.0)).ToArray();
 
-        //Read results
-        Assert.Equal(0.7071067811865476, res.ElementAt(0).Rotation.W);
-        Assert.Equal(0.0, res.ElementAt(0).Rotation.VectorPart.X);
-        Assert.Equal(0.0, res.ElementAt(0).Rotation.VectorPart.Y);
-        Assert.Equal(-0.7071067811865475, res.ElementAt(0).Rotation.VectorPart.Z);
-        Assert.Equal(0.0, res.ElementAt(0).AngularVelocity.X);
-        Assert.Equal(0.0, res.ElementAt(0).AngularVelocity.Y);
-        Assert.Equal(0.0, res.ElementAt(0).AngularVelocity.Z);
-        Assert.Equal(window.StartDate, res.ElementAt(0).Epoch);
-        Assert.Equal(Frames.Frame.ICRF, res.ElementAt(0).ReferenceFrame);
+            //Read results
+            Assert.Equal(0.7071067811865476, res.ElementAt(0).Rotation.W);
+            Assert.Equal(0.0, res.ElementAt(0).Rotation.VectorPart.X);
+            Assert.Equal(0.0, res.ElementAt(0).Rotation.VectorPart.Y);
+            Assert.Equal(-0.7071067811865475, res.ElementAt(0).Rotation.VectorPart.Z);
+            Assert.Equal(0.0, res.ElementAt(0).AngularVelocity.X);
+            Assert.Equal(0.0, res.ElementAt(0).AngularVelocity.Y);
+            Assert.Equal(0.0, res.ElementAt(0).AngularVelocity.Z);
+            Assert.Equal(window.StartDate, res.ElementAt(0).Epoch);
+            Assert.Equal(Frames.Frame.ICRF, res.ElementAt(0).ReferenceFrame);
+        }
+        
+       
     }
 
 
