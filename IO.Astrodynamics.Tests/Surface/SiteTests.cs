@@ -10,12 +10,12 @@ namespace IO.Astrodynamics.Tests.Surface
 {
     public class SiteTests
     {
-        private readonly API _api;
+        
 
         public SiteTests()
         {
-            _api = API.Instance;
-            _api.LoadKernels(Constants.SolarSystemKernelPath);
+            ;
+            API.Instance.LoadKernels(Constants.SolarSystemKernelPath);
         }
 
         [Fact]

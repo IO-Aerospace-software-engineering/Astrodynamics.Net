@@ -15,7 +15,7 @@ namespace IO.Astrodynamics.Mission
         public IReadOnlyCollection<Body.Body> Bodies => _bodies;
         private readonly HashSet<Site> _sites = new();
         public IReadOnlyCollection<Site> Sites => _sites;
-        private readonly API _api;
+        
 
         public Scenario(string name, Mission mission, in Window window)
         {
@@ -26,7 +26,7 @@ namespace IO.Astrodynamics.Mission
 
             Name = name;
             Mission = mission ?? throw new ArgumentNullException(nameof(mission));
-            _api = API.Instance;
+            ;
             Window = window;
         }
 
@@ -44,7 +44,7 @@ namespace IO.Astrodynamics.Mission
 
         public void Propagate(DirectoryInfo outputDirectory)
         {
-            _api.PropagateScenario(this, outputDirectory);
+            API.Instance.PropagateScenario(this, outputDirectory);
         }
         
         public bool Equals(Scenario other)

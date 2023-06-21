@@ -19,7 +19,7 @@ namespace IO.Astrodynamics.Surface
 
         public Frame Frame { get; }
 
-        private readonly API _api = API.Instance;
+        
 
         public Site(int id, string name, CelestialBody body, in Geodetic geodetic = new Geodetic())
         {
@@ -60,12 +60,12 @@ namespace IO.Astrodynamics.Surface
         public IEnumerable<OrbitalParameters.OrbitalParameters> GetEphemeris(Window searchWindow, CelestialBody observer, Frame frame, Aberration aberration,
             TimeSpan stepSize)
         {
-            return _api.ReadEphemeris(searchWindow, observer, this, frame, aberration, stepSize);
+            return API.Instance.ReadEphemeris(searchWindow, observer, this, frame, aberration, stepSize);
         }
 
         public OrbitalParameters.OrbitalParameters GetEphemeris(DateTime epoch, CelestialBody observer, Frame frame, Aberration aberration)
         {
-            return _api.ReadEphemeris(epoch, observer, this, frame, aberration);
+            return API.Instance.ReadEphemeris(epoch, observer, this, frame, aberration);
         }
 
         public Vector3 GetPosition(DateTime epoch, ILocalizable target, Frame frame, Aberration aberration)
@@ -92,21 +92,21 @@ namespace IO.Astrodynamics.Surface
         public IEnumerable<Window> FindWindowsOnDistanceConstraint(Window searchWindow, INaifObject observer, RelationnalOperator relationalOperator, double value,
             Aberration aberration, TimeSpan stepSize)
         {
-            return _api.FindWindowsOnDistanceConstraint(searchWindow, observer, this, relationalOperator, value, aberration, stepSize);
+            return API.Instance.FindWindowsOnDistanceConstraint(searchWindow, observer, this, relationalOperator, value, aberration, stepSize);
         }
 
         public IEnumerable<Window> FindWindowsOnOccultationConstraint(Window searchWindow, INaifObject observer, ShapeType targetShape, INaifObject frontBody,
             ShapeType frontShape,
             OccultationType occultationType, Aberration aberration, TimeSpan stepSize)
         {
-            return _api.FindWindowsOnOccultationConstraint(searchWindow, observer, this, targetShape, frontBody, frontShape, occultationType, aberration, stepSize);
+            return API.Instance.FindWindowsOnOccultationConstraint(searchWindow, observer, this, targetShape, frontBody, frontShape, occultationType, aberration, stepSize);
         }
 
         public IEnumerable<Window> FindWindowsOnCoordinateConstraint(Window searchWindow, INaifObject observer, Frame frame, CoordinateSystem coordinateSystem,
             Coordinate coordinate,
             RelationnalOperator relationalOperator, double value, double adjustValue, Aberration aberration, TimeSpan stepSize)
         {
-            return _api.FindWindowsOnCoordinateConstraint(searchWindow, observer, this, frame, coordinateSystem, coordinate, relationalOperator, value, adjustValue, aberration,
+            return API.Instance.FindWindowsOnCoordinateConstraint(searchWindow, observer, this, frame, coordinateSystem, coordinate, relationalOperator, value, adjustValue, aberration,
                 stepSize);
         }
 
@@ -114,7 +114,7 @@ namespace IO.Astrodynamics.Surface
             IlluminationAngle illuminationType, RelationnalOperator relationalOperator, double value, double adjustValue, Aberration aberration, TimeSpan stepSize,
             INaifObject illuminationSource, string method = "Ellipsoid")
         {
-            return _api.FindWindowsOnIlluminationConstraint(searchWindow, observer, this, Frame, geodetic, illuminationType, relationalOperator, value, adjustValue,
+            return API.Instance.FindWindowsOnIlluminationConstraint(searchWindow, observer, this, Frame, geodetic, illuminationType, relationalOperator, value, adjustValue,
                 aberration, stepSize, illuminationSource, method);
         }
 

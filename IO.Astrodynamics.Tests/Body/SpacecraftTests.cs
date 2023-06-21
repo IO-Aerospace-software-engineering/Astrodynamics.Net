@@ -13,11 +13,11 @@ namespace IO.Astrodynamics.Tests.Body
 {
     public class SpacecraftTests
     {
-        private API _api = API.Instance;
+        
 
         public SpacecraftTests()
         {
-            _api.LoadKernels(Constants.SolarSystemKernelPath);
+            API.Instance.LoadKernels(Constants.SolarSystemKernelPath);
         }
 
         [Fact]
@@ -95,7 +95,7 @@ namespace IO.Astrodynamics.Tests.Body
             scenario.AddBody(spacecraft);
 
             //Execute scenario
-            _api.PropagateScenario(scenario, Constants.OutputPath);
+            API.Instance.PropagateScenario(scenario, Constants.OutputPath);
             var orientation = spacecraft.GetOrientation(Frames.Frame.ICRF, start);
             Vector3.VectorY.Rotate(orientation.Rotation);
         }

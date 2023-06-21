@@ -14,7 +14,7 @@ namespace IO.Astrodynamics.Maneuver
         public Body.Body TargetBody { get; }
         public bool? LaunchByDay { get; }
         public double Twilight { get; }
-        private readonly API _api = API.Instance;
+        
 
         /// <summary>
         /// 
@@ -61,7 +61,7 @@ namespace IO.Astrodynamics.Maneuver
         /// <returns></returns>
         public IEnumerable<LaunchWindow> FindLaunchWindows(in Window searchWindow, DirectoryInfo outputDirectory)
         {
-            return _api.FindLaunchWindows(this, searchWindow, outputDirectory);
+            return API.Instance.FindLaunchWindows(this, searchWindow, outputDirectory);
         }
     }
 }

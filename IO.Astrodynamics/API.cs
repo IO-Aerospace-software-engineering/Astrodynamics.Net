@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -54,7 +55,7 @@ public class API
         NativeLibrary.SetDllImportResolver(typeof(API).Assembly, Resolver);
     }
 
-    public static API Instance { get; } = new();
+    public static API Instance => new();
 
     [DllImport(@"IO.Astrodynamics", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     private static extern string GetSpiceVersionProxy();
@@ -67,6 +68,9 @@ public class API
 
     [DllImport(@"IO.Astrodynamics", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     private static extern void LoadKernelsProxy(string directoryPath);
+    
+    [DllImport(@"IO.Astrodynamics", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+    private static extern void UnloadKernelsProxy(string directoryPath);
 
     [DllImport(@"IO.Astrodynamics", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     private static extern string TDBToStringProxy(double secondsFromJ2000);
@@ -137,7 +141,8 @@ public class API
     private static extern RaDec ConvertStateVectorToEquatorialCoordinatesProxy(StateVector stateVector);
 
     [DllImport(@"IO.Astrodynamics", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-    private static extern StateVector ReadEphemerisAtGivenEpochProxy(double epoch, int observerId, int targetId, string frame, string aberration);
+    private static extern StateVector ReadEphemerisAtGivenEpochProxy(double epoch, int observerId, int targetId,
+        string frame, string aberration);
 
     private static IntPtr Resolver(string libraryName, Assembly assembly, DllImportSearchPath? searchPath)
     {
@@ -179,8 +184,11 @@ public class API
     {
         lock (lockObject)
         {
+            API.Instance.UnloadKernels(outputDirectory);
+
             Scenario scenarioDto = new Scenario(scenario.Name,
-                new Window(scenario.Window.StartDate.SecondsFromJ2000TDB(), scenario.Window.EndDate.SecondsFromJ2000TDB()));
+                new Window(scenario.Window.StartDate.SecondsFromJ2000TDB(),
+                    scenario.Window.EndDate.SecondsFromJ2000TDB()));
             foreach (var site in scenario.Sites)
             {
                 for (int j = 0; j < scenario.Sites.Count(); j++)
@@ -198,13 +206,15 @@ public class API
                 }
 
                 //Define parking orbit
-                StateVector parkingOrbit = _mapper.Map<StateVector>(spacecraft.InitialOrbitalParameters.ToStateVector());
+                StateVector parkingOrbit =
+                    _mapper.Map<StateVector>(spacecraft.InitialOrbitalParameters.ToStateVector());
 
                 //Create and configure spacecraft
                 scenarioDto.Spacecraft = new DTO.Spacecraft(spacecraft.NaifId, spacecraft.Name,
                     spacecraft.DryOperatingMass,
                     spacecraft.MaximumOperatingMass, parkingOrbit,
                     outputDirectory.CreateSubdirectory("Spacecrafts").FullName);
+
                 for (int j = 0; j < spacecraft.FuelTanks.Count; j++)
                 {
                     var fuelTank = spacecraft.FuelTanks.ElementAt(j);
@@ -246,7 +256,8 @@ public class API
                     {
                         StateVector target = _mapper.Map<StateVector>(maneuver.TargetOrbit.ToStateVector());
                         int idx = scenarioDto.Spacecraft.OrbitalPlaneChangingManeuvers.Count(x => x.ManeuverOrder > -1);
-                        scenarioDto.Spacecraft.OrbitalPlaneChangingManeuvers[idx] = new OrbitalPlaneChangingManeuver(order,
+                        scenarioDto.Spacecraft.OrbitalPlaneChangingManeuvers[idx] = new OrbitalPlaneChangingManeuver(
+                            order,
                             maneuver.ManeuverHoldDuration.TotalSeconds,
                             maneuver.MinimumEpoch.SecondsFromJ2000TDB(), target);
 
@@ -308,9 +319,11 @@ public class API
                     }
                     else if (maneuver is PerigeeHeightManeuver)
                     {
-                        int idx = scenarioDto.Spacecraft.PerigeeHeightChangingManeuvers.Count(x => x.ManeuverOrder > -1);
+                        int idx = scenarioDto.Spacecraft.PerigeeHeightChangingManeuvers.Count(x =>
+                            x.ManeuverOrder > -1);
                         scenarioDto.Spacecraft.PerigeeHeightChangingManeuvers[
-                                scenarioDto.Spacecraft.PerigeeHeightChangingManeuvers.Count(x => x.ManeuverOrder > -1)] =
+                                scenarioDto.Spacecraft.PerigeeHeightChangingManeuvers.Count(x =>
+                                    x.ManeuverOrder > -1)] =
                             new PerigeeHeightChangingManeuver(order, maneuver.ManeuverHoldDuration.TotalSeconds,
                                 maneuver.MinimumEpoch.SecondsFromJ2000TDB(),
                                 maneuver.TargetOrbit.PerigeeVector().Magnitude());
@@ -326,10 +339,11 @@ public class API
                         StateVector target = _mapper.Map<StateVector>(maneuver.TargetOrbit.ToStateVector());
                         int idx = scenarioDto.Spacecraft.PhasingManeuver.Count(x => x.ManeuverOrder > -1);
                         scenarioDto.Spacecraft.PhasingManeuver[
-                            scenarioDto.Spacecraft.PhasingManeuver.Count(x => x.ManeuverOrder > -1)] = new DTO.PhasingManeuver(
-                            order,
-                            maneuver.ManeuverHoldDuration.TotalSeconds, maneuver.MinimumEpoch.SecondsFromJ2000TDB(),
-                            (int)(maneuver as PhasingManeuver).RevolutionNumber, target);
+                                scenarioDto.Spacecraft.PhasingManeuver.Count(x => x.ManeuverOrder > -1)] =
+                            new DTO.PhasingManeuver(
+                                order,
+                                maneuver.ManeuverHoldDuration.TotalSeconds, maneuver.MinimumEpoch.SecondsFromJ2000TDB(),
+                                (int)(maneuver as PhasingManeuver).RevolutionNumber, target);
                         //Add engines
                         for (int k = 0; k < maneuver.Engines.Count; k++)
                         {
@@ -418,7 +432,8 @@ public class API
                 PropagateProxy(ref scenarioDto);
                 LoadKernels(outputDirectory);
 
-                foreach (var maneuverResult in scenarioDto.Spacecraft.CombinedManeuvers.Where(x => x.ManeuverOrder > -1))
+                foreach (var maneuverResult in
+                         scenarioDto.Spacecraft.CombinedManeuvers.Where(x => x.ManeuverOrder > -1))
                 {
                     var mnv = spacecraft.GetManeuvers()[maneuverResult.ManeuverOrder] as ImpulseManeuver;
                     mnv.AttitudeWindow = _mapper.Map<Time.Window>(maneuverResult.AttitudeWindow);
@@ -485,11 +500,11 @@ public class API
         }
     }
 
-    
+
     private static object lockObject = new object();
 
     /// <summary>
-    ///     Load generic kernel at given path
+    ///     Load kernel at given path
     /// </summary>
     /// <param name="path">Path where kernels are located. This could be a file path or a directory path</param>
     public void LoadKernels(FileSystemInfo path)
@@ -497,6 +512,18 @@ public class API
         lock (lockObject)
         {
             LoadKernelsProxy(path.FullName);
+        }
+    }
+    
+    /// <summary>
+    ///     Unload kernel at given path
+    /// </summary>
+    /// <param name="path">Path where kernels are located. This could be a file path or a directory path</param>
+    public void UnloadKernels(FileSystemInfo path)
+    {
+        lock (lockObject)
+        {
+            UnloadKernelsProxy(path.FullName);
         }
     }
 
@@ -549,7 +576,8 @@ public class API
     /// <param name="stepSize"></param>
     /// <returns></returns>
     public IEnumerable<Time.Window> FindWindowsOnDistanceConstraint(Time.Window searchWindow, INaifObject observer,
-        INaifObject target, RelationnalOperator relationalOperator, double value, Aberration aberration, TimeSpan stepSize)
+        INaifObject target, RelationnalOperator relationalOperator, double value, Aberration aberration,
+        TimeSpan stepSize)
     {
         lock (lockObject)
         {
@@ -559,7 +587,8 @@ public class API
                 windows[i] = new Window(double.NaN, double.NaN);
             }
 
-            FindWindowsOnDistanceConstraintProxy(_mapper.Map<Window>(searchWindow), observer.NaifId, target.NaifId, relationalOperator.GetDescription(),
+            FindWindowsOnDistanceConstraintProxy(_mapper.Map<Window>(searchWindow), observer.NaifId, target.NaifId,
+                relationalOperator.GetDescription(),
                 value,
                 aberration.GetDescription(),
                 stepSize.TotalSeconds, windows);
@@ -582,21 +611,29 @@ public class API
     /// <param name="stepSize"></param>
     /// <param name="observer"></param>
     /// <returns></returns>
-    public IEnumerable<Time.Window> FindWindowsOnOccultationConstraint(Time.Window searchWindow, INaifObject observer, INaifObject target,
-        ShapeType targetShape, INaifObject frontBody, ShapeType frontShape, OccultationType occultationType, Aberration aberration, TimeSpan stepSize)
+    public IEnumerable<Time.Window> FindWindowsOnOccultationConstraint(Time.Window searchWindow, INaifObject observer,
+        INaifObject target,
+        ShapeType targetShape, INaifObject frontBody, ShapeType frontShape, OccultationType occultationType,
+        Aberration aberration, TimeSpan stepSize)
     {
         lock (lockObject)
         {
-            string frontFrame = frontShape == ShapeType.Ellipsoid ? (frontBody as Body.CelestialBody)?.Frame.Name : string.Empty;
-            string targetFrame = targetShape == ShapeType.Ellipsoid ? (target as Body.CelestialBody)?.Frame.Name : String.Empty;
+            string frontFrame = frontShape == ShapeType.Ellipsoid
+                ? (frontBody as Body.CelestialBody)?.Frame.Name
+                : string.Empty;
+            string targetFrame = targetShape == ShapeType.Ellipsoid
+                ? (target as Body.CelestialBody)?.Frame.Name
+                : String.Empty;
             var windows = new Window[1000];
             for (var i = 0; i < 1000; i++)
             {
                 windows[i] = new Window(double.NaN, double.NaN);
             }
 
-            FindWindowsOnOccultationConstraintProxy(_mapper.Map<Window>(searchWindow), observer.NaifId, target.NaifId, targetFrame, targetShape.GetDescription(),
-                frontBody.NaifId, frontFrame, frontShape.GetDescription(), occultationType.GetDescription(), aberration.GetDescription(), stepSize.TotalSeconds, windows);
+            FindWindowsOnOccultationConstraintProxy(_mapper.Map<Window>(searchWindow), observer.NaifId, target.NaifId,
+                targetFrame, targetShape.GetDescription(),
+                frontBody.NaifId, frontFrame, frontShape.GetDescription(), occultationType.GetDescription(),
+                aberration.GetDescription(), stepSize.TotalSeconds, windows);
             return _mapper.Map<Time.Window[]>(windows.Where(x => !double.IsNaN(x.Start)));
         }
     }
@@ -616,7 +653,8 @@ public class API
     /// <param name="stepSize"></param>
     /// <param name="observer"></param>
     /// <returns></returns>
-    public IEnumerable<Time.Window> FindWindowsOnCoordinateConstraint(Time.Window searchWindow, INaifObject observer, INaifObject target,
+    public IEnumerable<Time.Window> FindWindowsOnCoordinateConstraint(Time.Window searchWindow, INaifObject observer,
+        INaifObject target,
         Frame frame, CoordinateSystem coordinateSystem, Coordinate coordinate,
         RelationnalOperator relationalOperator, double value, double adjustValue, Aberration aberration,
         TimeSpan stepSize)
@@ -629,8 +667,10 @@ public class API
                 windows[i] = new Window(double.NaN, double.NaN);
             }
 
-            FindWindowsOnCoordinateConstraintProxy(_mapper.Map<Window>(searchWindow), observer.NaifId, target.NaifId, frame.Name, coordinateSystem.GetDescription(),
-                coordinate.GetDescription(), relationalOperator.GetDescription(), value, adjustValue, aberration.GetDescription(), stepSize.TotalSeconds, windows);
+            FindWindowsOnCoordinateConstraintProxy(_mapper.Map<Window>(searchWindow), observer.NaifId, target.NaifId,
+                frame.Name, coordinateSystem.GetDescription(),
+                coordinate.GetDescription(), relationalOperator.GetDescription(), value, adjustValue,
+                aberration.GetDescription(), stepSize.TotalSeconds, windows);
             return _mapper.Map<Time.Window[]>(windows.Where(x => !double.IsNaN(x.Start)));
         }
     }
@@ -652,8 +692,10 @@ public class API
     /// <param name="stepSize"></param>
     /// <param name="method"></param>
     /// <returns></returns>
-    public IEnumerable<Time.Window> FindWindowsOnIlluminationConstraint(Time.Window searchWindow, INaifObject observer, INaifObject targetBody, Frame fixedFrame,
-        Coordinates.Geodetic geodetic, IlluminationAngle illuminationType, RelationnalOperator relationalOperator, double value, double adjustValue, Aberration aberration,
+    public IEnumerable<Time.Window> FindWindowsOnIlluminationConstraint(Time.Window searchWindow, INaifObject observer,
+        INaifObject targetBody, Frame fixedFrame,
+        Coordinates.Geodetic geodetic, IlluminationAngle illuminationType, RelationnalOperator relationalOperator,
+        double value, double adjustValue, Aberration aberration,
         TimeSpan stepSize,
         INaifObject illuminationSource, string method = "Ellipsoid")
     {
@@ -668,9 +710,11 @@ public class API
                 windows[i] = new Window(double.NaN, double.NaN);
             }
 
-            FindWindowsOnIlluminationConstraintProxy(_mapper.Map<Window>(searchWindow), observer.NaifId, illuminationSource.Name, targetBody.NaifId, fixedFrame.Name,
+            FindWindowsOnIlluminationConstraintProxy(_mapper.Map<Window>(searchWindow), observer.NaifId,
+                illuminationSource.Name, targetBody.NaifId, fixedFrame.Name,
                 _mapper.Map<Geodetic>(geodetic),
-                illuminationType.GetDescription(), relationalOperator.GetDescription(), value, adjustValue, aberration.GetDescription(), stepSize.TotalSeconds, method, windows);
+                illuminationType.GetDescription(), relationalOperator.GetDescription(), value, adjustValue,
+                aberration.GetDescription(), stepSize.TotalSeconds, method, windows);
             return _mapper.Map<Time.Window[]>(windows.Where(x => !double.IsNaN(x.Start)));
         }
     }
@@ -687,7 +731,8 @@ public class API
     /// <param name="aberration"></param>
     /// <param name="stepSize"></param>
     /// <returns></returns>
-    public IEnumerable<Time.Window> FindWindowsInFieldOfViewConstraint(Time.Window searchWindow, Spacecraft observer, Instrument instrument,
+    public IEnumerable<Time.Window> FindWindowsInFieldOfViewConstraint(Time.Window searchWindow, Spacecraft observer,
+        Instrument instrument,
         INaifObject target, Frame targetFrame, ShapeType targetShape, Aberration aberration, TimeSpan stepSize)
     {
         lock (lockObject)
@@ -701,7 +746,8 @@ public class API
 
             var searchWindowDto = _mapper.Map<Window>(searchWindow);
 
-            FindWindowsInFieldOfViewConstraintProxy(searchWindowDto, observer.NaifId, instrument.NaifId, target.NaifId, targetFrame.Name,
+            FindWindowsInFieldOfViewConstraintProxy(searchWindowDto, observer.NaifId, instrument.NaifId, target.NaifId,
+                targetFrame.Name,
                 targetShape.GetDescription(), aberration.GetDescription(), stepSize.TotalSeconds, windows);
 
             return _mapper.Map<IEnumerable<Time.Window>>(windows.Where(x => !double.IsNaN(x.Start)).ToArray());
@@ -718,17 +764,20 @@ public class API
     /// <param name="stepSize"></param>
     /// <param name="observer"></param>
     /// <returns></returns>
-    public IEnumerable<OrbitalParameters.OrbitalParameters> ReadEphemeris(Time.Window searchWindow, Body.CelestialBody observer, ILocalizable target, Frame frame,
+    public IEnumerable<OrbitalParameters.OrbitalParameters> ReadEphemeris(Time.Window searchWindow,
+        Body.CelestialBody observer, ILocalizable target, Frame frame,
         Aberration aberration, TimeSpan stepSize)
     {
         lock (lockObject)
         {
             if (frame == null) throw new ArgumentNullException(nameof(frame));
             var stateVectors = new StateVector[10000];
-            ReadEphemerisProxy(_mapper.Map<Window>(searchWindow), observer.NaifId, target.NaifId, frame.Name, aberration.GetDescription(), stepSize.TotalSeconds,
+            ReadEphemerisProxy(_mapper.Map<Window>(searchWindow), observer.NaifId, target.NaifId, frame.Name,
+                aberration.GetDescription(), stepSize.TotalSeconds,
                 stateVectors);
             return stateVectors.Select(x =>
-                new OrbitalParameters.StateVector(_mapper.Map<Vector3>(x.Position), _mapper.Map<Vector3>(x.Velocity), observer, DateTimeExtension.CreateTDB(x.Epoch),
+                new OrbitalParameters.StateVector(_mapper.Map<Vector3>(x.Position), _mapper.Map<Vector3>(x.Velocity),
+                    observer, DateTimeExtension.CreateTDB(x.Epoch),
                     frame));
         }
     }
@@ -743,14 +792,17 @@ public class API
     /// <param name="aberration"></param>
     /// <returns></returns>
     /// <exception cref="ArgumentNullException"></exception>
-    public OrbitalParameters.OrbitalParameters ReadEphemeris(DateTime epoch, Body.CelestialBody observer, ILocalizable target, Frame frame,
+    public OrbitalParameters.OrbitalParameters ReadEphemeris(DateTime epoch, Body.CelestialBody observer,
+        ILocalizable target, Frame frame,
         Aberration aberration)
     {
         lock (lockObject)
         {
             if (frame == null) throw new ArgumentNullException(nameof(frame));
-            var stateVector = ReadEphemerisAtGivenEpochProxy(epoch.SecondsFromJ2000TDB(), observer.NaifId, target.NaifId, frame.Name, aberration.GetDescription());
-            return new OrbitalParameters.StateVector(_mapper.Map<Vector3>(stateVector.Position), _mapper.Map<Vector3>(stateVector.Velocity), observer,
+            var stateVector = ReadEphemerisAtGivenEpochProxy(epoch.SecondsFromJ2000TDB(), observer.NaifId,
+                target.NaifId, frame.Name, aberration.GetDescription());
+            return new OrbitalParameters.StateVector(_mapper.Map<Vector3>(stateVector.Position),
+                _mapper.Map<Vector3>(stateVector.Velocity), observer,
                 DateTimeExtension.CreateTDB(stateVector.Epoch), frame);
         }
     }
@@ -764,16 +816,19 @@ public class API
     /// <param name="referenceFrame"></param>
     /// <param name="stepSize"></param>
     /// <returns></returns>
-    public IEnumerable<OrbitalParameters.StateOrientation> ReadOrientation(Time.Window searchWindow, Spacecraft spacecraft, TimeSpan tolerance,
+    public IEnumerable<OrbitalParameters.StateOrientation> ReadOrientation(Time.Window searchWindow,
+        Spacecraft spacecraft, TimeSpan tolerance,
         Frame referenceFrame, TimeSpan stepSize)
     {
         lock (lockObject)
         {
             if (referenceFrame == null) throw new ArgumentNullException(nameof(referenceFrame));
             var stateOrientations = new StateOrientation[10000];
-            ReadOrientationProxy(_mapper.Map<Window>(searchWindow), spacecraft.NaifId, tolerance.TotalSeconds, referenceFrame.Name, stepSize.TotalSeconds,
+            ReadOrientationProxy(_mapper.Map<Window>(searchWindow), spacecraft.NaifId, tolerance.TotalSeconds,
+                referenceFrame.Name, stepSize.TotalSeconds,
                 stateOrientations);
-            return stateOrientations.Select(x => new OrbitalParameters.StateOrientation(_mapper.Map<Quaternion>(x.Rotation), _mapper.Map<Vector3>(x.AngularVelocity),
+            return stateOrientations.Select(x => new OrbitalParameters.StateOrientation(
+                _mapper.Map<Quaternion>(x.Rotation), _mapper.Map<Vector3>(x.AngularVelocity),
                 DateTimeExtension.CreateTDB(x.Epoch), referenceFrame));
         }
     }
@@ -785,7 +840,8 @@ public class API
     /// <param name="naifObject"></param>
     /// <param name="stateVectors"></param>
     /// <returns></returns>
-    public bool WriteEphemeris(FileInfo filePath, INaifObject naifObject, IEnumerable<OrbitalParameters.StateVector> stateVectors)
+    public bool WriteEphemeris(FileInfo filePath, INaifObject naifObject,
+        IEnumerable<OrbitalParameters.StateVector> stateVectors)
     {
         lock (lockObject)
         {
@@ -794,7 +850,8 @@ public class API
             var enumerable = stateVectors as OrbitalParameters.StateVector[] ?? stateVectors.ToArray();
             if (!enumerable.Any())
                 throw new ArgumentException("Value cannot be an empty collection.", nameof(stateVectors));
-            return WriteEphemerisProxy(filePath.FullName, naifObject.NaifId, _mapper.Map<StateVector[]>(stateVectors), (uint)enumerable.Count());
+            return WriteEphemerisProxy(filePath.FullName, naifObject.NaifId, _mapper.Map<StateVector[]>(stateVectors),
+                (uint)enumerable.Count());
         }
     }
 
