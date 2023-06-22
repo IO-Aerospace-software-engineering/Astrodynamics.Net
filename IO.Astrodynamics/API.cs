@@ -55,7 +55,7 @@ public class API
         NativeLibrary.SetDllImportResolver(typeof(API).Assembly, Resolver);
     }
 
-    public static API Instance => new();
+    public static API Instance { get; } = new();
 
     [DllImport(@"IO.Astrodynamics", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     private static extern string GetSpiceVersionProxy();
@@ -68,7 +68,7 @@ public class API
 
     [DllImport(@"IO.Astrodynamics", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     private static extern void LoadKernelsProxy(string directoryPath);
-    
+
     [DllImport(@"IO.Astrodynamics", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     private static extern void UnloadKernelsProxy(string directoryPath);
 
@@ -601,10 +601,8 @@ public class API
     /// </summary>
     /// <param name="searchWindow"></param>
     /// <param name="target"></param>
-    /// <param name="targetFrame"></param>
     /// <param name="targetShape"></param>
     /// <param name="frontBody"></param>
-    /// <param name="frontFrame"></param>
     /// <param name="frontShape"></param>
     /// <param name="occultationType"></param>
     /// <param name="aberration"></param>
