@@ -25,7 +25,6 @@ namespace IO.Astrodynamics.Surface
         {
             if (body == null) throw new ArgumentNullException(nameof(body));
             if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id));
-            if (body == null) throw new ArgumentNullException(nameof(body));
             if (string.IsNullOrEmpty(name)) throw new ArgumentException("Value cannot be null or empty.", nameof(name));
             Name = name;
             Body = body;
