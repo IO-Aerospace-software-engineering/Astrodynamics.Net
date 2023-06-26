@@ -4,7 +4,6 @@ using IO.Astrodynamics.Body;
 using IO.Astrodynamics.Coordinates;
 using IO.Astrodynamics.Frames;
 using IO.Astrodynamics.Math;
-
 using IO.Astrodynamics.Time;
 
 namespace IO.Astrodynamics.OrbitalParameters;
@@ -17,7 +16,10 @@ public abstract class OrbitalParameters : IEquatable<OrbitalParameters>
 
     public Frame Frame { get; }
 
-    protected OrbitalParameters() { }
+    protected OrbitalParameters()
+    {
+    }
+
     /// <summary>
     /// Constructor
     /// </summary>
@@ -86,6 +88,7 @@ public abstract class OrbitalParameters : IEquatable<OrbitalParameters>
         {
             return Vector3.VectorX;
         }
+
         return ToStateVector().AscendingNodeVector();
     }
 
@@ -137,16 +140,17 @@ public abstract class OrbitalParameters : IEquatable<OrbitalParameters>
     {
         if (trueAnomaly < 0.0)
         {
-            trueAnomaly +=Constants._2PI;
+            trueAnomaly += Constants._2PI;
         }
+
         //X = cos E
         double x = (Eccentricity() + System.Math.Cos(trueAnomaly)) / (1 + Eccentricity() * System.Math.Cos(trueAnomaly));
         double eccAno = System.Math.Acos(x);
         double M = eccAno - Eccentricity() * System.Math.Sin(eccAno);
 
-        if (trueAnomaly >Constants.PI)
+        if (trueAnomaly > Constants.PI)
         {
-            M =Constants._2PI - M;
+            M = Constants._2PI - M;
         }
 
         return M;
@@ -159,7 +163,7 @@ public abstract class OrbitalParameters : IEquatable<OrbitalParameters>
     public TimeSpan Period()
     {
         double a = SemiMajorAxis();
-        double T =Constants._2PI * System.Math.Sqrt((a * a * a) / CenterOfMotion.GM);
+        double T = Constants._2PI * System.Math.Sqrt((a * a * a) / CenterOfMotion.GM);
         return TimeSpan.FromSeconds(T);
     }
 
@@ -231,6 +235,7 @@ public abstract class OrbitalParameters : IEquatable<OrbitalParameters>
         {
             return Vector3.VectorX * SemiMajorAxis();
         }
+
         return EccentricityVector().Normalize() * SemiMajorAxis() * (1.0 - Eccentricity());
     }
 
@@ -244,6 +249,7 @@ public abstract class OrbitalParameters : IEquatable<OrbitalParameters>
         {
             return Vector3.VectorX.Inverse() * SemiMajorAxis();
         }
+
         return EccentricityVector().Normalize().Inverse() * SemiMajorAxis() * (1.0 + Eccentricity());
     }
 
@@ -263,7 +269,7 @@ public abstract class OrbitalParameters : IEquatable<OrbitalParameters>
     /// <returns></returns>
     public double TrueLongitude()
     {
-        return (AscendingNode() + ArgumentOfPeriapsis() + TrueAnomaly()) %Constants._2PI;
+        return (AscendingNode() + ArgumentOfPeriapsis() + TrueAnomaly()) % Constants._2PI;
     }
 
     /// <summary>
@@ -272,7 +278,7 @@ public abstract class OrbitalParameters : IEquatable<OrbitalParameters>
     /// <returns></returns>
     public double MeanLongitude()
     {
-        return (AscendingNode() + ArgumentOfPeriapsis() + MeanAnomaly()) %Constants._2PI;
+        return (AscendingNode() + ArgumentOfPeriapsis() + MeanAnomaly()) % Constants._2PI;
     }
 
     public bool IsCircular()
@@ -296,19 +302,18 @@ public abstract class OrbitalParameters : IEquatable<OrbitalParameters>
         double M = MeanAnomaly() + MeanMotion() * ellapsedTime;
         while (M < 0.0)
         {
-            M +=Constants._2PI;
+            M += Constants._2PI;
         }
-        return new KeplerianElements(SemiMajorAxis(), Eccentricity(), Inclination(), AscendingNode(), ArgumentOfPeriapsis(), M %Constants._2PI, CenterOfMotion, epoch, Frame);
+
+        return new KeplerianElements(SemiMajorAxis(), Eccentricity(), Inclination(), AscendingNode(), ArgumentOfPeriapsis(), M % Constants._2PI, CenterOfMotion, epoch, Frame);
     }
 
     public virtual KeplerianElements ToKeplerianElements()
     {
         return ToKeplerianElements(Epoch);
     }
-    
-    
 
-    public virtual OrbitalParameters ToFrame(Frame frame)
+    public OrbitalParameters ToFrame(Frame frame)
     {
         if (frame == Frame)
         {
@@ -342,13 +347,10 @@ public abstract class OrbitalParameters : IEquatable<OrbitalParameters>
         return Equals(obj as OrbitalParameters);
     }
 
-    public bool Equals(OrbitalParameters other)
+    public virtual bool Equals(OrbitalParameters other)
     {
         return other is not null &&
-               base.Equals(other) || (
-               EqualityComparer<CelestialBody>.Default.Equals(CenterOfMotion, other.CenterOfMotion) &&
-               Epoch == other.Epoch &&
-               EqualityComparer<Frame>.Default.Equals(Frame, other.Frame));
+            base.Equals(other) || (ToStateVector() == other?.ToStateVector());
     }
 
     public override int GetHashCode()

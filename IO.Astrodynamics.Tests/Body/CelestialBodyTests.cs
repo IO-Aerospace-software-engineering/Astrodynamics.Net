@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using IO.Astrodynamics.Body;
 using IO.Astrodynamics.Math;
+using IO.Astrodynamics.OrbitalParameters;
 using IO.Astrodynamics.SolarSystemObjects;
 using IO.Astrodynamics.Time;
 using Xunit;
@@ -19,6 +20,22 @@ public class CelestialBodyTests
     public void Create()
     {
         CelestialBody earth = new CelestialBody(399);
+
+        Assert.Equal(399, earth.NaifId);
+        Assert.Equal("EARTH", earth.Name);
+        Assert.Equal("ITRF93", earth.Frame.Name);
+        Assert.Equal(3.9860043543609594E+14, earth.GM);
+        Assert.Equal(5.972168398724899E+24, earth.Mass);
+        Assert.Equal(6356751.9, earth.PolarRadius);
+        Assert.Equal(6378136.6, earth.EquatorialRadius);
+        Assert.Equal(0.0033528131084554157, earth.Flatenning);
+        Assert.Equal(1, earth.InitialOrbitalParameters.CenterOfMotion.Satellites.Count);
+    }
+
+    [Fact]
+    public void Create2()
+    {
+        CelestialBody earth = new CelestialBody(399, Frames.Frame.ECLIPTIC, DateTimeExtension.J2000);
 
         Assert.Equal(399, earth.NaifId);
         Assert.Equal("EARTH", earth.Name);
@@ -53,7 +70,7 @@ public class CelestialBodyTests
     [Fact]
     public void CreateExceptions()
     {
-        Assert.Throws<ArgumentException>(() => new CelestialBody(-399));
+        Assert.Throws<InvalidOperationException>(() => new CelestialBody(-399));
     }
 
     [Fact]
@@ -62,9 +79,9 @@ public class CelestialBodyTests
         var moon = TestHelpers.MoonAt20011214;
         var earth = moon.InitialOrbitalParameters.CenterOfMotion;
         var sun = earth.InitialOrbitalParameters.CenterOfMotion;
-        var res = earth.FindOccultations(
-            new Window(DateTimeExtension.CreateTDB(61473664.183390938), DateTimeExtension.CreateTDB(61646464.183445148)), moon,
-            ShapeType.Ellipsoid, sun, ShapeType.Ellipsoid, OccultationType.Any, Aberration.None, TimeSpan.FromMinutes(1.0)).ToArray();
+        var res = sun.FindWindowsOnOccultationConstraint(
+            new Window(DateTimeExtension.CreateTDB(61473664.183390938), DateTimeExtension.CreateTDB(61646464.183445148)), earth,
+            ShapeType.Ellipsoid, moon, ShapeType.Ellipsoid, OccultationType.Any, Aberration.None, TimeSpan.FromMinutes(1.0)).ToArray();
         Assert.Single(res);
 
         Assert.Equal(new DateTime(2001, 12, 14, 20, 10, 50, 573), res[0].StartDate);
@@ -78,5 +95,44 @@ public class CelestialBodyTests
         var earth = TestHelpers.EarthAtJ2000;
         var res = sun.AngularSize(earth.InitialOrbitalParameters.ToStateVector().Position.Magnitude());
         Assert.Equal(0.009459, res, 6);
+    }
+
+    [Fact]
+    public void GetMass()
+    {
+        var earth = TestHelpers.EarthAtJ2000;
+        var res = earth.GetTotalMass();
+        Assert.Equal(5.972168398724899E+24, res);
+    }
+
+    [Fact]
+    public void CelestialBodyToString()
+    {
+        var earth = TestHelpers.EarthAtJ2000;
+        Assert.Equal("EARTH", earth.ToString());
+    }
+
+    [Fact]
+    public void Equality()
+    {
+        var earth1 = new CelestialBody(399);
+        var earth2 = new CelestialBody(399);
+        var moon = new CelestialBody(301);
+        Assert.Equal(earth1, earth2);
+        Assert.NotEqual(earth1, moon);
+        Assert.False(earth1 == null);
+    }
+
+    [Fact]
+    public void GetEphemeris()
+    {
+        var earth = new CelestialBody(399);
+        var res = earth.GetEphemeris(new Window(DateTimeExtension.J2000, TimeSpan.FromDays(1.0)), TestHelpers.Sun, Frames.Frame.ICRF, Aberration.None,
+            TimeSpan.FromDays(1.0)).ToArray();
+        Assert.Equal(2, res.Length);
+        Assert.Equal(TestHelpers.EarthAtJ2000.InitialOrbitalParameters, res.First());
+        Assert.Equal(
+            new StateVector(new Vector3(-29069076368.64741, 132303142494.37561, 57359794320.98976), new Vector3(-29695.854459557304, -5497.347182651619, -2382.9422283991967),
+                TestHelpers.Sun, DateTimeExtension.J2000 + TimeSpan.FromDays(1.0), Frames.Frame.ICRF), res.ElementAt(1));
     }
 }

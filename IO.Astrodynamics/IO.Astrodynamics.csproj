@@ -9,9 +9,6 @@
 
     <ItemGroup>
         <None Remove="resources\libIO.SDK.so" />
-        <None Update="resources\libIO.Astrodynamics.so">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
     </ItemGroup>
 
     <ItemGroup>
@@ -26,11 +23,13 @@
 
     <ItemGroup>
       <Content Include="..\..\SDK\cmake-build-release\IO.Astrodynamics\IO.Astrodynamics.dll">
-        <Link>resources\IO.Astrodynamics.dll</Link>
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        <Link>resources/IO.Astrodynamics.dll</Link>
       </Content>
       <Content Include="..\..\SDK\cmake-build-release\IO.Astrodynamics\IO.Astrodynamics.lib">
-        <Link>resources\IO.Astrodynamics.lib</Link>
+        <Link>resources/IO.Astrodynamics.lib</Link>
+      </Content>
+      <Content Include="..\..\SDK\cmake-build-release\IO.Astrodynamics\libIO.Astrodynamics.so">
+        <Link>resources/libIO.Astrodynamics.so</Link>
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
     </ItemGroup>

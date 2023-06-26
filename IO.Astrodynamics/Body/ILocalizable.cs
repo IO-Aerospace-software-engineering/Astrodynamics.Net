@@ -62,25 +62,6 @@ namespace IO.Astrodynamics.Body
         public IEnumerable<Window> FindWindowsOnCoordinateConstraint(Window searchWindow, INaifObject observer, Frame frame, CoordinateSystem coordinateSystem,
             Coordinate coordinate, RelationnalOperator relationalOperator, double value, double adjustValue, Aberration aberration, TimeSpan stepSize);
 
-        /// <summary>
-        ///     Find time windows based on illumination constraint
-        /// </summary>
-        /// <param name="searchWindow"></param>
-        /// <param name="illuminationSource"></param>
-        /// <param name="observer"></param>
-        /// <param name="targetBody"></param>
-        /// <param name="fixedFrame"></param>
-        /// <param name="geodetic"></param>
-        /// <param name="illuminationType"></param>
-        /// <param name="relationalOperator"></param>
-        /// <param name="value"></param>
-        /// <param name="adjustValue"></param>
-        /// <param name="aberration"></param>
-        /// <param name="stepSize"></param>
-        /// <param name="method"></param>
-        /// <returns></returns>
-        public IEnumerable<Window> FindWindowsOnIlluminationConstraint(Window searchWindow, INaifObject observer,
-            Geodetic geodetic, IlluminationAngle illuminationType, RelationnalOperator relationalOperator, double value, double adjustValue, Aberration aberration,
-            TimeSpan stepSize, INaifObject illuminationSource, string method = "Ellipsoid");
+       
     }
 }

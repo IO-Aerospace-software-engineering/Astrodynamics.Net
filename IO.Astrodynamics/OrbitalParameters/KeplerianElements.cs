@@ -8,31 +8,37 @@ namespace IO.Astrodynamics.OrbitalParameters
 {
     public class KeplerianElements : OrbitalParameters, IEquatable<KeplerianElements>
     {
-        public KeplerianElements(double semiMajorAxis, double eccentricity, double inclination, double rigthAscendingNode, double argumentOfPeriapsis, double meanAnomaly, CelestialBody centerOfMotion, DateTime epoch, Frame frame) : base(centerOfMotion, epoch, frame)
+        
+
+        public KeplerianElements(double semiMajorAxis, double eccentricity, double inclination, double rigthAscendingNode, double argumentOfPeriapsis, double meanAnomaly,
+            CelestialBody centerOfMotion, DateTime epoch, Frame frame) : base(centerOfMotion, epoch, frame)
         {
             if (semiMajorAxis <= 0.0)
             {
                 throw new ArgumentException("Semi major axis must be a positive number");
             }
+
             if (eccentricity < 0.0)
             {
                 throw new ArgumentException("Eccentricity must be a positive number");
             }
-            if (inclination < -Constants.PI || inclination >Constants.PI)
+
+            if (inclination < -Constants.PI || inclination > Constants.PI)
             {
                 throw new ArgumentException("Inclination must be in range [-PI,PI] ");
             }
-            if (rigthAscendingNode < 0.0 || rigthAscendingNode >Constants._2PI)
+
+            if (rigthAscendingNode < 0.0 || rigthAscendingNode > Constants._2PI)
             {
                 throw new ArgumentException("Rigth ascending node must be in range [0.0,2*PI] ");
             }
 
-            if (argumentOfPeriapsis < 0.0 || argumentOfPeriapsis >Constants._2PI)
+            if (argumentOfPeriapsis < 0.0 || argumentOfPeriapsis > Constants._2PI)
             {
                 throw new ArgumentException("Argument of periapsis must be in range [0.0,2*PI] ");
             }
 
-            if (meanAnomaly < 0.0 || meanAnomaly >Constants._2PI)
+            if (meanAnomaly < 0.0 || meanAnomaly > Constants._2PI)
             {
                 throw new ArgumentException("Mean anomaly must be in range [0.0,2*PI] ");
             }
@@ -72,6 +78,7 @@ namespace IO.Astrodynamics.OrbitalParameters
                 EA = tmpEA;
                 tmpEA = M + E * System.Math.Sin(EA);
             }
+
             return EA;
         }
 
@@ -96,9 +103,10 @@ namespace IO.Astrodynamics.OrbitalParameters
             double v = System.Math.Atan2(System.Math.Sqrt(1 - E * E) * System.Math.Sin(EA), System.Math.Cos(EA) - E);
             if (v < 0.0)
             {
-                v +=Constants._2PI;
+                v += Constants._2PI;
             }
-            return v %Constants._2PI;
+
+            return v % Constants._2PI;
         }
 
         public override double MeanAnomaly()
@@ -110,22 +118,21 @@ namespace IO.Astrodynamics.OrbitalParameters
         {
             return this;
         }
+        
+        public bool Equals(KeplerianElements other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return A.Equals(other.A) && E.Equals(other.E) && I.Equals(other.I) && RAAN.Equals(other.RAAN) && AOP.Equals(other.AOP) && M.Equals(other.M) &&
+                   CenterOfMotion == other.CenterOfMotion && Epoch == other.Epoch && Frame == other.Frame;
+        }
 
         public override bool Equals(object obj)
         {
-            return Equals(obj as KeplerianElements);
-        }
-
-        public bool Equals(KeplerianElements other)
-        {
-            return other is not null &&
-                   base.Equals(other) &&
-                   A == other.A &&
-                   E == other.E &&
-                   I == other.I &&
-                   RAAN == other.RAAN &&
-                   AOP == other.AOP &&
-                   M == other.M;
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((KeplerianElements)obj);
         }
 
         public override int GetHashCode()
@@ -135,12 +142,12 @@ namespace IO.Astrodynamics.OrbitalParameters
 
         public static bool operator ==(KeplerianElements left, KeplerianElements right)
         {
-            return EqualityComparer<KeplerianElements>.Default.Equals(left, right);
+            return Equals(left, right);
         }
 
         public static bool operator !=(KeplerianElements left, KeplerianElements right)
         {
-            return !(left == right);
+            return !Equals(left, right);
         }
     }
 }

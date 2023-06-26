@@ -14,19 +14,14 @@ public abstract class Body : ILocalizable, IEquatable<Body>
     public string Name { get; }
     public double Mass { get; }
 
-    public OrbitalParameters.OrbitalParameters InitialOrbitalParameters { get; private set; }
+    public OrbitalParameters.OrbitalParameters InitialOrbitalParameters { get; protected set; }
     public Frame Frame { get; }
 
     private readonly HashSet<Body> _satellites = new();
     public IReadOnlyCollection<Body> Satellites => _satellites;
 
-    //Used for performance improvement
+    //Used for performance improvement and avoid duplicated call in Celestial body
     protected DTO.CelestialBody ExtendedInformation;
-
-    protected Body(int naifId) : this(naifId, Frame.ECLIPTIC, DateTimeExtension.J2000)
-    {
-        
-    }
 
     /// <summary>
     /// 
@@ -37,9 +32,10 @@ public abstract class Body : ILocalizable, IEquatable<Body>
     protected Body(int naifId, Frame frame, DateTime epoch)
     {
         ExtendedInformation = API.Instance.GetCelestialBodyInfo(naifId);
+
         NaifId = naifId;
-        Name = ExtendedInformation.Name;
-        Frame = new Frame(ExtendedInformation.FrameName);
+        Name = string.IsNullOrEmpty(ExtendedInformation.Name) ? throw new InvalidOperationException("Celestial body name can't be defined, please check if you have loaded associated kernels") : ExtendedInformation.Name;
+        Frame = string.IsNullOrEmpty(ExtendedInformation.FrameName) ? throw new InvalidOperationException("Celestial body frame can't be defined, please check if you have loaded associated kernels"):new Frame(ExtendedInformation.FrameName);
         Mass = ExtendedInformation.GM / Constants.G;
 
         if (NaifId != Stars.Sun.NaifId)
@@ -83,7 +79,16 @@ public abstract class Body : ILocalizable, IEquatable<Body>
             initialOrbitalParameters.CenterOfMotion._satellites.Add(this);
         }
     }
-
+    internal void AddSatellite(Body body)
+    {
+        _satellites.Add(body);
+    }
+    
+    internal void RemoveSatellite(Body body)
+    {
+        _satellites.Remove(body);
+    }
+    
     /// <summary>
     /// Get ephemeris
     /// </summary>
@@ -141,35 +146,8 @@ public abstract class Body : ILocalizable, IEquatable<Body>
         return referenceFrame.ToFrame(Frame, epoch);
     }
 
-    public virtual void SetInitialOrbitalParameters(OrbitalParameters.OrbitalParameters orbitalParameters)
-    {
-        if (InitialOrbitalParameters?.CenterOfMotion != null)
-        {
-            InitialOrbitalParameters.CenterOfMotion._satellites.Remove(this);
-        }
+    
 
-        InitialOrbitalParameters = orbitalParameters;
-        InitialOrbitalParameters?.CenterOfMotion._satellites.Add(this);
-    }
-
-
-    /// <summary>
-    /// FindOccultations
-    /// </summary>
-    /// <param name="searchWindow"></param>
-    /// <param name="by"></param>
-    /// <param name="byShape"></param>
-    /// <param name="target"></param>
-    /// <param name="targetShape"></param>
-    /// <param name="occultationType"></param>
-    /// <param name="aberration"></param>
-    /// <param name="coarseStepSize"></param>
-    /// <returns></returns>
-    public IEnumerable<Window> FindOccultations(in Window searchWindow, INaifObject by, ShapeType byShape, INaifObject target, ShapeType targetShape,
-        OccultationType occultationType, Aberration aberration, in TimeSpan coarseStepSize)
-    {
-        return API.Instance.FindWindowsOnOccultationConstraint(searchWindow, this, target, targetShape, by, byShape, occultationType, aberration, coarseStepSize);
-    }
 
     /// <summary>
     /// Return the angular size of a body relative to the distance
@@ -216,14 +194,6 @@ public abstract class Body : ILocalizable, IEquatable<Body>
     {
         return API.Instance.FindWindowsOnCoordinateConstraint(searchWindow, observer, this, frame, coordinateSystem, coordinate, relationalOperator, value, adjustValue, aberration,
             stepSize);
-    }
-
-    public IEnumerable<Window> FindWindowsOnIlluminationConstraint(Window searchWindow, INaifObject observer, Geodetic geodetic,
-        IlluminationAngle illuminationType, RelationnalOperator relationalOperator, double value, double adjustValue, Aberration aberration, TimeSpan stepSize,
-        INaifObject illuminationSource, string method = "Ellipsoid")
-    {
-        return API.Instance.FindWindowsOnIlluminationConstraint(searchWindow, observer, this, Frame, geodetic, illuminationType, relationalOperator, value, adjustValue,
-            aberration, stepSize, illuminationSource, method);
     }
 
     public override string ToString()

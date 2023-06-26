@@ -8,11 +8,11 @@ namespace IO.Astrodynamics.Maneuver
         public double TargetPerigeeHeight { get; } = double.NaN;
         public double TargetInclination { get; } = double.NaN;
 
-        public CombinedManeuver(Spacecraft spacecraft, DateTime minimumEpoch, TimeSpan maneuverHoldDuration, OrbitalParameters.OrbitalParameters targetOrbit, params Engine[] engines) : base(spacecraft, minimumEpoch, maneuverHoldDuration, targetOrbit, engines)
+        public CombinedManeuver(DateTime minimumEpoch, TimeSpan maneuverHoldDuration, OrbitalParameters.OrbitalParameters targetOrbit, params Engine[] engines) : base(minimumEpoch, maneuverHoldDuration, targetOrbit, engines)
         {
         }
 
-        public CombinedManeuver(Spacecraft spacecraft, DateTime minimumEpoch, TimeSpan maneuverHoldDuration, double perigeeRadius, double inclination, params Engine[] engines) : base(spacecraft, minimumEpoch, maneuverHoldDuration, engines)
+        public CombinedManeuver(DateTime minimumEpoch, TimeSpan maneuverHoldDuration, double perigeeRadius, double inclination, params Engine[] engines) : base(minimumEpoch, maneuverHoldDuration, engines)
         {
             TargetPerigeeHeight = perigeeRadius;
             TargetInclination = inclination;

@@ -358,7 +358,7 @@ public class API
                         scenarioDto.Spacecraft.PointingToAttitudes[
                                 scenarioDto.Spacecraft.PointingToAttitudes.Count(x => x.ManeuverOrder > -1)] =
                             new DTO.InstrumentPointingToAttitude(order, instManeuver.Instrument.NaifId,
-                                instManeuver.TargetId.NaifId,
+                                instManeuver.Target.NaifId,
                                 instManeuver.ManeuverHoldDuration.TotalSeconds,
                                 instManeuver.MinimumEpoch.SecondsFromJ2000TDB());
                         //Add engines
@@ -514,7 +514,7 @@ public class API
             LoadKernelsProxy(path.FullName);
         }
     }
-    
+
     /// <summary>
     ///     Unload kernel at given path
     /// </summary>
@@ -773,10 +773,8 @@ public class API
             ReadEphemerisProxy(_mapper.Map<Window>(searchWindow), observer.NaifId, target.NaifId, frame.Name,
                 aberration.GetDescription(), stepSize.TotalSeconds,
                 stateVectors);
-            return stateVectors.Select(x =>
-                new OrbitalParameters.StateVector(_mapper.Map<Vector3>(x.Position), _mapper.Map<Vector3>(x.Velocity),
-                    observer, DateTimeExtension.CreateTDB(x.Epoch),
-                    frame));
+            return stateVectors.Where(x => !string.IsNullOrEmpty(x.Frame)).Select(x => new OrbitalParameters.StateVector(_mapper.Map<Vector3>(x.Position),
+                _mapper.Map<Vector3>(x.Velocity), observer, DateTimeExtension.CreateTDB(x.Epoch), frame));
         }
     }
 

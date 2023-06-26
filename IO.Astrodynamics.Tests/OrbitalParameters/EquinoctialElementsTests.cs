@@ -8,6 +8,10 @@ namespace IO.Astrodynamics.Tests.OrbitalParameters;
 
 public class EquinoctialElementsTests
 {
+    public EquinoctialElementsTests()
+    {
+        API.Instance.LoadKernels(Constants.SolarSystemKernelPath);
+    }
     [Fact]
     public void Create()
     {

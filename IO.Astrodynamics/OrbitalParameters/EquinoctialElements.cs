@@ -7,6 +7,8 @@ namespace IO.Astrodynamics.OrbitalParameters
 {
     public class EquinoctialElements : OrbitalParameters, IEquatable<EquinoctialElements>
     {
+        
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -20,7 +22,8 @@ namespace IO.Astrodynamics.OrbitalParameters
         /// <param name="epoch">Epoch</param>
         /// <param name="frame">Reference frame</param>
         /// <returns></returns>
-        public EquinoctialElements(double p, double f, double g, double h, double k, double l0, CelestialBody centerOfMotion, DateTime epoch, Frame frame) : base(centerOfMotion, epoch, frame)
+        public EquinoctialElements(double p, double f, double g, double h, double k, double l0, CelestialBody centerOfMotion, DateTime epoch, Frame frame) : base(centerOfMotion,
+            epoch, frame)
         {
             P = p;
             F = f;
@@ -83,22 +86,21 @@ namespace IO.Astrodynamics.OrbitalParameters
         {
             return this;
         }
+        
+        public bool Equals(EquinoctialElements other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return P.Equals(other.P) && F.Equals(other.F) && G.Equals(other.G) && H.Equals(other.H) && K.Equals(other.K) && L0.Equals(other.L0) &&
+                   CenterOfMotion == other.CenterOfMotion && Epoch == other.Epoch && Frame == other.Frame;
+        }
 
         public override bool Equals(object obj)
         {
-            return Equals(obj as EquinoctialElements);
-        }
-
-        public bool Equals(EquinoctialElements other)
-        {
-            return other is not null &&
-                   base.Equals(other) &&
-                   P == other.P &&
-                   F == other.F &&
-                   G == other.G &&
-                   H == other.H &&
-                   K == other.K &&
-                   L0 == other.L0;
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((EquinoctialElements)obj);
         }
 
         public override int GetHashCode()
@@ -108,12 +110,12 @@ namespace IO.Astrodynamics.OrbitalParameters
 
         public static bool operator ==(EquinoctialElements left, EquinoctialElements right)
         {
-            return EqualityComparer<EquinoctialElements>.Default.Equals(left, right);
+            return Equals(left, right);
         }
 
         public static bool operator !=(EquinoctialElements left, EquinoctialElements right)
         {
-            return !(left == right);
+            return !Equals(left, right);
         }
     }
 }

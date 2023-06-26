@@ -34,13 +34,8 @@ namespace IO.Astrodynamics.Maneuver
             TargetOrbit = targetOrbit;
         }
 
-        protected Maneuver(Spacecraft spacecraft, DateTime minimumEpoch, TimeSpan maneuverHoldDuration, params Engine[] engines)
+        protected Maneuver(DateTime minimumEpoch, TimeSpan maneuverHoldDuration, params Engine[] engines)
         {
-            if (spacecraft == null)
-            {
-                throw new ArgumentNullException(nameof(spacecraft));
-            }
-
             MinimumEpoch = minimumEpoch;
             ManeuverHoldDuration = maneuverHoldDuration;
             Engines = engines;

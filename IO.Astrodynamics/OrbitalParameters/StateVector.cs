@@ -8,11 +8,13 @@ namespace IO.Astrodynamics.OrbitalParameters
 {
     public class StateVector : OrbitalParameters, IEquatable<StateVector>
     {
-        public Vector3 Position { get; set; }
-        public Vector3 Velocity { get; set; }
+        public Vector3 Position { get; internal set; }
+        public Vector3 Velocity { get; internal set; }
 
         StateVector()
-        { }
+        {
+        }
+
         public StateVector(Vector3 position, Vector3 velocity, CelestialBody centerOfMotion, DateTime epoch, Frame frame) : base(centerOfMotion, epoch, frame)
         {
             Position = position;
@@ -56,6 +58,7 @@ namespace IO.Astrodynamics.OrbitalParameters
             {
                 return Vector3.VectorX;
             }
+
             var h = SpecificAngularMomentum();
             return new Vector3(-h.Y, h.X, 0.0);
         }
@@ -69,6 +72,7 @@ namespace IO.Astrodynamics.OrbitalParameters
             {
                 omega = 2 * System.Math.PI - omega;
             }
+
             return omega;
         }
 
@@ -120,6 +124,7 @@ namespace IO.Astrodynamics.OrbitalParameters
             {
                 throw new ArgumentException("State vector must have the same frame and the same epoch");
             }
+
             return new StateVector(sv1.Position + sv2.Position, sv1.Velocity + sv2.Velocity, sv2.CenterOfMotion, sv1.Epoch, sv2.Frame);
         }
 
@@ -129,18 +134,10 @@ namespace IO.Astrodynamics.OrbitalParameters
             {
                 throw new ArgumentException("State vector must have the same frame and the same epoch");
             }
+
             return new StateVector(sv1.Position - sv2.Position, sv1.Velocity - sv2.Velocity, sv2.CenterOfMotion, sv1.Epoch, sv2.Frame);
         }
 
-        public static bool operator ==(StateVector left, StateVector right)
-        {
-            return EqualityComparer<StateVector>.Default.Equals(left, right);
-        }
-
-        public static bool operator !=(StateVector left, StateVector right)
-        {
-            return !(left == right);
-        }
 
         public double[] ToArray()
         {
@@ -152,22 +149,35 @@ namespace IO.Astrodynamics.OrbitalParameters
             return new StateVector(Position.Inverse(), Velocity.Inverse(), CenterOfMotion, Epoch, Frame);
         }
 
-        public override bool Equals(object obj)
-        {
-            return Equals(obj as StateVector);
-        }
 
         public bool Equals(StateVector other)
         {
-            return other is not null &&
-                   base.Equals(other) &&
-                   Position.Equals(other.Position) &&
-                   Velocity.Equals(other.Velocity);
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return Position.Equals(other.Position) && Velocity.Equals(other.Velocity) && CenterOfMotion == other.CenterOfMotion && Epoch == other.Epoch && Frame == other.Frame;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((StateVector)obj);
         }
 
         public override int GetHashCode()
         {
             return HashCode.Combine(base.GetHashCode(), Position, Velocity);
+        }
+
+        public static bool operator ==(StateVector left, StateVector right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(StateVector left, StateVector right)
+        {
+            return !Equals(left, right);
         }
     }
 }

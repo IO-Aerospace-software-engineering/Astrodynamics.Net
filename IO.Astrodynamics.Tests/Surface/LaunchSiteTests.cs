@@ -7,6 +7,10 @@ namespace IO.Astrodynamics.Tests.Surface
 {
     public class LaunchSiteTests
     {
+        public LaunchSiteTests()
+        {
+            API.Instance.LoadKernels(Constants.SolarSystemKernelPath);
+        }
         [Fact]
         public void Create()
         {

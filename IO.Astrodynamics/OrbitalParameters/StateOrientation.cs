@@ -4,24 +4,12 @@ using IO.Astrodynamics.Math;
 
 namespace IO.Astrodynamics.OrbitalParameters
 {
-    public record class StateOrientation
+    public record class StateOrientation(Quaternion Rotation, Vector3 AngularVelocity, DateTime Epoch, Frame ReferenceFrame)
     {
-        public Quaternion Rotation { get; }
-        public DateTime Epoch { get; }
-        
         /// <summary>
         /// Frame from which the rotation is applied
         /// </summary>
-        public Frame ReferenceFrame { get; }
-        public Vector3 AngularVelocity { get; }
-
-        public StateOrientation(Quaternion orientation, Vector3 angularVelocity, DateTime epoch, Frame frame)
-        {
-            Rotation = orientation;
-            AngularVelocity = angularVelocity;
-            Epoch = epoch;
-            ReferenceFrame = frame;
-        }
+        public Frame ReferenceFrame { get; } = ReferenceFrame;
 
         public StateOrientation RelativeToICRF()
         {

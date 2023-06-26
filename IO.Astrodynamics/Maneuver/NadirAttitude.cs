@@ -7,7 +7,7 @@ namespace IO.Astrodynamics.Maneuver;
 
 public class NadirAttitude : Maneuver
 {
-    public NadirAttitude(Spacecraft spacecraft, DateTime minimumEpoch, TimeSpan maneuverHoldDuration, params Engine[] engines) : base(spacecraft, minimumEpoch, maneuverHoldDuration, engines)
+    public NadirAttitude(DateTime minimumEpoch, TimeSpan maneuverHoldDuration, params Engine[] engines) : base(minimumEpoch, maneuverHoldDuration, engines)
     {
     }
 }

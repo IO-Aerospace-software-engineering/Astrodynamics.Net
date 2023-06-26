@@ -5,11 +5,7 @@ namespace IO.Astrodynamics.Frames;
 
 public class Frame : IEquatable<Frame>
 {
-    
-
     public string Name { get; }
-
-    
 
     public static readonly Frame ICRF = new Frame("J2000");
     public static readonly Frame ECLIPTIC = new Frame("ECLIPJ2000");
@@ -20,8 +16,6 @@ public class Frame : IEquatable<Frame>
         {
             throw new ArgumentException("Frame must have a name");
         }
-
-        ;
         Name = name;
     }
 

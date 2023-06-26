@@ -107,13 +107,13 @@ public class APITest
             new Instrument(-1783601, "CAM601", "mod1", 80.0 * IO.Astrodynamics.Constants.Deg2Rad,
                 InstrumentShape.Circular, Vector3.VectorZ, Vector3.VectorX, Vector3.VectorX));
 
-        var planeAlignmentManeuver = new PlaneAlignmentManeuver(spacecraft, DateTime.MinValue, TimeSpan.Zero,
+        var planeAlignmentManeuver = new PlaneAlignmentManeuver(DateTime.MinValue, TimeSpan.Zero,
             targetOrbit, spacecraft.Engines.First());
-        planeAlignmentManeuver.SetNextManeuver(new ApsidalAlignmentManeuver(spacecraft, DateTime.MinValue,
+        planeAlignmentManeuver.SetNextManeuver(new ApsidalAlignmentManeuver(DateTime.MinValue,
                 TimeSpan.Zero, targetOrbit, spacecraft.Engines.First()))
-            .SetNextManeuver(new PhasingManeuver(spacecraft, DateTime.MinValue, TimeSpan.Zero, targetOrbit, 1,
+            .SetNextManeuver(new PhasingManeuver(DateTime.MinValue, TimeSpan.Zero, targetOrbit, 1,
                 spacecraft.Engines.First()))
-            .SetNextManeuver(new ApogeeHeightManeuver(spacecraft, DateTime.MinValue, TimeSpan.Zero, 15866666.666666666,
+            .SetNextManeuver(new ApogeeHeightManeuver(DateTime.MinValue, TimeSpan.Zero, 15866666.666666666,
                 spacecraft.Engines.First()));
         spacecraft.SetStandbyManeuver(planeAlignmentManeuver);
 
@@ -353,7 +353,7 @@ public class APITest
         spacecraft.AddInstrument(new Instrument(-1794600, "CAM600", "mod1", 1.5, InstrumentShape.Circular,
             Vector3.VectorZ, Vector3.VectorX, Vector3.VectorX));
 
-        spacecraft.SetStandbyManeuver(new NadirAttitude(spacecraft, DateTime.MinValue, TimeSpan.Zero,
+        spacecraft.SetStandbyManeuver(new NadirAttitude(DateTime.MinValue, TimeSpan.Zero,
             spacecraft.Engines.First()));
 
         scenario.AddBody(spacecraft);

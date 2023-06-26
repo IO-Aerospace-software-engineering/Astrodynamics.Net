@@ -8,12 +8,12 @@ namespace IO.Astrodynamics.Maneuver
         public double TargetTrueLongitude { get; } = double.NaN;
         public uint RevolutionNumber { get; }
 
-        public PhasingManeuver(Spacecraft spacecraft, DateTime minimumEpoch, TimeSpan maneuverHoldDuration, OrbitalParameters.OrbitalParameters targetOrbit, uint revolutionNumber, params Engine[] engines) : base(spacecraft, minimumEpoch, maneuverHoldDuration, targetOrbit, engines)
+        public PhasingManeuver(DateTime minimumEpoch, TimeSpan maneuverHoldDuration, OrbitalParameters.OrbitalParameters targetOrbit, uint revolutionNumber, params Engine[] engines) : base( minimumEpoch, maneuverHoldDuration, targetOrbit, engines)
         {
             RevolutionNumber = revolutionNumber;
         }
 
-        public PhasingManeuver(Spacecraft spacecraft, DateTime minimumEpoch, TimeSpan maneuverHoldDuration, double trueLongitude, uint revolutionNumber, params Engine[] engines) : base(spacecraft, minimumEpoch, maneuverHoldDuration, engines)
+        public PhasingManeuver(DateTime minimumEpoch, TimeSpan maneuverHoldDuration, double trueLongitude, uint revolutionNumber, params Engine[] engines) : base(minimumEpoch, maneuverHoldDuration, engines)
         {
             TargetTrueLongitude = trueLongitude;
             RevolutionNumber = revolutionNumber;

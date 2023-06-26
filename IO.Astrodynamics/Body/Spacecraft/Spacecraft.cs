@@ -200,5 +200,16 @@ namespace IO.Astrodynamics.Body.Spacecraft
 
             return maneuvers;
         }
+        
+        public virtual void SetInitialOrbitalParameters(OrbitalParameters.OrbitalParameters orbitalParameters)
+        {
+            if (InitialOrbitalParameters?.CenterOfMotion != null)
+            {
+                InitialOrbitalParameters.CenterOfMotion.RemoveSatellite(this);
+            }
+
+            InitialOrbitalParameters = orbitalParameters;
+            InitialOrbitalParameters?.CenterOfMotion.AddSatellite(this);
+        }
     }
 }

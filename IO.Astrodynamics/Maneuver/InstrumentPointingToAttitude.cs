@@ -9,14 +9,12 @@ namespace IO.Astrodynamics.Maneuver;
 public class InstrumentPointingToAttitude : Maneuver
 {
     public Instrument Instrument { get; }
-    public INaifObject TargetId { get; }
-    
-    public InstrumentPointingToAttitude(Spacecraft spacecraft, DateTime minimumEpoch, TimeSpan maneuverHoldDuration, Engine[] engines,
-        Instrument instrument, INaifObject targetId) : base(spacecraft, minimumEpoch, maneuverHoldDuration, engines)
+    public INaifObject Target { get; }
+
+    public InstrumentPointingToAttitude(DateTime minimumEpoch, TimeSpan maneuverHoldDuration,
+        Instrument instrument, INaifObject target, params Engine[] engines) : base(minimumEpoch, maneuverHoldDuration, engines)
     {
         Instrument = instrument ?? throw new ArgumentNullException(nameof(instrument));
-        TargetId = targetId ?? throw new ArgumentNullException(nameof(targetId));
+        Target = target ?? throw new ArgumentNullException(nameof(target));
     }
-
-    
 }

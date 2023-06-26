@@ -35,4 +35,18 @@ public class FrameTests
         Assert.Equal(new Vector3(1.980539178135755E-05, 2.2632012450014214E-05, 6.376864584829888E-05), q.AngularVelocity);
         Assert.Equal(7.050462200789696E-05, q.AngularVelocity.Magnitude());
     }
+
+    [Fact]
+    public void FrameToString()
+    {
+        Assert.Equal("J2000", Frames.Frame.ICRF.ToString());
+    }
+
+    [Fact]
+    public void Equality()
+    {
+        Assert.Equal(new Frames.Frame("J2000"), Frames.Frame.ICRF);
+        Assert.True(new Frames.Frame("J2000") == Frames.Frame.ICRF);
+        Assert.True(Frames.Frame.ECLIPTIC != Frames.Frame.ICRF);
+    }
 }
