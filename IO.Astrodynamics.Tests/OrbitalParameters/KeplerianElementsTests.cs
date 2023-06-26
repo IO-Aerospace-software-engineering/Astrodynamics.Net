@@ -3,6 +3,7 @@ using IO.Astrodynamics.Body;
 using IO.Astrodynamics.Math;
 using IO.Astrodynamics.OrbitalParameters;
 using IO.Astrodynamics.SolarSystemObjects;
+using IO.Astrodynamics.Time;
 using Xunit;
 
 namespace IO.Astrodynamics.Tests.OrbitalParameters
@@ -37,17 +38,16 @@ namespace IO.Astrodynamics.Tests.OrbitalParameters
         {
             CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH.NaifId);
 
-            KeplerianElements ke = new KeplerianElements(2E7, 0.43336, 30.193 * IO.Astrodynamics.Constants.Deg2Rad,
-                44.6017 * IO.Astrodynamics.Constants.Deg2Rad, 30.68 * IO.Astrodynamics.Constants.Deg2Rad, 356.73 * IO.Astrodynamics.Constants.Deg2Rad, earth,
-                DateTime.UtcNow, Frames.Frame.ICRF);
+            KeplerianElements ke = new KeplerianElements(6.800803544958167E+06, 1.353139738203394E-03, 5.171921958517460E+01 * IO.Astrodynamics.Constants.Deg2Rad,
+                3.257605322534260E+01 * IO.Astrodynamics.Constants.Deg2Rad, 1.062574316262159E+02 * IO.Astrodynamics.Constants.Deg2Rad, 4.541224977546975E+01 * IO.Astrodynamics.Constants.Deg2Rad, earth,
+                DateTimeExtension.CreateTDB(663724800.00001490), Frames.Frame.ICRF);
             StateVector sv = ke.ToStateVector();
-            Assert.Equal(5001878.051605426, sv.Position.X);
-            Assert.Equal(10000079.990636956, sv.Position.Y);
-            Assert.Equal(2099269.2094778065, sv.Position.Z);
-
-            Assert.Equal(-5991.230120132532, sv.Velocity.X);
-            Assert.Equal(1926.7436098006779, sv.Velocity.Y);
-            Assert.Equal(3245.991007903608, sv.Velocity.Z);
+            Assert.Equal(-6116559.468933809, sv.Position.X);
+            Assert.Equal(-1546174.6944518015, sv.Position.Y);
+            Assert.Equal(2521950.161516389, sv.Position.Z);
+            Assert.Equal(-807.8383114627195, sv.Velocity.X);
+            Assert.Equal(-5477.646280596454, sv.Velocity.Y);
+            Assert.Equal(-5297.633402454895, sv.Velocity.Z);
         }
 
         [Fact]

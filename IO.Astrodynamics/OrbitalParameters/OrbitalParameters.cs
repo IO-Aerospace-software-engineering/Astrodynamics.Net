@@ -191,9 +191,9 @@ public abstract class OrbitalParameters : IEquatable<OrbitalParameters>
         var y = r0 * System.Math.Sin(v);
         var dotX = -System.Math.Sqrt(CenterOfMotion.GM / p) * System.Math.Sin(v);
         var dotY = System.Math.Sqrt(CenterOfMotion.GM / p) * (e + System.Math.Cos(v));
-        Matrix R3 = Matrix.CreateRotationMatrixZ(-AscendingNode());
-        Matrix R1 = Matrix.CreateRotationMatrixX(-Inclination());
-        Matrix R3w = Matrix.CreateRotationMatrixZ(-ArgumentOfPeriapsis());
+        Matrix R3 = Matrix.CreateRotationMatrixZ(AscendingNode());
+        Matrix R1 = Matrix.CreateRotationMatrixX(Inclination());
+        Matrix R3w = Matrix.CreateRotationMatrixZ(ArgumentOfPeriapsis());
         Matrix R = R3 * R1 * R3w;
         double[] pos = { x, y, 0.0 };
         double[] vel = { dotX, dotY, 0.0 };

@@ -35,6 +35,7 @@ public class MatirxTests
         Assert.Equal(6, m.Get(1, 2));
     }
 
+
     [Fact]
     public void MultiplyMatrix()
     {
@@ -107,5 +108,36 @@ public class MatirxTests
         Assert.Equal(-0.3977771559319137, res.Get(4, 5));
         Assert.Equal(0.3977771559319137, res.Get(5, 4));
         Assert.Equal(0.9174820620691818, res.Get(5, 5));
+    }
+
+    [Fact]
+    public void CreateRotationMatrixX()
+    {
+        var res = Matrix.CreateRotationMatrixX(Astrodynamics.Constants.PI2);
+        Assert.Equal(1.0, res.Get(0, 0));
+        Assert.Equal(-1.0, res.Get(1, 2));
+        Assert.Equal(1.0, res.Get(2, 1));
+
+        
+    }
+
+    [Fact]
+    public void CreateRotationMatrixY()
+    {
+        var res = Matrix.CreateRotationMatrixY(Astrodynamics.Constants.PI2);
+        Assert.Equal(1.0, res.Get(0, 2));
+        Assert.Equal(1.0, res.Get(1, 1));
+        Assert.Equal(-1.0, res.Get(2, 0));
+        
+        var rot = res.Multiply(new double[] { 1.0, 0.0, 0.0 });
+    }
+
+    [Fact]
+    public void CreateRotationMatrixZ()
+    {
+        var res = Matrix.CreateRotationMatrixZ(Astrodynamics.Constants.PI2);
+        Assert.Equal(-1.0, res.Get(0, 1));
+        Assert.Equal(1.0, res.Get(1, 0));
+        Assert.Equal(1.0, res.Get(2, 2));
     }
 }

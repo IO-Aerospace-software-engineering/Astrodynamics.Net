@@ -54,35 +54,5 @@ namespace IO.Astrodynamics.Math
             }
             return result;
         }
-
-        public static StateOrientation Interpolate(StateOrientation[] data, DateTime epoch)
-        {
-            double idx = epoch.SecondsFromJ2000TDB();
-            int n = data.Length;
-            Quaternion qRes = new Quaternion();
-            Vector3 avRes = new Vector3();
-
-            for (int i = 0; i < n; i++)
-            {
-                // Compute individual terms
-                // of above formula
-                var q = data[i].Rotation;
-                var av = data[i].AngularVelocity;
-                for (int j = 0; j < n; j++)
-                {
-                    if (j != i)
-                    {
-                        var t = (idx - data[j].Epoch.SecondsFromJ2000TDB()) / (data[i].Epoch.SecondsFromJ2000TDB() - data[j].Epoch.SecondsFromJ2000TDB());
-                        q *= t;
-                        av *= t;
-                    }
-                }
-
-                // Add current term to result
-                qRes *= q;
-                avRes += av;
-            }
-            return new StateOrientation(qRes, avRes, epoch, data[0].ReferenceFrame);
-        }
     }
 }

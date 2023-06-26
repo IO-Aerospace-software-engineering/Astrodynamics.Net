@@ -261,14 +261,7 @@ public readonly record struct Matrix
         return x;
     } // Reduce
 
-    public double[] GetColumn(double[,] data, int columnNumber)
-    {
-        return Enumerable.Range(0, data.GetLength(0))
-                .Select(x => data[x, columnNumber])
-                .ToArray();
-    }
-
-    public double[] GetRow(double[,] data, int rowNumber)
+    private double[] GetRow(double[,] data, int rowNumber)
     {
         return Enumerable.Range(0, data.GetLength(1))
                 .Select(x => data[rowNumber, x])
@@ -280,8 +273,8 @@ public readonly record struct Matrix
         Matrix mtx = new Matrix(3, 3);
         mtx.Set(0, 0, 1.0);
         mtx.Set(1, 1, System.Math.Cos(angle));
-        mtx.Set(1, 2, System.Math.Sin(angle));
-        mtx.Set(2, 1, -System.Math.Sin(angle));
+        mtx.Set(1, 2, -System.Math.Sin(angle));
+        mtx.Set(2, 1, System.Math.Sin(angle));
         mtx.Set(2, 2, System.Math.Cos(angle));
 
         return mtx;
@@ -291,9 +284,9 @@ public readonly record struct Matrix
     {
         Matrix mtx = new Matrix(3, 3);
         mtx.Set(0, 0, System.Math.Cos(angle));
-        mtx.Set(0, 2, -System.Math.Sin(angle));
+        mtx.Set(0, 2, System.Math.Sin(angle));
         mtx.Set(1, 1, 1.0);
-        mtx.Set(2, 0, System.Math.Sin(angle));
+        mtx.Set(2, 0, -System.Math.Sin(angle));
         mtx.Set(2, 2, System.Math.Cos(angle));
         return mtx;
     }
@@ -302,8 +295,8 @@ public readonly record struct Matrix
     {
         Matrix mtx = new Matrix(3, 3);
         mtx.Set(0, 0, System.Math.Cos(angle));
-        mtx.Set(0, 1, System.Math.Sin(angle));
-        mtx.Set(1, 0, -System.Math.Sin(angle));
+        mtx.Set(0, 1, -System.Math.Sin(angle));
+        mtx.Set(1, 0, System.Math.Sin(angle));
         mtx.Set(1, 1, System.Math.Cos(angle));
         mtx.Set(2, 2, 1.0);
         return mtx;

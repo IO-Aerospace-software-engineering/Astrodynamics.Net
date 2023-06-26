@@ -69,10 +69,6 @@ namespace IO.Astrodynamics.Math
             return new Quaternion(lhs.W / rhs, lhs.VectorPart / rhs);
         }
 
-        public static Quaternion operator /(double lhs, Quaternion rhs)
-        {
-            return rhs / lhs;
-        }
 
         public Vector3 ToEuler()
         {
