@@ -182,6 +182,8 @@ public class API
     /// <param name="outputDirectory"></param>
     public void PropagateScenario(Mission.Scenario scenario, DirectoryInfo outputDirectory)
     {
+        if (scenario == null) throw new ArgumentNullException(nameof(scenario));
+        if (outputDirectory == null) throw new ArgumentNullException(nameof(outputDirectory));
         lock (lockObject)
         {
             API.Instance.UnloadKernels(outputDirectory);
@@ -509,6 +511,7 @@ public class API
     /// <param name="path">Path where kernels are located. This could be a file path or a directory path</param>
     public void LoadKernels(FileSystemInfo path)
     {
+        if (path == null) throw new ArgumentNullException(nameof(path));
         lock (lockObject)
         {
             LoadKernelsProxy(path.FullName);
@@ -521,6 +524,7 @@ public class API
     /// <param name="path">Path where kernels are located. This could be a file path or a directory path</param>
     public void UnloadKernels(FileSystemInfo path)
     {
+        if (path == null) throw new ArgumentNullException(nameof(path));
         lock (lockObject)
         {
             UnloadKernelsProxy(path.FullName);
@@ -536,6 +540,7 @@ public class API
     public IEnumerable<LaunchWindow> FindLaunchWindows(Maneuver.Launch launch,
         in Time.Window window, DirectoryInfo outputDirectory)
     {
+        if (launch == null) throw new ArgumentNullException(nameof(launch));
         lock (lockObject)
         {
             //Convert data
@@ -579,6 +584,8 @@ public class API
         INaifObject target, RelationnalOperator relationalOperator, double value, Aberration aberration,
         TimeSpan stepSize)
     {
+        if (observer == null) throw new ArgumentNullException(nameof(observer));
+        if (target == null) throw new ArgumentNullException(nameof(target));
         lock (lockObject)
         {
             var windows = new Window[1000];
@@ -610,10 +617,12 @@ public class API
     /// <param name="observer"></param>
     /// <returns></returns>
     public IEnumerable<Time.Window> FindWindowsOnOccultationConstraint(Time.Window searchWindow, INaifObject observer,
-        INaifObject target,
-        ShapeType targetShape, INaifObject frontBody, ShapeType frontShape, OccultationType occultationType,
+        INaifObject target, ShapeType targetShape, INaifObject frontBody, ShapeType frontShape, OccultationType occultationType,
         Aberration aberration, TimeSpan stepSize)
     {
+        if (observer == null) throw new ArgumentNullException(nameof(observer));
+        if (target == null) throw new ArgumentNullException(nameof(target));
+        if (frontBody == null) throw new ArgumentNullException(nameof(frontBody));
         lock (lockObject)
         {
             string frontFrame = frontShape == ShapeType.Ellipsoid
@@ -652,11 +661,13 @@ public class API
     /// <param name="observer"></param>
     /// <returns></returns>
     public IEnumerable<Time.Window> FindWindowsOnCoordinateConstraint(Time.Window searchWindow, INaifObject observer,
-        INaifObject target,
-        Frame frame, CoordinateSystem coordinateSystem, Coordinate coordinate,
+        INaifObject target, Frame frame, CoordinateSystem coordinateSystem, Coordinate coordinate,
         RelationnalOperator relationalOperator, double value, double adjustValue, Aberration aberration,
         TimeSpan stepSize)
     {
+        if (observer == null) throw new ArgumentNullException(nameof(observer));
+        if (target == null) throw new ArgumentNullException(nameof(target));
+        if (frame == null) throw new ArgumentNullException(nameof(frame));
         lock (lockObject)
         {
             var windows = new Window[1000];
@@ -693,15 +704,15 @@ public class API
     public IEnumerable<Time.Window> FindWindowsOnIlluminationConstraint(Time.Window searchWindow, INaifObject observer,
         INaifObject targetBody, Frame fixedFrame,
         Coordinates.Geodetic geodetic, IlluminationAngle illuminationType, RelationnalOperator relationalOperator,
-        double value, double adjustValue, Aberration aberration,
-        TimeSpan stepSize,
-        INaifObject illuminationSource, string method = "Ellipsoid")
+        double value, double adjustValue, Aberration aberration, TimeSpan stepSize, INaifObject illuminationSource, string method = "Ellipsoid")
     {
+        if (observer == null) throw new ArgumentNullException(nameof(observer));
+        if (targetBody == null) throw new ArgumentNullException(nameof(targetBody));
+        if (fixedFrame == null) throw new ArgumentNullException(nameof(fixedFrame));
+        if (illuminationSource == null) throw new ArgumentNullException(nameof(illuminationSource));
+        if (method == null) throw new ArgumentNullException(nameof(method));
         lock (lockObject)
         {
-            if (fixedFrame == null) throw new ArgumentNullException(nameof(fixedFrame));
-            if (illuminationSource == null) throw new ArgumentNullException(nameof(illuminationSource));
-            if (method == null) throw new ArgumentNullException(nameof(method));
             var windows = new Window[1000];
             for (var i = 0; i < 1000; i++)
             {
@@ -730,9 +741,12 @@ public class API
     /// <param name="stepSize"></param>
     /// <returns></returns>
     public IEnumerable<Time.Window> FindWindowsInFieldOfViewConstraint(Time.Window searchWindow, Spacecraft observer,
-        Instrument instrument,
-        INaifObject target, Frame targetFrame, ShapeType targetShape, Aberration aberration, TimeSpan stepSize)
+        Instrument instrument, INaifObject target, Frame targetFrame, ShapeType targetShape, Aberration aberration, TimeSpan stepSize)
     {
+        if (observer == null) throw new ArgumentNullException(nameof(observer));
+        if (instrument == null) throw new ArgumentNullException(nameof(instrument));
+        if (target == null) throw new ArgumentNullException(nameof(target));
+        if (targetFrame == null) throw new ArgumentNullException(nameof(targetFrame));
         lock (lockObject)
         {
             if (targetFrame == null) throw new ArgumentNullException(nameof(targetFrame));
@@ -766,6 +780,9 @@ public class API
         Body.CelestialBody observer, ILocalizable target, Frame frame,
         Aberration aberration, TimeSpan stepSize)
     {
+        if (observer == null) throw new ArgumentNullException(nameof(observer));
+        if (target == null) throw new ArgumentNullException(nameof(target));
+        if (frame == null) throw new ArgumentNullException(nameof(frame));
         lock (lockObject)
         {
             if (frame == null) throw new ArgumentNullException(nameof(frame));
@@ -789,9 +806,11 @@ public class API
     /// <returns></returns>
     /// <exception cref="ArgumentNullException"></exception>
     public OrbitalParameters.OrbitalParameters ReadEphemeris(DateTime epoch, Body.CelestialBody observer,
-        ILocalizable target, Frame frame,
-        Aberration aberration)
+        ILocalizable target, Frame frame, Aberration aberration)
     {
+        if (observer == null) throw new ArgumentNullException(nameof(observer));
+        if (target == null) throw new ArgumentNullException(nameof(target));
+        if (frame == null) throw new ArgumentNullException(nameof(frame));
         lock (lockObject)
         {
             if (frame == null) throw new ArgumentNullException(nameof(frame));
@@ -816,6 +835,8 @@ public class API
         Spacecraft spacecraft, TimeSpan tolerance,
         Frame referenceFrame, TimeSpan stepSize)
     {
+        if (spacecraft == null) throw new ArgumentNullException(nameof(spacecraft));
+        if (referenceFrame == null) throw new ArgumentNullException(nameof(referenceFrame));
         lock (lockObject)
         {
             if (referenceFrame == null) throw new ArgumentNullException(nameof(referenceFrame));
@@ -839,10 +860,11 @@ public class API
     public bool WriteEphemeris(FileInfo filePath, INaifObject naifObject,
         IEnumerable<OrbitalParameters.StateVector> stateVectors)
     {
+        if (naifObject == null) throw new ArgumentNullException(nameof(naifObject));
+        if (filePath == null) throw new ArgumentNullException(nameof(filePath));
+        if (stateVectors == null) throw new ArgumentNullException(nameof(stateVectors));
         lock (lockObject)
         {
-            if (filePath == null) throw new ArgumentNullException(nameof(filePath));
-            if (stateVectors == null) throw new ArgumentNullException(nameof(stateVectors));
             var enumerable = stateVectors as OrbitalParameters.StateVector[] ?? stateVectors.ToArray();
             if (!enumerable.Any())
                 throw new ArgumentException("Value cannot be an empty collection.", nameof(stateVectors));

@@ -35,6 +35,30 @@ public class MatirxTests
         Assert.Equal(6, m.Get(1, 2));
     }
 
+    [Fact]
+    public void Equality()
+    {
+        double[] data = new double[6] { 1.0, 2.0, 3.0, 4.0, 5.0, 6.0 };
+        Matrix m = new Matrix(2, 3, data);
+
+        Matrix m2 = new Matrix(2, 3, data);
+
+        double[] data3 = new double[6] { 2.0, 2.0, 3.0, 4.0, 5.0, 6.0 };
+        Matrix m3 = new Matrix(2, 3, data3);
+        
+        double[] data4 = new double[6] { 2.0, 2.0, 3.0, 4.0, 5.0, 6.0 };
+        Matrix m4 = new Matrix(3, 2, data3);
+        Assert.Equal(m, m2);
+        Assert.NotEqual(m2, m3);
+        Assert.True(m==m2);
+        Assert.True(m!=m3);
+        Assert.True(m.Equals(m2));
+        Assert.True(m.Equals((object)m2));
+        Assert.False(m.Equals(null));
+        Assert.False(m.Equals((object)null));
+        Assert.NotEqual(m3, m4);
+    }
+
 
     [Fact]
     public void MultiplyMatrix()
@@ -48,6 +72,8 @@ public class MatirxTests
         Assert.Equal(64, res.Get(0, 1));
         Assert.Equal(139, res.Get(1, 0));
         Assert.Equal(154, res.Get(1, 1));
+
+        Assert.Equal(res, m1 * m2);
     }
 
     [Fact]
@@ -76,6 +102,8 @@ public class MatirxTests
         Assert.Equal(-29.79426007, res[3]);
         Assert.Equal(-5.469294939745739, res[4]);
         Assert.Equal(0.0001817867528561834, res[5]);
+        Assert.Equal(res, m * earthSv);
+        Assert.Equal(res, earthSv * m);
     }
 
     [Fact]
@@ -117,8 +145,6 @@ public class MatirxTests
         Assert.Equal(1.0, res.Get(0, 0));
         Assert.Equal(-1.0, res.Get(1, 2));
         Assert.Equal(1.0, res.Get(2, 1));
-
-        
     }
 
     [Fact]
@@ -128,7 +154,7 @@ public class MatirxTests
         Assert.Equal(1.0, res.Get(0, 2));
         Assert.Equal(1.0, res.Get(1, 1));
         Assert.Equal(-1.0, res.Get(2, 0));
-        
+
         var rot = res.Multiply(new double[] { 1.0, 0.0, 0.0 });
     }
 

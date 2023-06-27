@@ -1,3 +1,4 @@
+using System;
 using IO.Astrodynamics.Math;
 using IO.Astrodynamics.OrbitalParameters;
 using IO.Astrodynamics.Time;
@@ -11,6 +12,14 @@ public class FrameTests
     public FrameTests()
     {
         API.Instance.LoadKernels(Constants.SolarSystemKernelPath);
+    }
+    
+    [Fact]
+    public void Create()
+    {
+        Frames.Frame frame = new Frames.Frame("J2000");
+        Assert.Equal("J2000",frame.Name);
+        Assert.Throws<ArgumentException>(()=>new Frames.Frame(""));
     }
 
     [Fact]
@@ -48,5 +57,10 @@ public class FrameTests
         Assert.Equal(new Frames.Frame("J2000"), Frames.Frame.ICRF);
         Assert.True(new Frames.Frame("J2000") == Frames.Frame.ICRF);
         Assert.True(Frames.Frame.ECLIPTIC != Frames.Frame.ICRF);
+        Assert.True(Frames.Frame.ECLIPTIC.Equals(Frames.Frame.ECLIPTIC));
+        Assert.True(Frames.Frame.ECLIPTIC.Equals((object)Frames.Frame.ECLIPTIC));
+        Assert.False(Frames.Frame.ECLIPTIC.Equals(null));
+        Assert.False(Frames.Frame.ECLIPTIC.Equals((object)null));
+        Assert.False(Frames.Frame.ECLIPTIC.Equals("null"));
     }
 }

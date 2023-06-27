@@ -23,10 +23,13 @@ namespace IO.Astrodynamics.Maneuver
         protected Maneuver(DateTime minimumEpoch, TimeSpan maneuverHoldDuration, OrbitalParameters.OrbitalParameters targetOrbit,
             params Engine[] engines)
         {
+            if (engines == null) throw new ArgumentNullException(nameof(engines));
             if (targetOrbit == null)
             {
                 throw new ArgumentException("Target orbit must be define");
             }
+
+            if (engines.Length == 0) throw new ArgumentException("Value cannot be an empty collection.", nameof(engines));
 
             MinimumEpoch = minimumEpoch;
             ManeuverHoldDuration = maneuverHoldDuration;

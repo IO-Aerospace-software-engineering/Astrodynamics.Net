@@ -33,7 +33,7 @@ namespace IO.Astrodynamics.Math
 
         public Vector3 Cross(Vector3 vector)
         {
-            return new Vector3(Y * vector.Z - Z * vector.Y, Z * vector.X - X * vector.Z, X * vector.Y - Y * vector.X);
+            return new Vector3((Y * vector.Z) - (Z * vector.Y), (Z * vector.X) - (X * vector.Z), (X * vector.Y) - (Y * vector.X));
         }
 
         public double Angle(Vector3 vector)
@@ -75,7 +75,7 @@ namespace IO.Astrodynamics.Math
         {
             var dot = this * vector;
 
-            if (dot == -1.0)//Manage 180° case
+            if (dot == -1.0) //Manage 180° case
             {
                 double x = System.Math.Abs(vector.X);
                 double y = System.Math.Abs(vector.Y);

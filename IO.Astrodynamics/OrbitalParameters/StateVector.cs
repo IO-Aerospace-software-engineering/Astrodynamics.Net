@@ -11,10 +11,6 @@ namespace IO.Astrodynamics.OrbitalParameters
         public Vector3 Position { get; internal set; }
         public Vector3 Velocity { get; internal set; }
 
-        StateVector()
-        {
-        }
-
         public StateVector(Vector3 position, Vector3 velocity, CelestialBody centerOfMotion, DateTime epoch, Frame frame) : base(centerOfMotion, epoch, frame)
         {
             Position = position;

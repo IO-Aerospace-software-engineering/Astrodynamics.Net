@@ -28,5 +28,20 @@ namespace IO.Astrodynamics.Tests.Body
             Assert.Throws<ArgumentOutOfRangeException>(() => new FuelTank("ft", "model", "sn1", -4000.0, 10.0));
             Assert.Throws<ArgumentOutOfRangeException>(() => new FuelTank("ft", "model", "sn1", 4000.0, 5000.0));
         }
+
+        [Fact]
+        public void Equality()
+        {
+            FuelTank fuelTank = new FuelTank("ft", "model", "sn1", 4000.0, 2000.0);
+            FuelTank fuelTank2 = new FuelTank("ft2", "model2", "sn2", 4000.0, 2000.0);
+            Assert.True(fuelTank != fuelTank2);
+            Assert.False(fuelTank.Equals(fuelTank2));
+            Assert.True(fuelTank.Equals(fuelTank));
+            Assert.False(fuelTank.Equals((object)fuelTank2));
+            Assert.True(fuelTank.Equals((object)fuelTank));
+            Assert.False(fuelTank.Equals((object)null));
+            Assert.False(fuelTank.Equals(null));
+            Assert.False(fuelTank==fuelTank2);
+        }
     }
 }

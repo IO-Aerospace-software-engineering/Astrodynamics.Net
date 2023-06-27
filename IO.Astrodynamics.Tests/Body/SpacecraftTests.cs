@@ -13,8 +13,6 @@ namespace IO.Astrodynamics.Tests.Body
 {
     public class SpacecraftTests
     {
-        
-
         public SpacecraftTests()
         {
             API.Instance.LoadKernels(Constants.SolarSystemKernelPath);
@@ -41,6 +39,8 @@ namespace IO.Astrodynamics.Tests.Body
             Assert.Throws<ArgumentException>(() => new Spacecraft(-1001, "", 1000.0, 10000.0, clk,
                 new StateVector(new Vector3(1.0, 2.0, 3.0), new Vector3(1.0, 2.0, 3.0), TestHelpers.EarthAtJ2000, DateTime.MinValue, Frames.Frame.ICRF)));
             Assert.Throws<ArgumentNullException>(() => new Spacecraft(-1001, "MySpacecraft", 1000.0, 10000.0, null,
+                new StateVector(new Vector3(1.0, 2.0, 3.0), new Vector3(1.0, 2.0, 3.0), TestHelpers.EarthAtJ2000, DateTime.MinValue, Frames.Frame.ICRF)));
+            Assert.Throws<ArgumentOutOfRangeException>(() => new Spacecraft(-1001, "MySpacecraft", 10000.0, 1000.0, clk,
                 new StateVector(new Vector3(1.0, 2.0, 3.0), new Vector3(1.0, 2.0, 3.0), TestHelpers.EarthAtJ2000, DateTime.MinValue, Frames.Frame.ICRF)));
         }
 
@@ -114,6 +114,8 @@ namespace IO.Astrodynamics.Tests.Body
             spc.AddEngine(eng);
             Assert.Equal(eng, spc.Engines.Single());
             Assert.Equal(fuelTank, spc.FuelTanks.Single());
+            Assert.Throws<ArgumentNullException>(() => spc.AddEngine(null));
+            Assert.Throws<ArgumentException>(() => spc.AddEngine(eng));
         }
 
         [Fact]
@@ -136,9 +138,10 @@ namespace IO.Astrodynamics.Tests.Body
             Spacecraft spc = new Spacecraft(-1001, "MySpacecraft", 1000.0, 10000.0, clk, ke);
 
             FuelTank fuelTank = new FuelTank("My fuel tank", "ft2021", "sn1", 4000.0, 4000.0);
-            new Engine("My engine", "model 1", "sn1", 350.0, 50.0, fuelTank);
             spc.AddFuelTank(fuelTank);
             Assert.Equal(fuelTank, spc.FuelTanks.Single());
+            Assert.Throws<ArgumentNullException>(() => spc.AddFuelTank(null));
+            Assert.Throws<ArgumentException>(() => spc.AddFuelTank(fuelTank));
         }
 
         [Fact]
@@ -151,6 +154,8 @@ namespace IO.Astrodynamics.Tests.Body
             Payload pl = new Payload("My payload", 1000.0, "sn0");
             spc.AddPayload(pl);
             Assert.Equal(pl, spc.Payloads.Single());
+            Assert.Throws<ArgumentNullException>(() => spc.AddPayload(null));
+            Assert.Throws<ArgumentException>(() => spc.AddPayload(pl));
         }
 
         [Fact]
@@ -163,6 +168,8 @@ namespace IO.Astrodynamics.Tests.Body
             Instrument instrument = new Instrument(-1001600, "My instrument", "Model", 1.57, InstrumentShape.Circular, Vector3.VectorZ, Vector3.VectorX, Vector3.VectorX);
             spc.AddInstrument(instrument);
             Assert.Equal(instrument, spc.Intruments.Single());
+            Assert.Throws<ArgumentNullException>(() => spc.AddInstrument(null));
+            Assert.Throws<ArgumentException>(() => spc.AddInstrument(instrument));
         }
 
         [Fact]
@@ -257,6 +264,74 @@ namespace IO.Astrodynamics.Tests.Body
             Assert.Equal(spc1, spc2.Child);
             Assert.Equal(spc2, spc1.Parent);
             Assert.Null(spc1.Child);
+        }
+
+        [Fact]
+        void SetInitialOrbitalParameters()
+        {
+            var earth = TestHelpers.EarthAtJ2000;
+            var sv = new StateVector(new Vector3(6800000.0, 0.0, 0.0), new Vector3(0.0, 8000.0, 0.0), earth, DateTimeExtension.J2000, Frames.Frame.ICRF);
+            var sv2 = new StateVector(new Vector3(8800000.0, 0.0, 0.0), new Vector3(0.0, 7000.0, 0.0), earth, DateTimeExtension.J2000, Frames.Frame.ICRF);
+            Clock clk = new Clock("My clock", 1.0 / 256.0);
+            Spacecraft spc = new Spacecraft(-1001, "MySpacecraft", 1000.0, 10000.0, clk, sv);
+            Assert.Equal(spc, sv.CenterOfMotion.Satellites.First());
+            Assert.Single(sv.CenterOfMotion.Satellites);
+
+            spc.SetInitialOrbitalParameters(sv2);
+            Assert.Single(sv.CenterOfMotion.Satellites);
+            Assert.Equal(spc, sv2.CenterOfMotion.Satellites.First());
+            Assert.Throws<ArgumentNullException>(() => spc.SetInitialOrbitalParameters(null));
+        }
+
+        [Fact]
+        public void ComputeProperties()
+        {
+            Clock clk = new Clock("My clock", 1.0 / 256.0);
+            var ke = new KeplerianElements(150000000.0, 0.0, 0.0, 0.0, 0.0, 0.0, TestHelpers.Sun, DateTime.UtcNow, Frames.Frame.ECLIPTIC);
+            Spacecraft spc = new Spacecraft(-1001, "MySpacecraft", 1000.0, 10000.0, clk, ke);
+
+            FuelTank fuelTank = new FuelTank("My fuel tank", "ft2021", "sn1", 4000.0, 4000.0);
+            FuelTank fuelTank2 = new FuelTank("My fuel tank", "ft2022", "sn2", 4000.0, 4000.0);
+            Engine eng = new Engine("My engine", "model 1", "sn1", 350.0, 50.0, fuelTank);
+            Engine eng2 = new Engine("My engine", "model 2", "sn2", 300.0, 40.0, fuelTank2);
+            spc.AddFuelTank(fuelTank);
+            spc.AddFuelTank(fuelTank2);
+            spc.AddEngine(eng);
+            spc.AddEngine(eng2);
+
+            Assert.Equal(327.77777777777777, spc.GetTotalISP());
+            Assert.Equal(90.0, spc.GetTotalFuelFlow());
+            Assert.Equal(8000.0, spc.GetTotalFuel());
+        }
+
+        [Fact]
+        public void SetParent()
+        {
+            var ke = new KeplerianElements(150000000.0, 0.0, 0.0, 0.0, 0.0, 0.0, TestHelpers.Sun, DateTime.UtcNow, Frames.Frame.ECLIPTIC);
+            Clock clk1 = new Clock("My clock", 1.0 / 256.0);
+            Payload pl1 = new Payload("pl1", 300, "sn1");
+            Spacecraft spc1 = new Spacecraft(-1001, "MySpacecraft", 1000.0, 10000.0, clk1, ke);
+
+
+            FuelTank fuelTank10 = new FuelTank("My fuel tank10", "ft2021", "sn0", 4000.0, 3000.0);
+            FuelTank fuelTank11 = new FuelTank("My fuel tank11", "ft2021", "sn1", 4000.0, 4000.0);
+            spc1.AddFuelTank(fuelTank10);
+            spc1.AddFuelTank(fuelTank11);
+            spc1.AddPayload(pl1);
+
+            Payload pl2 = new Payload("pl2", 400, "sn1");
+            Clock clk2 = new Clock("My clock2", 1.0 / 256.0);
+            Spacecraft spc2 = new Spacecraft(-1002, "MySpacecraft", 2000.0, 10000.0, clk2, ke);
+            FuelTank fuelTank20 = new FuelTank("My fuel tank20", "ft2021", "sn0", 4000.0, 2000.0);
+            FuelTank fuelTank21 = new FuelTank("My fuel tank21", "ft2021", "sn1", 4000.0, 3000.0);
+            spc2.AddFuelTank(fuelTank20);
+            spc2.AddFuelTank(fuelTank21);
+            spc2.AddPayload(pl2);
+            spc2.SetParent(spc1);
+
+            Assert.Equal(spc1, spc2.Parent);
+            Assert.Equal(spc2, spc1.Child);
+            Assert.Null(spc2.Child);
         }
     }
 }

@@ -34,12 +34,24 @@ namespace IO.Astrodynamics.Tests.OrbitalParameters
         }
 
         [Fact]
+        public void ToKeplerian()
+        {
+            CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH.NaifId);
+            DateTime epoch = DateTime.Now;
+            KeplerianElements ke = new KeplerianElements(20000, 0.5, 30.0 * IO.Astrodynamics.Constants.Deg2Rad, 40.0 * IO.Astrodynamics.Constants.Deg2Rad,
+                50.0 * IO.Astrodynamics.Constants.Deg2Rad, 10.0 * IO.Astrodynamics.Constants.Deg2Rad, earth, epoch, Frames.Frame.ICRF);
+            var ke2 = ke.ToKeplerianElements();
+            Assert.Equal(ke, ke2);
+        }
+
+        [Fact]
         public void ToStateVector()
         {
             CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH.NaifId);
 
             KeplerianElements ke = new KeplerianElements(6.800803544958167E+06, 1.353139738203394E-03, 5.171921958517460E+01 * IO.Astrodynamics.Constants.Deg2Rad,
-                3.257605322534260E+01 * IO.Astrodynamics.Constants.Deg2Rad, 1.062574316262159E+02 * IO.Astrodynamics.Constants.Deg2Rad, 4.541224977546975E+01 * IO.Astrodynamics.Constants.Deg2Rad, earth,
+                3.257605322534260E+01 * IO.Astrodynamics.Constants.Deg2Rad, 1.062574316262159E+02 * IO.Astrodynamics.Constants.Deg2Rad,
+                4.541224977546975E+01 * IO.Astrodynamics.Constants.Deg2Rad, earth,
                 DateTimeExtension.CreateTDB(663724800.00001490), Frames.Frame.ICRF);
             StateVector sv = ke.ToStateVector();
             Assert.Equal(-6116559.468933809, sv.Position.X);
@@ -235,6 +247,24 @@ namespace IO.Astrodynamics.Tests.OrbitalParameters
 
             m = km0.MeanAnomaly(v270);
             Assert.Equal(270.0000000252809, m * IO.Astrodynamics.Constants.Rad2Deg);
+        }
+
+        [Fact]
+        public void KeplerianElementsEquality()
+        {
+            CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH.NaifId);
+            DateTime epoch = DateTime.Now;
+            KeplerianElements ke = new KeplerianElements(20000, 0.5, 30.0 * IO.Astrodynamics.Constants.Deg2Rad, 40.0 * IO.Astrodynamics.Constants.Deg2Rad,
+                50.0 * IO.Astrodynamics.Constants.Deg2Rad, 10.0 * IO.Astrodynamics.Constants.Deg2Rad, earth, epoch, Frames.Frame.ICRF);
+            KeplerianElements ke2 = new KeplerianElements(20000, 0.5, 30.1 * IO.Astrodynamics.Constants.Deg2Rad, 40.0 * IO.Astrodynamics.Constants.Deg2Rad,
+                50.0 * IO.Astrodynamics.Constants.Deg2Rad, 10.0 * IO.Astrodynamics.Constants.Deg2Rad, earth, epoch, Frames.Frame.ICRF);
+
+            Assert.False(ke == ke2);
+            Assert.True(ke != ke2);
+            Assert.False(ke.Equals(ke2));
+            Assert.False(ke.Equals((object)ke2));
+            Assert.True(ke.Equals((object)ke));
+            Assert.False(ke.Equals(null));
         }
     }
 }

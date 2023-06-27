@@ -10,6 +10,8 @@ namespace IO.Astrodynamics.Maneuver
 
         public CombinedManeuver(DateTime minimumEpoch, TimeSpan maneuverHoldDuration, OrbitalParameters.OrbitalParameters targetOrbit, params Engine[] engines) : base(minimumEpoch, maneuverHoldDuration, targetOrbit, engines)
         {
+            TargetPerigeeHeight = targetOrbit.PerigeeVector().Magnitude();
+            TargetInclination = targetOrbit.Inclination();
         }
 
         public CombinedManeuver(DateTime minimumEpoch, TimeSpan maneuverHoldDuration, double perigeeRadius, double inclination, params Engine[] engines) : base(minimumEpoch, maneuverHoldDuration, engines)

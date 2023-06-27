@@ -34,8 +34,12 @@ public abstract class Body : ILocalizable, IEquatable<Body>
         ExtendedInformation = API.Instance.GetCelestialBodyInfo(naifId);
 
         NaifId = naifId;
-        Name = string.IsNullOrEmpty(ExtendedInformation.Name) ? throw new InvalidOperationException("Celestial body name can't be defined, please check if you have loaded associated kernels") : ExtendedInformation.Name;
-        Frame = string.IsNullOrEmpty(ExtendedInformation.FrameName) ? throw new InvalidOperationException("Celestial body frame can't be defined, please check if you have loaded associated kernels"):new Frame(ExtendedInformation.FrameName);
+        Name = string.IsNullOrEmpty(ExtendedInformation.Name)
+            ? throw new InvalidOperationException("Celestial body name can't be defined, please check if you have loaded associated kernels")
+            : ExtendedInformation.Name;
+        Frame = string.IsNullOrEmpty(ExtendedInformation.FrameName)
+            ? throw new InvalidOperationException("Celestial body frame can't be defined, please check if you have loaded associated kernels")
+            : new Frame(ExtendedInformation.FrameName);
         Mass = ExtendedInformation.GM / Constants.G;
 
         if (NaifId != Stars.Sun.NaifId)
@@ -79,16 +83,17 @@ public abstract class Body : ILocalizable, IEquatable<Body>
             initialOrbitalParameters.CenterOfMotion._satellites.Add(this);
         }
     }
+
     internal void AddSatellite(Body body)
     {
         _satellites.Add(body);
     }
-    
+
     internal void RemoveSatellite(Body body)
     {
         _satellites.Remove(body);
     }
-    
+
     /// <summary>
     /// Get ephemeris
     /// </summary>
@@ -132,7 +137,7 @@ public abstract class Body : ILocalizable, IEquatable<Body>
 
         var velocity = GetEphemeris(epoch, centerOfMotion, frame, aberration).ToStateVector().Velocity;
         var targetVelocity = observer.GetEphemeris(epoch, centerOfMotion, frame, aberration).ToStateVector().Velocity;
-        return targetVelocity - velocity;
+        return velocity - targetVelocity;
     }
 
     /// <summary>
@@ -145,8 +150,6 @@ public abstract class Body : ILocalizable, IEquatable<Body>
     {
         return referenceFrame.ToFrame(Frame, epoch);
     }
-
-    
 
 
     /// <summary>

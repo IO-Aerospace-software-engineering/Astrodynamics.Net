@@ -89,6 +89,35 @@ public class CelestialBodyTests
     }
 
     [Fact]
+    public void FindWindowsOnDistanceConstraint()
+    {
+        var res = TestHelpers.EarthAtJ2000.FindWindowsOnDistanceConstraint(
+            new Window(DateTimeExtension.CreateTDB(220881665.18391809), DateTimeExtension.CreateTDB(228657665.18565452)),
+            TestHelpers.MoonAtJ2000, RelationnalOperator.Greater, 400000000, Aberration.None, TimeSpan.FromSeconds(86400.0));
+        var windows = res as Window[] ?? res.ToArray();
+        Assert.Equal(4, windows.Count());
+        Assert.Equal("2007-01-08T00:11:07.6290000 (TDB)", windows.ElementAt(0).StartDate.ToFormattedString());
+        Assert.Equal("2007-01-13T06:37:47.9480000 (TDB)", windows.ElementAt(0).EndDate.ToFormattedString());
+        Assert.Equal("2007-02-04T07:02:35.2840000 (TDB)", windows.ElementAt(1).StartDate.ToFormattedString());
+        Assert.Equal("2007-02-10T09:31:01.8380000 (TDB)", windows.ElementAt(1).EndDate.ToFormattedString());
+    }
+
+    [Fact]
+    public void FindWindowsOnCoordinateConstraint()
+    {
+        var res = TestHelpers.EarthAtJ2000.FindWindowsOnCoordinateConstraint(new Window(DateTime.Parse("2005-10-03").ToTDB(), DateTime.Parse("2005-11-03").ToTDB()),
+            TestHelpers.MoonAtJ2000, TestHelpers.MoonAtJ2000.Frame, CoordinateSystem.Latitudinal, Coordinate.Latitude, RelationnalOperator.Greater, 0.0, 0.0, Aberration.None,
+            TimeSpan.FromSeconds(60.0));
+
+        var windows = res as Window[] ?? res.ToArray();
+        Assert.Equal(2, windows.Length);
+        Assert.Equal("2005-10-03T17:24:29.0990000 (TDB)", windows[0].StartDate.ToFormattedString());
+        Assert.Equal("2005-10-16T17:50:20.7050000 (TDB)", windows[0].EndDate.ToFormattedString());
+        Assert.Equal("2005-10-31T00:27:02.6710000 (TDB)", windows[1].StartDate.ToFormattedString());
+        Assert.Equal("2005-11-03T00:00:00.0000000 (TDB)", windows[1].EndDate.ToFormattedString());
+    }
+
+    [Fact]
     public void AngularSize()
     {
         var sun = TestHelpers.Sun;
@@ -121,6 +150,13 @@ public class CelestialBodyTests
         Assert.Equal(earth1, earth2);
         Assert.NotEqual(earth1, moon);
         Assert.False(earth1 == null);
+        Assert.True(earth1.Equals(earth2));
+        Assert.True(earth1.Equals(earth1));
+        Assert.True(earth1.Equals((object)earth2));
+        Assert.True(earth1.Equals((object)earth1));
+        Assert.False(earth1.Equals(null));
+        Assert.False(earth1.Equals((object)null));
+        Assert.False(earth1.Equals("null"));
     }
 
     [Fact]
@@ -134,5 +170,19 @@ public class CelestialBodyTests
         Assert.Equal(
             new StateVector(new Vector3(-29069076368.64741, 132303142494.37561, 57359794320.98976), new Vector3(-29695.854459557304, -5497.347182651619, -2382.9422283991967),
                 TestHelpers.Sun, DateTimeExtension.J2000 + TimeSpan.FromDays(1.0), Frames.Frame.ICRF), res.ElementAt(1));
+    }
+
+    [Fact]
+    public void GetVelocity()
+    {
+        var res = TestHelpers.Sun.GetVelocity(DateTimeExtension.J2000, TestHelpers.EarthAtJ2000, Frames.Frame.ICRF, Aberration.None);
+        Assert.Equal(new Vector3(29794.26007042197, 5018.052308786111, 2175.3938028266693), res);
+    }
+
+    [Fact]
+    public void AngularSeparation()
+    {
+        var res = TestHelpers.EarthAtJ2000.AngularSeparation(DateTimeExtension.J2000, TestHelpers.MoonAtJ2000, TestHelpers.Sun, Aberration.None);
+        Assert.Equal(0.9984998794278185, res);
     }
 }

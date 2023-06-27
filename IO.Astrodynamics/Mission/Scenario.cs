@@ -26,7 +26,6 @@ namespace IO.Astrodynamics.Mission
 
             Name = name;
             Mission = mission ?? throw new ArgumentNullException(nameof(mission));
-            ;
             Window = window;
         }
 

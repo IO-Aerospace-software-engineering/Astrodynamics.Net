@@ -9,7 +9,7 @@ namespace IO.Astrodynamics.Tests.Body
         [Fact]
         public void Create()
         {
-            Payload payload = new Payload("pl", 1000.0,"sn");
+            Payload payload = new Payload("pl", 1000.0, "sn");
             Assert.Equal("pl", payload.Name);
             Assert.Equal(1000.0, payload.Mass);
             Assert.Equal("sn", payload.SerialNumber);
@@ -18,9 +18,21 @@ namespace IO.Astrodynamics.Tests.Body
         [Fact]
         public void CreateInvalid()
         {
-            Assert.Throws<ArgumentException>(() => new Payload("", 1000.0,"sn"));
-            Assert.Throws<ArgumentException>(() => new Payload("pl", 0.0,"sn"));
-            Assert.Throws<ArgumentException>(() => new Payload("pl", 1000.0,""));
+            Assert.Throws<ArgumentException>(() => new Payload("", 1000.0, "sn"));
+            Assert.Throws<ArgumentException>(() => new Payload("pl", 0.0, "sn"));
+            Assert.Throws<ArgumentException>(() => new Payload("pl", 1000.0, ""));
+        }
+
+        [Fact]
+        public void PayloadEquality()
+        {
+            Payload payload = new Payload("pl", 1000.0, "sn");
+            Payload payload2 = new Payload("pl", 1000.0, "sn");
+            Payload payload3 = new Payload("pl1", 1000.0, "sn");
+            Assert.Equal(payload, payload2);
+            Assert.False(payload == null);
+            Assert.False(payload == payload3);
+            Assert.True(payload != payload3);
         }
     }
 }

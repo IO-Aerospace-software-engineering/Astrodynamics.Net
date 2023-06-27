@@ -45,16 +45,6 @@ namespace IO.Astrodynamics.Body.Spacecraft
         }
         
         /// <summary>
-        /// Update clock
-        /// </summary>
-        /// <param name="clock"></param>
-        /// <exception cref="ArgumentNullException"></exception>
-        public void UpdateClock(Clock clock)
-        {
-            Clock = clock ?? throw new ArgumentNullException(nameof(clock));
-        }
-
-        /// <summary>
         /// Add instrument to spacecraft
         /// </summary>
         /// <param name="instrument"></param>
@@ -108,7 +98,11 @@ namespace IO.Astrodynamics.Body.Spacecraft
         /// <param name="payload"></param>
         public void AddPayload(Payload payload)
         {
-            _payloads.Add(payload);
+            if (payload == null) throw new ArgumentNullException(nameof(payload));
+            if (!_payloads.Add(payload))
+            {
+                throw new ArgumentException("Payload already added to spacecraft");
+            }
         }
 
         /// <summary>
@@ -203,6 +197,7 @@ namespace IO.Astrodynamics.Body.Spacecraft
         
         public virtual void SetInitialOrbitalParameters(OrbitalParameters.OrbitalParameters orbitalParameters)
         {
+            if (orbitalParameters == null) throw new ArgumentNullException(nameof(orbitalParameters));
             if (InitialOrbitalParameters?.CenterOfMotion != null)
             {
                 InitialOrbitalParameters.CenterOfMotion.RemoveSatellite(this);

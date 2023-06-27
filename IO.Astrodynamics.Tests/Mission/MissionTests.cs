@@ -12,7 +12,7 @@ namespace IO.Astrodynamics.Tests.Mission
         }
 
         [Fact]
-        public void Equal()
+        public void Equality()
         {
             Astrodynamics.Mission.Mission mission = new Astrodynamics.Mission.Mission("Mission1");
             Astrodynamics.Mission.Mission mission1 = new Astrodynamics.Mission.Mission("Mission1");
@@ -21,6 +21,10 @@ namespace IO.Astrodynamics.Tests.Mission
             Assert.Equal(mission, mission1);
             Assert.False(mission.Equals(null));
             Assert.True(mission.Equals(mission));
+            Assert.True(mission.Equals((object)mission));
+            Assert.True(mission.Equals((object)mission1));
+            Assert.False(mission.Equals((object)null));
+            Assert.False(mission.Equals("null"));
             Assert.True(mission == mission1);
             Assert.True(mission != mission2);
         }

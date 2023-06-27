@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 
 namespace IO.Astrodynamics.Math;
+
 public readonly record struct Matrix
 {
     readonly double[,] _data;
@@ -101,6 +102,7 @@ public readonly record struct Matrix
                 {
                     sum += _data[i, k] * matrix.Get(k, j);
                 }
+
                 res._data[i, j] = sum;
             }
         }
@@ -140,8 +142,8 @@ public readonly record struct Matrix
         double[,] result = new double[Rows, Columns];
 
         double[,] lum; // combined lower & upper
-        int[] perm;  // out parameter
-        Decompose(out lum, out perm);  // ignore return
+        int[] perm; // out parameter
+        Decompose(out lum, out perm); // ignore return
 
         double[] b = new double[n];
         for (int i = 0; i < n; ++i)
@@ -156,6 +158,7 @@ public readonly record struct Matrix
             for (int j = 0; j < n; ++j)
                 result[j, i] = x[j];
         }
+
         return new Matrix(result);
     }
 
@@ -227,10 +230,9 @@ public readonly record struct Matrix
                         lum[i, k] -= xij * lum[j, k];
                 }
             }
-
         } // j
 
-        return toggle;  // for determinant
+        return toggle; // for determinant
     }
 
     double[] Reduce(double[,] luMatrix, double[] b)
@@ -264,8 +266,8 @@ public readonly record struct Matrix
     private double[] GetRow(double[,] data, int rowNumber)
     {
         return Enumerable.Range(0, data.GetLength(1))
-                .Select(x => data[rowNumber, x])
-                .ToArray();
+            .Select(x => data[rowNumber, x])
+            .ToArray();
     }
 
     public static Matrix CreateRotationMatrixX(double angle)
@@ -302,7 +304,7 @@ public readonly record struct Matrix
         return mtx;
     }
 
-    bool IEquatable<Matrix>.Equals(Matrix other)
+    public bool Equals(Matrix other)
     {
         if (Rows != other.Rows)
         {
@@ -318,7 +320,7 @@ public readonly record struct Matrix
         {
             for (int j = 0; j < Columns; j++)
             {
-                if (_data[i, j] != other.Get(i, j))
+                if (System.Math.Abs(_data[i, j] - other.Get(i, j)) > Double.Epsilon)
                 {
                     return false;
                 }
@@ -326,6 +328,11 @@ public readonly record struct Matrix
         }
 
         return true;
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(_data, Rows, Columns);
     }
 
     public static Matrix operator *(Matrix lhs, Matrix rhs)
@@ -342,5 +349,4 @@ public readonly record struct Matrix
     {
         return rhs.Multiply(lhs);
     }
-
 }
