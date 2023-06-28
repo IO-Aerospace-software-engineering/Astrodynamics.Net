@@ -64,6 +64,7 @@ namespace IO.Astrodynamics.Body.Spacecraft
         /// <param name="shape"></param>
         /// <param name="boresight"></param>
         /// <param name="refVector"></param>
+        /// <param name="orientation"></param>
         /// <param name="crossAngle"></param>
         /// <exception cref="ArgumentException"></exception>
         public Instrument(int naifId, string name, string model, double fieldOfView, InstrumentShape shape, Vector3 boresight, Vector3 refVector, Vector3 orientation, double crossAngle = double.NaN)
