@@ -343,5 +343,13 @@ namespace IO.Astrodynamics.Tests.OrbitalParameters
             Assert.True(sv == sv2);
             Assert.True(sv3 != sv2);
         }
+        
+        [Fact]
+        public void ToKeplerian()
+        {
+            var earth = TestHelpers.EarthAtJ2000;
+            var ke = earth.InitialOrbitalParameters.ToKeplerianElements();
+            // Assert.Equal(new KeplerianElements(),res);
+        }
     }
 }

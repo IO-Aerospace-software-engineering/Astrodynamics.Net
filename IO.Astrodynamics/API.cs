@@ -749,7 +749,6 @@ public class API
         if (targetFrame == null) throw new ArgumentNullException(nameof(targetFrame));
         lock (lockObject)
         {
-            if (targetFrame == null) throw new ArgumentNullException(nameof(targetFrame));
             var windows = new Window[1000];
             for (var i = 0; i < 1000; i++)
             {
@@ -839,7 +838,6 @@ public class API
         if (referenceFrame == null) throw new ArgumentNullException(nameof(referenceFrame));
         lock (lockObject)
         {
-            if (referenceFrame == null) throw new ArgumentNullException(nameof(referenceFrame));
             var stateOrientations = new StateOrientation[10000];
             ReadOrientationProxy(_mapper.Map<Window>(searchWindow), spacecraft.NaifId, tolerance.TotalSeconds,
                 referenceFrame.Name, stepSize.TotalSeconds,

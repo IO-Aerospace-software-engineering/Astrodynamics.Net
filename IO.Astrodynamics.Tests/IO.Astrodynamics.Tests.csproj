@@ -72,9 +72,6 @@
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
       <None Remove="Data\SolarSystem\moon_assoc_pa.tf" />
-      <Content Include="Data\SolarSystem\moon_assoc_pa.tf">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
       <None Remove="Data\SolarSystem\moon_pa_de421_1900-2050.bpc" />
       <Content Include="Data\SolarSystem\moon_pa_de421_1900-2050.bpc">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

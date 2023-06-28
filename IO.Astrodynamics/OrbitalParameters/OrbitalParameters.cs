@@ -16,10 +16,6 @@ public abstract class OrbitalParameters : IEquatable<OrbitalParameters>
 
     public Frame Frame { get; }
 
-    protected OrbitalParameters()
-    {
-    }
-
     /// <summary>
     /// Constructor
     /// </summary>
@@ -350,7 +346,7 @@ public abstract class OrbitalParameters : IEquatable<OrbitalParameters>
     public virtual bool Equals(OrbitalParameters other)
     {
         return other is not null &&
-            base.Equals(other) || (ToStateVector() == other?.ToStateVector());
+            base.Equals(other) || ToStateVector() == other?.ToStateVector();
     }
 
     public override int GetHashCode()
