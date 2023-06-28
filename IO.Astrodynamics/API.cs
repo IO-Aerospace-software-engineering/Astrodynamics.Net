@@ -41,7 +41,6 @@ namespace IO.Astrodynamics;
 /// </summary>
 public class API
 {
-    private static bool _isResolverLoaded;
     private readonly IMapper _mapper;
 
     /// <summary>
@@ -50,8 +49,6 @@ public class API
     private API()
     {
         _mapper = ProfilesConfiguration.Instance.Mapper;
-        if (_isResolverLoaded) return;
-        _isResolverLoaded = true;
         NativeLibrary.SetDllImportResolver(typeof(API).Assembly, Resolver);
     }
 

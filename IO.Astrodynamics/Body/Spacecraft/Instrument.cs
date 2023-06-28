@@ -110,6 +110,9 @@ namespace IO.Astrodynamics.Body.Spacecraft
         public IEnumerable<Time.Window> FindWindowsInFieldOfViewConstraint(Time.Window searchWindow, Spacecraft observer, INaifObject target,
             Frame targetFrame, ShapeType targetShape, Aberration aberration, TimeSpan stepSize)
         {
+            if (observer == null) throw new ArgumentNullException(nameof(observer));
+            if (target == null) throw new ArgumentNullException(nameof(target));
+            if (targetFrame == null) throw new ArgumentNullException(nameof(targetFrame));
             return API.Instance.FindWindowsInFieldOfViewConstraint(searchWindow, observer, this, target, targetFrame, targetShape, aberration, stepSize);
         }
         

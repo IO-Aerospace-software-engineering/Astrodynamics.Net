@@ -96,6 +96,7 @@ public class APITest
         scenario.AddBody(TestHelpers.Sun);
         scenario.AddBody(TestHelpers.EarthAtJ2000);
         scenario.AddBody(TestHelpers.MoonAtJ2000);
+        scenario.AddSite(new Site(132, "MySite", earth, new Geodetic(0.5, 0.3, 0.0)));
 
         //Define parking orbit
         StateVector parkingOrbit = new StateVector(
@@ -139,6 +140,8 @@ public class APITest
 
         scenario.AddBody(spacecraft);
         API.Instance.PropagateScenario(scenario, Constants.OutputPath);
+        Assert.Throws<ArgumentNullException>(() => API.Instance.PropagateScenario(null, Constants.OutputPath));
+        Assert.Throws<ArgumentNullException>(() => API.Instance.PropagateScenario(scenario, null));
 
         // Read maneuver results
         var maneuver = spacecraft.StandbyManeuver;
@@ -607,13 +610,13 @@ public class APITest
         Assert.Equal(10.0, so.Start);
         Assert.Equal(20.0, so.End);
     }
-    
+
     [Fact]
     void UnloadKernelException()
     {
         Assert.Throws<ArgumentNullException>(() => API.Instance.UnloadKernels(null));
     }
-    
+
     [Fact]
     void LoadKernelException()
     {

@@ -93,6 +93,18 @@ public class VectorTests
         Assert.Equal(0.0, q.VectorPart.Y);
         Assert.Equal(-0.7071067811865475, q.VectorPart.Z);
     }
+    
+    [Fact]
+    public void To2()
+    {
+        Vector3 m1 = new Vector3(10, 0, 0);
+        Vector3 m2 = new Vector3(-10, 0, 0);
+        var q = m1.To(m2);
+        Assert.Equal(0.0, q.W);
+        Assert.Equal(0.0, q.VectorPart.X);
+        Assert.Equal(1.0, q.VectorPart.Y);
+        Assert.Equal(0.0, q.VectorPart.Z);
+    }
 
     [Fact]
     public void Rotate()
@@ -105,5 +117,10 @@ public class VectorTests
         Assert.Equal(0.0, m2.Z);
     }
 
-
+    [Fact]
+    public void VectorToString()
+    {
+        Vector3 m1 = new Vector3(10, 20, 30);
+        Assert.Equal("Vector3 { X = 10, Y = 20, Z = 30 }", m1.ToString());
+    }
 }

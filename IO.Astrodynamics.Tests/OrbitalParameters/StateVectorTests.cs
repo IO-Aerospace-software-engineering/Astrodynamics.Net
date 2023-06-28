@@ -1,5 +1,6 @@
 using System;
 using IO.Astrodynamics.Body;
+using IO.Astrodynamics.Coordinates;
 using IO.Astrodynamics.Math;
 using IO.Astrodynamics.OrbitalParameters;
 using IO.Astrodynamics.Time;
@@ -90,7 +91,7 @@ namespace IO.Astrodynamics.Tests.OrbitalParameters
             var sv3 = sv2 - sv;
             Assert.Equal(new StateVector(new Vector3(1.0, 2.0, 3.0), new Vector3(4.0, 5.0, 6.0), earth, epoch, Frames.Frame.ICRF), sv3);
         }
-        
+
         [Fact]
         public void SubtractExcept()
         {
@@ -343,13 +344,23 @@ namespace IO.Astrodynamics.Tests.OrbitalParameters
             Assert.True(sv == sv2);
             Assert.True(sv3 != sv2);
         }
-        
+
         [Fact]
         public void ToKeplerian()
         {
             var earth = TestHelpers.EarthAtJ2000;
             var ke = earth.InitialOrbitalParameters.ToKeplerianElements();
-            // Assert.Equal(new KeplerianElements(),res);
+            Assert.Equal(
+                new KeplerianElements(149665479724.14615, 0.017121683029703794, 0.40908763696755318, 1.2954012328856077E-05,
+                    1.7768848943741333, 6.259056257646451, TestHelpers.Sun, DateTimeExtension.J2000, Frames.Frame.ICRF), ke);
+        }
+
+        [Fact]
+        public void ToEquatorial()
+        {
+            var earth = TestHelpers.MoonAtJ2000;
+            var ra = earth.InitialOrbitalParameters.ToEquatorial();
+            Assert.Equal(new Equatorial(-0.19024413568211912, 3.8824377884372114, 402448639.8873273), ra);
         }
     }
 }

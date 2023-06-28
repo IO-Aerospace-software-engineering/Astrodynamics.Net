@@ -73,7 +73,7 @@ namespace IO.Astrodynamics.Math
 
         public Quaternion To(Vector3 vector)
         {
-            var dot = this * vector;
+            var dot = this.Normalize() * vector.Normalize();
 
             if (dot == -1.0) //Manage 180° case
             {
@@ -98,11 +98,6 @@ namespace IO.Astrodynamics.Math
         {
             var p = new Quaternion(0.0, this);
             return (quaternion * p * quaternion.Conjugate()).VectorPart;
-        }
-
-        public override string ToString()
-        {
-            return $"X : {X} - Y : {Y} - Z : {Z}";
         }
     }
 }
