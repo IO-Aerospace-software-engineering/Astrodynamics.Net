@@ -36,8 +36,6 @@ namespace IO.Astrodynamics.Body.Spacecraft
                 throw new ArgumentException("Fuel flow must be a positive number");
             }
 
-            if (string.IsNullOrEmpty(name)) throw new ArgumentException("Value cannot be null or empty.", nameof(name));
-            if (string.IsNullOrEmpty(model)) throw new ArgumentException("Value cannot be null or empty.", nameof(model));
             if (string.IsNullOrEmpty(serialNumber)) throw new ArgumentException("Value cannot be null or empty.", nameof(serialNumber));
 
             Name = name;

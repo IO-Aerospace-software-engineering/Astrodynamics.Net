@@ -239,7 +239,7 @@ public class APITest
 
         scenario.AddBody(spacecraft);
         API.Instance.PropagateScenario(scenario, Constants.OutputPath);
-        
+
         // Read maneuver results
         var maneuver = spacecraft.StandbyManeuver;
         Assert.Equal("2021-03-04T01:33:26.9870000 (TDB)", maneuver.ManeuverWindow.StartDate.ToFormattedString());
@@ -723,5 +723,19 @@ public class APITest
     void LoadKernelException()
     {
         Assert.Throws<ArgumentNullException>(() => API.Instance.LoadKernels(null));
+    }
+
+    [Fact]
+    void CelestialBody()
+    {
+        DTO.CelestialBody celestialBody = new CelestialBody(1, 2, "body", new Vector3D(1.0, 2.0, 3.0), 123, "frame", 147, "error");
+        Assert.Equal(1, celestialBody.Id);
+        Assert.Equal(2, celestialBody.CenterOfMotionId);
+        Assert.Equal("body", celestialBody.Name);
+        Assert.Equal(new Vector3D(1.0,2.0,3.0), celestialBody.Radii);
+        Assert.Equal(147, celestialBody.FrameId);
+        Assert.Equal("frame", celestialBody.FrameName);
+        Assert.Equal(123, celestialBody.GM);
+        Assert.Equal("error", celestialBody.Error);
     }
 }

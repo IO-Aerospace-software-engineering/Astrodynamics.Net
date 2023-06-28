@@ -52,6 +52,7 @@ public class API
         NativeLibrary.SetDllImportResolver(typeof(API).Assembly, Resolver);
     }
 
+    //Todo manage error into sdk
     public static API Instance { get; } = new();
 
     [DllImport(@"IO.Astrodynamics", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
