@@ -212,9 +212,7 @@ public readonly record struct Matrix
                     lum[j, idx] = tmp[idx];
                 }
 
-                int t = perm[piv]; // swap perm elements
-                perm[piv] = perm[j];
-                perm[j] = t;
+                (perm[piv], perm[j]) = (perm[j], perm[piv]);
 
                 toggle = -toggle;
             }

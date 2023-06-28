@@ -24,14 +24,13 @@
     <ItemGroup>
       <Content Include="..\..\SDK\cmake-build-release\IO.Astrodynamics\IO.Astrodynamics.dll">
         <Link>resources/IO.Astrodynamics.dll</Link>
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
       <Content Include="..\..\SDK\cmake-build-release\IO.Astrodynamics\IO.Astrodynamics.lib">
         <Link>resources/IO.Astrodynamics.lib</Link>
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
       <Content Include="..\..\SDK\cmake-build-release\IO.Astrodynamics\libIO.Astrodynamics.so">
         <Link>resources/libIO.Astrodynamics.so</Link>
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
     </ItemGroup>
 

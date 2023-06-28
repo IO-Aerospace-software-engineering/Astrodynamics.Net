@@ -306,26 +306,21 @@ public class API
                                 scenarioDto.Spacecraft.CombinedManeuvers.Count(x => x.ManeuverOrder > -1)] =
                             new DTO.CombinedManeuver(order,
                                 maneuver.ManeuverHoldDuration.TotalSeconds, maneuver.MinimumEpoch.SecondsFromJ2000TDB(),
-                                maneuver.TargetOrbit.ApogeeVector().Magnitude(),
-                                maneuver.TargetOrbit.Inclination());
+                                (maneuver as CombinedManeuver).TargetPerigeeHeight, (maneuver as CombinedManeuver).TargetInclination);
 
                         //Add engines
                         for (int k = 0; k < maneuver.Engines.Count; k++)
                         {
-                            scenarioDto.Spacecraft.CombinedManeuvers[idx].Engines[k] =
-                                maneuver.Engines.ElementAt(k).SerialNumber;
+                            scenarioDto.Spacecraft.CombinedManeuvers[idx].Engines[k] = maneuver.Engines.ElementAt(k).SerialNumber;
                         }
                     }
                     else if (maneuver is PerigeeHeightManeuver)
                     {
-                        int idx = scenarioDto.Spacecraft.PerigeeHeightChangingManeuvers.Count(x =>
-                            x.ManeuverOrder > -1);
-                        scenarioDto.Spacecraft.PerigeeHeightChangingManeuvers[
-                                scenarioDto.Spacecraft.PerigeeHeightChangingManeuvers.Count(x =>
+                        int idx = scenarioDto.Spacecraft.PerigeeHeightChangingManeuvers.Count(x => x.ManeuverOrder > -1);
+                        scenarioDto.Spacecraft.PerigeeHeightChangingManeuvers[scenarioDto.Spacecraft.PerigeeHeightChangingManeuvers.Count(x =>
                                     x.ManeuverOrder > -1)] =
                             new PerigeeHeightChangingManeuver(order, maneuver.ManeuverHoldDuration.TotalSeconds,
-                                maneuver.MinimumEpoch.SecondsFromJ2000TDB(),
-                                maneuver.TargetOrbit.PerigeeVector().Magnitude());
+                                maneuver.MinimumEpoch.SecondsFromJ2000TDB(), (maneuver as PerigeeHeightManeuver).TargetPerigeeHeight);
                         //Add engines
                         for (int k = 0; k < maneuver.Engines.Count; k++)
                         {
