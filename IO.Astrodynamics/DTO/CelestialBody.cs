@@ -14,10 +14,8 @@ public struct CelestialBody
     public double GM { get; }
     public string FrameName { get; }
     public int FrameId { get; }
-    public string Error { get; }
 
-    public CelestialBody(int id, int centerOfMotionId, string name, Vector3D radii, double gm, string frameName,
-        int frameId, string error)
+    public CelestialBody(int id, int centerOfMotionId, string name, Vector3D radii, double gm, string frameName, int frameId)
     {
         Id = id;
         CenterOfMotionId = centerOfMotionId;
@@ -26,6 +24,5 @@ public struct CelestialBody
         GM = gm;
         FrameName = frameName;
         FrameId = frameId;
-        Error = error;
     }
 }

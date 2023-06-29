@@ -641,7 +641,6 @@ public class APITest
         Assert.Equal(PlanetsAndMoons.EARTH.NaifId, res.Id);
         Assert.Equal(Stars.Sun.NaifId, res.CenterOfMotionId);
         Assert.Equal(PlanetsAndMoons.EARTH.Name, res.Name);
-        Assert.Equal("", res.Error);
         Assert.Equal(13000, res.FrameId);
         Assert.Equal("ITRF93", res.FrameName);
         Assert.Equal(398600435436095.93, res.GM);
@@ -728,7 +727,7 @@ public class APITest
     [Fact]
     void CelestialBody()
     {
-        DTO.CelestialBody celestialBody = new CelestialBody(1, 2, "body", new Vector3D(1.0, 2.0, 3.0), 123, "frame", 147, "error");
+        DTO.CelestialBody celestialBody = new CelestialBody(1, 2, "body", new Vector3D(1.0, 2.0, 3.0), 123, "frame", 147);
         Assert.Equal(1, celestialBody.Id);
         Assert.Equal(2, celestialBody.CenterOfMotionId);
         Assert.Equal("body", celestialBody.Name);
@@ -736,6 +735,5 @@ public class APITest
         Assert.Equal(147, celestialBody.FrameId);
         Assert.Equal("frame", celestialBody.FrameName);
         Assert.Equal(123, celestialBody.GM);
-        Assert.Equal("error", celestialBody.Error);
     }
 }
