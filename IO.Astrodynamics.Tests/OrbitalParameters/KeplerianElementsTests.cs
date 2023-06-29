@@ -33,6 +33,38 @@ namespace IO.Astrodynamics.Tests.OrbitalParameters
             Assert.Equal(earth, ke.CenterOfMotion);
             Assert.Equal(epoch, ke.Epoch);
             Assert.Equal(Frames.Frame.ICRF, ke.Frame);
+            Assert.Throws<ArgumentException>(()=>new KeplerianElements(-20000, 0.5, 30.0 * IO.Astrodynamics.Constants.Deg2Rad,
+                40.0 * IO.Astrodynamics.Constants.Deg2Rad,
+                50.0 * IO.Astrodynamics.Constants.Deg2Rad, 10.0 * IO.Astrodynamics.Constants.Deg2Rad, earth, epoch,
+                Frames.Frame.ICRF));
+            Assert.Throws<ArgumentException>(()=>new KeplerianElements(20000, -0.5, 30.0 * IO.Astrodynamics.Constants.Deg2Rad,
+                40.0 * IO.Astrodynamics.Constants.Deg2Rad,
+                50.0 * IO.Astrodynamics.Constants.Deg2Rad, 10.0 * IO.Astrodynamics.Constants.Deg2Rad, earth, epoch,
+                Frames.Frame.ICRF));
+            Assert.Throws<ArgumentException>(()=>new KeplerianElements(20000, 0.5, 181 * IO.Astrodynamics.Constants.Deg2Rad,
+                40.0 * IO.Astrodynamics.Constants.Deg2Rad,
+                50.0 * IO.Astrodynamics.Constants.Deg2Rad, 10.0 * IO.Astrodynamics.Constants.Deg2Rad, earth, epoch,
+                Frames.Frame.ICRF));
+            Assert.Throws<ArgumentException>(()=>new KeplerianElements(20000, 0.5, 30.0 * IO.Astrodynamics.Constants.Deg2Rad,
+                -40.0 * IO.Astrodynamics.Constants.Deg2Rad,
+                50.0 * IO.Astrodynamics.Constants.Deg2Rad, 10.0 * IO.Astrodynamics.Constants.Deg2Rad, earth, epoch,
+                Frames.Frame.ICRF));
+            Assert.Throws<ArgumentException>(()=>new KeplerianElements(20000, 0.5, 30.0 * IO.Astrodynamics.Constants.Deg2Rad,
+                40.0 * IO.Astrodynamics.Constants.Deg2Rad,
+                -50.0 * IO.Astrodynamics.Constants.Deg2Rad, 10.0 * IO.Astrodynamics.Constants.Deg2Rad, earth, epoch,
+                Frames.Frame.ICRF));
+            Assert.Throws<ArgumentException>(()=>new KeplerianElements(20000, 0.5, 30.0 * IO.Astrodynamics.Constants.Deg2Rad,
+                40.0 * IO.Astrodynamics.Constants.Deg2Rad,
+                50.0 * IO.Astrodynamics.Constants.Deg2Rad, -10.0 * IO.Astrodynamics.Constants.Deg2Rad, earth, epoch,
+                Frames.Frame.ICRF));
+            Assert.Throws<ArgumentNullException>(()=>new KeplerianElements(20000, 0.5, 30.0 * IO.Astrodynamics.Constants.Deg2Rad,
+                40.0 * IO.Astrodynamics.Constants.Deg2Rad,
+                50.0 * IO.Astrodynamics.Constants.Deg2Rad, 10.0 * IO.Astrodynamics.Constants.Deg2Rad, null, epoch,
+                Frames.Frame.ICRF));
+            Assert.Throws<ArgumentNullException>(()=>new KeplerianElements(20000, 0.5, 30.0 * IO.Astrodynamics.Constants.Deg2Rad,
+                40.0 * IO.Astrodynamics.Constants.Deg2Rad,
+                50.0 * IO.Astrodynamics.Constants.Deg2Rad, 10.0 * IO.Astrodynamics.Constants.Deg2Rad, earth, epoch,
+                null));
         }
 
         [Fact]
@@ -276,7 +308,7 @@ namespace IO.Astrodynamics.Tests.OrbitalParameters
         }
 
         [Fact]
-        public void KeplerianElementsEquality()
+        public void Equality()
         {
             CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH.NaifId);
             DateTime epoch = DateTime.Now;

@@ -46,7 +46,7 @@ public class EquinoctialElementsTests
     }
 
     [Fact]
-    public void EquinoctialEquality()
+    public void Equality()
     {
         CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH.NaifId);
         KeplerianElements ke = new KeplerianElements(6800.81178582, 0.00134, 51.71 * IO.Astrodynamics.Constants.Deg2Rad, 32.57 * IO.Astrodynamics.Constants.Deg2Rad,
@@ -58,5 +58,9 @@ public class EquinoctialElementsTests
         Assert.False(equ != equ2);
         Assert.False(equ == null);
         Assert.True(equ.Equals((object)equ2));
+        Assert.True(equ.Equals((object)equ));
+        Assert.False(equ.Equals((object)null));
+        Assert.False(equ.Equals(null));
+        Assert.True(equ.Equals(equ2));
     }
 }

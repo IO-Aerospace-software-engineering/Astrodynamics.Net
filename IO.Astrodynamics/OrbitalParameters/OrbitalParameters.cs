@@ -24,9 +24,9 @@ public abstract class OrbitalParameters : IEquatable<OrbitalParameters>
     /// <param name="frame"></param>
     protected OrbitalParameters(CelestialBody centerOfMotion, DateTime epoch, Frame frame)
     {
-        CenterOfMotion = centerOfMotion;
+        CenterOfMotion = centerOfMotion ?? throw new ArgumentNullException(nameof(centerOfMotion));
         Epoch = epoch;
-        Frame = frame;
+        Frame = frame ?? throw new ArgumentNullException(nameof(frame));
     }
 
     /// <summary>

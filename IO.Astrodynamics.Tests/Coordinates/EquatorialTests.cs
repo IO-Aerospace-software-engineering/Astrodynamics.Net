@@ -21,7 +21,9 @@ namespace IO.Astrodynamics.Tests.Coordinates
         public void Create()
         {
             Equatorial eq = new Equatorial(1.0, 2.0, 3.0);
-            Assert.Equal(new Equatorial(1.0, 2.0, 3.0), eq);
+            Assert.Equal(1.0, eq.Declination);
+            Assert.Equal(2.0, eq.RightAscencion);
+            Assert.Equal(3.0, eq.Distance);
         }
 
         [Fact]
@@ -31,7 +33,9 @@ namespace IO.Astrodynamics.Tests.Coordinates
             new Scenario("scn1", mission, new Window(new DateTime(2021, 1, 1), new DateTime(2021, 1, 2)));
             var epoch = DateTime.MinValue;
             CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH.NaifId);
-            Equatorial eq = new Equatorial(new StateVector(new Vector3(-291608.38463344, -266716.83339423, -76102.48709990), new Vector3(), earth, epoch, Frames.Frame.ICRF));
+            Equatorial eq = new Equatorial(new StateVector(
+                new Vector3(-291608.38463344, -266716.83339423, -76102.48709990), new Vector3(), earth, epoch,
+                Frames.Frame.ICRF));
             Assert.Equal(new Equatorial(-0.19024413568211371, 3.8824377884371972, 402448.63988732797), eq);
         }
 
@@ -42,8 +46,10 @@ namespace IO.Astrodynamics.Tests.Coordinates
 
             var moon = TestHelpers.Moon;
             var earth = moon.InitialOrbitalParameters.CenterOfMotion;
-            var eq = new Equatorial(new StateVector(new Vector3(-202831.34150844064, 284319.70678317308, 150458.88140126597),
-                new Vector3(-0.48702480142667454, -0.26438331399030518, -0.17175837261637006), earth, epoch, Frames.Frame.ICRF));
+            var eq = new Equatorial(new StateVector(
+                new Vector3(-202831.34150844064, 284319.70678317308, 150458.88140126597),
+                new Vector3(-0.48702480142667454, -0.26438331399030518, -0.17175837261637006), earth, epoch,
+                Frames.Frame.ICRF));
             Assert.Equal(new Equatorial(0.406773808779999, 2.1904536325374035, 380284.26703704614), eq);
         }
     }

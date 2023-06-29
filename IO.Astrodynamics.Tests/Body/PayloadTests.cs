@@ -33,6 +33,10 @@ namespace IO.Astrodynamics.Tests.Body
             Assert.False(payload == null);
             Assert.False(payload == payload3);
             Assert.True(payload != payload3);
+            Assert.True(payload.Equals(payload2));
+            Assert.False(payload.Equals(null));
+            Assert.False(payload.Equals((object)null));
+            Assert.True(payload.Equals((object)payload2));
         }
     }
 }
