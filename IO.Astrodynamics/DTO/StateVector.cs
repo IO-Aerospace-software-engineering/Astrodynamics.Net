@@ -12,6 +12,7 @@ public struct StateVector
     public Vector3D Velocity { get; }
     public int CenterOfMotionId { get; }
     public string Frame { get; }
+    public string Error { get; } = string.Empty;
 
     public StateVector(int centerOfMotionId, double epoch, string frame, in Vector3D position, in Vector3D velocity)
     {
@@ -20,5 +21,10 @@ public struct StateVector
         Frame = frame;
         Position = position;
         Velocity = velocity;
+    }
+    
+    public bool HasError()
+    {
+        return !string.IsNullOrEmpty(Error);
     }
 }

@@ -272,7 +272,7 @@ public class APITest
     {
         var scenario = new DTO.Scenario();
         var size = Marshal.SizeOf(scenario);
-        Assert.Equal(18776, size);
+        Assert.Equal(19032, size);
     }
 
     [Fact]
@@ -650,6 +650,12 @@ public class APITest
     }
 
     [Fact]
+    void GetInvalidCelestialBodyInformation()
+    {
+        Assert.Throws<InvalidOperationException>(() => API.Instance.GetCelestialBodyInfo(398));
+    }
+
+    [Fact]
     void TransformFrame()
     {
         //Get the quaternion to transform
@@ -731,7 +737,7 @@ public class APITest
         Assert.Equal(1, celestialBody.Id);
         Assert.Equal(2, celestialBody.CenterOfMotionId);
         Assert.Equal("body", celestialBody.Name);
-        Assert.Equal(new Vector3D(1.0,2.0,3.0), celestialBody.Radii);
+        Assert.Equal(new Vector3D(1.0, 2.0, 3.0), celestialBody.Radii);
         Assert.Equal(147, celestialBody.FrameId);
         Assert.Equal("frame", celestialBody.FrameName);
         Assert.Equal(123, celestialBody.GM);

@@ -52,7 +52,6 @@ public class API
         NativeLibrary.SetDllImportResolver(typeof(API).Assembly, Resolver);
     }
 
-    //Todo manage error into sdk
     public static API Instance { get; } = new();
 
     [DllImport(@"IO.Astrodynamics", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
@@ -65,10 +64,10 @@ public class API
     private static extern void LaunchProxy([In] [Out] ref Launch launch);
 
     [DllImport(@"IO.Astrodynamics", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-    private static extern void LoadKernelsProxy(string directoryPath);
+    private static extern bool LoadKernelsProxy(string directoryPath);
 
     [DllImport(@"IO.Astrodynamics", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-    private static extern void UnloadKernelsProxy(string directoryPath);
+    private static extern bool UnloadKernelsProxy(string directoryPath);
 
     [DllImport(@"IO.Astrodynamics", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     private static extern string TDBToStringProxy(double secondsFromJ2000);
@@ -174,7 +173,7 @@ public class API
     }
 
     /// <summary>
-    ///     Execute the scenario
+    ///  Execute the scenario
     /// </summary>
     /// <param name="scenario"></param>
     /// <param name="outputDirectory"></param>
@@ -319,7 +318,7 @@ public class API
                     {
                         int idx = scenarioDto.Spacecraft.PerigeeHeightChangingManeuvers.Count(x => x.ManeuverOrder > -1);
                         scenarioDto.Spacecraft.PerigeeHeightChangingManeuvers[scenarioDto.Spacecraft.PerigeeHeightChangingManeuvers.Count(x =>
-                                    x.ManeuverOrder > -1)] =
+                                x.ManeuverOrder > -1)] =
                             new PerigeeHeightChangingManeuver(order, maneuver.ManeuverHoldDuration.TotalSeconds,
                                 maneuver.MinimumEpoch.SecondsFromJ2000TDB(), (maneuver as PerigeeHeightManeuver).TargetPerigeeHeight);
                         //Add engines
@@ -425,6 +424,11 @@ public class API
                 }
 
                 PropagateProxy(ref scenarioDto);
+                if (scenarioDto.HasError())
+                {
+                    throw new InvalidOperationException($"Scenario can't be executed : {scenarioDto.Error}");
+                }
+
                 LoadKernels(outputDirectory);
 
                 foreach (var maneuverResult in
@@ -496,6 +500,7 @@ public class API
     }
 
 
+    //Use the same lock for all cspice calls because it doesn't support multithreading.
     private static object lockObject = new object();
 
     /// <summary>
@@ -507,7 +512,10 @@ public class API
         if (path == null) throw new ArgumentNullException(nameof(path));
         lock (lockObject)
         {
-            LoadKernelsProxy(path.FullName);
+            if (!LoadKernelsProxy(path.FullName))
+            {
+                throw new InvalidOperationException($"Kernel can't be loaded. You can have more details on standard output");
+            }
         }
     }
 
@@ -520,7 +528,10 @@ public class API
         if (path == null) throw new ArgumentNullException(nameof(path));
         lock (lockObject)
         {
-            UnloadKernelsProxy(path.FullName);
+            if (!UnloadKernelsProxy(path.FullName))
+            {
+                throw new InvalidOperationException("Kernel can't be unloaded. You can have more details on standard output");
+            }
         }
     }
 
@@ -544,6 +555,11 @@ public class API
 
             //Execute request
             LaunchProxy(ref launchDto);
+
+            if (launchDto.HasError())
+            {
+                throw new InvalidOperationException($"Operation failed to find launch windows : {launchDto.Error}");
+            }
 
             //Filter result
             var windows = launchDto.Windows.Where(x => x.Start != 0 && x.End != 0).ToArray();
@@ -859,21 +875,33 @@ public class API
             var enumerable = stateVectors as OrbitalParameters.StateVector[] ?? stateVectors.ToArray();
             if (!enumerable.Any())
                 throw new ArgumentException("Value cannot be an empty collection.", nameof(stateVectors));
-            return WriteEphemerisProxy(filePath.FullName, naifObject.NaifId, _mapper.Map<StateVector[]>(stateVectors),
+            bool res = WriteEphemerisProxy(filePath.FullName, naifObject.NaifId, _mapper.Map<StateVector[]>(stateVectors),
                 (uint)enumerable.Count());
+            if (res == false)
+            {
+                throw new InvalidOperationException("An error occurred while writing ephemeris. You can have more details on standard output.");
+            }
+
+            return true;
         }
     }
 
     /// <summary>
     ///     Get celestial body information like radius, GM, name, associated frame, ...
     /// </summary>
-    /// <param name="celestialBody"></param>
+    /// <param name="naifId"></param>
     /// <returns></returns>
     public CelestialBody GetCelestialBodyInfo(int naifId)
     {
         lock (lockObject)
         {
-            return GetCelestialBodyInfoProxy(naifId);
+            var res = GetCelestialBodyInfoProxy(naifId);
+            if (res.HasError())
+            {
+                throw new InvalidOperationException($"An error occured while reading celestial body information : {res.Error}");
+            }
+
+            return res;
         }
     }
 
@@ -892,6 +920,11 @@ public class API
             if (fromFrame == null) throw new ArgumentNullException(nameof(fromFrame));
             if (toFrame == null) throw new ArgumentNullException(nameof(toFrame));
             var res = TransformFrameProxy(fromFrame.Name, toFrame.Name, epoch.ToTDB().SecondsFromJ2000TDB());
+            if (res.HasError())
+            {
+                throw new InvalidOperationException($"An error occured during frame transformation : {res.Error}");
+            }
+
             return new OrbitalParameters.StateOrientation(
                 new Quaternion(res.Rotation.W, res.Rotation.X, res.Rotation.Y, res.Rotation.Z),
                 new Vector3(res.AngularVelocity.X, res.AngularVelocity.Y, res.AngularVelocity.Z), epoch, fromFrame);

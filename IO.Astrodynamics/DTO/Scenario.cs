@@ -20,13 +20,20 @@ public struct Scenario
 
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = CELESTIALBODIESIZE)]
     public int[] CelestialBodiesId;
-    
+
+    public string Error { get; } = string.Empty;
+
     public Scenario(string name, Window window) : this()
     {
         Name = name;
         Window = window;
         Sites = ArrayBuilder.ArrayOf<Site>(SITESIZE);
         CelestialBodiesId = new int[CELESTIALBODIESIZE];
-        Array.Fill(CelestialBodiesId,-1);
+        Array.Fill(CelestialBodiesId, -1);
+    }
+    
+    public bool HasError()
+    {
+        return !string.IsNullOrEmpty(Error);
     }
 }
