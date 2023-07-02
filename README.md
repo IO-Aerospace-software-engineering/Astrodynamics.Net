@@ -8,45 +8,88 @@ IO.SDK.Net is the .Net connector to [IO.SDK native library](https://github.com/I
 It allows .Net developers to call IO.SDK high level features :
 
 * Load [JPL Spice kernels](https://naif.jpl.nasa.gov/naif/data.html)
-* Execute spacecraft propagator to evaluate maneuvers and fuel balance
-* Evaluate launch opportunities
-* Convert elapsed seconds from J2000 to TDB or UTC string
-* Convert TDB <-> UTC
-* Get celestial body information
-* Find time windows based on distance constraints
-* Find time windows based on occultation constraints
-* Find time windows based on coordinate constraints
-* Find time windows based on illumination constraints
-* Find time windows when an object is in instrument field of view.
-* Write ephemeris file
-* Read ephemeris file
-* Read orientation file
+* Compute and convert orbital parameters
+  * State vector
+  * Two lines elements
+  * Equinoctial
+  * Keplerian elements
+* Compute and convert coordinates system
+  * Equatorial
+  * Horizontal
+  * Geodetic
 * Frame transformation
+  * ICRF
+  * Ecliptic
+  * Body fixed frames
+  * ITRF93 (High accuracy earth fixed frame)
+* Execute spacecraft propagator to evaluate trajectory, maneuvers and fuel balance
+* Impulse maneuvers :
+  * Apogee height
+  * Perigee height
+  * Plane alignment
+  * Combined maneuver
+  * Apsidal alignment
+  * Phasing
+* Attitudes
+  * Instrument pointing toward an object
+  * Nadir
+  * Zenith
+  * Prograde
+  * Retrograde
+  * Zenith
+* Configure spacecraft
+  * Clock
+  * Fuel tank
+  * Engines
+  * Instrument
+* Surface site on any celestial body
+* Evaluate launch opportunities
+* Use or convert different time referential (TDB, UTC, Local)
+* Get celestial body information based on Naif kernels
+* Find time windows based on distance constraints from spacecraft, celestial body or ground site
+* Find time windows based on occultation constraints from spacecraft, celestial body or ground site
+* Find time windows based on coordinate constraints from spacecraft, celestial body or ground site
+* Find time windows based on illumination constraints from ground site.
+* Find time windows when an object is in instrument field of view.
+* Manipulate kernel files
+* Math tools
+  * Vector
+  * Matrix
+  * Quaternion
+  * Lagrange interpolation
+
 
 ## Installation
-This package is hosted by Nuget [here](https://www.nuget.org/packages/IO.SDK.Net/).
+This package is hosted by Nuget [here](https://www.nuget.org/packages/IO.Astrodynamics/).
 You can install it in your project with this command :
 ```
-dotnet add package IO.SDK.Net
+dotnet add package IO.Astrodynamics
 ```
 ## Quick start
 ```C#
-using IO.SDK.Net.DTO;
+//LET'S GO !
+//In this example we'll get the moon state vector in ICRF frame relative to the earth without aberration
 
-//Instanciate API
-var api = new IO.SDK.Net.API();
+//Load required kernels for computation
+API.Instance.LoadKernels(new DirectoryInfo("/home/spacer/Sources/SDK.Net/IO.Astrodynamics.Tests/Data/SolarSystem"));
 
-//Load kernels from directory, in this example the directory must contain at least the leapseconds kernel file
-api.LoadKernels("/home/spacer/Sources/SDK.Net/IO.SDK.Net.Tests/bin/Release/net6.0/Data/SolarSystem");
+//Create moon object
+var moon = new CelestialBody(PlanetsAndMoons.MOON.NaifId);
 
-//Convert elapsed seconds from J2000 to human readable string
-var epoch = api.TDBToString(0.0);
-Console.WriteLine(epoch); //Expected output : 2000-01-01 12:00:00.000000 (TDB)
+//Get moon ephemeris
+var ephemeris = moon.GetEphemeris(DateTimeExtension.J2000, moon.InitialOrbitalParameters.CenterOfMotion, Frame.ICRF, Aberration.None).ToStateVector();
 
+//Display some informations
+Console.WriteLine($"Position : {ephemeris.Position.ToString()}");
+Console.WriteLine($"Velocity : {ephemeris.Velocity.ToString()}");
+
+//You should have the following result : 
+// Position : Vector3 { X = -291608384.6334355, Y = -266716833.39423338, Z = -76102487.09990202 }
+// Velocity : Vector3 { X = 643.5313877190328, Y = -666.0876840916304, Z = -301.32570498227307 }
 
 ```
 
-You can find more advanced examples [here](https://github.com/IO-Aerospace-software-engineering/SDK.Net/wiki/Examples)
+You can find more advanced examples [here](https://github.com/IO-Aerospace-software-engineering/Astrodynamics.Net/wiki/Examples)
 
 ## Documentation
-For more information you can read the [wiki](https://github.com/IO-Aerospace-software-engineering/SDK.Net/wiki)
+For more information you can read the [wiki](https://github.com/IO-Aerospace-software-engineering/Astrodynamics.Net/wiki)
