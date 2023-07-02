@@ -4,19 +4,21 @@
         <id>IO.Astrodynamics</id>
         <authors>Sylvain Guillet</authors>
         <copyright>Sylvain Guillet</copyright>
-        <version>1.0.0</version>
-        <title>.Net version of IO Astrodynamics</title>
+        <version>1.0.2</version>
+        <title>Astrodynamics framework</title>
         <icon>images\dragonfly-dark-trans.png</icon>
         <readme>docs\README.md</readme>
         <projectUrl>https://github.com/IO-Aerospace-software-engineering/Astrodynamics.Net</projectUrl>
         <license type="expression">LGPL-3.0-or-later</license>
-        <description>This package provides a .Net connector to IO.Astrodynamics native library</description>
+        <description>This astrodynamics framework provides tools to manipulate orbital parameters, run spacecrat propagation, evaluate impulse maneuvers, ...</description>
         <dependencies>
             <group targetFramework="net6.0"/>
+            <dependency id="AutoMapper" version="12.0.1"/>
         </dependencies>
         <tags>astrodynamics aerospace orbital mechanics spice physics</tags>
 
     </metadata>
+    
     <files>
         <!-- binding libraries -->
         <file src="bin/Release/net6.0/IO.Astrodynamics.dll" target="lib/net6.0"/>
