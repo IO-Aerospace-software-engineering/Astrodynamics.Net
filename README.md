@@ -3,7 +3,7 @@
 [![Continous integration](https://github.com/IO-Aerospace-software-engineering/SDK.Net/actions/workflows/ci.yml/badge.svg)](https://github.com/IO-Aerospace-software-engineering/SDK.Net/actions/workflows/ci.yml)
 [![Continous deployment](https://github.com/IO-Aerospace-software-engineering/SDK.Net/actions/workflows/cd.yml/badge.svg)](https://github.com/IO-Aerospace-software-engineering/SDK.Net/actions/workflows/cd.yml)
 
-IO.Astrodynamics.Net is a .Net astrodynamics framework based on [IO.Astrodynamics native library](https://github.com/IO-Aerospace-software-engineering/SDK).
+IO.Astrodynamics.Net is a .Net astrodynamics framework based on [IO.Astrodynamics native library](https://github.com/IO-Aerospace-software-engineering/Astrodynamics).
 
 It allows .Net developers to call IO.Astrodynamics high level features :
 
