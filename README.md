@@ -22,7 +22,14 @@ It allows .Net developers to call IO.Astrodynamics high level features :
   * Ecliptic
   * Body fixed frames
   * ITRF93 (High accuracy earth fixed frame)
-* Execute spacecraft propagator to evaluate trajectory, maneuvers and fuel balance
+* Configure spacecraft
+  * Clock
+  * Fuel tank
+  * Engines
+  * Instrument
+* Spacecraft propagator
+  * Impulsive maneuvers
+  * Fuel balance
 * Impulse maneuvers :
   * Apogee height
   * Perigee height
@@ -37,11 +44,6 @@ It allows .Net developers to call IO.Astrodynamics high level features :
   * Prograde
   * Retrograde
   * Zenith
-* Configure spacecraft
-  * Clock
-  * Fuel tank
-  * Engines
-  * Instrument
 * Surface site on any celestial body
 * Evaluate launch opportunities
 * Use or convert different time referential (TDB, UTC, Local)
