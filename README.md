@@ -3,9 +3,9 @@
 [![Continous integration](https://github.com/IO-Aerospace-software-engineering/SDK.Net/actions/workflows/ci.yml/badge.svg)](https://github.com/IO-Aerospace-software-engineering/SDK.Net/actions/workflows/ci.yml)
 [![Continous deployment](https://github.com/IO-Aerospace-software-engineering/SDK.Net/actions/workflows/cd.yml/badge.svg)](https://github.com/IO-Aerospace-software-engineering/SDK.Net/actions/workflows/cd.yml)
 
-IO.SDK.Net is the .Net connector to [IO.SDK native library](https://github.com/IO-Aerospace-software-engineering/SDK).
+IO.Astrodynamics.Net is a .Net astrodynamics framework based on [IO.Astrodynamics native library](https://github.com/IO-Aerospace-software-engineering/SDK).
 
-It allows .Net developers to call IO.SDK high level features :
+It allows .Net developers to call IO.Astrodynamics high level features :
 
 * Load [JPL Spice kernels](https://naif.jpl.nasa.gov/naif/data.html)
 * Compute and convert orbital parameters
