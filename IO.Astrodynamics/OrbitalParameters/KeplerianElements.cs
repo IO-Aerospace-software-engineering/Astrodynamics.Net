@@ -10,6 +10,19 @@ namespace IO.Astrodynamics.OrbitalParameters
     {
         
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="semiMajorAxis"></param>
+        /// <param name="eccentricity"></param>
+        /// <param name="inclination"></param>
+        /// <param name="rigthAscendingNode"></param>
+        /// <param name="argumentOfPeriapsis"></param>
+        /// <param name="meanAnomaly"></param>
+        /// <param name="centerOfMotion"></param>
+        /// <param name="epoch"></param>
+        /// <param name="frame"></param>
+        /// <exception cref="ArgumentException"></exception>
         public KeplerianElements(double semiMajorAxis, double eccentricity, double inclination, double rigthAscendingNode, double argumentOfPeriapsis, double meanAnomaly,
             CelestialBody centerOfMotion, DateTime epoch, Frame frame) : base(centerOfMotion, epoch, frame)
         {

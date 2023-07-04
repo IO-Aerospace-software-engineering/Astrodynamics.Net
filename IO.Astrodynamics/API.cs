@@ -14,6 +14,8 @@ using IO.Astrodynamics.Body;
 using IO.Astrodynamics.Frames;
 using IO.Astrodynamics.Maneuver;
 using IO.Astrodynamics.Math;
+using IO.Astrodynamics.OrbitalParameters;
+using IO.Astrodynamics.SolarSystemObjects;
 using IO.Astrodynamics.Time;
 using ApsidalAlignmentManeuver = IO.Astrodynamics.Maneuver.ApsidalAlignmentManeuver;
 using CelestialBody = IO.Astrodynamics.DTO.CelestialBody;
@@ -140,6 +142,12 @@ public class API
     [DllImport(@"IO.Astrodynamics", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     private static extern StateVector ReadEphemerisAtGivenEpochProxy(double epoch, int observerId, int targetId,
         string frame, string aberration);
+
+    [DllImport(@"IO.Astrodynamics", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+    private static extern StateVector ConvertTLEToStateVectorProxy(string line1, string line2, string line3, double epoch);
+
+    [DllImport(@"IO.Astrodynamics", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+    private static extern DTO.TLEElements GetTLEElementsProxy(string line1, string line2, string line3);
 
     private static IntPtr Resolver(string libraryName, Assembly assembly, DllImportSearchPath? searchPath)
     {
@@ -928,6 +936,45 @@ public class API
             return new OrbitalParameters.StateOrientation(
                 new Quaternion(res.Rotation.W, res.Rotation.X, res.Rotation.Y, res.Rotation.Z),
                 new Vector3(res.AngularVelocity.X, res.AngularVelocity.Y, res.AngularVelocity.Z), epoch, fromFrame);
+        }
+    }
+
+    /// <summary>
+    /// Convert TLE to state vector at given epoch
+    /// </summary>
+    /// <param name="line1"></param>
+    /// <param name="line2"></param>
+    /// <param name="line3"></param>
+    /// <param name="epoch"></param>
+    /// <returns></returns>
+    public OrbitalParameters.StateVector ConvertTleToStateVector(string line1, string line2, string line3, DateTime epoch)
+    {
+        lock (lockObject)
+        {
+            var res = ConvertTLEToStateVectorProxy(line1, line2, line3, epoch.SecondsFromJ2000TDB());
+            return new OrbitalParameters.StateVector(_mapper.Map<Vector3>(res.Position), _mapper.Map<Vector3>(res.Velocity),
+                new Body.CelestialBody(PlanetsAndMoons.EARTH.NaifId, Frame.ECLIPTIC, epoch), epoch, new Frame(res.Frame));
+        }
+    }
+
+    /// <summary>
+    /// Create TLE
+    /// </summary>
+    /// <param name="line1">Body identifier</param>
+    /// <param name="line2">line 1</param>
+    /// <param name="line3">line 2</param>
+    /// <returns></returns>
+    public TLE CreateTLE(string line1, string line2, string line3)
+    {
+        lock (lockObject)
+        {
+            var res = GetTLEElementsProxy(line1, line2, line3);
+            if (res.HasError())
+            {
+                throw new InvalidOperationException($"An error occured during TLE creation : {res.Error}");
+            }
+            return new TLE(line1, line2, line3, res.BalisticCoefficient, res.DragTerm, res.SecondDerivativeOfMeanMotion, res.A, res.E, res.I, res.O, res.W, res.M,
+                DateTimeExtension.CreateTDB(res.Epoch), Frame.ICRF);
         }
     }
 }
