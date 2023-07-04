@@ -30,16 +30,16 @@ public class TLETests
             "1 25544U 98067A   21020.53488036  .00016717  00000-0  10270-3 0  9054",
             ""));
 
-        Assert.Equal(6803376.2171725659, tle.SemiMajorAxis());
-        Assert.Equal(4.9299999999999999e-05, tle.Eccentricity());
-        Assert.Equal(0.9013281683026676, tle.Inclination());
-        Assert.Equal(6.1615568022666061, tle.AscendingNode());
-        Assert.Equal(5.6003339639830649, tle.ArgumentOfPeriapsis());
-        Assert.Equal(0.68479738531249512, tle.MeanAnomaly());
-        Assert.Equal(664419082.848, tle.Epoch.SecondsFromJ2000TDB());
-        Assert.Equal(5.06539394194257e-10, tle.BalisticCoefficient);
-        Assert.Equal(0.0001027, tle.DragTerm);
-        Assert.Equal(0.0, tle.SecondDerivativeMeanMotion);
+        Assert.Equal(6803376.2171725659, tle.SemiMajorAxis(), 6);
+        Assert.Equal(4.9299999999999999e-05, tle.Eccentricity(), 6);
+        Assert.Equal(0.9013281683026676, tle.Inclination(), 6);
+        Assert.Equal(6.1615568022666061, tle.AscendingNode(), 6);
+        Assert.Equal(5.6003339639830649, tle.ArgumentOfPeriapsis(), 6);
+        Assert.Equal(0.68479738531249512, tle.MeanAnomaly(), 6);
+        Assert.Equal(664419082.848, tle.Epoch.SecondsFromJ2000TDB(), 6);
+        Assert.Equal(5.06539394194257e-10, tle.BalisticCoefficient, 6);
+        Assert.Equal(0.0001027, tle.DragTerm, 6);
+        Assert.Equal(0.0, tle.SecondDerivativeMeanMotion, 6);
     }
 
     [Fact]
@@ -62,21 +62,21 @@ public class TLETests
         Assert.Equal(399, stateVector.CenterOfMotion.NaifId);
         Assert.Equal(664440682.848, stateVector.Epoch.SecondsFromJ2000TDB());
     }
-    
+
     [Fact]
     public void Equality()
     {
         TLE tle = TLE.Create("ISS",
             "1 25544U 98067A   21020.53488036  .00016717  00000-0  10270-3 0  9054",
             "2 25544  51.6423 353.0312 0000493 320.8755  39.2360 15.49309423 25703");
-        
+
         TLE tle2 = TLE.Create("ISS",
             "1 25544U 98067A   21021.53488036  .00016717  00000-0  10270-3 0  9054",
             "2 25544  51.6423 353.0312 0000493 320.8755  39.2360 15.49309423 25703");
 
-        Assert.NotEqual(tle,tle2);
-        Assert.True(tle!=tle2);
-        Assert.False(tle==tle2);
+        Assert.NotEqual(tle, tle2);
+        Assert.True(tle != tle2);
+        Assert.False(tle == tle2);
         Assert.False(tle.Equals(tle2));
         Assert.False(tle.Equals(null));
         Assert.True(tle.Equals(tle));
