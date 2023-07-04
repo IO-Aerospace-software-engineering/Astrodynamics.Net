@@ -198,6 +198,11 @@ public abstract class OrbitalParameters : IEquatable<OrbitalParameters>
 
         return new StateVector(new Vector3(finalPos[0], finalPos[1], finalPos[2]), new Vector3(finalV[0], finalV[1], finalV[2]), CenterOfMotion, Epoch, Frame);
     }
+    
+    public virtual StateVector ToStateVector(DateTime epoch)
+    {
+        return AtEpoch(epoch).ToStateVector();
+    }
 
     /// <summary>
     /// Convert to equinoctial
@@ -254,7 +259,7 @@ public abstract class OrbitalParameters : IEquatable<OrbitalParameters>
     /// </summary>
     /// <param name="epoch"></param>
     /// <returns></returns>
-    public OrbitalParameters AtEpoch(DateTime epoch)
+    public virtual OrbitalParameters AtEpoch(DateTime epoch)
     {
         return ToKeplerianElements(epoch);
     }
