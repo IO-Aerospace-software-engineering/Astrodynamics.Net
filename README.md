@@ -1,4 +1,4 @@
-# IO.SDK.Net
+# IO.Astrodynamics.Net
 ## Presentation
 [![Continous integration](https://github.com/IO-Aerospace-software-engineering/SDK.Net/actions/workflows/ci.yml/badge.svg)](https://github.com/IO-Aerospace-software-engineering/SDK.Net/actions/workflows/ci.yml)
 [![Continous deployment](https://github.com/IO-Aerospace-software-engineering/SDK.Net/actions/workflows/cd.yml/badge.svg)](https://github.com/IO-Aerospace-software-engineering/SDK.Net/actions/workflows/cd.yml)
