@@ -12,7 +12,7 @@ public struct Site
     public string Name = null;
     public int BodyId = -1;
 
-    public Geodetic Coordinates = default;
+    public Planetodetic Coordinates = default;
 
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = AZIMUTHRANGESIZE)]
     public AzimuthRange[] Ranges;
@@ -20,7 +20,7 @@ public struct Site
     public string DirectoryPath = null;
 
 
-    public Site(int naifId, int bodyId, Geodetic coordinates, string name, string directoryPath) : this()
+    public Site(int naifId, int bodyId, Planetodetic coordinates, string name, string directoryPath) : this()
     {
         Id = naifId;
         BodyId = bodyId;

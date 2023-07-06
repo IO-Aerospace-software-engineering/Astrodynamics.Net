@@ -97,7 +97,7 @@ public class API
     [DllImport(@"IO.Astrodynamics", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     private static extern void FindWindowsOnIlluminationConstraintProxy(Window searchWindow, int observerId,
         string illuminationSource, int targetBody, string fixedFrame,
-        Geodetic geodetic, string illuminationType, string relationalOperator, double value, double adjustValue,
+        Planetodetic geodetic, string illuminationType, string relationalOperator, double value, double adjustValue,
         string aberration, double stepSize, string method, [In] [Out] Window[] windows);
 
     [DllImport(@"IO.Astrodynamics", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
@@ -144,7 +144,8 @@ public class API
         string frame, string aberration);
 
     [DllImport(@"IO.Astrodynamics", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-    private static extern StateVector ConvertTLEToStateVectorProxy(string line1, string line2, string line3, double epoch);
+    private static extern StateVector ConvertTLEToStateVectorProxy(string line1, string line2, string line3,
+        double epoch);
 
     [DllImport(@"IO.Astrodynamics", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     private static extern DTO.TLEElements GetTLEElementsProxy(string line1, string line2, string line3);
@@ -205,11 +206,22 @@ public class API
                 }
             }
 
-            foreach (var spacecraft in scenario.Bodies.OfType<Spacecraft>())
+            foreach (var spacecraft in scenario.Spacecrafts)
             {
-                for (int j = 0; j < scenario.Bodies.OfType<Body.CelestialBody>().Count(); j++)
+                //Reset for each propagation
+                Array.Clear(scenarioDto.CelestialBodiesId);
+
+                //Add mains involved bodies
+                foreach (var celestialBody in spacecraft.GetCentersOfMotion().ToArray())
                 {
-                    scenarioDto.CelestialBodiesId[j] = scenario.Bodies.ElementAt(j).NaifId;
+                    scenarioDto.CelestialBodiesId[scenarioDto.CelestialBodiesId.Count(x => x > 0)] =
+                        celestialBody.NaifId;
+                }
+
+                //add additional celestial bodies
+                foreach (var celestialBody in scenario.AdditionalCelstialBodies)
+                {
+                    scenarioDto.CelestialBodiesId[scenarioDto.CelestialBodiesId.Count(x => x > 0)] = celestialBody.NaifId;
                 }
 
                 //Define parking orbit
@@ -314,21 +326,26 @@ public class API
                                 scenarioDto.Spacecraft.CombinedManeuvers.Count(x => x.ManeuverOrder > -1)] =
                             new DTO.CombinedManeuver(order,
                                 maneuver.ManeuverHoldDuration.TotalSeconds, maneuver.MinimumEpoch.SecondsFromJ2000TDB(),
-                                (maneuver as CombinedManeuver).TargetPerigeeHeight, (maneuver as CombinedManeuver).TargetInclination);
+                                (maneuver as CombinedManeuver).TargetPerigeeHeight,
+                                (maneuver as CombinedManeuver).TargetInclination);
 
                         //Add engines
                         for (int k = 0; k < maneuver.Engines.Count; k++)
                         {
-                            scenarioDto.Spacecraft.CombinedManeuvers[idx].Engines[k] = maneuver.Engines.ElementAt(k).SerialNumber;
+                            scenarioDto.Spacecraft.CombinedManeuvers[idx].Engines[k] =
+                                maneuver.Engines.ElementAt(k).SerialNumber;
                         }
                     }
                     else if (maneuver is PerigeeHeightManeuver)
                     {
-                        int idx = scenarioDto.Spacecraft.PerigeeHeightChangingManeuvers.Count(x => x.ManeuverOrder > -1);
-                        scenarioDto.Spacecraft.PerigeeHeightChangingManeuvers[scenarioDto.Spacecraft.PerigeeHeightChangingManeuvers.Count(x =>
-                                x.ManeuverOrder > -1)] =
+                        int idx = scenarioDto.Spacecraft.PerigeeHeightChangingManeuvers.Count(x =>
+                            x.ManeuverOrder > -1);
+                        scenarioDto.Spacecraft.PerigeeHeightChangingManeuvers[
+                                scenarioDto.Spacecraft.PerigeeHeightChangingManeuvers.Count(x =>
+                                    x.ManeuverOrder > -1)] =
                             new PerigeeHeightChangingManeuver(order, maneuver.ManeuverHoldDuration.TotalSeconds,
-                                maneuver.MinimumEpoch.SecondsFromJ2000TDB(), (maneuver as PerigeeHeightManeuver).TargetPerigeeHeight);
+                                maneuver.MinimumEpoch.SecondsFromJ2000TDB(),
+                                (maneuver as PerigeeHeightManeuver).TargetPerigeeHeight);
                         //Add engines
                         for (int k = 0; k < maneuver.Engines.Count; k++)
                         {
@@ -522,7 +539,8 @@ public class API
         {
             if (!LoadKernelsProxy(path.FullName))
             {
-                throw new InvalidOperationException($"Kernel can't be loaded. You can have more details on standard output");
+                throw new InvalidOperationException(
+                    $"Kernel can't be loaded. You can have more details on standard output");
             }
         }
     }
@@ -538,7 +556,8 @@ public class API
         {
             if (!UnloadKernelsProxy(path.FullName))
             {
-                throw new InvalidOperationException("Kernel can't be unloaded. You can have more details on standard output");
+                throw new InvalidOperationException(
+                    "Kernel can't be unloaded. You can have more details on standard output");
             }
         }
     }
@@ -634,7 +653,8 @@ public class API
     /// <param name="observer"></param>
     /// <returns></returns>
     public IEnumerable<Time.Window> FindWindowsOnOccultationConstraint(Time.Window searchWindow, INaifObject observer,
-        INaifObject target, ShapeType targetShape, INaifObject frontBody, ShapeType frontShape, OccultationType occultationType,
+        INaifObject target, ShapeType targetShape, INaifObject frontBody, ShapeType frontShape,
+        OccultationType occultationType,
         Aberration aberration, TimeSpan stepSize)
     {
         if (observer == null) throw new ArgumentNullException(nameof(observer));
@@ -709,7 +729,7 @@ public class API
     /// <param name="observer"></param>
     /// <param name="targetBody"></param>
     /// <param name="fixedFrame"></param>
-    /// <param name="geodetic"></param>
+    /// <param name="planetodetic"></param>
     /// <param name="illuminationType"></param>
     /// <param name="relationalOperator"></param>
     /// <param name="value"></param>
@@ -720,8 +740,9 @@ public class API
     /// <returns></returns>
     public IEnumerable<Time.Window> FindWindowsOnIlluminationConstraint(Time.Window searchWindow, INaifObject observer,
         INaifObject targetBody, Frame fixedFrame,
-        Coordinates.Geodetic geodetic, IlluminationAngle illuminationType, RelationnalOperator relationalOperator,
-        double value, double adjustValue, Aberration aberration, TimeSpan stepSize, INaifObject illuminationSource, string method = "Ellipsoid")
+        Coordinates.Planetodetic planetodetic, IlluminationAngle illuminationType, RelationnalOperator relationalOperator,
+        double value, double adjustValue, Aberration aberration, TimeSpan stepSize, INaifObject illuminationSource,
+        string method = "Ellipsoid")
     {
         if (observer == null) throw new ArgumentNullException(nameof(observer));
         if (targetBody == null) throw new ArgumentNullException(nameof(targetBody));
@@ -738,7 +759,7 @@ public class API
 
             FindWindowsOnIlluminationConstraintProxy(_mapper.Map<Window>(searchWindow), observer.NaifId,
                 illuminationSource.Name, targetBody.NaifId, fixedFrame.Name,
-                _mapper.Map<Geodetic>(geodetic),
+                _mapper.Map<Planetodetic>(planetodetic),
                 illuminationType.GetDescription(), relationalOperator.GetDescription(), value, adjustValue,
                 aberration.GetDescription(), stepSize.TotalSeconds, method, windows);
             return _mapper.Map<Time.Window[]>(windows.Where(x => !double.IsNaN(x.Start)));
@@ -758,7 +779,8 @@ public class API
     /// <param name="stepSize"></param>
     /// <returns></returns>
     public IEnumerable<Time.Window> FindWindowsInFieldOfViewConstraint(Time.Window searchWindow, Spacecraft observer,
-        Instrument instrument, INaifObject target, Frame targetFrame, ShapeType targetShape, Aberration aberration, TimeSpan stepSize)
+        Instrument instrument, INaifObject target, Frame targetFrame, ShapeType targetShape, Aberration aberration,
+        TimeSpan stepSize)
     {
         if (observer == null) throw new ArgumentNullException(nameof(observer));
         if (instrument == null) throw new ArgumentNullException(nameof(instrument));
@@ -806,8 +828,9 @@ public class API
             ReadEphemerisProxy(_mapper.Map<Window>(searchWindow), observer.NaifId, target.NaifId, frame.Name,
                 aberration.GetDescription(), stepSize.TotalSeconds,
                 stateVectors);
-            return stateVectors.Where(x => !string.IsNullOrEmpty(x.Frame)).Select(x => new OrbitalParameters.StateVector(_mapper.Map<Vector3>(x.Position),
-                _mapper.Map<Vector3>(x.Velocity), observer, DateTimeExtension.CreateTDB(x.Epoch), frame));
+            return stateVectors.Where(x => !string.IsNullOrEmpty(x.Frame)).Select(x =>
+                new OrbitalParameters.StateVector(_mapper.Map<Vector3>(x.Position),
+                    _mapper.Map<Vector3>(x.Velocity), observer, DateTimeExtension.CreateTDB(x.Epoch), frame));
         }
     }
 
@@ -883,11 +906,13 @@ public class API
             var enumerable = stateVectors as OrbitalParameters.StateVector[] ?? stateVectors.ToArray();
             if (!enumerable.Any())
                 throw new ArgumentException("Value cannot be an empty collection.", nameof(stateVectors));
-            bool res = WriteEphemerisProxy(filePath.FullName, naifObject.NaifId, _mapper.Map<StateVector[]>(stateVectors),
+            bool res = WriteEphemerisProxy(filePath.FullName, naifObject.NaifId,
+                _mapper.Map<StateVector[]>(stateVectors),
                 (uint)enumerable.Count());
             if (res == false)
             {
-                throw new InvalidOperationException("An error occurred while writing ephemeris. You can have more details on standard output.");
+                throw new InvalidOperationException(
+                    "An error occurred while writing ephemeris. You can have more details on standard output.");
             }
 
             return true;
@@ -906,7 +931,8 @@ public class API
             var res = GetCelestialBodyInfoProxy(naifId);
             if (res.HasError())
             {
-                throw new InvalidOperationException($"An error occured while reading celestial body information : {res.Error}");
+                throw new InvalidOperationException(
+                    $"An error occured while reading celestial body information : {res.Error}");
             }
 
             return res;
@@ -947,13 +973,16 @@ public class API
     /// <param name="line3"></param>
     /// <param name="epoch"></param>
     /// <returns></returns>
-    public OrbitalParameters.StateVector ConvertTleToStateVector(string line1, string line2, string line3, DateTime epoch)
+    public OrbitalParameters.StateVector ConvertTleToStateVector(string line1, string line2, string line3,
+        DateTime epoch)
     {
         lock (lockObject)
         {
             var res = ConvertTLEToStateVectorProxy(line1, line2, line3, epoch.SecondsFromJ2000TDB());
-            return new OrbitalParameters.StateVector(_mapper.Map<Vector3>(res.Position), _mapper.Map<Vector3>(res.Velocity),
-                new Body.CelestialBody(PlanetsAndMoons.EARTH.NaifId, Frame.ECLIPTIC, epoch), epoch, new Frame(res.Frame));
+            return new OrbitalParameters.StateVector(_mapper.Map<Vector3>(res.Position),
+                _mapper.Map<Vector3>(res.Velocity),
+                new Body.CelestialBody(PlanetsAndMoons.EARTH.NaifId, Frame.ECLIPTIC, epoch), epoch,
+                new Frame(res.Frame));
         }
     }
 
@@ -973,7 +1002,9 @@ public class API
             {
                 throw new InvalidOperationException($"An error occured during TLE creation : {res.Error}");
             }
-            return new TLE(line1, line2, line3, res.BalisticCoefficient, res.DragTerm, res.SecondDerivativeOfMeanMotion, res.A, res.E, res.I, res.O, res.W, res.M,
+
+            return new TLE(line1, line2, line3, res.BalisticCoefficient, res.DragTerm, res.SecondDerivativeOfMeanMotion,
+                res.A, res.E, res.I, res.O, res.W, res.M,
                 DateTimeExtension.CreateTDB(res.Epoch), Frame.ICRF);
         }
     }

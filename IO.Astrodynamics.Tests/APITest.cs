@@ -14,13 +14,13 @@ using Xunit;
 using ApsidalAlignmentManeuver = IO.Astrodynamics.Maneuver.ApsidalAlignmentManeuver;
 using CombinedManeuver = IO.Astrodynamics.Maneuver.CombinedManeuver;
 using FuelTank = IO.Astrodynamics.Body.Spacecraft.FuelTank;
-using Geodetic = IO.Astrodynamics.Coordinates.Geodetic;
 using Instrument = IO.Astrodynamics.Body.Spacecraft.Instrument;
 using InstrumentPointingToAttitude = IO.Astrodynamics.Maneuver.InstrumentPointingToAttitude;
 using Launch = IO.Astrodynamics.Maneuver.Launch;
 using NadirAttitude = IO.Astrodynamics.Maneuver.NadirAttitude;
 using Payload = IO.Astrodynamics.Body.Spacecraft.Payload;
 using PhasingManeuver = IO.Astrodynamics.Maneuver.PhasingManeuver;
+using Planetodetic = IO.Astrodynamics.Coordinates.Planetodetic;
 using ProgradeAttitude = IO.Astrodynamics.Maneuver.ProgradeAttitude;
 using RetrogradeAttitude = IO.Astrodynamics.Maneuver.RetrogradeAttitude;
 using Scenario = IO.Astrodynamics.Mission.Scenario;
@@ -56,7 +56,7 @@ public class APITest
 
         //Define launch site
         LaunchSite launchSite = new LaunchSite(399303, "S3", TestHelpers.EarthAtJ2000,
-            new Geodetic(-81.0 * IO.Astrodynamics.Constants.Deg2Rad, 28.5 * IO.Astrodynamics.Constants.Deg2Rad, 0.0));
+            new Planetodetic(-81.0 * IO.Astrodynamics.Constants.Deg2Rad, 28.5 * IO.Astrodynamics.Constants.Deg2Rad, 0.0));
 
         //Define the targeted parking orbit
         StateVector parkingOrbit = new StateVector(
@@ -95,10 +95,8 @@ public class APITest
 
         Astrodynamics.Mission.Mission mission = new Astrodynamics.Mission.Mission("mission01");
         Scenario scenario = new Scenario("scn1", mission, new Window(startPropagator, end));
-        scenario.AddBody(TestHelpers.Sun);
-        scenario.AddBody(TestHelpers.EarthAtJ2000);
-        scenario.AddBody(TestHelpers.MoonAtJ2000);
-        scenario.AddSite(new Site(132, "MySite", earth, new Geodetic(0.5, 0.3, 0.0)));
+        scenario.AddAdditionalCelestialBody(TestHelpers.MoonAtJ2000);
+        scenario.AddSite(new Site(132, "MySite", earth, new Planetodetic(0.5, 0.3, 0.0)));
 
         //Define parking orbit
         StateVector parkingOrbit = new StateVector(
@@ -141,7 +139,7 @@ public class APITest
                 spacecraft.Intruments.First(), earth, engine));
         spacecraft.SetStandbyManeuver(planeAlignmentManeuver);
 
-        scenario.AddBody(spacecraft);
+        scenario.AddSpacecraft(spacecraft);
         API.Instance.PropagateScenario(scenario, Constants.OutputPath);
         Assert.Throws<ArgumentNullException>(() => API.Instance.PropagateScenario(null, Constants.OutputPath));
         Assert.Throws<ArgumentNullException>(() => API.Instance.PropagateScenario(scenario, null));
@@ -206,10 +204,8 @@ public class APITest
 
         Astrodynamics.Mission.Mission mission = new Astrodynamics.Mission.Mission("mission01");
         Scenario scenario = new Scenario("scn1", mission, new Window(startPropagator, end));
-        scenario.AddBody(TestHelpers.Sun);
-        scenario.AddBody(TestHelpers.EarthAtJ2000);
-        scenario.AddBody(TestHelpers.MoonAtJ2000);
-        scenario.AddSite(new Site(132, "MySite", earth, new Geodetic(0.5, 0.3, 0.0)));
+        scenario.AddAdditionalCelestialBody(TestHelpers.MoonAtJ2000);
+        scenario.AddSite(new Site(132, "MySite", earth, new Planetodetic(0.5, 0.3, 0.0)));
 
         //Define parking orbit
         KeplerianElements parkingOrbit = new KeplerianElements(10000000.0, 0.5, 1.0, 0.0, 0.0, 0.0, earth, DateTimeExtension.J2000, Frames.Frame.ICRF);
@@ -237,7 +233,7 @@ public class APITest
 
         spacecraft.SetStandbyManeuver(combinedManeuver);
 
-        scenario.AddBody(spacecraft);
+        scenario.AddSpacecraft(spacecraft);
         API.Instance.PropagateScenario(scenario, Constants.OutputPath);
 
         // Read maneuver results
@@ -336,7 +332,7 @@ public class APITest
     public void FindWindowsOnCoordinateConstraint()
     {
         Site site = new Site(13, "DSS-13", TestHelpers.EarthAtJ2000,
-            new Geodetic(-116.7944627147624 * IO.Astrodynamics.Constants.Deg2Rad,
+            new Planetodetic(-116.7944627147624 * IO.Astrodynamics.Constants.Deg2Rad,
                 35.2471635434595 * IO.Astrodynamics.Constants.Deg2Rad, 0.107));
         //Find time windows when the moon will be above the horizon relative to Deep Space Station 13
         var res = API.Instance.FindWindowsOnCoordinateConstraint(
@@ -366,11 +362,11 @@ public class APITest
     [Fact]
     public void FindWindowsOnIlluminationConstraint()
     {
-        //Find time windows when the geodetic point is illuminated by the sun (Official twilight 0.8° bellow horizon)
+        //Find time windows when the planetodetic point is illuminated by the sun (Official twilight 0.8° bellow horizon)
         var res = API.Instance.FindWindowsOnIlluminationConstraint(
             new Window(DateTimeExtension.CreateTDB(674524800), DateTimeExtension.CreateTDB(674611200)),
             TestHelpers.Sun, TestHelpers.EarthAtJ2000, new Frames.Frame("ITRF93"),
-            new Geodetic(2.2 * IO.Astrodynamics.Constants.Deg2Rad, 48.0 * IO.Astrodynamics.Constants.Deg2Rad, 0.0),
+            new Planetodetic(2.2 * IO.Astrodynamics.Constants.Deg2Rad, 48.0 * IO.Astrodynamics.Constants.Deg2Rad, 0.0),
             IlluminationAngle.Incidence, RelationnalOperator.Lower,
             System.Math.PI * 0.5 - (-0.8 * IO.Astrodynamics.Constants.Deg2Rad), 0.0, Aberration.CNS,
             TimeSpan.FromHours(4.5), TestHelpers.Sun);
@@ -383,7 +379,7 @@ public class APITest
         Assert.Throws<ArgumentNullException>(() => API.Instance.FindWindowsOnIlluminationConstraint(
             new Window(DateTimeExtension.CreateTDB(674524800), DateTimeExtension.CreateTDB(674611200)),
             null, TestHelpers.EarthAtJ2000, new Frames.Frame("ITRF93"),
-            new Geodetic(2.2 * IO.Astrodynamics.Constants.Deg2Rad, 48.0 * IO.Astrodynamics.Constants.Deg2Rad, 0.0),
+            new Planetodetic(2.2 * IO.Astrodynamics.Constants.Deg2Rad, 48.0 * IO.Astrodynamics.Constants.Deg2Rad, 0.0),
             IlluminationAngle.Incidence, RelationnalOperator.Lower,
             System.Math.PI * 0.5 - (-0.8 * IO.Astrodynamics.Constants.Deg2Rad), 0.0, Aberration.CNS,
             TimeSpan.FromHours(4.5), TestHelpers.Sun));
@@ -391,7 +387,7 @@ public class APITest
         Assert.Throws<ArgumentNullException>(() => API.Instance.FindWindowsOnIlluminationConstraint(
             new Window(DateTimeExtension.CreateTDB(674524800), DateTimeExtension.CreateTDB(674611200)),
             TestHelpers.Sun, null, new Frames.Frame("ITRF93"),
-            new Geodetic(2.2 * IO.Astrodynamics.Constants.Deg2Rad, 48.0 * IO.Astrodynamics.Constants.Deg2Rad, 0.0),
+            new Planetodetic(2.2 * IO.Astrodynamics.Constants.Deg2Rad, 48.0 * IO.Astrodynamics.Constants.Deg2Rad, 0.0),
             IlluminationAngle.Incidence, RelationnalOperator.Lower,
             System.Math.PI * 0.5 - (-0.8 * IO.Astrodynamics.Constants.Deg2Rad), 0.0, Aberration.CNS,
             TimeSpan.FromHours(4.5), TestHelpers.Sun));
@@ -399,7 +395,7 @@ public class APITest
         Assert.Throws<ArgumentNullException>(() => API.Instance.FindWindowsOnIlluminationConstraint(
             new Window(DateTimeExtension.CreateTDB(674524800), DateTimeExtension.CreateTDB(674611200)),
             TestHelpers.Sun, TestHelpers.EarthAtJ2000, null,
-            new Geodetic(2.2 * IO.Astrodynamics.Constants.Deg2Rad, 48.0 * IO.Astrodynamics.Constants.Deg2Rad, 0.0),
+            new Planetodetic(2.2 * IO.Astrodynamics.Constants.Deg2Rad, 48.0 * IO.Astrodynamics.Constants.Deg2Rad, 0.0),
             IlluminationAngle.Incidence, RelationnalOperator.Lower,
             System.Math.PI * 0.5 - (-0.8 * IO.Astrodynamics.Constants.Deg2Rad), 0.0, Aberration.CNS,
             TimeSpan.FromHours(4.5), TestHelpers.Sun));
@@ -407,7 +403,7 @@ public class APITest
         Assert.Throws<ArgumentNullException>(() => API.Instance.FindWindowsOnIlluminationConstraint(
             new Window(DateTimeExtension.CreateTDB(674524800), DateTimeExtension.CreateTDB(674611200)),
             TestHelpers.Sun, TestHelpers.EarthAtJ2000, new Frames.Frame("ITRF93"),
-            new Geodetic(2.2 * IO.Astrodynamics.Constants.Deg2Rad, 48.0 * IO.Astrodynamics.Constants.Deg2Rad, 0.0),
+            new Planetodetic(2.2 * IO.Astrodynamics.Constants.Deg2Rad, 48.0 * IO.Astrodynamics.Constants.Deg2Rad, 0.0),
             IlluminationAngle.Incidence, RelationnalOperator.Lower,
             System.Math.PI * 0.5 - (-0.8 * IO.Astrodynamics.Constants.Deg2Rad), 0.0, Aberration.CNS,
             TimeSpan.FromHours(4.5), null));
@@ -422,9 +418,7 @@ public class APITest
         //Configure scenario
         Scenario scenario = new Scenario("Scenario_A", new Astrodynamics.Mission.Mission("mission01"),
             new Window(start, end));
-        scenario.AddBody(TestHelpers.Sun);
-        scenario.AddBody(TestHelpers.EarthAtJ2000);
-        scenario.AddBody(TestHelpers.MoonAtJ2000);
+        scenario.AddAdditionalCelestialBody(TestHelpers.MoonAtJ2000);
 
         //Define parking orbit
 
@@ -445,7 +439,7 @@ public class APITest
         spacecraft.AddInstrument(new Instrument(-172600, "CAM602", "mod1", 1.5, InstrumentShape.Circular,
             Vector3.VectorZ, Vector3.VectorY,
             new Vector3(0.0, -System.Math.PI * 0.5, 0.0)));
-        scenario.AddBody(spacecraft);
+        scenario.AddSpacecraft(spacecraft);
 
         //Execute scenario
         API.Instance.PropagateScenario(scenario, Constants.OutputPath);
@@ -529,9 +523,7 @@ public class APITest
 
         //Configure scenario
         Scenario scenario = new Scenario("Scenario_B", new Astrodynamics.Mission.Mission("mission01"), window);
-        scenario.AddBody(TestHelpers.Sun);
-        scenario.AddBody(TestHelpers.EarthAtJ2000);
-        scenario.AddBody(TestHelpers.MoonAtJ2000);
+        scenario.AddAdditionalCelestialBody(TestHelpers.MoonAtJ2000);
 
         //Define parking orbit
 
@@ -555,7 +547,7 @@ public class APITest
         spacecraft.SetStandbyManeuver(new NadirAttitude(DateTime.MinValue, TimeSpan.Zero,
             spacecraft.Engines.First()));
 
-        scenario.AddBody(spacecraft);
+        scenario.AddSpacecraft(spacecraft);
 
         //Execute scenario
         API.Instance.PropagateScenario(scenario, Constants.OutputPath);
@@ -741,5 +733,21 @@ public class APITest
         Assert.Equal(147, celestialBody.FrameId);
         Assert.Equal("frame", celestialBody.FrameName);
         Assert.Equal(123, celestialBody.GM);
+    }
+
+    [Fact]
+    void TLEElements()
+    {
+        DTO.TLEElements tle = new TLEElements(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+        Assert.Equal(1, tle.BalisticCoefficient);
+        Assert.Equal(2, tle.SecondDerivativeOfMeanMotion);
+        Assert.Equal(3, tle.DragTerm);
+        Assert.Equal(4, tle.Epoch);
+        Assert.Equal(5, tle.A);
+        Assert.Equal(6, tle.E);
+        Assert.Equal(7, tle.I);
+        Assert.Equal(8, tle.W);
+        Assert.Equal(9, tle.O);
+        Assert.Equal(10, tle.M);
     }
 }

@@ -62,12 +62,9 @@ namespace IO.Astrodynamics.Tests.Body
         //Configure scenario
         Scenario scenario = new Scenario("Scenario_A", new Astrodynamics.Mission.Mission("mission01"),
             new Astrodynamics.Time.Window(start, end));
-        scenario.AddBody(TestHelpers.Sun);
-        scenario.AddBody(TestHelpers.EarthAtJ2000);
-        scenario.AddBody(TestHelpers.MoonAtJ2000);
+        scenario.AddAdditionalCelestialBody(TestHelpers.MoonAtJ2000);
 
         //Define parking orbit
-
         StateVector parkingOrbit = new StateVector(
             new Vector3(6800000.0, 0.0, 0.0), new Vector3(0.0, 7656.2204182967143, 0.0), TestHelpers.EarthAtJ2000,
             start, Frames.Frame.ICRF);
@@ -85,7 +82,7 @@ namespace IO.Astrodynamics.Tests.Body
         spacecraft.AddInstrument(new Instrument(-172600, "CAM602", "mod1", 1.5, InstrumentShape.Circular,
             Vector3.VectorZ, Vector3.VectorY,
             new Vector3(0.0, -System.Math.PI * 0.5, 0.0)));
-        scenario.AddBody(spacecraft);
+        scenario.AddSpacecraft(spacecraft);
 
         //Execute scenario
         API.Instance.PropagateScenario(scenario, Constants.OutputPath);

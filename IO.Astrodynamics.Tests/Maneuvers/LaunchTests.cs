@@ -20,8 +20,8 @@ namespace IO.Astrodynamics.Tests.Maneuvers
         [Fact]
         public void CreateWithBody()
         {
-            LaunchSite site = new LaunchSite(33, "l1", TestHelpers.EarthAtJ2000, new Geodetic(1.0, 2.0, 3.0), default, new AzimuthRange(1.0, 2.0));
-            Site recoverySite = new Site(34, "l2", TestHelpers.EarthAtJ2000, new Geodetic(1.0, 2.0, 3.0));
+            LaunchSite site = new LaunchSite(33, "l1", TestHelpers.EarthAtJ2000, new Planetodetic(1.0, 2.0, 3.0), default, new AzimuthRange(1.0, 2.0));
+            Site recoverySite = new Site(34, "l2", TestHelpers.EarthAtJ2000, new Planetodetic(1.0, 2.0, 3.0));
             Launch launch = new Launch(site, recoverySite, TestHelpers.Moon, IO.Astrodynamics.Constants.CivilTwilight, true);
             Assert.NotNull(launch);
             Assert.Equal(site, launch.LaunchSite);
@@ -34,8 +34,8 @@ namespace IO.Astrodynamics.Tests.Maneuvers
         [Fact]
         public void CreateWithOrbitalParameter()
         {
-            LaunchSite site = new LaunchSite(33, "l1", TestHelpers.EarthAtJ2000, new Geodetic(1.0, 2.0, 3.0), default, new AzimuthRange(1.0, 2.0));
-            Site recoverySite = new Site(34, "l2", TestHelpers.EarthAtJ2000, new Geodetic(1.0, 2.0, 3.0));
+            LaunchSite site = new LaunchSite(33, "l1", TestHelpers.EarthAtJ2000, new Planetodetic(1.0, 2.0, 3.0), default, new AzimuthRange(1.0, 2.0));
+            Site recoverySite = new Site(34, "l2", TestHelpers.EarthAtJ2000, new Planetodetic(1.0, 2.0, 3.0));
             Launch launch = new Launch(site, recoverySite, TestHelpers.Moon.InitialOrbitalParameters, IO.Astrodynamics.Constants.CivilTwilight, true);
             Assert.NotNull(launch);
             Assert.Equal(site, launch.LaunchSite);
@@ -51,9 +51,9 @@ namespace IO.Astrodynamics.Tests.Maneuvers
             var epoch = new DateTime(2021, 6, 2);
 
             var earth = TestHelpers.Earth;
-            LaunchSite site = new LaunchSite(33, "l1", earth, new Geodetic(-81.0 * IO.Astrodynamics.Constants.Deg2Rad, 28.5 * IO.Astrodynamics.Constants.Deg2Rad, 0.0), default,
+            LaunchSite site = new LaunchSite(33, "l1", earth, new Planetodetic(-81.0 * IO.Astrodynamics.Constants.Deg2Rad, 28.5 * IO.Astrodynamics.Constants.Deg2Rad, 0.0), default,
                 new AzimuthRange(0.0, 6.0));
-            Site recoverySite = new Site(34, "l2", earth, new Geodetic(-81.0 * IO.Astrodynamics.Constants.Deg2Rad, 28.5 * IO.Astrodynamics.Constants.Deg2Rad, 0.0));
+            Site recoverySite = new Site(34, "l2", earth, new Planetodetic(-81.0 * IO.Astrodynamics.Constants.Deg2Rad, 28.5 * IO.Astrodynamics.Constants.Deg2Rad, 0.0));
             //ISS at 2021-06-02 TDB
             Launch launch = new Launch(site, recoverySite,
                 new StateVector(new Vector3(-1.144243683349977E+06, 4.905086030671815E+06, 4.553416875193589E+06),
@@ -85,9 +85,9 @@ namespace IO.Astrodynamics.Tests.Maneuvers
             var epoch = new DateTime(2021, 6, 2);
 
             var earth = TestHelpers.Earth;
-            LaunchSite site = new LaunchSite(33, "l1", earth, new Geodetic(-81.0 * IO.Astrodynamics.Constants.Deg2Rad, 28.5 * IO.Astrodynamics.Constants.Deg2Rad, 0.0), default,
+            LaunchSite site = new LaunchSite(33, "l1", earth, new Planetodetic(-81.0 * IO.Astrodynamics.Constants.Deg2Rad, 28.5 * IO.Astrodynamics.Constants.Deg2Rad, 0.0), default,
                 new AzimuthRange(0.0, 6.0));
-            Site recoverySite = new Site(34, "l2", earth, new Geodetic(-81.0 * IO.Astrodynamics.Constants.Deg2Rad, 28.5 * IO.Astrodynamics.Constants.Deg2Rad, 0.0));
+            Site recoverySite = new Site(34, "l2", earth, new Planetodetic(-81.0 * IO.Astrodynamics.Constants.Deg2Rad, 28.5 * IO.Astrodynamics.Constants.Deg2Rad, 0.0));
             //ISS at 2021-06-02 TDB
             Launch launch = new Launch(site, recoverySite,
                 new StateVector(new Vector3(-1.144243683349977E+06, 4.905086030671815E+06, 4.553416875193589E+06),
@@ -110,9 +110,9 @@ namespace IO.Astrodynamics.Tests.Maneuvers
             var epoch = new DateTime(2021, 6, 2);
 
             var earth = TestHelpers.Earth;
-            LaunchSite site = new LaunchSite(33, "l1", earth, new Geodetic(-104.0 * IO.Astrodynamics.Constants.Deg2Rad, -41.0 * IO.Astrodynamics.Constants.Deg2Rad, 0.0), default,
+            LaunchSite site = new LaunchSite(33, "l1", earth, new Planetodetic(-104.0 * IO.Astrodynamics.Constants.Deg2Rad, -41.0 * IO.Astrodynamics.Constants.Deg2Rad, 0.0), default,
                 new AzimuthRange(0.0, 6.0));
-            Site recoverySite = new Site(34, "l2", earth, new Geodetic(-104.0 * IO.Astrodynamics.Constants.Deg2Rad, -41.0 * IO.Astrodynamics.Constants.Deg2Rad, 0.0));
+            Site recoverySite = new Site(34, "l2", earth, new Planetodetic(-104.0 * IO.Astrodynamics.Constants.Deg2Rad, -41.0 * IO.Astrodynamics.Constants.Deg2Rad, 0.0));
             //ISS at 2021-06-02 TDB
             Launch launch = new Launch(site, recoverySite,
                 new StateVector(new Vector3(-1.144243683349977E+06, 4.905086030671815E+06, 4.553416875193589E+06),
@@ -135,9 +135,9 @@ namespace IO.Astrodynamics.Tests.Maneuvers
             var epoch = new DateTime(2021, 6, 2);
 
             var earth = TestHelpers.Earth;
-            LaunchSite site = new LaunchSite(33, "l1", earth, new Geodetic(-104.0 * IO.Astrodynamics.Constants.Deg2Rad, -41.0 * IO.Astrodynamics.Constants.Deg2Rad, 0.0),
+            LaunchSite site = new LaunchSite(33, "l1", earth, new Planetodetic(-104.0 * IO.Astrodynamics.Constants.Deg2Rad, -41.0 * IO.Astrodynamics.Constants.Deg2Rad, 0.0),
                 new AzimuthRange(0.0, 6.0));
-            Site recoverySite = new Site(34, "l2", earth, new Geodetic(-104.0 * IO.Astrodynamics.Constants.Deg2Rad, -41.0 * IO.Astrodynamics.Constants.Deg2Rad, 0.0));
+            Site recoverySite = new Site(34, "l2", earth, new Planetodetic(-104.0 * IO.Astrodynamics.Constants.Deg2Rad, -41.0 * IO.Astrodynamics.Constants.Deg2Rad, 0.0));
             //ISS at 2021-06-02 TDB
             Launch launch = new Launch(site, recoverySite,
                 new StateVector(new Vector3(-1.144243683349977E+06, 4.905086030671815E+06, 4.553416875193589E+06),
