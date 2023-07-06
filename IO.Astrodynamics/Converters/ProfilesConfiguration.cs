@@ -5,8 +5,8 @@ using IO.Astrodynamics.DTO;
 using IO.Astrodynamics.Math;
 using IO.Astrodynamics.Surface;
 using IO.Astrodynamics.Time;
-using Geodetic = IO.Astrodynamics.Coordinates.Geodetic;
 using Launch = IO.Astrodynamics.Maneuver.Launch;
+using Planetodetic = IO.Astrodynamics.Coordinates.Planetodetic;
 using Quaternion = IO.Astrodynamics.Math.Quaternion;
 using Site = IO.Astrodynamics.Surface.Site;
 using StateOrientation = IO.Astrodynamics.OrbitalParameters.StateOrientation;
@@ -43,12 +43,12 @@ public class ProfilesConfiguration
             cfg.CreateMap<Window, DTO.Window>().ConstructUsing(x => new DTO.Window(x.StartDate.ToTDB().SecondsFromJ2000TDB(), x.EndDate.ToTDB().SecondsFromJ2000TDB()));
             cfg.CreateMap<DTO.Window, Window>().ConstructUsing(x => new Window(DateTimeExtension.CreateTDB(x.Start), DateTimeExtension.CreateTDB(x.End)));
 
-            cfg.CreateMap<Geodetic, DTO.Geodetic>().ConstructUsing(x => new DTO.Geodetic(x.Longitude, x.Latitude, x.Altitude));
+            cfg.CreateMap<Planetodetic, DTO.Planetodetic>().ConstructUsing(x => new DTO.Planetodetic(x.Longitude, x.Latitude, x.Altitude));
 
             cfg.CreateMap<Site, DTO.Site>()
-                .ConstructUsing(x => new DTO.Site(x.NaifId, x.Body.NaifId, Mapper.Map<DTO.Geodetic>(x.Geodetic), x.Name, string.Empty))
+                .ConstructUsing(x => new DTO.Site(x.NaifId, x.Body.NaifId, Mapper.Map<DTO.Planetodetic>(x.Planetodetic), x.Name, string.Empty))
                 .ForMember(x => x.BodyId, o => o.MapFrom(x => x.Body.NaifId))
-                .ForMember(x => x.Coordinates, o => o.MapFrom(x => x.Geodetic))
+                .ForMember(x => x.Coordinates, o => o.MapFrom(x => x.Planetodetic))
                 .ForMember(x => x.Ranges, o => o.Ignore())
                 .ForMember(x => x.Id, o => o.MapFrom(x => x.NaifId))
                 .ForMember(x => x.DirectoryPath, o => o.Ignore());

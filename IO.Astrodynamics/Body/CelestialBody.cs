@@ -48,4 +48,17 @@ public class CelestialBody : Body
     {
         return Mass;
     }
+
+    /// <summary>
+    /// Compute body radius from geocentric latitude
+    /// </summary>
+    /// <param name="latitude">Geocentric latitude</param>
+    /// <returns></returns>
+    public double RadiusFromGeocentricLatitude(double latitude)
+    {
+        double r2 = EquatorialRadius * EquatorialRadius;
+        double s2 = System.Math.Sin(latitude) * System.Math.Sin(latitude);
+        double f2 = (1 - Flatenning) * (1 - Flatenning);
+        return System.Math.Sqrt(r2 / (1 + (1 / f2 - 1) * s2));
+    }
 }

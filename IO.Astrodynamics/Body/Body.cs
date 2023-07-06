@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using IO.Astrodynamics.Coordinates;
 using IO.Astrodynamics.Frames;
-using IO.Astrodynamics.OrbitalParameters;
 using IO.Astrodynamics.SolarSystemObjects;
-using IO.Astrodynamics.Time;
+using StateOrientation = IO.Astrodynamics.OrbitalParameters.StateOrientation;
+using Window = IO.Astrodynamics.Time.Window;
 
 namespace IO.Astrodynamics.Body;
 
@@ -197,6 +197,31 @@ public abstract class Body : ILocalizable, IEquatable<Body>
     {
         return API.Instance.FindWindowsOnCoordinateConstraint(searchWindow, observer, this, frame, coordinateSystem, coordinate, relationalOperator, value, adjustValue, aberration,
             stepSize);
+    }
+
+    //Return all centers of motion up to the root 
+    public IEnumerable<CelestialBody> GetCentersOfMotion()
+    {
+        List<CelestialBody> celestialBodies = new List<CelestialBody>();
+
+        if (InitialOrbitalParameters?.CenterOfMotion != null)
+        {
+            celestialBodies.Add(InitialOrbitalParameters.CenterOfMotion);
+            celestialBodies.AddRange(InitialOrbitalParameters.CenterOfMotion.GetCentersOfMotion());
+        }
+
+        return celestialBodies;
+    }
+
+    public Planetocentric SubObserverPoint(CelestialBody observer, DateTime epoch, Aberration aberration)
+    {
+        var position = GetPosition(epoch, observer, observer.Frame, aberration);
+
+        var lon = System.Math.Atan2(position.Y, position.X);
+
+        var lat = System.Math.Asin(position.Z / position.Magnitude());
+
+        return new Planetocentric(lon, lat, position.Magnitude() - observer.RadiusFromGeocentricLatitude(lat));
     }
 
     public override string ToString()

@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Linq;
 using IO.Astrodynamics.Body;
 using IO.Astrodynamics.Body.Spacecraft;
@@ -42,16 +43,16 @@ namespace IO.Astrodynamics.Tests.Mission
             Assert.Equal(site, scenario.Sites.First());
             Assert.Throws<ArgumentNullException>(() => scenario.AddSite(null));
         }
-        
+
         [Fact]
-        public void AddBody()
+        public void AddAdditionalCelestialBody()
         {
             Astrodynamics.Mission.Mission mission = new Astrodynamics.Mission.Mission("Mission1");
             Scenario scenario = new Scenario("Scenario", mission, new Window(new DateTime(2021, 1, 1), new DateTime(2021, 1, 2)));
-            scenario.AddBody(TestHelpers.MoonAtJ2000);
-            Assert.Single(scenario.Bodies);
-            Assert.Equal(TestHelpers.MoonAtJ2000,scenario.Bodies.First());
-            Assert.Throws<ArgumentNullException>(() => scenario.AddBody(null));
+            scenario.AddAdditionalCelestialBody(TestHelpers.MoonAtJ2000);
+            Assert.Single(scenario.AdditionalCelstialBodies);
+            Assert.Equal(TestHelpers.MoonAtJ2000, scenario.AdditionalCelstialBodies.First());
+            Assert.Throws<ArgumentNullException>(() => scenario.AddAdditionalCelestialBody(null));
         }
 
         [Fact]
@@ -63,9 +64,7 @@ namespace IO.Astrodynamics.Tests.Mission
 
             Astrodynamics.Mission.Mission mission = new Astrodynamics.Mission.Mission("mission01");
             Scenario scenario = new Scenario("scn1", mission, new Window(startPropagator, end));
-            scenario.AddBody(TestHelpers.Sun);
-            scenario.AddBody(TestHelpers.EarthAtJ2000);
-            scenario.AddBody(TestHelpers.MoonAtJ2000);
+            scenario.AddAdditionalCelestialBody(TestHelpers.MoonAtJ2000);
 
             //Define parking orbit
             StateVector parkingOrbit = new StateVector(
@@ -106,7 +105,7 @@ namespace IO.Astrodynamics.Tests.Mission
                 .SetNextManeuver(new ProgradeAttitude(DateTime.MinValue, TimeSpan.Zero, engine));
             spacecraft.SetStandbyManeuver(planeAlignmentManeuver);
 
-            scenario.AddBody(spacecraft);
+            scenario.AddSpacecraft(spacecraft);
             scenario.Propagate(Constants.OutputPath);
 
             // Read maneuver results
@@ -157,6 +156,39 @@ namespace IO.Astrodynamics.Tests.Mission
             Assert.Equal(new Vector3(134.61069118237498, -81.41939868308344, -184.2992402533224),
                 ((ImpulseManeuver)maneuver).DeltaV);
             Assert.Equal(429.19025843695215, maneuver.FuelBurned);
+        }
+
+        [Fact]
+        public void Equality()
+        {
+            Astrodynamics.Mission.Mission mission = new Astrodynamics.Mission.Mission("mission01");
+            Scenario scenario = new Scenario("scn1", mission, new Window(DateTime.MinValue, DateTime.MaxValue));
+
+            Astrodynamics.Mission.Mission mission2 = new Astrodynamics.Mission.Mission("mission02");
+            Scenario scenario2 = new Scenario("scn1", mission2, new Window(DateTime.MinValue, DateTime.MaxValue));
+
+            Assert.True(scenario != scenario2);
+            Assert.True(scenario == scenario);
+            Assert.False(scenario == scenario2);
+            Assert.False(scenario.Equals(scenario2));
+            Assert.False(scenario.Equals(null));
+            Assert.True(scenario.Equals(scenario));
+            Assert.False(scenario.Equals((object)scenario2));
+            Assert.False(scenario.Equals((object)null));
+            Assert.True(scenario.Equals((object)scenario));
+        }
+
+        [Fact]
+        public void PropagateException()
+        {
+            DateTime start = DateTimeExtension.CreateUTC(667915269.18539762).ToTDB();
+            DateTime startPropagator = DateTimeExtension.CreateUTC(668085555.829810).ToTDB();
+            DateTime end = DateTimeExtension.CreateUTC(668174400.000000).ToTDB();
+
+            Astrodynamics.Mission.Mission mission = new Astrodynamics.Mission.Mission("mission01");
+            Scenario scenario = new Scenario("scn1", mission, new Window(startPropagator, end));
+            Assert.Throws<ArgumentNullException>(() => scenario.AddSpacecraft(null));
+            Assert.Throws<InvalidOperationException>(() => scenario.Propagate(new DirectoryInfo("/")));
         }
     }
 }

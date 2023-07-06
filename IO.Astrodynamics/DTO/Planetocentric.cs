@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 namespace IO.Astrodynamics.DTO;
 
 [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
-public struct Geodetic
+public struct Planetocentric
 {
     public double longitude, latitude, altitude;
 
-    public Geodetic(double longitude, double latitude, double altitude)
+    public Planetocentric(double longitude, double latitude, double altitude)
     {
         this.longitude = longitude;
         this.latitude = latitude;

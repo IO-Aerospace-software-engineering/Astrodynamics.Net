@@ -185,4 +185,26 @@ public class CelestialBodyTests
         var res = TestHelpers.EarthAtJ2000.AngularSeparation(DateTimeExtension.J2000, TestHelpers.MoonAtJ2000, TestHelpers.Sun, Aberration.None);
         Assert.Equal(0.9984998794278185, res);
     }
+
+    [Fact]
+    public void SubObserverPoint()
+    {
+        var moon = TestHelpers.MoonAtJ2000;
+        var res = moon.SubObserverPoint(TestHelpers.EarthAtJ2000, DateTimeExtension.J2000, Aberration.None);
+        Assert.Equal(-10.898058558227296, res.Latitude * Constants.RAD_DEG);
+        Assert.Equal(-57.74660136367262, res.Longitude * Constants.RAD_DEG);
+        Assert.Equal(396071271.39556694, res.Altitude);
+    }
+
+    [Fact]
+    public void RadiusFromLatitude()
+    {
+        var earth = TestHelpers.EarthAtJ2000;
+        var res1 = earth.RadiusFromGeocentricLatitude(0.0);
+        var res2 = earth.RadiusFromGeocentricLatitude(Astrodynamics.Constants.PI2);
+        var res3 = earth.RadiusFromGeocentricLatitude(-Astrodynamics.Constants.PI2);
+        Assert.Equal(earth.EquatorialRadius, res1, 6);
+        Assert.Equal(earth.PolarRadius, res2, 6);
+        Assert.Equal(earth.PolarRadius, res3, 6);
+    }
 }

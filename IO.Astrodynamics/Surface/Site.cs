@@ -14,20 +14,20 @@ namespace IO.Astrodynamics.Surface
         public int NaifId { get; }
         public string Name { get; }
         public CelestialBody Body { get; }
-        public Geodetic Geodetic { get; }
+        public Planetodetic Planetodetic { get; }
 
 
         public Frame Frame { get; }
 
 
-        public Site(int id, string name, CelestialBody body, in Geodetic geodetic = new Geodetic())
+        public Site(int id, string name, CelestialBody body, in Planetodetic planetodetic = new Planetodetic())
         {
             if (body == null) throw new ArgumentNullException(nameof(body));
             if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id));
             if (string.IsNullOrEmpty(name)) throw new ArgumentException("Value cannot be null or empty.", nameof(name));
             Name = name;
             Body = body;
-            Geodetic = geodetic;
+            Planetodetic = planetodetic;
             Id = id;
             NaifId = body.NaifId * 1000 + id;
             Frame = new Frame(name.ToUpper() + "_TOPO");
@@ -113,7 +113,7 @@ namespace IO.Astrodynamics.Surface
             RelationnalOperator relationalOperator, double value, double adjustValue, Aberration aberration, TimeSpan stepSize, INaifObject illuminationSource,
             string method = "Ellipsoid")
         {
-            return API.Instance.FindWindowsOnIlluminationConstraint(searchWindow, observer, Body, Body.Frame, Geodetic, illuminationType, relationalOperator, value, adjustValue,
+            return API.Instance.FindWindowsOnIlluminationConstraint(searchWindow, observer, Body, Body.Frame, Planetodetic, illuminationType, relationalOperator, value, adjustValue,
                 aberration, stepSize, illuminationSource, method);
         }
 
