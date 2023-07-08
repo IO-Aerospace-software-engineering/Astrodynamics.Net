@@ -15,7 +15,7 @@ namespace IO.Astrodynamics.Surface
         public int NaifId { get; }
         public string Name { get; }
         public CelestialBody Body { get; }
-        public Planetodetic Planetodetic { get; }
+        public Planetocentric Planetocentric { get; }
         public OrbitalParameters.OrbitalParameters InitialOrbitalParameters { get; }
 
         public IEnumerable<ILocalizable> GetCentersOfMotion()
@@ -35,27 +35,50 @@ namespace IO.Astrodynamics.Surface
         public double GM { get; } = 0.0;
         public double Mass { get; } = 0.0;
 
-        public Site(int id, string name, CelestialBody body, in Planetodetic planetodetic = new Planetodetic())
+        public Site(int id, string name, CelestialBody body) : this(id, name, body, new Planetocentric(double.NaN, double.NaN, double.NaN))
+        {
+        }
+
+        public Site(int id, string name, CelestialBody body, Planetocentric planetocentric)
         {
             if (body == null) throw new ArgumentNullException(nameof(body));
             if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id));
             if (string.IsNullOrEmpty(name)) throw new ArgumentException("Value cannot be null or empty.", nameof(name));
             Name = name;
             Body = body;
-            Planetodetic = planetodetic;
             Id = id;
             NaifId = body.NaifId * 1000 + id;
             Frame = new Frame(name.ToUpper() + "_TOPO");
-            InitialOrbitalParameters = new StateVector(GetCartesianCoordinates(), Vector3.Zero, Body, DateTime.Now, Body.Frame);
+            if (double.IsNaN(planetocentric.Latitude))
+            {
+                InitialOrbitalParameters = GetEphemeris(DateTimeExtension.J2000, Body, Body.Frame, Aberration.None);
+                Planetocentric = GetPlanetocentricCoordinates();
+            }
+            else
+            {
+                Planetocentric = planetocentric;
+                InitialOrbitalParameters = new StateVector(GetCartesianCoordinates(), Vector3.Zero, Body, DateTimeExtension.J2000, Body.Frame);
+            }
         }
 
-        public Vector3 GetCartesianCoordinates()
+        private Vector3 GetCartesianCoordinates()
         {
-            var r = Body.RadiusFromPlanetocentricLatitude(Planetodetic.Latitude);
-            var x = r * System.Math.Sin(Planetodetic.Latitude) * System.Math.Cos(Planetodetic.Longitude);
-            var y = r * System.Math.Sin(Planetodetic.Latitude) * System.Math.Sin(Planetodetic.Longitude);
-            var z = r * System.Math.Cos(Planetodetic.Latitude);
+            var r = Body.RadiusFromPlanetocentricLatitude(Planetocentric.Latitude);
+            var x = r * System.Math.Sin(Planetocentric.Latitude) * System.Math.Cos(Planetocentric.Longitude);
+            var y = r * System.Math.Sin(Planetocentric.Latitude) * System.Math.Sin(Planetocentric.Longitude);
+            var z = r * System.Math.Cos(Planetocentric.Latitude);
             return new Vector3(x, y, z);
+        }
+
+        private Planetocentric GetPlanetocentricCoordinates()
+        {
+            var position = InitialOrbitalParameters.ToStateVector().Position;
+
+            var lon = System.Math.Atan2(position.Y, position.X);
+
+            var lat = System.Math.Asin(position.Z / position.Magnitude());
+
+            return new Planetocentric(lon, lat, position.Magnitude());
         }
 
         /// <summary>
@@ -125,7 +148,7 @@ namespace IO.Astrodynamics.Surface
             RelationnalOperator relationalOperator, double value, double adjustValue, Aberration aberration, TimeSpan stepSize, INaifObject illuminationSource,
             string method = "Ellipsoid")
         {
-            return API.Instance.FindWindowsOnIlluminationConstraint(searchWindow, observer, Body, Body.Frame, Planetodetic, illuminationType, relationalOperator, value,
+            return API.Instance.FindWindowsOnIlluminationConstraint(searchWindow, observer, Body, Body.Frame, Planetocentric, illuminationType, relationalOperator, value,
                 adjustValue,
                 aberration, stepSize, illuminationSource, method);
         }

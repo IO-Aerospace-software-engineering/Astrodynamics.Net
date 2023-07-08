@@ -58,7 +58,7 @@ public abstract class Body : ILocalizable, IEquatable<Body>
             if (IsBarycenter || IsPlanet || IsMoon)
                 InitialOrbitalParameters = GetEphemeris(epoch, new Barycenter(ExtendedInformation.CenterOfMotionId), frame, Aberration.None);
 
-            (InitialOrbitalParameters?.Observer as CelestialBody)?._satellites.Add(this);
+            (InitialOrbitalParameters?.Observer as Body)?._satellites.Add(this);
         }
     }
 

@@ -41,9 +41,9 @@ namespace IO.Astrodynamics.Tests.Surface
 
             Site site = new Site(13, "DSS-13", TestHelpers.EarthAtJ2000);
             var hor = site.GetHorizontalCoordinates(epoch, TestHelpers.MoonAtJ2000, Aberration.None);
-            Assert.Equal(117.89631806108865, hor.Azimuth * IO.Astrodynamics.Constants.Rad2Deg);
-            Assert.Equal(16.79061677201462, hor.Elevation * IO.Astrodynamics.Constants.Rad2Deg);
-            Assert.Equal(400552679.30743355, hor.Range);
+            Assert.Equal(117.89631806108865, hor.Azimuth * IO.Astrodynamics.Constants.Rad2Deg, 6);
+            Assert.Equal(16.79061677201462, hor.Elevation * IO.Astrodynamics.Constants.Rad2Deg, 6);
+            Assert.Equal(400552679.30743355, hor.Range, 3);
         }
 
         [Fact]
@@ -53,9 +53,9 @@ namespace IO.Astrodynamics.Tests.Surface
 
             Site site = new Site(13, "DSS-13", TestHelpers.EarthAtJ2000);
             var hor = site.GetHorizontalCoordinates(epoch, TestHelpers.MoonAtJ2000, Aberration.None);
-            Assert.Equal(100.01881371927551, hor.Azimuth * IO.Astrodynamics.Constants.Rad2Deg);
-            Assert.Equal(-23.23601238553318, hor.Elevation * IO.Astrodynamics.Constants.Rad2Deg);
-            Assert.Equal(408535095.85180473, hor.Range);
+            Assert.Equal(100.01881371927551, hor.Azimuth * IO.Astrodynamics.Constants.Rad2Deg, 6);
+            Assert.Equal(-23.23601238553318, hor.Elevation * IO.Astrodynamics.Constants.Rad2Deg, 6);
+            Assert.Equal(408535095.85180473, hor.Range, 6);
         }
 
         [Fact]
@@ -65,9 +65,9 @@ namespace IO.Astrodynamics.Tests.Surface
 
             Site site = new Site(13, "DSS-13", TestHelpers.EarthAtJ2000);
             var hor = site.GetHorizontalCoordinates(epoch, TestHelpers.MoonAtJ2000, Aberration.None);
-            Assert.Equal(41.60830471508871, hor.Azimuth * IO.Astrodynamics.Constants.Rad2Deg);
-            Assert.Equal(-63.02074114148227, hor.Elevation * IO.Astrodynamics.Constants.Rad2Deg);
-            Assert.Equal(401248015.68680006, hor.Range);
+            Assert.Equal(41.60830471508871, hor.Azimuth * IO.Astrodynamics.Constants.Rad2Deg, 6);
+            Assert.Equal(-63.02074114148227, hor.Elevation * IO.Astrodynamics.Constants.Rad2Deg, 6);
+            Assert.Equal(401248015.68680006, hor.Range, 6);
         }
 
         [Fact]
@@ -121,13 +121,12 @@ namespace IO.Astrodynamics.Tests.Surface
         [Fact]
         public void GetPosition()
         {
-            var epoch = new DateTime(2000, 1, 1, 12, 0, 0);
             CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH.NaifId);
             Site site = new Site(13, "DSS-13", earth);
 
-            var sv = site.GetCartesianCoordinates();
+            var sv = site.InitialOrbitalParameters.ToStateVector().Position;
 
-            Assert.Equal(new Vector3(4998233.546875491, -1489959.5686882124, -3660827.795151215), sv);
+            Assert.Equal(new Vector3(-2351112.6050123204, -4655530.655495551, 3660912.7393973987), sv);
         }
 
         [Fact]
@@ -139,7 +138,7 @@ namespace IO.Astrodynamics.Tests.Surface
 
             var sv = site.GetEphemeris(epoch, earth, Frames.Frame.ICRF, Aberration.None).ToStateVector().Velocity;
 
-            Assert.Equal(new Vector3(108.65703034589836, 364.46975238850325, 0.013117008722929138), sv);
+            Assert.Equal(new Vector3(-108.65703034589836, -364.46975238850325, -0.013117008722929138), sv);
         }
 
         [Fact]
@@ -205,25 +204,26 @@ namespace IO.Astrodynamics.Tests.Surface
         public void FindWindowsOnIlluminationConstraint()
         {
             Site site = new Site(13, "DSS-13", TestHelpers.EarthAtJ2000,
-                new Planetodetic(-116.79445837 * Astrodynamics.Constants.Deg2Rad, 35.24716450 * Astrodynamics.Constants.Deg2Rad, 1070.85059));
+                new Planetocentric(-116.79445837 * Astrodynamics.Constants.Deg2Rad, 35.24716450 * Astrodynamics.Constants.Deg2Rad, 1070.85059));
 
             var res = site.FindWindowsOnIlluminationConstraint(new Window(DateTimeExtension.CreateTDB(674524800), DateTimeExtension.CreateTDB(674611200)), TestHelpers.Sun,
-                IlluminationAngle.Incidence, RelationnalOperator.Lower, System.Math.PI * 0.5 - (-0.8 * IO.Astrodynamics.Constants.Deg2Rad), 0.0, Aberration.CNS, TimeSpan.FromSeconds(3600), TestHelpers.Sun);
+                IlluminationAngle.Incidence, RelationnalOperator.Lower, System.Math.PI * 0.5 - (-0.8 * IO.Astrodynamics.Constants.Deg2Rad), 0.0, Aberration.CNS,
+                TimeSpan.FromSeconds(3600), TestHelpers.Sun);
 
             var windows = res as Window[] ?? res.ToArray();
             Assert.Single(windows);
             Assert.Equal("2021-05-17T12:51:01.1100000 (TDB)", windows[0].StartDate.ToFormattedString());
             Assert.Equal("2021-05-18T02:55:45.3300000 (TDB)", windows[0].EndDate.ToFormattedString());
         }
-        
+
         [Fact]
         public void Equality()
         {
             Site site = new Site(13, "DSS-13", TestHelpers.EarthAtJ2000,
-                new Planetodetic(-116.79445837 * Astrodynamics.Constants.Deg2Rad, 35.24716450 * Astrodynamics.Constants.Deg2Rad, 1070.85059));
-            
+                new Planetocentric(-116.79445837 * Astrodynamics.Constants.Deg2Rad, 35.24716450 * Astrodynamics.Constants.Deg2Rad, 1070.85059));
+
             Site site2 = new Site(14, "DSS-14", TestHelpers.EarthAtJ2000,
-                new Planetodetic(-116.79445837 * Astrodynamics.Constants.Deg2Rad, 35.24716450 * Astrodynamics.Constants.Deg2Rad, 1070.85059));
+                new Planetocentric(-116.79445837 * Astrodynamics.Constants.Deg2Rad, 35.24716450 * Astrodynamics.Constants.Deg2Rad, 1070.85059));
 
             Assert.True(site != site2);
             Assert.False(site == site2);

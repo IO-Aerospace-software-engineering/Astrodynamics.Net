@@ -29,7 +29,7 @@ public class CelestialBodyTests
         Assert.Equal(6356751.9, earth.PolarRadius);
         Assert.Equal(6378136.6, earth.EquatorialRadius);
         Assert.Equal(0.0033528131084554157, earth.Flatenning);
-        Assert.Equal(1, (earth.InitialOrbitalParameters.Observer as CelestialBody)?.Satellites.Count);
+        Assert.Equal(1, (earth.InitialOrbitalParameters.Observer as Astrodynamics.Body.Body)?.Satellites.Count);
     }
 
     [Fact]
@@ -45,7 +45,7 @@ public class CelestialBodyTests
         Assert.Equal(6356751.9, earth.PolarRadius);
         Assert.Equal(6378136.6, earth.EquatorialRadius);
         Assert.Equal(0.0033528131084554157, earth.Flatenning);
-        Assert.Equal(1, (earth.InitialOrbitalParameters.Observer as CelestialBody)?.Satellites.Count);
+        Assert.Equal(1, (earth.InitialOrbitalParameters.Observer as Astrodynamics.Body.Body)?.Satellites.Count);
     }
 
     [Fact]
@@ -77,8 +77,8 @@ public class CelestialBodyTests
     public void FindOccultationsEclipse()
     {
         var moon = TestHelpers.MoonAt20011214;
-        var earth = moon.InitialOrbitalParameters.Observer;
-        var sun = earth.InitialOrbitalParameters.Observer;
+        var earth = TestHelpers.EarthAtJ2000;
+        var sun = TestHelpers.Sun;
         var res = sun.FindWindowsOnOccultationConstraint(
             new Window(DateTimeExtension.CreateTDB(61473664.183390938), DateTimeExtension.CreateTDB(61646464.183445148)), earth,
             ShapeType.Ellipsoid, moon, ShapeType.Ellipsoid, OccultationType.Any, Aberration.None, TimeSpan.FromMinutes(1.0)).ToArray();

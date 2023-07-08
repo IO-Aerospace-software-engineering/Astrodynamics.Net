@@ -20,6 +20,7 @@ using Launch = IO.Astrodynamics.Maneuver.Launch;
 using NadirAttitude = IO.Astrodynamics.Maneuver.NadirAttitude;
 using Payload = IO.Astrodynamics.Body.Spacecraft.Payload;
 using PhasingManeuver = IO.Astrodynamics.Maneuver.PhasingManeuver;
+using Planetocentric = IO.Astrodynamics.Coordinates.Planetocentric;
 using Planetodetic = IO.Astrodynamics.Coordinates.Planetodetic;
 using ProgradeAttitude = IO.Astrodynamics.Maneuver.ProgradeAttitude;
 using RetrogradeAttitude = IO.Astrodynamics.Maneuver.RetrogradeAttitude;
@@ -56,7 +57,7 @@ public class APITest
 
         //Define launch site
         LaunchSite launchSite = new LaunchSite(399303, "S3", TestHelpers.EarthAtJ2000,
-            new Planetodetic(-81.0 * IO.Astrodynamics.Constants.Deg2Rad, 28.5 * IO.Astrodynamics.Constants.Deg2Rad, 0.0));
+            new Planetocentric(-81.0 * IO.Astrodynamics.Constants.Deg2Rad, 28.5 * IO.Astrodynamics.Constants.Deg2Rad, 0.0));
 
         //Define the targeted parking orbit
         StateVector parkingOrbit = new StateVector(
@@ -96,7 +97,7 @@ public class APITest
         Astrodynamics.Mission.Mission mission = new Astrodynamics.Mission.Mission("mission01");
         Scenario scenario = new Scenario("scn1", mission, new Window(startPropagator, end));
         scenario.AddAdditionalCelestialBody(TestHelpers.MoonAtJ2000);
-        scenario.AddSite(new Site(132, "MySite", earth, new Planetodetic(0.5, 0.3, 0.0)));
+        scenario.AddSite(new Site(132, "MySite", earth, new Planetocentric(0.5, 0.3, 0.0)));
 
         //Define parking orbit
         StateVector parkingOrbit = new StateVector(
@@ -205,7 +206,7 @@ public class APITest
         Astrodynamics.Mission.Mission mission = new Astrodynamics.Mission.Mission("mission01");
         Scenario scenario = new Scenario("scn1", mission, new Window(startPropagator, end));
         scenario.AddAdditionalCelestialBody(TestHelpers.MoonAtJ2000);
-        scenario.AddSite(new Site(132, "MySite", earth, new Planetodetic(0.5, 0.3, 0.0)));
+        scenario.AddSite(new Site(132, "MySite", earth, new Planetocentric(0.5, 0.3, 0.0)));
 
         //Define parking orbit
         KeplerianElements parkingOrbit = new KeplerianElements(10000000.0, 0.5, 1.0, 0.0, 0.0, 0.0, earth, DateTimeExtension.J2000, Frames.Frame.ICRF);
@@ -332,7 +333,7 @@ public class APITest
     public void FindWindowsOnCoordinateConstraint()
     {
         Site site = new Site(13, "DSS-13", TestHelpers.EarthAtJ2000,
-            new Planetodetic(-116.7944627147624 * IO.Astrodynamics.Constants.Deg2Rad,
+            new Planetocentric(-116.7944627147624 * IO.Astrodynamics.Constants.Deg2Rad,
                 35.2471635434595 * IO.Astrodynamics.Constants.Deg2Rad, 0.107));
         //Find time windows when the moon will be above the horizon relative to Deep Space Station 13
         var res = API.Instance.FindWindowsOnCoordinateConstraint(
@@ -632,6 +633,7 @@ public class APITest
         var res = API.Instance.GetCelestialBodyInfo(TestHelpers.EarthAtJ2000.NaifId);
         Assert.Equal(PlanetsAndMoons.EARTH.NaifId, res.Id);
         Assert.Equal(Stars.Sun.NaifId, res.CenterOfMotionId);
+        Assert.Equal(Barycenters.EARTH_BARYCENTER.NaifId, res.BarycenterOfMotionId);
         Assert.Equal(PlanetsAndMoons.EARTH.Name, res.Name);
         Assert.Equal(13000, res.FrameId);
         Assert.Equal("ITRF93", res.FrameName);
@@ -725,9 +727,10 @@ public class APITest
     [Fact]
     void CelestialBody()
     {
-        DTO.CelestialBody celestialBody = new CelestialBody(1, 2, "body", new Vector3D(1.0, 2.0, 3.0), 123, "frame", 147);
+        DTO.CelestialBody celestialBody = new CelestialBody(1, 2, 3, "body", new Vector3D(1.0, 2.0, 3.0), 123, "frame", 147);
         Assert.Equal(1, celestialBody.Id);
         Assert.Equal(2, celestialBody.CenterOfMotionId);
+        Assert.Equal(3, celestialBody.BarycenterOfMotionId);
         Assert.Equal("body", celestialBody.Name);
         Assert.Equal(new Vector3D(1.0, 2.0, 3.0), celestialBody.Radii);
         Assert.Equal(147, celestialBody.FrameId);

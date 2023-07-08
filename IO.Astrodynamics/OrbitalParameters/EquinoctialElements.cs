@@ -92,7 +92,7 @@ namespace IO.Astrodynamics.OrbitalParameters
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
             return P.Equals(other.P) && F.Equals(other.F) && G.Equals(other.G) && H.Equals(other.H) && K.Equals(other.K) && L0.Equals(other.L0) &&
-                   Observer == other.Observer && Epoch == other.Epoch && Frame == other.Frame;
+                   Observer.NaifId == other.Observer.NaifId && Epoch == other.Epoch && Frame == other.Frame;
         }
 
         public override bool Equals(object obj)

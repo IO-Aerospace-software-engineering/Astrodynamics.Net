@@ -158,7 +158,7 @@ namespace IO.Astrodynamics.OrbitalParameters
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return Position.Equals(other.Position) && Velocity.Equals(other.Velocity) && Observer == other.Observer && Epoch == other.Epoch && Frame == other.Frame;
+            return Position.Equals(other.Position) && Velocity.Equals(other.Velocity) && Observer.NaifId == other.Observer.NaifId && Epoch == other.Epoch && Frame == other.Frame;
         }
 
         public override bool Equals(object obj)
