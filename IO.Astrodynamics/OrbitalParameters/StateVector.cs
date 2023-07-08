@@ -19,7 +19,7 @@ namespace IO.Astrodynamics.OrbitalParameters
         /// <param name="centerOfMotion"></param>
         /// <param name="epoch"></param>
         /// <param name="frame"></param>
-        public StateVector(Vector3 position, Vector3 velocity, CelestialBody centerOfMotion, DateTime epoch, Frame frame) : base(centerOfMotion, epoch, frame)
+        public StateVector(Vector3 position, Vector3 velocity, ILocalizable centerOfMotion, DateTime epoch, Frame frame) : base(centerOfMotion, epoch, frame)
         {
             Position = position;
             Velocity = velocity;
@@ -37,7 +37,7 @@ namespace IO.Astrodynamics.OrbitalParameters
 
         public override Vector3 EccentricityVector()
         {
-            return (Velocity.Cross(SpecificAngularMomentum()) / CenterOfMotion.GM) - (Position / Position.Magnitude());
+            return (Velocity.Cross(SpecificAngularMomentum()) / Observer.GM) - (Position / Position.Magnitude());
         }
 
         public override double Inclination()
@@ -48,12 +48,12 @@ namespace IO.Astrodynamics.OrbitalParameters
 
         public override double SpecificOrbitalEnergy()
         {
-            return System.Math.Pow(Velocity.Magnitude(), 2.0) / 2.0 - (CenterOfMotion.GM / Position.Magnitude());
+            return System.Math.Pow(Velocity.Magnitude(), 2.0) / 2.0 - (Observer.GM / Position.Magnitude());
         }
 
         public override double SemiMajorAxis()
         {
-            return -(CenterOfMotion.GM / (2.0 * SpecificOrbitalEnergy()));
+            return -(Observer.GM / (2.0 * SpecificOrbitalEnergy()));
         }
 
         public override Vector3 AscendingNodeVector()
@@ -129,7 +129,7 @@ namespace IO.Astrodynamics.OrbitalParameters
                 throw new ArgumentException("State vector must have the same frame and the same epoch");
             }
 
-            return new StateVector(sv1.Position + sv2.Position, sv1.Velocity + sv2.Velocity, sv2.CenterOfMotion, sv1.Epoch, sv2.Frame);
+            return new StateVector(sv1.Position + sv2.Position, sv1.Velocity + sv2.Velocity, sv2.Observer, sv1.Epoch, sv2.Frame);
         }
 
         public static StateVector operator -(StateVector sv1, StateVector sv2)
@@ -139,7 +139,7 @@ namespace IO.Astrodynamics.OrbitalParameters
                 throw new ArgumentException("State vector must have the same frame and the same epoch");
             }
 
-            return new StateVector(sv1.Position - sv2.Position, sv1.Velocity - sv2.Velocity, sv2.CenterOfMotion, sv1.Epoch, sv2.Frame);
+            return new StateVector(sv1.Position - sv2.Position, sv1.Velocity - sv2.Velocity, sv2.Observer, sv1.Epoch, sv2.Frame);
         }
 
 
@@ -150,7 +150,7 @@ namespace IO.Astrodynamics.OrbitalParameters
 
         public StateVector Inverse()
         {
-            return new StateVector(Position.Inverse(), Velocity.Inverse(), CenterOfMotion, Epoch, Frame);
+            return new StateVector(Position.Inverse(), Velocity.Inverse(), Observer, Epoch, Frame);
         }
 
 
@@ -158,7 +158,7 @@ namespace IO.Astrodynamics.OrbitalParameters
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return Position.Equals(other.Position) && Velocity.Equals(other.Velocity) && CenterOfMotion == other.CenterOfMotion && Epoch == other.Epoch && Frame == other.Frame;
+            return Position.Equals(other.Position) && Velocity.Equals(other.Velocity) && Observer == other.Observer && Epoch == other.Epoch && Frame == other.Frame;
         }
 
         public override bool Equals(object obj)

@@ -125,7 +125,7 @@ namespace IO.Astrodynamics.Tests.Surface
             CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH.NaifId);
             Site site = new Site(13, "DSS-13", earth);
 
-            var sv = site.GetPosition(epoch, earth, Frames.Frame.ICRF, Aberration.None);
+            var sv = site.GetCartesianCoordinates();
 
             Assert.Equal(new Vector3(4998233.546875491, -1489959.5686882124, -3660827.795151215), sv);
         }
@@ -137,7 +137,7 @@ namespace IO.Astrodynamics.Tests.Surface
             CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH.NaifId);
             Site site = new Site(13, "DSS-13", earth);
 
-            var sv = site.GetVelocity(epoch, earth, Frames.Frame.ICRF, Aberration.None);
+            var sv = site.GetEphemeris(epoch, earth, Frames.Frame.ICRF, Aberration.None).ToStateVector().Velocity;
 
             Assert.Equal(new Vector3(108.65703034589836, 364.46975238850325, 0.013117008722929138), sv);
         }
@@ -147,9 +147,9 @@ namespace IO.Astrodynamics.Tests.Surface
         {
             var epoch = new DateTime(2000, 1, 1, 12, 0, 0);
             CelestialBody moon = new CelestialBody(PlanetsAndMoons.MOON.NaifId);
-            Site site = new Site(13, "DSS-13", moon.InitialOrbitalParameters.CenterOfMotion);
+            Site site = new Site(13, "DSS-13", TestHelpers.EarthAtJ2000);
 
-            var separation = site.AngularSeparation(epoch, moon, site.Body.InitialOrbitalParameters.CenterOfMotion, Aberration.None);
+            var separation = site.AngularSeparation(epoch, moon, site.Body.InitialOrbitalParameters.Observer, Aberration.None);
 
             Assert.Equal(0.9844974681377541, separation);
         }
@@ -158,7 +158,7 @@ namespace IO.Astrodynamics.Tests.Surface
         public void FindWindowsOnDistanceConstraint()
         {
             CelestialBody moon = new CelestialBody(PlanetsAndMoons.MOON.NaifId);
-            Site site = new Site(13, "DSS-13", moon.InitialOrbitalParameters.CenterOfMotion);
+            Site site = new Site(13, "DSS-13", TestHelpers.EarthAtJ2000);
 
             var res = site.FindWindowsOnDistanceConstraint(new Window(DateTimeExtension.CreateTDB(220881665.18391809), DateTimeExtension.CreateTDB(228657665.18565452)),
                 TestHelpers.MoonAtJ2000, RelationnalOperator.Greater, 400000000, Aberration.None, TimeSpan.FromSeconds(86400.0));
@@ -174,7 +174,7 @@ namespace IO.Astrodynamics.Tests.Surface
         public void FindWindowsOnOccultationConstraint()
         {
             CelestialBody moon = new CelestialBody(PlanetsAndMoons.MOON.NaifId);
-            Site site = new Site(13, "DSS-13", moon.InitialOrbitalParameters.CenterOfMotion);
+            Site site = new Site(13, "DSS-13", TestHelpers.EarthAtJ2000);
 
             var res = site.FindWindowsOnOccultationConstraint(new Window(DateTime.Parse("2005-10-03 00:00:00"), DateTime.Parse("2005-10-04 00:00:00")),
                 TestHelpers.Sun, ShapeType.Ellipsoid, TestHelpers.MoonAtJ2000, ShapeType.Ellipsoid, OccultationType.Partial, Aberration.None, TimeSpan.FromSeconds(360.0));

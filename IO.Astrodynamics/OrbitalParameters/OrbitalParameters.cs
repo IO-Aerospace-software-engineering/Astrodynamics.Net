@@ -10,7 +10,7 @@ namespace IO.Astrodynamics.OrbitalParameters;
 
 public abstract class OrbitalParameters : IEquatable<OrbitalParameters>
 {
-    public CelestialBody CenterOfMotion { get; protected set; }
+    public ILocalizable Observer { get; }
 
     public DateTime Epoch { get; }
 
@@ -19,12 +19,12 @@ public abstract class OrbitalParameters : IEquatable<OrbitalParameters>
     /// <summary>
     /// Constructor
     /// </summary>
-    /// <param name="centerOfMotion"></param>
+    /// <param name="observer"></param>
     /// <param name="epoch"></param>
     /// <param name="frame"></param>
-    protected OrbitalParameters(CelestialBody centerOfMotion, DateTime epoch, Frame frame)
+    protected OrbitalParameters(ILocalizable observer, DateTime epoch, Frame frame)
     {
-        CenterOfMotion = centerOfMotion ?? throw new ArgumentNullException(nameof(centerOfMotion));
+        Observer = observer ?? throw new ArgumentNullException(nameof(observer));
         Epoch = epoch;
         Frame = frame ?? throw new ArgumentNullException(nameof(frame));
     }
@@ -159,7 +159,7 @@ public abstract class OrbitalParameters : IEquatable<OrbitalParameters>
     public TimeSpan Period()
     {
         double a = SemiMajorAxis();
-        double T = Constants._2PI * System.Math.Sqrt((a * a * a) / CenterOfMotion.GM);
+        double T = Constants._2PI * System.Math.Sqrt((a * a * a) / Observer.GM);
         return TimeSpan.FromSeconds(T);
     }
 
@@ -185,8 +185,8 @@ public abstract class OrbitalParameters : IEquatable<OrbitalParameters>
         var r0 = p / (1 + e * System.Math.Cos(v));
         var x = r0 * System.Math.Cos(v);
         var y = r0 * System.Math.Sin(v);
-        var dotX = -System.Math.Sqrt(CenterOfMotion.GM / p) * System.Math.Sin(v);
-        var dotY = System.Math.Sqrt(CenterOfMotion.GM / p) * (e + System.Math.Cos(v));
+        var dotX = -System.Math.Sqrt(Observer.GM / p) * System.Math.Sin(v);
+        var dotY = System.Math.Sqrt(Observer.GM / p) * (e + System.Math.Cos(v));
         Matrix R3 = Matrix.CreateRotationMatrixZ(AscendingNode());
         Matrix R1 = Matrix.CreateRotationMatrixX(Inclination());
         Matrix R3w = Matrix.CreateRotationMatrixZ(ArgumentOfPeriapsis());
@@ -196,7 +196,7 @@ public abstract class OrbitalParameters : IEquatable<OrbitalParameters>
         double[] finalPos = pos * R;
         double[] finalV = vel * R;
 
-        return new StateVector(new Vector3(finalPos[0], finalPos[1], finalPos[2]), new Vector3(finalV[0], finalV[1], finalV[2]), CenterOfMotion, Epoch, Frame);
+        return new StateVector(new Vector3(finalPos[0], finalPos[1], finalPos[2]), new Vector3(finalV[0], finalV[1], finalV[2]), Observer, Epoch, Frame);
     }
     
     public virtual StateVector ToStateVector(DateTime epoch)
@@ -223,7 +223,7 @@ public abstract class OrbitalParameters : IEquatable<OrbitalParameters>
         double k = System.Math.Tan(i * 0.5) * System.Math.Sin(o);
         double l0 = o + w + v;
 
-        return new EquinoctialElements(p, f, g, h, k, l0, CenterOfMotion, Epoch, Frame);
+        return new EquinoctialElements(p, f, g, h, k, l0, Observer, Epoch, Frame);
     }
 
     /// <summary>
@@ -306,7 +306,7 @@ public abstract class OrbitalParameters : IEquatable<OrbitalParameters>
             M += Constants._2PI;
         }
 
-        return new KeplerianElements(SemiMajorAxis(), Eccentricity(), Inclination(), AscendingNode(), ArgumentOfPeriapsis(), M % Constants._2PI, CenterOfMotion, epoch, Frame);
+        return new KeplerianElements(SemiMajorAxis(), Eccentricity(), Inclination(), AscendingNode(), ArgumentOfPeriapsis(), M % Constants._2PI, Observer, epoch, Frame);
     }
 
     public virtual KeplerianElements ToKeplerianElements()
@@ -325,7 +325,7 @@ public abstract class OrbitalParameters : IEquatable<OrbitalParameters>
         var orientation = Frame.ToFrame(frame, Epoch);
         var newPos = icrfSv.Position.Rotate(orientation.Rotation);
         var newVel = icrfSv.Velocity.Rotate(orientation.Rotation) - orientation.AngularVelocity.Cross(newPos);
-        return new StateVector(newPos, newVel, CenterOfMotion, Epoch, frame);
+        return new StateVector(newPos, newVel, Observer, Epoch, frame);
     }
 
     public Equatorial ToEquatorial()
@@ -335,12 +335,12 @@ public abstract class OrbitalParameters : IEquatable<OrbitalParameters>
 
     public double PerigeeVelocity()
     {
-        return System.Math.Sqrt(CenterOfMotion.GM * (2 / PerigeeVector().Magnitude() - 1.0 / SemiMajorAxis()));
+        return System.Math.Sqrt(Observer.GM * (2 / PerigeeVector().Magnitude() - 1.0 / SemiMajorAxis()));
     }
 
     public double ApogeeVelocity()
     {
-        return System.Math.Sqrt(CenterOfMotion.GM * (2 / ApogeeVector().Magnitude() - 1.0 / SemiMajorAxis()));
+        return System.Math.Sqrt(Observer.GM * (2 / ApogeeVector().Magnitude() - 1.0 / SemiMajorAxis()));
     }
 
     public override bool Equals(object obj)
@@ -356,7 +356,7 @@ public abstract class OrbitalParameters : IEquatable<OrbitalParameters>
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(base.GetHashCode(), CenterOfMotion, Epoch, Frame);
+        return HashCode.Combine(base.GetHashCode(), Observer, Epoch, Frame);
     }
 
     public static bool operator ==(OrbitalParameters left, OrbitalParameters right)

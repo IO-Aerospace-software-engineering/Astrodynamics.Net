@@ -19,12 +19,12 @@ namespace IO.Astrodynamics.OrbitalParameters
         /// <param name="rigthAscendingNode"></param>
         /// <param name="argumentOfPeriapsis"></param>
         /// <param name="meanAnomaly"></param>
-        /// <param name="centerOfMotion"></param>
+        /// <param name="observer"></param>
         /// <param name="epoch"></param>
         /// <param name="frame"></param>
         /// <exception cref="ArgumentException"></exception>
         public KeplerianElements(double semiMajorAxis, double eccentricity, double inclination, double rigthAscendingNode, double argumentOfPeriapsis, double meanAnomaly,
-            CelestialBody centerOfMotion, DateTime epoch, Frame frame) : base(centerOfMotion, epoch, frame)
+            ILocalizable observer, DateTime epoch, Frame frame) : base(observer, epoch, frame)
         {
             if (semiMajorAxis <= 0.0)
             {
@@ -137,7 +137,7 @@ namespace IO.Astrodynamics.OrbitalParameters
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
             return A.Equals(other.A) && E.Equals(other.E) && I.Equals(other.I) && RAAN.Equals(other.RAAN) && AOP.Equals(other.AOP) && M.Equals(other.M) &&
-                   CenterOfMotion == other.CenterOfMotion && Epoch == other.Epoch && Frame == other.Frame;
+                   Observer == other.Observer && Epoch == other.Epoch && Frame == other.Frame;
         }
 
         public override bool Equals(object obj)

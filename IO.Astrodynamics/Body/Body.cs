@@ -13,15 +13,26 @@ public abstract class Body : ILocalizable, IEquatable<Body>
     public int NaifId { get; }
     public string Name { get; }
     public double Mass { get; }
+    public double GM { get; }
 
-    public OrbitalParameters.OrbitalParameters InitialOrbitalParameters { get; protected set; }
-    public Frame Frame { get; }
+    public OrbitalParameters.OrbitalParameters InitialOrbitalParameters { get; internal set; }
+    
 
     private readonly HashSet<Body> _satellites = new();
     public IReadOnlyCollection<Body> Satellites => _satellites;
 
     //Used for performance improvement and avoid duplicated call in Celestial body
     protected DTO.CelestialBody ExtendedInformation;
+
+    public bool IsBarycenter => NaifId is >= 0 and < 10;
+
+    public bool IsSun => NaifId == 10;
+
+    public bool IsPlanet => NaifId is > 100 and < 1000 && (NaifId % 100) == 99;
+
+    public bool IsMoon => NaifId is > 100 and < 1000 && (NaifId % 100) != 99;
+
+    public bool IsAsteroid => this.NaifId > 1000;
 
     /// <summary>
     /// 
@@ -38,25 +49,16 @@ public abstract class Body : ILocalizable, IEquatable<Body>
             ? throw new InvalidOperationException(
                 "Celestial body name can't be defined, please check if you have loaded associated kernels")
             : ExtendedInformation.Name;
-        if (naifId < 0 || naifId > 9)
-        {
-            Frame = string.IsNullOrEmpty(ExtendedInformation.FrameName)
-                ? throw new InvalidOperationException(
-                    "Celestial body frame can't be defined, please check if you have loaded associated kernels")
-                : new Frame(ExtendedInformation.FrameName);
-        }
 
         Mass = ExtendedInformation.GM / Constants.G;
+        GM = ExtendedInformation.GM;
 
         if (NaifId != Stars.Sun.NaifId && NaifId != Barycenters.SOLAR_SYSTEM_BARYCENTER.NaifId)
         {
-            InitialOrbitalParameters = GetEphemeris(epoch, new CelestialBody(ExtendedInformation.CenterOfMotionId),
-                frame, Aberration.None);
+            if (IsBarycenter || IsPlanet || IsMoon)
+                InitialOrbitalParameters = GetEphemeris(epoch, new Barycenter(ExtendedInformation.CenterOfMotionId), frame, Aberration.None);
 
-            if (InitialOrbitalParameters != null)
-            {
-                InitialOrbitalParameters.CenterOfMotion._satellites.Add(this);
-            }
+            (InitialOrbitalParameters?.Observer as CelestialBody)?._satellites.Add(this);
         }
     }
 
@@ -67,9 +69,7 @@ public abstract class Body : ILocalizable, IEquatable<Body>
     /// <param name="name"></param>
     /// <param name="mass"></param>
     /// <param name="initialOrbitalParameters"></param>
-    /// <param name="frame"></param>
-    protected Body(int naifId, string name, double mass, OrbitalParameters.OrbitalParameters initialOrbitalParameters,
-        Frame frame)
+    protected Body(int naifId, string name, double mass, OrbitalParameters.OrbitalParameters initialOrbitalParameters)
     {
         if (string.IsNullOrEmpty(name))
         {
@@ -85,11 +85,7 @@ public abstract class Body : ILocalizable, IEquatable<Body>
         Name = name;
         Mass = mass;
         InitialOrbitalParameters = initialOrbitalParameters;
-        Frame = frame ?? throw new ArgumentNullException(nameof(frame));
-        if (InitialOrbitalParameters != null)
-        {
-            initialOrbitalParameters.CenterOfMotion._satellites.Add(this);
-        }
+        (InitialOrbitalParameters?.Observer as CelestialBody)?._satellites.Add(this);
     }
 
     internal void AddSatellite(Body body)
@@ -111,55 +107,45 @@ public abstract class Body : ILocalizable, IEquatable<Body>
     /// <param name="aberration"></param>
     /// <param name="stepSize"></param>
     /// <returns></returns>
-    public IEnumerable<OrbitalParameters.OrbitalParameters> GetEphemeris(Window searchWindow, CelestialBody observer,
+    public IEnumerable<OrbitalParameters.OrbitalParameters> GetEphemeris(Window searchWindow, ILocalizable observer,
         Frame frame, Aberration aberration,
         TimeSpan stepSize)
     {
         return API.Instance.ReadEphemeris(searchWindow, observer, this, frame, aberration, stepSize);
     }
 
-    public OrbitalParameters.OrbitalParameters GetEphemeris(DateTime epoch, CelestialBody observer, Frame frame,
+    public OrbitalParameters.OrbitalParameters GetEphemeris(DateTime epoch, ILocalizable observer, Frame frame,
         Aberration aberration)
     {
         return API.Instance.ReadEphemeris(epoch, observer, this, frame, aberration);
     }
 
-    public Math.Vector3 GetPosition(DateTime epoch, ILocalizable observer, Frame frame, Aberration aberration)
-    {
-        var centerOfMotion = InitialOrbitalParameters?.CenterOfMotion ?? this as CelestialBody;
-        if (centerOfMotion == null)
-        {
-            throw new InvalidOperationException("Center of motion can not be defined");
-        }
+    // public Math.Vector3 GetPosition(DateTime epoch, ILocalizable observer, Frame frame, Aberration aberration)
+    // {
+    //     var centerOfMotion = InitialOrbitalParameters?.Observer ?? this as CelestialBody;
+    //     if (centerOfMotion == null)
+    //     {
+    //         throw new InvalidOperationException("Center of motion can not be defined");
+    //     }
+    //
+    //     var targetPosition = GetEphemeris(epoch, centerOfMotion, frame, aberration).ToStateVector().Position;
+    //     var observerPosition = observer.GetEphemeris(epoch, centerOfMotion, frame, aberration).ToStateVector().Position;
+    //     return targetPosition - observerPosition;
+    // }
+    //
+    // public Math.Vector3 GetVelocity(DateTime epoch, ILocalizable observer, Frame frame, Aberration aberration)
+    // {
+    //     var centerOfMotion = InitialOrbitalParameters?.Observer ?? this as CelestialBody;
+    //     if (centerOfMotion == null)
+    //     {
+    //         throw new InvalidOperationException("Center of motion can not be defined");
+    //     }
+    //
+    //     var velocity = GetEphemeris(epoch, centerOfMotion, frame, aberration).ToStateVector().Velocity;
+    //     var targetVelocity = observer.GetEphemeris(epoch, centerOfMotion, frame, aberration).ToStateVector().Velocity;
+    //     return velocity - targetVelocity;
+    // }
 
-        var targetPosition = GetEphemeris(epoch, centerOfMotion, frame, aberration).ToStateVector().Position;
-        var observerPosition = observer.GetEphemeris(epoch, centerOfMotion, frame, aberration).ToStateVector().Position;
-        return targetPosition - observerPosition;
-    }
-
-    public Math.Vector3 GetVelocity(DateTime epoch, ILocalizable observer, Frame frame, Aberration aberration)
-    {
-        var centerOfMotion = InitialOrbitalParameters?.CenterOfMotion ?? this as CelestialBody;
-        if (centerOfMotion == null)
-        {
-            throw new InvalidOperationException("Center of motion can not be defined");
-        }
-
-        var velocity = GetEphemeris(epoch, centerOfMotion, frame, aberration).ToStateVector().Velocity;
-        var targetVelocity = observer.GetEphemeris(epoch, centerOfMotion, frame, aberration).ToStateVector().Velocity;
-        return velocity - targetVelocity;
-    }
-
-    /// <summary>
-    /// Get orientation relative to reference frame
-    /// </summary>
-    /// <param name="referenceFrame"></param>
-    /// <param name="epoch"></param>
-    /// <returns></returns>
-    public StateOrientation GetOrientation(Frame referenceFrame, in DateTime epoch)
-    {
-        return referenceFrame.ToFrame(Frame, epoch);
-    }
 
 
     /// <summary>
@@ -184,8 +170,8 @@ public abstract class Body : ILocalizable, IEquatable<Body>
     /// <returns></returns>
     public double AngularSeparation(DateTime epoch, ILocalizable target1, ILocalizable target2, Aberration aberration)
     {
-        var target1Position = target1.GetPosition(epoch, this, Frame.ICRF, aberration);
-        var target2Position = target2.GetPosition(epoch, this, Frame.ICRF, aberration);
+        var target1Position = target1.GetEphemeris(epoch, this, Frame.ICRF, aberration).ToStateVector().Position;
+        var target2Position = target2.GetEphemeris(epoch, this, Frame.ICRF, aberration).ToStateVector().Position;
         return target1Position.Angle(target2Position);
     }
 
@@ -217,14 +203,14 @@ public abstract class Body : ILocalizable, IEquatable<Body>
     }
 
     //Return all centers of motion up to the root 
-    public IEnumerable<CelestialBody> GetCentersOfMotion()
+    public IEnumerable<ILocalizable> GetCentersOfMotion()
     {
-        List<CelestialBody> celestialBodies = new List<CelestialBody>();
+        List<ILocalizable> celestialBodies = new List<ILocalizable>();
 
-        if (InitialOrbitalParameters?.CenterOfMotion != null)
+        if (InitialOrbitalParameters?.Observer != null)
         {
-            celestialBodies.Add(InitialOrbitalParameters.CenterOfMotion);
-            celestialBodies.AddRange(InitialOrbitalParameters.CenterOfMotion.GetCentersOfMotion());
+            celestialBodies.Add(InitialOrbitalParameters.Observer);
+            celestialBodies.AddRange(InitialOrbitalParameters.Observer.GetCentersOfMotion());
         }
 
         return celestialBodies;
@@ -232,13 +218,13 @@ public abstract class Body : ILocalizable, IEquatable<Body>
 
     public Planetocentric SubObserverPoint(CelestialBody observer, DateTime epoch, Aberration aberration)
     {
-        var position = GetPosition(epoch, observer, observer.Frame, aberration);
+        var position = GetEphemeris(epoch, observer, observer.Frame, aberration).ToStateVector().Position;
 
         var lon = System.Math.Atan2(position.Y, position.X);
 
         var lat = System.Math.Asin(position.Z / position.Magnitude());
 
-        return new Planetocentric(lon, lat, position.Magnitude() - observer.RadiusFromGeocentricLatitude(lat));
+        return new Planetocentric(lon, lat, position.Magnitude() - observer.RadiusFromPlanetocentricLatitude(lat));
     }
 
     public override string ToString()
@@ -247,6 +233,7 @@ public abstract class Body : ILocalizable, IEquatable<Body>
     }
 
     public abstract double GetTotalMass();
+
 
     public bool Equals(Body other)
     {

@@ -30,7 +30,7 @@ namespace IO.Astrodynamics.Tests.OrbitalParameters
             Assert.Equal(40.0, ke.AscendingNode() * IO.Astrodynamics.Constants.Rad2Deg);
             Assert.Equal(50.0, ke.ArgumentOfPeriapsis() * IO.Astrodynamics.Constants.Rad2Deg);
             Assert.Equal(10.0, ke.MeanAnomaly() * IO.Astrodynamics.Constants.Rad2Deg);
-            Assert.Equal(earth, ke.CenterOfMotion);
+            Assert.Equal(earth, ke.Observer);
             Assert.Equal(epoch, ke.Epoch);
             Assert.Equal(Frames.Frame.ICRF, ke.Frame);
             Assert.Throws<ArgumentException>(()=>new KeplerianElements(-20000, 0.5, 30.0 * IO.Astrodynamics.Constants.Deg2Rad,

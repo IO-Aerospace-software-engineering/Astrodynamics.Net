@@ -13,10 +13,10 @@ public class BarycenterTests
     [Fact]
     public void Create()
     {
-        var ssb = new Barycenter(Barycenters.SOLAR_SYSTEM_BARYCENTER.NaifId);
-        Assert.Equal("SOLAR SYSTEM BARYCENTER", ssb.Name);
-        Assert.Equal(0, ssb.NaifId);
-        Assert.Equal(1.9910779956942692E+30,ssb.Mass);
-        Assert.Null(ssb.Frame);
+        var earthbc = new Barycenter(Barycenters.EARTH_BARYCENTER.NaifId);
+        Assert.Equal("EARTH BARYCENTER", earthbc.Name);
+        Assert.Equal(3, earthbc.NaifId);
+        Assert.Equal(6.045626290431354E+24,earthbc.Mass);
+        Assert.Equal(4.035032355022598E+14,earthbc.GM);
     }
 }

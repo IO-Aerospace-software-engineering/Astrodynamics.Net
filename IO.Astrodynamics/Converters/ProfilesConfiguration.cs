@@ -31,7 +31,7 @@ public class ProfilesConfiguration
                 .ForMember(x => x.Z, o => o.Ignore());
             cfg.CreateMap<DTO.Quaternion, Quaternion>().ConstructUsing(x => new Quaternion(x.W, x.X, x.Y, x.Z));
 
-            cfg.CreateMap<StateVector, DTO.StateVector>().ConstructUsing(x => new DTO.StateVector(x.CenterOfMotion.NaifId, x.Epoch.SecondsFromJ2000TDB(), x.Frame.Name,
+            cfg.CreateMap<StateVector, DTO.StateVector>().ConstructUsing(x => new DTO.StateVector(x.Observer.NaifId, x.Epoch.SecondsFromJ2000TDB(), x.Frame.Name,
                 Mapper.Map<Vector3D>(x.Position), Mapper.Map<Vector3D>(x.Velocity)));
 
             cfg.CreateMap<StateOrientation, DTO.StateOrientation>()

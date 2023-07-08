@@ -18,11 +18,11 @@ namespace IO.Astrodynamics.OrbitalParameters
         /// <param name="h">H Coefficient</param>
         /// <param name="k">K Coefficient</param>
         /// <param name="l0">True longitude</param>
-        /// <param name="centerOfMotion">Center of motion</param>
+        /// <param name="observer">Center of motion</param>
         /// <param name="epoch">Epoch</param>
         /// <param name="frame">Reference frame</param>
         /// <returns></returns>
-        public EquinoctialElements(double p, double f, double g, double h, double k, double l0, CelestialBody centerOfMotion, DateTime epoch, Frame frame) : base(centerOfMotion,
+        public EquinoctialElements(double p, double f, double g, double h, double k, double l0, ILocalizable observer, DateTime epoch, Frame frame) : base(observer,
             epoch, frame)
         {
             P = p;
@@ -92,7 +92,7 @@ namespace IO.Astrodynamics.OrbitalParameters
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
             return P.Equals(other.P) && F.Equals(other.F) && G.Equals(other.G) && H.Equals(other.H) && K.Equals(other.K) && L0.Equals(other.L0) &&
-                   CenterOfMotion == other.CenterOfMotion && Epoch == other.Epoch && Frame == other.Frame;
+                   Observer == other.Observer && Epoch == other.Epoch && Frame == other.Frame;
         }
 
         public override bool Equals(object obj)

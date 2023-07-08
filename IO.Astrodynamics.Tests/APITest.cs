@@ -490,7 +490,7 @@ public class APITest
         Assert.Equal(643.53061483971885, stateVectors[0].Velocity.X);
         Assert.Equal(-666.08181440799092, stateVectors[0].Velocity.Y);
         Assert.Equal(-301.32283209101018, stateVectors[0].Velocity.Z);
-        Assert.Equal(PlanetsAndMoons.EARTH.NaifId, stateVectors[0].CenterOfMotion.NaifId);
+        Assert.Equal(PlanetsAndMoons.EARTH.NaifId, stateVectors[0].Observer.NaifId);
         Assert.Equal(Frames.Frame.ICRF, stateVectors[0].Frame);
         Assert.Equal(0.0, stateVectors[0].Epoch.SecondsFromJ2000TDB());
 
@@ -620,7 +620,7 @@ public class APITest
             Assert.Equal(8 + i * 0.001, stateVectors[i].Velocity.Y, 12);
             Assert.Equal(i, stateVectors[i].Velocity.Z, 12);
             Assert.Equal(i, stateVectors[i].Epoch.SecondsFromJ2000TDB());
-            Assert.Equal(PlanetsAndMoons.EARTH.NaifId, stateVectors[i].CenterOfMotion.NaifId);
+            Assert.Equal(PlanetsAndMoons.EARTH.NaifId, stateVectors[i].Observer.NaifId);
             Assert.Equal(Frames.Frame.ICRF, stateVectors[i].Frame);
         }
     }

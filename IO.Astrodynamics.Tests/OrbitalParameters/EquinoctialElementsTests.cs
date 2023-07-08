@@ -25,7 +25,7 @@ public class EquinoctialElementsTests
         Assert.Equal(4.0, equ.H);
         Assert.Equal(5.0, equ.K);
         Assert.Equal(6.0, equ.L0);
-        Assert.Equal(earth, equ.CenterOfMotion);
+        Assert.Equal(earth, equ.Observer);
         Assert.Equal(epoch, equ.Epoch);
         Assert.Equal(Frames.Frame.ICRF, equ.Frame);
     }

@@ -29,7 +29,7 @@ public class CelestialBodyTests
         Assert.Equal(6356751.9, earth.PolarRadius);
         Assert.Equal(6378136.6, earth.EquatorialRadius);
         Assert.Equal(0.0033528131084554157, earth.Flatenning);
-        Assert.Equal(1, earth.InitialOrbitalParameters.CenterOfMotion.Satellites.Count);
+        Assert.Equal(1, (earth.InitialOrbitalParameters.Observer as CelestialBody)?.Satellites.Count);
     }
 
     [Fact]
@@ -45,7 +45,7 @@ public class CelestialBodyTests
         Assert.Equal(6356751.9, earth.PolarRadius);
         Assert.Equal(6378136.6, earth.EquatorialRadius);
         Assert.Equal(0.0033528131084554157, earth.Flatenning);
-        Assert.Equal(1, earth.InitialOrbitalParameters.CenterOfMotion.Satellites.Count);
+        Assert.Equal(1, (earth.InitialOrbitalParameters.Observer as CelestialBody)?.Satellites.Count);
     }
 
     [Fact]
@@ -61,7 +61,7 @@ public class CelestialBodyTests
         Assert.Equal(66482231.94758831, moon.SphereOfInfluence);
         Assert.Equal(7.345789170645306E+22, moon.Mass);
         Assert.NotNull(moon.InitialOrbitalParameters);
-        Assert.Equal(399, moon.InitialOrbitalParameters.CenterOfMotion.NaifId);
+        Assert.Equal(399, moon.InitialOrbitalParameters.Observer.NaifId);
         Assert.Equal(new Vector3(-291608384.6334355, -274979741.16904783, 36271196.6337128), moon.InitialOrbitalParameters.ToStateVector().Position);
         Assert.Equal(new Vector3(643.5313877190328, -730.9839838563024, -11.506464582342058), moon.InitialOrbitalParameters.ToStateVector().Velocity);
         Assert.Equal(Frames.Frame.ECLIPTIC, moon.InitialOrbitalParameters.Frame);
@@ -77,8 +77,8 @@ public class CelestialBodyTests
     public void FindOccultationsEclipse()
     {
         var moon = TestHelpers.MoonAt20011214;
-        var earth = moon.InitialOrbitalParameters.CenterOfMotion;
-        var sun = earth.InitialOrbitalParameters.CenterOfMotion;
+        var earth = moon.InitialOrbitalParameters.Observer;
+        var sun = earth.InitialOrbitalParameters.Observer;
         var res = sun.FindWindowsOnOccultationConstraint(
             new Window(DateTimeExtension.CreateTDB(61473664.183390938), DateTimeExtension.CreateTDB(61646464.183445148)), earth,
             ShapeType.Ellipsoid, moon, ShapeType.Ellipsoid, OccultationType.Any, Aberration.None, TimeSpan.FromMinutes(1.0)).ToArray();
@@ -173,13 +173,6 @@ public class CelestialBodyTests
     }
 
     [Fact]
-    public void GetVelocity()
-    {
-        var res = TestHelpers.Sun.GetVelocity(DateTimeExtension.J2000, TestHelpers.EarthAtJ2000, Frames.Frame.ICRF, Aberration.None);
-        Assert.Equal(new Vector3(29794.26007042197, 5018.052308786111, 2175.3938028266693), res);
-    }
-
-    [Fact]
     public void AngularSeparation()
     {
         var res = TestHelpers.EarthAtJ2000.AngularSeparation(DateTimeExtension.J2000, TestHelpers.MoonAtJ2000, TestHelpers.Sun, Aberration.None);
@@ -200,9 +193,9 @@ public class CelestialBodyTests
     public void RadiusFromLatitude()
     {
         var earth = TestHelpers.EarthAtJ2000;
-        var res1 = earth.RadiusFromGeocentricLatitude(0.0);
-        var res2 = earth.RadiusFromGeocentricLatitude(Astrodynamics.Constants.PI2);
-        var res3 = earth.RadiusFromGeocentricLatitude(-Astrodynamics.Constants.PI2);
+        var res1 = earth.RadiusFromPlanetocentricLatitude(0.0);
+        var res2 = earth.RadiusFromPlanetocentricLatitude(Astrodynamics.Constants.PI2);
+        var res3 = earth.RadiusFromPlanetocentricLatitude(-Astrodynamics.Constants.PI2);
         Assert.Equal(earth.EquatorialRadius, res1, 6);
         Assert.Equal(earth.PolarRadius, res2, 6);
         Assert.Equal(earth.PolarRadius, res3, 6);

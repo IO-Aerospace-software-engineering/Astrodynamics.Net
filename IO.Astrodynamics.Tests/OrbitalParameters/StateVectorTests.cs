@@ -25,7 +25,7 @@ namespace IO.Astrodynamics.Tests.OrbitalParameters
             Vector3 vel = new Vector3(4.0, 5.0, 6.0);
             var epoch = new DateTime(2021, 12, 12);
             StateVector sv = new StateVector(pos, vel, earth, epoch, Frames.Frame.ICRF);
-            Assert.Equal(earth, sv.CenterOfMotion);
+            Assert.Equal(earth, sv.Observer);
             Assert.Equal(epoch, sv.Epoch);
             Assert.Equal(Frames.Frame.ICRF, sv.Frame);
             Assert.Equal(pos, sv.Position);

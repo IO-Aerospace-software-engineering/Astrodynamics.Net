@@ -815,7 +815,7 @@ public class API
     /// <param name="observer"></param>
     /// <returns></returns>
     public IEnumerable<OrbitalParameters.OrbitalParameters> ReadEphemeris(Time.Window searchWindow,
-        Body.CelestialBody observer, ILocalizable target, Frame frame,
+        ILocalizable observer, ILocalizable target, Frame frame,
         Aberration aberration, TimeSpan stepSize)
     {
         if (observer == null) throw new ArgumentNullException(nameof(observer));
@@ -844,7 +844,7 @@ public class API
     /// <param name="aberration"></param>
     /// <returns></returns>
     /// <exception cref="ArgumentNullException"></exception>
-    public OrbitalParameters.OrbitalParameters ReadEphemeris(DateTime epoch, Body.CelestialBody observer,
+    public OrbitalParameters.OrbitalParameters ReadEphemeris(DateTime epoch, ILocalizable observer,
         ILocalizable target, Frame frame, Aberration aberration)
     {
         if (observer == null) throw new ArgumentNullException(nameof(observer));

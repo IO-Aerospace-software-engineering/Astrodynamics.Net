@@ -1,4 +1,8 @@
-﻿namespace IO.Astrodynamics.Coordinates
+﻿using System.Numerics;
+using IO.Astrodynamics.Body;
+using Vector3 = IO.Astrodynamics.Math.Vector3;
+
+namespace IO.Astrodynamics.Coordinates
 {
     public readonly record struct Planetocentric
     {

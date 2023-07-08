@@ -60,7 +60,7 @@ public class TLETests
         Assert.Equal(2575.7244807830643, stateVector.Velocity.Y);
         Assert.Equal(4271.59936530876, stateVector.Velocity.Z);
         Assert.Equal("J2000", stateVector.Frame.Name);
-        Assert.Equal(399, stateVector.CenterOfMotion.NaifId);
+        Assert.Equal(399, stateVector.Observer.NaifId);
         Assert.Equal(664440682.848, stateVector.Epoch.SecondsFromJ2000TDB());
     }
 
