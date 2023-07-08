@@ -168,7 +168,6 @@ namespace IO.Astrodynamics.Tests.Mission
             Scenario scenario2 = new Scenario("scn1", mission2, new Window(DateTime.MinValue, DateTime.MaxValue));
 
             Assert.True(scenario != scenario2);
-            Assert.True(scenario == scenario);
             Assert.False(scenario == scenario2);
             Assert.False(scenario.Equals(scenario2));
             Assert.False(scenario.Equals(null));

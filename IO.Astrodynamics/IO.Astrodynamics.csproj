@@ -11,15 +11,6 @@
 
     <ItemGroup>
         <None Remove="resources\libIO.SDK.so" />
-        <None Update="resources\IO.Astrodynamics.dll">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="resources\IO.Astrodynamics.lib">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="resources\libIO.Astrodynamics.so">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
     </ItemGroup>
 
     <ItemGroup>
@@ -30,6 +21,17 @@
 
     <ItemGroup>
       <PackageReference Include="AutoMapper" Version="12.0.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="..\..\SDK\cmake-build-release\IO.Astrodynamics\IO.Astrodynamics.dll">
+        <Link>resources\IO.Astrodynamics.dll</Link>
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <Content Include="..\..\SDK\cmake-build-release\IO.Astrodynamics\IO.Astrodynamics.lib">
+        <Link>resources\IO.Astrodynamics.lib</Link>
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
     </ItemGroup>
 
 </Project>

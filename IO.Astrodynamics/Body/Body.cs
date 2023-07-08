@@ -35,16 +35,23 @@ public abstract class Body : ILocalizable, IEquatable<Body>
 
         NaifId = naifId;
         Name = string.IsNullOrEmpty(ExtendedInformation.Name)
-            ? throw new InvalidOperationException("Celestial body name can't be defined, please check if you have loaded associated kernels")
+            ? throw new InvalidOperationException(
+                "Celestial body name can't be defined, please check if you have loaded associated kernels")
             : ExtendedInformation.Name;
-        Frame = string.IsNullOrEmpty(ExtendedInformation.FrameName)
-            ? throw new InvalidOperationException("Celestial body frame can't be defined, please check if you have loaded associated kernels")
-            : new Frame(ExtendedInformation.FrameName);
+        if (naifId < 0 || naifId > 9)
+        {
+            Frame = string.IsNullOrEmpty(ExtendedInformation.FrameName)
+                ? throw new InvalidOperationException(
+                    "Celestial body frame can't be defined, please check if you have loaded associated kernels")
+                : new Frame(ExtendedInformation.FrameName);
+        }
+
         Mass = ExtendedInformation.GM / Constants.G;
 
-        if (NaifId != Stars.Sun.NaifId)
+        if (NaifId != Stars.Sun.NaifId && NaifId != Barycenters.SOLAR_SYSTEM_BARYCENTER.NaifId)
         {
-            InitialOrbitalParameters = GetEphemeris(epoch, new CelestialBody(ExtendedInformation.CenterOfMotionId), frame, Aberration.None);
+            InitialOrbitalParameters = GetEphemeris(epoch, new CelestialBody(ExtendedInformation.CenterOfMotionId),
+                frame, Aberration.None);
 
             if (InitialOrbitalParameters != null)
             {
@@ -61,7 +68,8 @@ public abstract class Body : ILocalizable, IEquatable<Body>
     /// <param name="mass"></param>
     /// <param name="initialOrbitalParameters"></param>
     /// <param name="frame"></param>
-    protected Body(int naifId, string name, double mass, OrbitalParameters.OrbitalParameters initialOrbitalParameters, Frame frame)
+    protected Body(int naifId, string name, double mass, OrbitalParameters.OrbitalParameters initialOrbitalParameters,
+        Frame frame)
     {
         if (string.IsNullOrEmpty(name))
         {
@@ -103,13 +111,15 @@ public abstract class Body : ILocalizable, IEquatable<Body>
     /// <param name="aberration"></param>
     /// <param name="stepSize"></param>
     /// <returns></returns>
-    public IEnumerable<OrbitalParameters.OrbitalParameters> GetEphemeris(Window searchWindow, CelestialBody observer, Frame frame, Aberration aberration,
+    public IEnumerable<OrbitalParameters.OrbitalParameters> GetEphemeris(Window searchWindow, CelestialBody observer,
+        Frame frame, Aberration aberration,
         TimeSpan stepSize)
     {
         return API.Instance.ReadEphemeris(searchWindow, observer, this, frame, aberration, stepSize);
     }
 
-    public OrbitalParameters.OrbitalParameters GetEphemeris(DateTime epoch, CelestialBody observer, Frame frame, Aberration aberration)
+    public OrbitalParameters.OrbitalParameters GetEphemeris(DateTime epoch, CelestialBody observer, Frame frame,
+        Aberration aberration)
     {
         return API.Instance.ReadEphemeris(epoch, observer, this, frame, aberration);
     }
@@ -179,23 +189,30 @@ public abstract class Body : ILocalizable, IEquatable<Body>
         return target1Position.Angle(target2Position);
     }
 
-    public IEnumerable<Window> FindWindowsOnDistanceConstraint(Window searchWindow, INaifObject observer, RelationnalOperator relationalOperator, double value,
+    public IEnumerable<Window> FindWindowsOnDistanceConstraint(Window searchWindow, INaifObject observer,
+        RelationnalOperator relationalOperator, double value,
         Aberration aberration, TimeSpan stepSize)
     {
-        return API.Instance.FindWindowsOnDistanceConstraint(searchWindow, observer, this, relationalOperator, value, aberration, stepSize);
+        return API.Instance.FindWindowsOnDistanceConstraint(searchWindow, observer, this, relationalOperator, value,
+            aberration, stepSize);
     }
 
-    public IEnumerable<Window> FindWindowsOnOccultationConstraint(Window searchWindow, INaifObject observer, ShapeType targetShape, INaifObject frontBody,
+    public IEnumerable<Window> FindWindowsOnOccultationConstraint(Window searchWindow, INaifObject observer,
+        ShapeType targetShape, INaifObject frontBody,
         ShapeType frontShape, OccultationType occultationType, Aberration aberration, TimeSpan stepSize)
     {
-        return API.Instance.FindWindowsOnOccultationConstraint(searchWindow, observer, this, targetShape, frontBody, frontShape, occultationType, aberration, stepSize);
+        return API.Instance.FindWindowsOnOccultationConstraint(searchWindow, observer, this, targetShape, frontBody,
+            frontShape, occultationType, aberration, stepSize);
     }
 
-    public IEnumerable<Window> FindWindowsOnCoordinateConstraint(Window searchWindow, INaifObject observer, Frame frame, CoordinateSystem coordinateSystem,
+    public IEnumerable<Window> FindWindowsOnCoordinateConstraint(Window searchWindow, INaifObject observer, Frame frame,
+        CoordinateSystem coordinateSystem,
         Coordinate coordinate,
-        RelationnalOperator relationalOperator, double value, double adjustValue, Aberration aberration, TimeSpan stepSize)
+        RelationnalOperator relationalOperator, double value, double adjustValue, Aberration aberration,
+        TimeSpan stepSize)
     {
-        return API.Instance.FindWindowsOnCoordinateConstraint(searchWindow, observer, this, frame, coordinateSystem, coordinate, relationalOperator, value, adjustValue, aberration,
+        return API.Instance.FindWindowsOnCoordinateConstraint(searchWindow, observer, this, frame, coordinateSystem,
+            coordinate, relationalOperator, value, adjustValue, aberration,
             stepSize);
     }
 

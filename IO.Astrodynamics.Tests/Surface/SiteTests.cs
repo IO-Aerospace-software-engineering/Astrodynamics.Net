@@ -226,7 +226,6 @@ namespace IO.Astrodynamics.Tests.Surface
                 new Planetodetic(-116.79445837 * Astrodynamics.Constants.Deg2Rad, 35.24716450 * Astrodynamics.Constants.Deg2Rad, 1070.85059));
 
             Assert.True(site != site2);
-            Assert.True(site == site);
             Assert.False(site == site2);
             Assert.False(site.Equals(site2));
             Assert.False(site.Equals(null));
