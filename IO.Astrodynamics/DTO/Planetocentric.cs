@@ -7,12 +7,12 @@ namespace IO.Astrodynamics.DTO;
 [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
 public struct Planetocentric
 {
-    public double longitude, latitude, altitude;
+    public double longitude, latitude, radius;
 
-    public Planetocentric(double longitude, double latitude, double altitude)
+    public Planetocentric(double longitude, double latitude, double radius)
     {
         this.longitude = longitude;
         this.latitude = latitude;
-        this.altitude = altitude;
+        this.radius = radius;
     }
 }

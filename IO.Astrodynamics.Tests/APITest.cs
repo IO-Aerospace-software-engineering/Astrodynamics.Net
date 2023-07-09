@@ -57,7 +57,7 @@ public class APITest
 
         //Define launch site
         LaunchSite launchSite = new LaunchSite(399303, "S3", TestHelpers.EarthAtJ2000,
-            new Planetocentric(-81.0 * IO.Astrodynamics.Constants.Deg2Rad, 28.5 * IO.Astrodynamics.Constants.Deg2Rad, 0.0));
+            new Planetodetic(-81.0 * IO.Astrodynamics.Constants.Deg2Rad, 28.5 * IO.Astrodynamics.Constants.Deg2Rad, 0.0));
 
         //Define the targeted parking orbit
         StateVector parkingOrbit = new StateVector(
@@ -97,7 +97,7 @@ public class APITest
         Astrodynamics.Mission.Mission mission = new Astrodynamics.Mission.Mission("mission01");
         Scenario scenario = new Scenario("scn1", mission, new Window(startPropagator, end));
         scenario.AddAdditionalCelestialBody(TestHelpers.MoonAtJ2000);
-        scenario.AddSite(new Site(132, "MySite", earth, new Planetocentric(0.5, 0.3, 0.0)));
+        scenario.AddSite(new Site(132, "MySite", earth, new Planetodetic(0.5, 0.3, 0.0)));
 
         //Define parking orbit
         StateVector parkingOrbit = new StateVector(
@@ -206,7 +206,7 @@ public class APITest
         Astrodynamics.Mission.Mission mission = new Astrodynamics.Mission.Mission("mission01");
         Scenario scenario = new Scenario("scn1", mission, new Window(startPropagator, end));
         scenario.AddAdditionalCelestialBody(TestHelpers.MoonAtJ2000);
-        scenario.AddSite(new Site(132, "MySite", earth, new Planetocentric(0.5, 0.3, 0.0)));
+        scenario.AddSite(new Site(132, "MySite", earth, new Planetodetic(0.5, 0.3, 0.0)));
 
         //Define parking orbit
         KeplerianElements parkingOrbit = new KeplerianElements(10000000.0, 0.5, 1.0, 0.0, 0.0, 0.0, earth, DateTimeExtension.J2000, Frames.Frame.ICRF);
@@ -333,7 +333,7 @@ public class APITest
     public void FindWindowsOnCoordinateConstraint()
     {
         Site site = new Site(13, "DSS-13", TestHelpers.EarthAtJ2000,
-            new Planetocentric(-116.7944627147624 * IO.Astrodynamics.Constants.Deg2Rad,
+            new Planetodetic(-116.7944627147624 * IO.Astrodynamics.Constants.Deg2Rad,
                 35.2471635434595 * IO.Astrodynamics.Constants.Deg2Rad, 0.107));
         //Find time windows when the moon will be above the horizon relative to Deep Space Station 13
         var res = API.Instance.FindWindowsOnCoordinateConstraint(

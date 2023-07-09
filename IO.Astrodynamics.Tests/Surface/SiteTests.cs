@@ -204,7 +204,7 @@ namespace IO.Astrodynamics.Tests.Surface
         public void FindWindowsOnIlluminationConstraint()
         {
             Site site = new Site(13, "DSS-13", TestHelpers.EarthAtJ2000,
-                new Planetocentric(-116.79445837 * Astrodynamics.Constants.Deg2Rad, 35.24716450 * Astrodynamics.Constants.Deg2Rad, 1070.85059));
+                new Planetodetic(-116.79445837 * Astrodynamics.Constants.Deg2Rad, 35.24716450 * Astrodynamics.Constants.Deg2Rad, 1070.85059));
 
             var res = site.FindWindowsOnIlluminationConstraint(new Window(DateTimeExtension.CreateTDB(674524800), DateTimeExtension.CreateTDB(674611200)), TestHelpers.Sun,
                 IlluminationAngle.Incidence, RelationnalOperator.Lower, System.Math.PI * 0.5 - (-0.8 * IO.Astrodynamics.Constants.Deg2Rad), 0.0, Aberration.CNS,
@@ -220,10 +220,10 @@ namespace IO.Astrodynamics.Tests.Surface
         public void Equality()
         {
             Site site = new Site(13, "DSS-13", TestHelpers.EarthAtJ2000,
-                new Planetocentric(-116.79445837 * Astrodynamics.Constants.Deg2Rad, 35.24716450 * Astrodynamics.Constants.Deg2Rad, 1070.85059));
+                new Planetodetic(-116.79445837 * Astrodynamics.Constants.Deg2Rad, 35.24716450 * Astrodynamics.Constants.Deg2Rad, 1070.85059));
 
             Site site2 = new Site(14, "DSS-14", TestHelpers.EarthAtJ2000,
-                new Planetocentric(-116.79445837 * Astrodynamics.Constants.Deg2Rad, 35.24716450 * Astrodynamics.Constants.Deg2Rad, 1070.85059));
+                new Planetodetic(-116.79445837 * Astrodynamics.Constants.Deg2Rad, 35.24716450 * Astrodynamics.Constants.Deg2Rad, 1070.85059));
 
             Assert.True(site != site2);
             Assert.False(site == site2);

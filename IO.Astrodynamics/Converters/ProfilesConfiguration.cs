@@ -45,12 +45,12 @@ public class ProfilesConfiguration
             cfg.CreateMap<DTO.Window, Window>().ConstructUsing(x => new Window(DateTimeExtension.CreateTDB(x.Start), DateTimeExtension.CreateTDB(x.End)));
 
             cfg.CreateMap<Planetodetic, DTO.Planetodetic>().ConstructUsing(x => new DTO.Planetodetic(x.Longitude, x.Latitude, x.Altitude));
-            cfg.CreateMap<Planetocentric, DTO.Planetocentric>().ConstructUsing(x => new DTO.Planetocentric(x.Longitude, x.Latitude, x.Altitude));
+            cfg.CreateMap<Planetocentric, DTO.Planetocentric>().ConstructUsing(x => new DTO.Planetocentric(x.Longitude, x.Latitude, x.Radius));
 
             cfg.CreateMap<Site, DTO.Site>()
-                .ConstructUsing(x => new DTO.Site(x.NaifId, x.Body.NaifId, Mapper.Map<DTO.Planetocentric>(x.Planetocentric), x.Name, string.Empty))
+                .ConstructUsing(x => new DTO.Site(x.NaifId, x.Body.NaifId, Mapper.Map<DTO.Planetodetic>(x.Planetodetic), x.Name, string.Empty))
                 .ForMember(x => x.BodyId, o => o.MapFrom(x => x.Body.NaifId))
-                .ForMember(x => x.Coordinates, o => o.MapFrom(x => x.Planetocentric))
+                .ForMember(x => x.Coordinates, o => o.MapFrom(x => x.Planetodetic))
                 .ForMember(x => x.Ranges, o => o.Ignore())
                 .ForMember(x => x.Id, o => o.MapFrom(x => x.NaifId))
                 .ForMember(x => x.DirectoryPath, o => o.Ignore());

@@ -8,13 +8,43 @@ namespace IO.Astrodynamics.Coordinates
     {
         public double Longitude { get; }
         public double Latitude { get; }
-        public double Altitude { get; }
+        public double Radius { get; }
 
-        public Planetocentric(double longitude, double latitude, double altitude)
+        public Planetocentric(double longitude, double latitude, double radius)
         {
             Longitude = longitude;
             Latitude = latitude;
-            Altitude = altitude;
+            Radius = radius;
+        }
+
+        public Planetodetic ToPlanetodetic(double flattening, double equatorialRadius)
+        {
+            double f2 = (1 - flattening) * (1 - flattening);
+            double lat = System.Math.Atan((1.0 / f2) * System.Math.Tan(Latitude));
+            double alt =
+                (ToCartesianCoordinates() - (new Planetocentric(Longitude, lat, RadiusFromPlanetocentricLatitude(lat, equatorialRadius, flattening))).ToCartesianCoordinates()).Magnitude();
+            return new Planetodetic(Longitude, lat, alt);
+        }
+
+        public double RadiusFromPlanetocentricLatitude(double equatorialRadius, double flattening)
+        {
+            return RadiusFromPlanetocentricLatitude(Latitude, equatorialRadius, flattening);
+        }
+
+        public static double RadiusFromPlanetocentricLatitude(double latitude, double equatorialRadius, double flattening)
+        {
+            double r2 = equatorialRadius * equatorialRadius;
+            double s2 = System.Math.Sin(latitude) * System.Math.Sin(latitude);
+            double f2 = (1 - flattening) * (1 - flattening);
+            return System.Math.Sqrt(r2 / (1 + (1 / f2 - 1) * s2));
+        }
+
+        public Vector3 ToCartesianCoordinates()
+        {
+            var x = Radius * System.Math.Sin(Latitude) * System.Math.Cos(Longitude);
+            var y = Radius * System.Math.Sin(Latitude) * System.Math.Sin(Longitude);
+            var z = Radius * System.Math.Cos(Latitude);
+            return new Vector3(x, y, z);
         }
     }
 }
