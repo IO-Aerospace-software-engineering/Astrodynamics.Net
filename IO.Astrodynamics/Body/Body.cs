@@ -224,7 +224,7 @@ public abstract class Body : ILocalizable, IEquatable<Body>
 
         var lat = System.Math.Asin(position.Z / position.Magnitude());
 
-        return new Planetocentric(lon, lat, position.Magnitude() - observer.RadiusFromPlanetocentricLatitude(lat));
+        return new Planetocentric(lon, lat, position.Magnitude());
     }
 
     public override string ToString()

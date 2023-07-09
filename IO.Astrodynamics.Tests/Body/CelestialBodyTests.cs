@@ -186,7 +186,7 @@ public class CelestialBodyTests
         var res = moon.SubObserverPoint(TestHelpers.EarthAtJ2000, DateTimeExtension.J2000, Aberration.None);
         Assert.Equal(-10.898058558227296, res.Latitude * Constants.RAD_DEG);
         Assert.Equal(-57.74660136367262, res.Longitude * Constants.RAD_DEG);
-        Assert.Equal(396071271.39556694, res.Radius);
+        Assert.Equal(402448639.8873273, res.Radius);
     }
 
     [Fact]
