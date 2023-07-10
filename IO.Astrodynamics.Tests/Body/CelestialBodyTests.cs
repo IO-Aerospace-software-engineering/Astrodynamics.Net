@@ -28,7 +28,7 @@ public class CelestialBodyTests
         Assert.Equal(5.972168398724899E+24, earth.Mass);
         Assert.Equal(6356751.9, earth.PolarRadius);
         Assert.Equal(6378136.6, earth.EquatorialRadius);
-        Assert.Equal(0.0033528131084554157, earth.Flatenning);
+        Assert.Equal(0.0033528131084554157, earth.Flattening);
         Assert.Equal(1, (earth.InitialOrbitalParameters.Observer as Astrodynamics.Body.Body)?.Satellites.Count);
     }
 
@@ -44,7 +44,7 @@ public class CelestialBodyTests
         Assert.Equal(5.972168398724899E+24, earth.Mass);
         Assert.Equal(6356751.9, earth.PolarRadius);
         Assert.Equal(6378136.6, earth.EquatorialRadius);
-        Assert.Equal(0.0033528131084554157, earth.Flatenning);
+        Assert.Equal(0.0033528131084554157, earth.Flattening);
         Assert.Equal(1, (earth.InitialOrbitalParameters.Observer as Astrodynamics.Body.Body)?.Satellites.Count);
     }
 
@@ -54,7 +54,7 @@ public class CelestialBodyTests
         CelestialBody moon = new CelestialBody(PlanetsAndMoons.MOON.NaifId);
         Assert.Equal("MOON", moon.Name);
         Assert.Equal(301, moon.NaifId);
-        Assert.Equal(0.0, moon.Flatenning);
+        Assert.Equal(0.0, moon.Flattening);
         Assert.Equal(1737400.0, moon.EquatorialRadius);
         Assert.Equal(4902800066163.796, moon.GM);
         Assert.Equal(1737400.0, moon.PolarRadius);

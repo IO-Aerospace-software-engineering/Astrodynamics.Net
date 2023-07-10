@@ -3,32 +3,23 @@ using IO.Astrodynamics.Math;
 
 namespace IO.Astrodynamics.Coordinates
 {
-    public readonly record struct Planetodetic
+    public readonly record struct Planetodetic(double Longitude, double Latitude, double Altitude)
     {
-        public double Longitude { get; }
-        public double Latitude { get; }
-        public double Altitude { get; }
-
-        public Planetodetic(double longitude, double latitude, double altitude)
-        {
-            Longitude = longitude;
-            Latitude = latitude;
-            Altitude = altitude;
-        }
-
+        /// <summary>
+        /// Convert to planetocentric coordinates
+        /// </summary>
+        /// <param name="flattening"></param>
+        /// <param name="equatorialRadius"></param>
+        /// <returns></returns>
         public Planetocentric ToPlanetocentric(double flattening, double equatorialRadius)
         {
             double f2 = (1 - flattening) * (1 - flattening);
             double lat = System.Math.Atan(f2 * System.Math.Tan(Latitude));
-            double a2 = equatorialRadius * equatorialRadius;
-            double b = equatorialRadius - equatorialRadius * flattening;
-            double b2 = b * b;
-            double coslat2 = System.Math.Cos(Latitude) * System.Math.Cos(Latitude);
-            double sinlat2 = System.Math.Sin(Latitude) * System.Math.Sin(Latitude);
-            double alt = (a2 / System.Math.Sqrt(a2 * coslat2 + b2 * sinlat2)) * (1 / flattening) + Altitude;
-            return new Planetocentric(Longitude, lat, alt);
+            double n = equatorialRadius / System.Math.Sqrt(1.0 - 0.00669437999014 * System.Math.Sin(Latitude) * System.Math.Sin(Latitude));
+            double x = (n + Altitude) * System.Math.Cos(Latitude) * System.Math.Cos(Longitude);
+            double y = (n + Altitude) * System.Math.Cos(Latitude) * System.Math.Sin(Longitude);
+            double z = (n * (1.0 - (2 * flattening - flattening * flattening)) + Altitude) * System.Math.Sin(Latitude);
+            return new Planetocentric(Longitude, lat, System.Math.Sqrt(x * x + y * y + z * z));
         }
-
-        // r = (a^2 / sqrt(a^2 * cos^2(lat) + b^2 * sin^2(lat))) + alt
     }
 }

@@ -52,12 +52,12 @@ namespace IO.Astrodynamics.Surface
             if (double.IsNaN(planetodetic.Latitude))
             {
                 InitialOrbitalParameters = GetEphemeris(DateTimeExtension.J2000, Body, Body.Frame, Aberration.None);
-                Planetodetic = GetPlanetocentricCoordinates().ToPlanetodetic(Body.Flatenning, Body.EquatorialRadius);
+                Planetodetic = GetPlanetocentricCoordinates().ToPlanetodetic(Body.Flattening, Body.EquatorialRadius);
             }
             else
             {
                 Planetodetic = planetodetic;
-                InitialOrbitalParameters = new StateVector(Planetodetic.ToPlanetocentric(Body.Flatenning, Body.EquatorialRadius).ToCartesianCoordinates(), Vector3.Zero, Body,
+                InitialOrbitalParameters = new StateVector(Planetodetic.ToPlanetocentric(Body.Flattening, Body.EquatorialRadius).ToCartesianCoordinates(), Vector3.Zero, Body,
                     DateTimeExtension.J2000, Body.Frame);
             }
         }

@@ -1,7 +1,4 @@
-﻿using System.Text.Json.Serialization;
-
-
-namespace IO.Astrodynamics.Coordinates
+﻿namespace IO.Astrodynamics.Coordinates
 {
     public readonly record struct AzimuthRange
     {
@@ -9,7 +6,6 @@ namespace IO.Astrodynamics.Coordinates
         public double End { get; }
         public double Span { get; }
 
-        [JsonConstructor]
         public AzimuthRange(double start, double end)
         {
             Start = start %Constants._2PI;
@@ -31,7 +27,7 @@ namespace IO.Astrodynamics.Coordinates
             }
         }
 
-        public readonly bool IsInRange(double angle)
+        public bool IsInRange(double angle)
         {
             var a = angle - Start %Constants._2PI;
             if (a < 0.0)

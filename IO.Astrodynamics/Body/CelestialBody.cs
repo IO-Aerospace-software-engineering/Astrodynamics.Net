@@ -10,7 +10,7 @@ public class CelestialBody : Body
 {
     public double PolarRadius { get; }
     public double EquatorialRadius { get; }
-    public double Flatenning { get; }
+    public double Flattening { get; }
     
     public double SphereOfInfluence { get; private set; }
     public Frame Frame { get; }
@@ -23,10 +23,10 @@ public class CelestialBody : Body
     {
         PolarRadius = ExtendedInformation.Radii.Z;
         EquatorialRadius = ExtendedInformation.Radii.X;
-        Flatenning = (EquatorialRadius - PolarRadius) / EquatorialRadius;
-        if (double.IsNaN(Flatenning))
+        Flattening = (EquatorialRadius - PolarRadius) / EquatorialRadius;
+        if (double.IsNaN(Flattening))
         {
-            Flatenning = double.PositiveInfinity;
+            Flattening = double.PositiveInfinity;
         }
         Frame = string.IsNullOrEmpty(ExtendedInformation.FrameName)
             ? throw new InvalidOperationException(
@@ -63,7 +63,7 @@ public class CelestialBody : Body
     {
         double r2 = EquatorialRadius * EquatorialRadius;
         double s2 = System.Math.Sin(latitude) * System.Math.Sin(latitude);
-        double f2 = (1 - Flatenning) * (1 - Flatenning);
+        double f2 = (1 - Flattening) * (1 - Flattening);
         return System.Math.Sqrt(r2 / (1 + (1 / f2 - 1) * s2));
     }
     
