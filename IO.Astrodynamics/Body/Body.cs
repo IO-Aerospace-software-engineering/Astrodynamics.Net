@@ -120,34 +120,6 @@ public abstract class Body : ILocalizable, IEquatable<Body>
         return API.Instance.ReadEphemeris(epoch, observer, this, frame, aberration);
     }
 
-    // public Math.Vector3 GetPosition(DateTime epoch, ILocalizable observer, Frame frame, Aberration aberration)
-    // {
-    //     var centerOfMotion = InitialOrbitalParameters?.Observer ?? this as CelestialBody;
-    //     if (centerOfMotion == null)
-    //     {
-    //         throw new InvalidOperationException("Center of motion can not be defined");
-    //     }
-    //
-    //     var targetPosition = GetEphemeris(epoch, centerOfMotion, frame, aberration).ToStateVector().Position;
-    //     var observerPosition = observer.GetEphemeris(epoch, centerOfMotion, frame, aberration).ToStateVector().Position;
-    //     return targetPosition - observerPosition;
-    // }
-    //
-    // public Math.Vector3 GetVelocity(DateTime epoch, ILocalizable observer, Frame frame, Aberration aberration)
-    // {
-    //     var centerOfMotion = InitialOrbitalParameters?.Observer ?? this as CelestialBody;
-    //     if (centerOfMotion == null)
-    //     {
-    //         throw new InvalidOperationException("Center of motion can not be defined");
-    //     }
-    //
-    //     var velocity = GetEphemeris(epoch, centerOfMotion, frame, aberration).ToStateVector().Velocity;
-    //     var targetVelocity = observer.GetEphemeris(epoch, centerOfMotion, frame, aberration).ToStateVector().Velocity;
-    //     return velocity - targetVelocity;
-    // }
-
-
-
     /// <summary>
     /// Return the angular size of a body relative to the distance
     /// </summary>
@@ -216,9 +188,16 @@ public abstract class Body : ILocalizable, IEquatable<Body>
         return celestialBodies;
     }
 
-    public Planetocentric SubObserverPoint(CelestialBody observer, DateTime epoch, Aberration aberration)
+    /// <summary>
+    /// Return the sub-observer coordinates based on ellipsoid interception 
+    /// </summary>
+    /// <param name="target"></param>
+    /// <param name="epoch"></param>
+    /// <param name="aberration"></param>
+    /// <returns></returns>
+    public Planetocentric SubObserverPoint(CelestialBody target, DateTime epoch, Aberration aberration)
     {
-        var position = GetEphemeris(epoch, observer, observer.Frame, aberration).ToStateVector().Position;
+        var position = GetEphemeris(epoch, target, target.Frame, aberration).ToStateVector().Position;
 
         var lon = System.Math.Atan2(position.Y, position.X);
 

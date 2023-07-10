@@ -13,7 +13,7 @@ public class PlanetodeticTests
     }
 
     [Fact]
-    public void Planetocentric()
+    public void ToPlanetocentric()
     {
         Planetodetic planetodetic = new Planetodetic(-116.79445837 * Astrodynamics.Constants.Deg2Rad, 35.24716450 * Astrodynamics.Constants.Deg2Rad, 1070.85);
         Planetocentric planetocentric = planetodetic.ToPlanetocentric(TestHelpers.EarthAtJ2000.Flatenning, TestHelpers.EarthAtJ2000.EquatorialRadius);
