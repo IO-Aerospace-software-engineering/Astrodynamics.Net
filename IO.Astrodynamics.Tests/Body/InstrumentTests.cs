@@ -10,7 +10,6 @@ using FuelTank = IO.Astrodynamics.Body.Spacecraft.FuelTank;
 using Instrument = IO.Astrodynamics.Body.Spacecraft.Instrument;
 using Payload = IO.Astrodynamics.Body.Spacecraft.Payload;
 using Spacecraft = IO.Astrodynamics.Body.Spacecraft.Spacecraft;
-using Window = IO.Astrodynamics.DTO.Window;
 
 namespace IO.Astrodynamics.Tests.Body
 {

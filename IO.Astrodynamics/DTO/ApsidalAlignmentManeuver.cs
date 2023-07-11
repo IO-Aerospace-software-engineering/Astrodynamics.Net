@@ -7,10 +7,10 @@ namespace IO.Astrodynamics.DTO;
 [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
 public struct ApsidalAlignmentManeuver
 {
-    public int ManeuverOrder;
+    public readonly int ManeuverOrder;
 
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = Spacecraft.ENGINESIZE)]
-    public string[] Engines;
+    public readonly string[] Engines;
 
     public double AttitudeHoldDuration { get; }
     public double MinimumEpoch { get; }
@@ -22,7 +22,7 @@ public struct ApsidalAlignmentManeuver
     public Window AttitudeWindow { get; }
     public Vector3D DeltaV { get; }
     public double FuelBurned { get; }
-    private readonly double Theta { get; }
+    private double Theta { get; }
 
     public ApsidalAlignmentManeuver() : this(-1, 0.0, double.MinValue, default)
     {

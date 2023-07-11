@@ -7,10 +7,10 @@ namespace IO.Astrodynamics.DTO;
 [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
 public struct RetrogradeAttitude
 {
-    public int ManeuverOrder;
+    public readonly int ManeuverOrder;
 
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = Spacecraft.ENGINESIZE)]
-    public string[] Engines;
+    public readonly string[] Engines;
 
     private readonly double AttitudeHoldDuration;
     private readonly double MinimumEpoch;

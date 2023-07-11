@@ -7,7 +7,7 @@ IO.Astrodynamics.Net is a .Net astrodynamics framework based on [IO.Astrodynamic
 
 C++ Velocity + .Net productivity = ❤️
 
-It allows .Net developers to call IO.Astrodynamics high level features :
+This framework provides the following features :
 
 * Load [JPL Spice kernels](https://naif.jpl.nasa.gov/naif/data.html)
 * Compute and convert orbital parameters
@@ -18,12 +18,12 @@ It allows .Net developers to call IO.Astrodynamics high level features :
 * Compute and convert coordinates system
   * Equatorial
   * Horizontal
-  * Geodetic
+  * Planetodetic
+  * Planetodentric
 * Frame transformation
   * ICRF
   * Ecliptic
-  * Body fixed frames
-  * ITRF93 (High accuracy earth fixed frame)
+  * Body fixed frames and ITRF93 (High accuracy earth fixed frame)
 * Configure spacecraft
   * Clock
   * Fuel tank
@@ -61,7 +61,21 @@ It allows .Net developers to call IO.Astrodynamics high level features :
   * Matrix
   * Quaternion
   * Lagrange interpolation
+* ...
 
+## Concept
+IO.Astrodynamics is based on [Spice concept](https://naif.jpl.nasa.gov/naif/spiceconcept.html)
+
+To work, this framework needs data (Ephemeris, Planetary constants, leap seconds, mission data, ...) these data can be found [here](https://naif.jpl.nasa.gov/naif/data.html)
+
+To use these data in the framework, just call this function :
+
+```C#
+//Load required kernels for computation
+API.Instance.LoadKernels(new DirectoryInfo("<your path containing data>"));
+```
+
+When you use the propagation functionalities, you will have to provide an output path to reuse, if necessary, the data generated in another software.
 
 ## Installation
 This package is hosted by Nuget [here](https://www.nuget.org/packages/IO.Astrodynamics/).

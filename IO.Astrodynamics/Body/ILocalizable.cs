@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using IO.Astrodynamics.Coordinates;
 using IO.Astrodynamics.Frames;
 using IO.Astrodynamics.Time;
 
@@ -8,19 +7,19 @@ namespace IO.Astrodynamics.Body
 {
     public interface ILocalizable : INaifObject
     {
-        IEnumerable<OrbitalParameters.OrbitalParameters> GetEphemeris(Window searchWindow, CelestialBody observer, Frame frame, Aberration aberration, TimeSpan stepSize);
-        OrbitalParameters.OrbitalParameters GetEphemeris(DateTime epoch, CelestialBody observer, Frame frame, Aberration aberration);
-        Math.Vector3 GetPosition(DateTime epoch, ILocalizable observer, Frame frame, Aberration aberration);
-        Math.Vector3 GetVelocity(DateTime epoch, ILocalizable observer, Frame frame, Aberration aberration);
+        IEnumerable<OrbitalParameters.OrbitalParameters> GetEphemeris(Window searchWindow, ILocalizable observer, Frame frame, Aberration aberration, TimeSpan stepSize);
+        OrbitalParameters.OrbitalParameters GetEphemeris(DateTime epoch, ILocalizable observer, Frame frame, Aberration aberration);
         double AngularSeparation(DateTime epoch, ILocalizable target1, ILocalizable target2, Aberration aberration);
-        Frame Frame { get; }
+        OrbitalParameters.OrbitalParameters InitialOrbitalParameters { get; }
+        IEnumerable<ILocalizable> GetCentersOfMotion();
+        double GM { get; }
+        double Mass { get; }
 
         /// <summary>
         ///     Find time windows based on distance constraint
         /// </summary>
         /// <param name="searchWindow"></param>
         /// <param name="observer"></param>
-        /// <param name="target"></param>
         /// <param name="relationalOperator"></param>
         /// <param name="value"></param>
         /// <param name="aberration"></param>
@@ -33,7 +32,6 @@ namespace IO.Astrodynamics.Body
         ///     Find time windows based on occultation constraint
         /// </summary>
         /// <param name="searchWindow"></param>
-        /// <param name="target"></param>
         /// <param name="targetShape"></param>
         /// <param name="frontBody"></param>
         /// <param name="frontShape"></param>

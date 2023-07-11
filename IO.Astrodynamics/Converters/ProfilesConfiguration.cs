@@ -6,6 +6,7 @@ using IO.Astrodynamics.Math;
 using IO.Astrodynamics.Surface;
 using IO.Astrodynamics.Time;
 using Launch = IO.Astrodynamics.Maneuver.Launch;
+using Planetocentric = IO.Astrodynamics.Coordinates.Planetocentric;
 using Planetodetic = IO.Astrodynamics.Coordinates.Planetodetic;
 using Quaternion = IO.Astrodynamics.Math.Quaternion;
 using Site = IO.Astrodynamics.Surface.Site;
@@ -31,7 +32,7 @@ public class ProfilesConfiguration
                 .ForMember(x => x.Z, o => o.Ignore());
             cfg.CreateMap<DTO.Quaternion, Quaternion>().ConstructUsing(x => new Quaternion(x.W, x.X, x.Y, x.Z));
 
-            cfg.CreateMap<StateVector, DTO.StateVector>().ConstructUsing(x => new DTO.StateVector(x.CenterOfMotion.NaifId, x.Epoch.SecondsFromJ2000TDB(), x.Frame.Name,
+            cfg.CreateMap<StateVector, DTO.StateVector>().ConstructUsing(x => new DTO.StateVector(x.Observer.NaifId, x.Epoch.SecondsFromJ2000TDB(), x.Frame.Name,
                 Mapper.Map<Vector3D>(x.Position), Mapper.Map<Vector3D>(x.Velocity)));
 
             cfg.CreateMap<StateOrientation, DTO.StateOrientation>()
@@ -44,6 +45,7 @@ public class ProfilesConfiguration
             cfg.CreateMap<DTO.Window, Window>().ConstructUsing(x => new Window(DateTimeExtension.CreateTDB(x.Start), DateTimeExtension.CreateTDB(x.End)));
 
             cfg.CreateMap<Planetodetic, DTO.Planetodetic>().ConstructUsing(x => new DTO.Planetodetic(x.Longitude, x.Latitude, x.Altitude));
+            cfg.CreateMap<Planetocentric, DTO.Planetocentric>().ConstructUsing(x => new DTO.Planetocentric(x.Longitude, x.Latitude, x.Radius));
 
             cfg.CreateMap<Site, DTO.Site>()
                 .ConstructUsing(x => new DTO.Site(x.NaifId, x.Body.NaifId, Mapper.Map<DTO.Planetodetic>(x.Planetodetic), x.Name, string.Empty))

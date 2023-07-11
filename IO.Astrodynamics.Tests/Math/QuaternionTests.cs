@@ -1,4 +1,3 @@
-using System.Runtime.CompilerServices;
 using IO.Astrodynamics.Body.Spacecraft;
 using IO.Astrodynamics.Math;
 using Xunit;
@@ -16,7 +15,7 @@ namespace IO.Astrodynamics.Tests.Math
             Assert.Equal(0.0, q.VectorPart.Y);
             Assert.Equal(0.7071067811865475, q.VectorPart.Z, 12);
         }
-        
+
         [Fact]
         public void ToEulerAngle()
         {
@@ -46,7 +45,7 @@ namespace IO.Astrodynamics.Tests.Math
             Assert.Equal(0.0, q.VectorPart.Y);
             Assert.Equal(0.0, q.VectorPart.Z);
         }
-        
+
         [Fact]
         public void Create3()
         {
@@ -187,6 +186,12 @@ namespace IO.Astrodynamics.Tests.Math
             Assert.Equal(2.0, q2.VectorPart.X);
             Assert.Equal(-2.0, q2.VectorPart.Y);
             Assert.Equal(2.0, q2.VectorPart.Z);
+        }
+
+        [Fact]
+        public void Zero()
+        {
+            Assert.Equal(new Quaternion(1.0, 0.0, 0.0, 0.0), Quaternion.Zero);
         }
     }
 }

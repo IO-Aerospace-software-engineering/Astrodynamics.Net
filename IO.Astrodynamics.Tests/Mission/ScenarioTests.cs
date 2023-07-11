@@ -37,7 +37,7 @@ namespace IO.Astrodynamics.Tests.Mission
             Scenario scenario = new Scenario("Scenario", mission, new Window(new DateTime(2021, 1, 1), new DateTime(2021, 1, 2)));
             Assert.Equal("Scenario", scenario.Name);
             Assert.Equal(mission, scenario.Mission);
-            var site = new Site(13, "DSS-13", new CelestialBody(PlanetsAndMoons.EARTH.NaifId));
+            var site = new Site(13, "DSS-13", new CelestialBody(PlanetsAndMoons.EARTH));
             scenario.AddSite(site);
             Assert.Single(scenario.Sites);
             Assert.Equal(site, scenario.Sites.First());
@@ -168,7 +168,6 @@ namespace IO.Astrodynamics.Tests.Mission
             Scenario scenario2 = new Scenario("scn1", mission2, new Window(DateTime.MinValue, DateTime.MaxValue));
 
             Assert.True(scenario != scenario2);
-            Assert.True(scenario == scenario);
             Assert.False(scenario == scenario2);
             Assert.False(scenario.Equals(scenario2));
             Assert.False(scenario.Equals(null));

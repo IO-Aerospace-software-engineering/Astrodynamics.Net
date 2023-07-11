@@ -4,7 +4,7 @@ using IO.Astrodynamics.Time;
 
 namespace IO.Astrodynamics.Math
 {
-    public class Lagrange
+    public static class Lagrange
     {
         public static double Interpolate((double x, double y)[] data, double idx)
         {
@@ -31,7 +31,7 @@ namespace IO.Astrodynamics.Math
         {
             double idx = epoch.SecondsFromJ2000TDB();
             int n = data.Length;
-            StateVector result = new StateVector(new Vector3(), new Vector3(), data[0].CenterOfMotion, epoch, data[0].Frame); // Initialize result
+            StateVector result = new StateVector(new Vector3(), new Vector3(), data[0].Observer, epoch, data[0].Frame); // Initialize result
 
             for (int i = 0; i < n; i++)
             {

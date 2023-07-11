@@ -41,6 +41,7 @@ namespace IO.Astrodynamics.Maneuver
         /// <param name="launchSite">Launch from</param>
         /// <param name="recoverySite">Recovery site</param>
         /// <param name="targetOrbit">Orbit to reach</param>
+        /// <param name="twilight"></param>
         /// <param name="launchByDay">Define if launch should occur by day. If undefined launch can occur everytime</param>
         /// <exception cref="ArgumentNullException"></exception>
         public Launch(LaunchSite launchSite, Site recoverySite, OrbitalParameters.OrbitalParameters targetOrbit,

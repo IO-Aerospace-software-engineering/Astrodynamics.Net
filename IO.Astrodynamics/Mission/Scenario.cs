@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using IO.Astrodynamics.Surface;
 using IO.Astrodynamics.Time;
 

@@ -7,22 +7,22 @@ namespace IO.Astrodynamics.DTO;
 [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
 public struct PhasingManeuver
 {
-    public int ManeuverOrder;
+    public readonly int ManeuverOrder;
 
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = Spacecraft.ENGINESIZE)]
-    public string[] Engines;
+    public readonly string[] Engines;
 
-    public double AttitudeHoldDuration;
-    public double MinimumEpoch;
+    public readonly double AttitudeHoldDuration;
+    public readonly double MinimumEpoch;
 
-    public int NumberRevolutions;
+    public readonly int NumberRevolutions;
     public StateVector TargetOrbit;
 
     public Window ManeuverWindow;
     public Window ThrustWindow;
     public Window AttitudeWindow;
     public Vector3D DeltaV;
-    public double FuelBurned;
+    public readonly double FuelBurned;
 
     public PhasingManeuver() : this(-1, 0.0, double.NaN, 0, default)
     {

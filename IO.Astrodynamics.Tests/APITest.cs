@@ -490,7 +490,7 @@ public class APITest
         Assert.Equal(643.53061483971885, stateVectors[0].Velocity.X);
         Assert.Equal(-666.08181440799092, stateVectors[0].Velocity.Y);
         Assert.Equal(-301.32283209101018, stateVectors[0].Velocity.Z);
-        Assert.Equal(PlanetsAndMoons.EARTH.NaifId, stateVectors[0].CenterOfMotion.NaifId);
+        Assert.Equal(PlanetsAndMoons.EARTH.NaifId, stateVectors[0].Observer.NaifId);
         Assert.Equal(Frames.Frame.ICRF, stateVectors[0].Frame);
         Assert.Equal(0.0, stateVectors[0].Epoch.SecondsFromJ2000TDB());
 
@@ -620,7 +620,7 @@ public class APITest
             Assert.Equal(8 + i * 0.001, stateVectors[i].Velocity.Y, 12);
             Assert.Equal(i, stateVectors[i].Velocity.Z, 12);
             Assert.Equal(i, stateVectors[i].Epoch.SecondsFromJ2000TDB());
-            Assert.Equal(PlanetsAndMoons.EARTH.NaifId, stateVectors[i].CenterOfMotion.NaifId);
+            Assert.Equal(PlanetsAndMoons.EARTH.NaifId, stateVectors[i].Observer.NaifId);
             Assert.Equal(Frames.Frame.ICRF, stateVectors[i].Frame);
         }
     }
@@ -632,6 +632,7 @@ public class APITest
         var res = API.Instance.GetCelestialBodyInfo(TestHelpers.EarthAtJ2000.NaifId);
         Assert.Equal(PlanetsAndMoons.EARTH.NaifId, res.Id);
         Assert.Equal(Stars.Sun.NaifId, res.CenterOfMotionId);
+        Assert.Equal(Barycenters.EARTH_BARYCENTER.NaifId, res.BarycenterOfMotionId);
         Assert.Equal(PlanetsAndMoons.EARTH.Name, res.Name);
         Assert.Equal(13000, res.FrameId);
         Assert.Equal("ITRF93", res.FrameName);
@@ -725,9 +726,10 @@ public class APITest
     [Fact]
     void CelestialBody()
     {
-        DTO.CelestialBody celestialBody = new CelestialBody(1, 2, "body", new Vector3D(1.0, 2.0, 3.0), 123, "frame", 147);
+        DTO.CelestialBody celestialBody = new CelestialBody(1, 2, 3, "body", new Vector3D(1.0, 2.0, 3.0), 123, "frame", 147);
         Assert.Equal(1, celestialBody.Id);
         Assert.Equal(2, celestialBody.CenterOfMotionId);
+        Assert.Equal(3, celestialBody.BarycenterOfMotionId);
         Assert.Equal("body", celestialBody.Name);
         Assert.Equal(new Vector3D(1.0, 2.0, 3.0), celestialBody.Radii);
         Assert.Equal(147, celestialBody.FrameId);
@@ -749,5 +751,14 @@ public class APITest
         Assert.Equal(8, tle.W);
         Assert.Equal(9, tle.O);
         Assert.Equal(10, tle.M);
+    }
+    
+    [Fact]
+    void Planetocentric()
+    {
+        DTO.Planetocentric tle = new Planetocentric(1, 2, 3);
+        Assert.Equal(1, tle.longitude);
+        Assert.Equal(2, tle.latitude);
+        Assert.Equal(3, tle.radius);
     }
 }

@@ -32,7 +32,7 @@ namespace IO.Astrodynamics.Tests.Coordinates
             Astrodynamics.Mission.Mission mission = new Astrodynamics.Mission.Mission("mission1");
             new Scenario("scn1", mission, new Window(new DateTime(2021, 1, 1), new DateTime(2021, 1, 2)));
             var epoch = DateTime.MinValue;
-            CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH.NaifId);
+            CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH);
             Equatorial eq = new Equatorial(new StateVector(
                 new Vector3(-291608.38463344, -266716.83339423, -76102.48709990), new Vector3(), earth, epoch,
                 Frames.Frame.ICRF));
@@ -45,7 +45,7 @@ namespace IO.Astrodynamics.Tests.Coordinates
             var epoch = new DateTime(2021, 1, 1);
 
             var moon = TestHelpers.Moon;
-            var earth = moon.InitialOrbitalParameters.CenterOfMotion;
+            var earth = moon.InitialOrbitalParameters.Observer;
             var eq = new Equatorial(new StateVector(
                 new Vector3(-202831.34150844064, 284319.70678317308, 150458.88140126597),
                 new Vector3(-0.48702480142667454, -0.26438331399030518, -0.17175837261637006), earth, epoch,

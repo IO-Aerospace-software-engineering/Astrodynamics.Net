@@ -52,7 +52,7 @@ namespace IO.Astrodynamics.Tests.Body
         [Fact]
         public void Create2()
         {
-            CelestialBody sun = new CelestialBody(Stars.Sun.NaifId);
+            CelestialBody sun = new CelestialBody(Stars.Sun);
 
             var ke = new KeplerianElements(150000000.0, 0.0, 0.0, 0.0, 0.0, 0.0, sun, DateTime.UtcNow,
                 Frames.Frame.ECLIPTIC);
@@ -290,12 +290,12 @@ namespace IO.Astrodynamics.Tests.Body
                 DateTimeExtension.J2000, Frames.Frame.ICRF);
             Clock clk = new Clock("My clock", 1.0 / 256.0);
             Spacecraft spc = new Spacecraft(-1001, "MySpacecraft", 1000.0, 10000.0, clk, sv);
-            Assert.Equal(spc, sv.CenterOfMotion.Satellites.First());
-            Assert.Single(sv.CenterOfMotion.Satellites);
+            Assert.Equal(spc, (sv.Observer as CelestialBody)?.Satellites.First());
+            Assert.True((sv.Observer as CelestialBody)?.Satellites?.Count == 1);
 
             spc.SetInitialOrbitalParameters(sv2);
-            Assert.Single(sv.CenterOfMotion.Satellites);
-            Assert.Equal(spc, sv2.CenterOfMotion.Satellites.First());
+            Assert.True((sv.Observer as CelestialBody)?.Satellites.Count==1);
+            Assert.Equal(spc, (sv.Observer as CelestialBody)?.Satellites.First());
             Assert.Throws<ArgumentNullException>(() => spc.SetInitialOrbitalParameters(null));
         }
 

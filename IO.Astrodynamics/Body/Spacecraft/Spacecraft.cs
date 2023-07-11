@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using IO.Astrodynamics.Frames;
 using IO.Astrodynamics.Math;
+using IO.Astrodynamics.OrbitalParameters;
 
 
 namespace IO.Astrodynamics.Body.Spacecraft
@@ -21,29 +22,32 @@ namespace IO.Astrodynamics.Body.Spacecraft
         public Spacecraft Child { get; private set; }
         public Clock Clock { get; private set; }
 
-        private HashSet<Instrument> _instruments = new();
+        private readonly HashSet<Instrument> _instruments = new();
         public IReadOnlyCollection<Instrument> Intruments => _instruments;
 
-        private HashSet<FuelTank> _fuelTanks = new();
+        private readonly HashSet<FuelTank> _fuelTanks = new();
         public IReadOnlyCollection<FuelTank> FuelTanks => _fuelTanks;
 
-        private HashSet<Engine> _engines = new();
+        private readonly HashSet<Engine> _engines = new();
         public IReadOnlyCollection<Engine> Engines => _engines;
 
-        private HashSet<Payload> _payloads = new();
+        private readonly HashSet<Payload> _payloads = new();
         public IReadOnlyCollection<Payload> Payloads => _payloads;
         public double DryOperatingMass => Mass;
 
         public double MaximumOperatingMass { get; }
+        public Frame Frame { get; }
 
-        public Spacecraft(int naifId, string name, double mass, double maximumOperatingMass,Clock clock, OrbitalParameters.OrbitalParameters initialOrbitalParameters) : base(naifId, name, mass,initialOrbitalParameters,new Frame($"{name}_SPACECRAFT"))
+        public Spacecraft(int naifId, string name, double mass, double maximumOperatingMass, Clock clock, OrbitalParameters.OrbitalParameters initialOrbitalParameters) : base(
+            naifId, name, mass, initialOrbitalParameters)
         {
             if (maximumOperatingMass < mass) throw new ArgumentOutOfRangeException(nameof(maximumOperatingMass));
             if (naifId >= 0) throw new ArgumentOutOfRangeException(nameof(naifId));
             MaximumOperatingMass = maximumOperatingMass;
             Clock = clock ?? throw new ArgumentNullException(nameof(clock));
+            Frame = new Frame($"{name}_SPACECRAFT");
         }
-        
+
         /// <summary>
         /// Add instrument to spacecraft
         /// </summary>
@@ -148,7 +152,7 @@ namespace IO.Astrodynamics.Body.Spacecraft
         /// <returns></returns>
         public double GetTotalISP()
         {
-            return (Engines.Where(x => x.FuelTank.InitialQuantity > 0.0).Sum(x => x.Thrust) /Constants.g0) /
+            return (Engines.Where(x => x.FuelTank.InitialQuantity > 0.0).Sum(x => x.Thrust) / Constants.g0) /
                    GetTotalFuelFlow();
         }
 
@@ -194,17 +198,26 @@ namespace IO.Astrodynamics.Body.Spacecraft
 
             return maneuvers;
         }
-        
-        public virtual void SetInitialOrbitalParameters(OrbitalParameters.OrbitalParameters orbitalParameters)
+
+        public void SetInitialOrbitalParameters(OrbitalParameters.OrbitalParameters orbitalParameters)
         {
             if (orbitalParameters == null) throw new ArgumentNullException(nameof(orbitalParameters));
-            if (InitialOrbitalParameters?.CenterOfMotion != null)
-            {
-                InitialOrbitalParameters.CenterOfMotion.RemoveSatellite(this);
-            }
+            (InitialOrbitalParameters?.Observer as CelestialBody)?.RemoveSatellite(this);
 
             InitialOrbitalParameters = orbitalParameters;
-            InitialOrbitalParameters?.CenterOfMotion.AddSatellite(this);
+            (InitialOrbitalParameters?.Observer as CelestialBody)?.AddSatellite(this);
+        }
+
+
+        /// <summary>
+        /// Get orientation relative to reference frame
+        /// </summary>
+        /// <param name="referenceFrame"></param>
+        /// <param name="epoch"></param>
+        /// <returns></returns>
+        public StateOrientation GetOrientation(Frame referenceFrame, in DateTime epoch)
+        {
+            return referenceFrame.ToFrame(Frame, epoch);
         }
     }
 }

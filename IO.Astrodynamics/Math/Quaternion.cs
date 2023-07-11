@@ -4,7 +4,7 @@ namespace IO.Astrodynamics.Math
 {
     public readonly record struct Quaternion
     {
-        public static Quaternion Zero = new Quaternion(1, 0, 0, 0);
+        public static Quaternion Zero = new (1, 0, 0, 0);
         public double W { get; }
 
         public Vector3 VectorPart { get; }
@@ -13,7 +13,6 @@ namespace IO.Astrodynamics.Math
         {
         }
 
-        [JsonConstructor]
         public Quaternion(double w, Vector3 vectorPart) : this(w, vectorPart.X, vectorPart.Y, vectorPart.Z)
         {
         }

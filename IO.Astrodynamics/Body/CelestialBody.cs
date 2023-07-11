@@ -1,5 +1,7 @@
 using System;
 using IO.Astrodynamics.Frames;
+using IO.Astrodynamics.OrbitalParameters;
+using IO.Astrodynamics.SolarSystemObjects;
 using IO.Astrodynamics.Time;
 
 
@@ -9,34 +11,49 @@ public class CelestialBody : Body
 {
     public double PolarRadius { get; }
     public double EquatorialRadius { get; }
-    public double Flatenning { get; }
-    public double GM { get; }
+    public double Flattening { get; }
+
     public double SphereOfInfluence { get; private set; }
+    public Frame Frame { get; }
+
+    public CelestialBody(NaifObject naifObject) : this(naifObject.NaifId)
+    {
+    }
 
     public CelestialBody(int naifId) : this(naifId, Frame.ECLIPTIC, DateTimeExtension.J2000)
     {
     }
 
+    public CelestialBody(NaifObject naifObject, Frame frame, DateTime epoch) : this(naifObject.NaifId, frame, epoch)
+    {
+    }
+    
     public CelestialBody(int naifId, Frame frame, DateTime epoch) : base(naifId, frame, epoch)
     {
-        GM = ExtendedInformation.GM;
         PolarRadius = ExtendedInformation.Radii.Z;
         EquatorialRadius = ExtendedInformation.Radii.X;
-        Flatenning = (EquatorialRadius - PolarRadius) / EquatorialRadius;
-        if (double.IsNaN(Flatenning))
+        Flattening = (EquatorialRadius - PolarRadius) / EquatorialRadius;
+        if (double.IsNaN(Flattening))
         {
-            Flatenning = double.PositiveInfinity;
+            Flattening = double.PositiveInfinity;
         }
-
+        Frame = string.IsNullOrEmpty(ExtendedInformation.FrameName)
+            ? throw new InvalidOperationException(
+                "Celestial body frame can't be defined, please check if you have loaded associated kernels")
+            : new Frame(ExtendedInformation.FrameName);
+    
         UpdateSphereOfInfluence();
     }
 
     private void UpdateSphereOfInfluence()
     {
-        SphereOfInfluence = InitialOrbitalParameters != null
-            ? SphereOfInluence(InitialOrbitalParameters.SemiMajorAxis(), Mass,
-                InitialOrbitalParameters.CenterOfMotion.Mass)
-            : double.PositiveInfinity;
+        SphereOfInfluence = double.PositiveInfinity;
+        if (InitialOrbitalParameters != null)
+        {
+            var mainBody = new CelestialBody(ExtendedInformation.CenterOfMotionId);
+            var a = this.GetEphemeris(InitialOrbitalParameters.Epoch, mainBody, Frame.ECLIPTIC, Aberration.None).SemiMajorAxis();
+            SphereOfInfluence = InitialOrbitalParameters != null ? SphereOfInluence(a, Mass, mainBody.Mass) : double.PositiveInfinity;
+        }
     }
 
     private double SphereOfInluence(double a, double minorMass, double majorMass)
@@ -54,11 +71,23 @@ public class CelestialBody : Body
     /// </summary>
     /// <param name="latitude">Geocentric latitude</param>
     /// <returns></returns>
-    public double RadiusFromGeocentricLatitude(double latitude)
+    public double RadiusFromPlanetocentricLatitude(double latitude)
     {
         double r2 = EquatorialRadius * EquatorialRadius;
         double s2 = System.Math.Sin(latitude) * System.Math.Sin(latitude);
-        double f2 = (1 - Flatenning) * (1 - Flatenning);
+        double f2 = (1 - Flattening) * (1 - Flattening);
         return System.Math.Sqrt(r2 / (1 + (1 / f2 - 1) * s2));
+    }
+
+
+    /// <summary>
+    /// Get orientation relative to reference frame
+    /// </summary>
+    /// <param name="referenceFrame"></param>
+    /// <param name="epoch"></param>
+    /// <returns></returns>
+    public StateOrientation GetOrientation(Frame referenceFrame, in DateTime epoch)
+    {
+        return referenceFrame.ToFrame(Frame, epoch);
     }
 }
