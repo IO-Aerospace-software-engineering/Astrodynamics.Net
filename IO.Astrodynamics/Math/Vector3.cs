@@ -75,7 +75,7 @@ namespace IO.Astrodynamics.Math
         {
             var dot = this.Normalize() * vector.Normalize();
 
-            if (dot == -1.0) //Manage 180° case
+            if (System.Math.Abs(dot - (-1.0)) < double.Epsilon) //Manage 180° case
             {
                 double x = System.Math.Abs(vector.X);
                 double y = System.Math.Abs(vector.Y);

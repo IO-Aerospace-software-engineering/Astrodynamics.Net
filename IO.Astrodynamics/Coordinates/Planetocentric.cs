@@ -1,7 +1,4 @@
-﻿using System.Numerics;
-using System.Runtime.CompilerServices;
-using IO.Astrodynamics.Body;
-using Vector3 = IO.Astrodynamics.Math.Vector3;
+﻿using Vector3 = IO.Astrodynamics.Math.Vector3;
 
 namespace IO.Astrodynamics.Coordinates
 {

@@ -1,10 +1,7 @@
 using System;
-using System.Linq;
-using IO.Astrodynamics.Body;
 using IO.Astrodynamics.Body.Spacecraft;
 using IO.Astrodynamics.Maneuver;
 using IO.Astrodynamics.OrbitalParameters;
-using IO.Astrodynamics.SolarSystemObjects;
 using IO.Astrodynamics.Time;
 using Xunit;
 

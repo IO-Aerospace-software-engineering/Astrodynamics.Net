@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using IO.Astrodynamics.Coordinates;
 using IO.Astrodynamics.Frames;
 using IO.Astrodynamics.SolarSystemObjects;
-using StateOrientation = IO.Astrodynamics.OrbitalParameters.StateOrientation;
 using Window = IO.Astrodynamics.Time.Window;
 
 namespace IO.Astrodynamics.Body;

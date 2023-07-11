@@ -3,7 +3,6 @@
 using System;
 using IO.Astrodynamics.Body;
 using IO.Astrodynamics.Frames;
-using IO.Astrodynamics.Math;
 using IO.Astrodynamics.SolarSystemObjects;
 
 namespace IO.Astrodynamics.OrbitalParameters;

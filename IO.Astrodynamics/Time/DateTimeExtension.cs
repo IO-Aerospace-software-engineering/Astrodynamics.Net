@@ -46,6 +46,11 @@ public static class DateTimeExtension
 
     public static readonly DateTime J2000 = new DateTime(2000, 01, 01, 12, 0, 0, DateTimeKind.Unspecified);
 
+    /// <summary>
+    /// Convert datetime to TDB
+    /// </summary>
+    /// <param name="date"></param>
+    /// <returns></returns>
     public static DateTime ToTDB(this DateTime date)
     {
         if (date.Kind == DateTimeKind.Unspecified)
@@ -61,6 +66,11 @@ public static class DateTimeExtension
         return DateTime.SpecifyKind(date.AddSeconds(OFFSET + LeapSeconds.Count(x => x < date)), DateTimeKind.Unspecified);
     }
 
+    /// <summary>
+    /// Convert datetime to UTC
+    /// </summary>
+    /// <param name="date"></param>
+    /// <returns></returns>
     public static DateTime ToUTC(this DateTime date)
     {
         if (date.Kind == DateTimeKind.Utc)

@@ -7,9 +7,9 @@ namespace IO.Astrodynamics.DTO;
 [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
 public struct Payload
 {
-    public string SerialNumber;
-    public string Name;
-    public double Mass;
+    public readonly string SerialNumber;
+    public readonly string Name;
+    public readonly double Mass;
 
     public Payload(string serialNumber, string name, double mass)
     {

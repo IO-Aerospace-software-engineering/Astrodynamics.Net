@@ -7,16 +7,16 @@ namespace IO.Astrodynamics.DTO;
 [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
 public struct ConicElements
 {
-    public int CenterOfMotionId;
-    public double Epoch;
-    public double PerifocalDistance;
-    public double Eccentricity;
-    public double Inclination;
-    public double AscendingNodeLongitude;
-    public double PeriapsisArgument;
-    public double MeanAnomaly;
-    public double TrueAnomaly;
-    public double OrbitalPeriod;
-    public double SemiMajorAxis;
-    public string Frame;
+    public readonly int CenterOfMotionId;
+    public readonly double Epoch;
+    public readonly double PerifocalDistance;
+    public readonly double Eccentricity;
+    public readonly double Inclination;
+    public readonly double AscendingNodeLongitude;
+    public readonly double PeriapsisArgument;
+    public readonly double MeanAnomaly;
+    public readonly double TrueAnomaly;
+    public readonly double OrbitalPeriod;
+    public readonly double SemiMajorAxis;
+    public readonly string Frame;
 }

@@ -4,7 +4,7 @@ using IO.Astrodynamics.Time;
 
 namespace IO.Astrodynamics.Math
 {
-    public class Lagrange
+    public static class Lagrange
     {
         public static double Interpolate((double x, double y)[] data, double idx)
         {

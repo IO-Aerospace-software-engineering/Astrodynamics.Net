@@ -1,4 +1,3 @@
-using System.Runtime.CompilerServices;
 using IO.Astrodynamics.Body.Spacecraft;
 using IO.Astrodynamics.Math;
 using Xunit;

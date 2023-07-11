@@ -44,57 +44,57 @@ public struct Spacecraft
     }
 
     //Spacecraft structure
-    public int Id;
-    public string Name;
-    public double DryOperatingMass;
-    public double MaximumOperatingMass;
+    public readonly int Id;
+    public readonly string Name;
+    public readonly double DryOperatingMass;
+    public readonly double MaximumOperatingMass;
     public StateVector InitialOrbitalParameter;
-    public string DirectoryPath;
+    public readonly string DirectoryPath;
 
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = FUELTANKSIZE)]
-    public FuelTank[] FuelTanks;
+    public readonly FuelTank[] FuelTanks;
 
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
-    public EngineDTO[] Engines;
+    public readonly EngineDTO[] Engines;
 
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
-    public Instrument[] Instruments;
+    public readonly Instrument[] Instruments;
 
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
-    public Payload[] Payloads;
+    public readonly Payload[] Payloads;
 
     //Spacecraft attitudes
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
-    public ProgradeAttitude[] ProgradeAttitudes;
+    public readonly ProgradeAttitude[] ProgradeAttitudes;
 
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
-    public RetrogradeAttitude[] RetrogradeAttitudes;
+    public readonly RetrogradeAttitude[] RetrogradeAttitudes;
 
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
-    public ZenithAttitude[] ZenithAttitudes;
+    public readonly ZenithAttitude[] ZenithAttitudes;
 
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
-    public NadirAttitude[] NadirAttitudes;
+    public readonly NadirAttitude[] NadirAttitudes;
 
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
-    public InstrumentPointingToAttitude[] PointingToAttitudes;
+    public readonly InstrumentPointingToAttitude[] PointingToAttitudes;
 
     //Spacecraft maneuvers
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
-    public PerigeeHeightChangingManeuver[] PerigeeHeightChangingManeuvers;
+    public readonly PerigeeHeightChangingManeuver[] PerigeeHeightChangingManeuvers;
 
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
-    public ApogeeHeightChangingManeuver[] ApogeeHeightChangingManeuvers;
+    public readonly ApogeeHeightChangingManeuver[] ApogeeHeightChangingManeuvers;
 
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
-    public OrbitalPlaneChangingManeuver[] OrbitalPlaneChangingManeuvers;
+    public readonly OrbitalPlaneChangingManeuver[] OrbitalPlaneChangingManeuvers;
 
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
-    public CombinedManeuver[] CombinedManeuvers;
+    public readonly CombinedManeuver[] CombinedManeuvers;
 
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
-    public ApsidalAlignmentManeuver[] ApsidalAlignmentManeuvers;
+    public readonly ApsidalAlignmentManeuver[] ApsidalAlignmentManeuvers;
 
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 10)]
-    public PhasingManeuver[] PhasingManeuver;
+    public readonly PhasingManeuver[] PhasingManeuver;
 }

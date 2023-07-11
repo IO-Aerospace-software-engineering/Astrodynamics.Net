@@ -22,16 +22,16 @@ namespace IO.Astrodynamics.Body.Spacecraft
         public Spacecraft Child { get; private set; }
         public Clock Clock { get; private set; }
 
-        private HashSet<Instrument> _instruments = new();
+        private readonly HashSet<Instrument> _instruments = new();
         public IReadOnlyCollection<Instrument> Intruments => _instruments;
 
-        private HashSet<FuelTank> _fuelTanks = new();
+        private readonly HashSet<FuelTank> _fuelTanks = new();
         public IReadOnlyCollection<FuelTank> FuelTanks => _fuelTanks;
 
-        private HashSet<Engine> _engines = new();
+        private readonly HashSet<Engine> _engines = new();
         public IReadOnlyCollection<Engine> Engines => _engines;
 
-        private HashSet<Payload> _payloads = new();
+        private readonly HashSet<Payload> _payloads = new();
         public IReadOnlyCollection<Payload> Payloads => _payloads;
         public double DryOperatingMass => Mass;
 
@@ -199,7 +199,7 @@ namespace IO.Astrodynamics.Body.Spacecraft
             return maneuvers;
         }
 
-        public virtual void SetInitialOrbitalParameters(OrbitalParameters.OrbitalParameters orbitalParameters)
+        public void SetInitialOrbitalParameters(OrbitalParameters.OrbitalParameters orbitalParameters)
         {
             if (orbitalParameters == null) throw new ArgumentNullException(nameof(orbitalParameters));
             (InitialOrbitalParameters?.Observer as CelestialBody)?.RemoveSatellite(this);

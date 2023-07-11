@@ -20,7 +20,6 @@ using Launch = IO.Astrodynamics.Maneuver.Launch;
 using NadirAttitude = IO.Astrodynamics.Maneuver.NadirAttitude;
 using Payload = IO.Astrodynamics.Body.Spacecraft.Payload;
 using PhasingManeuver = IO.Astrodynamics.Maneuver.PhasingManeuver;
-using Planetocentric = IO.Astrodynamics.Coordinates.Planetocentric;
 using Planetodetic = IO.Astrodynamics.Coordinates.Planetodetic;
 using ProgradeAttitude = IO.Astrodynamics.Maneuver.ProgradeAttitude;
 using RetrogradeAttitude = IO.Astrodynamics.Maneuver.RetrogradeAttitude;

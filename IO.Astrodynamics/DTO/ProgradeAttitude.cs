@@ -7,13 +7,13 @@ namespace IO.Astrodynamics.DTO;
 [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
 public struct ProgradeAttitude
 {
-    public int ManeuverOrder = -1;
+    public readonly int ManeuverOrder = -1;
 
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = Spacecraft.ENGINESIZE)]
-    public string[] Engines;
+    public readonly string[] Engines;
 
-    public double AttitudeHoldDuration;
-    public double MinimumEpoch;
+    public readonly double AttitudeHoldDuration;
+    public readonly double MinimumEpoch;
     public Window Window;
 
     public ProgradeAttitude() : this(-1, 0.0, double.MinValue)

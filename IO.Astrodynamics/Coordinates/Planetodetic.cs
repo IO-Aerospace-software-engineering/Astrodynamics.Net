@@ -1,7 +1,4 @@
-﻿using System.Text.Json.Serialization;
-using IO.Astrodynamics.Math;
-
-namespace IO.Astrodynamics.Coordinates
+﻿namespace IO.Astrodynamics.Coordinates
 {
     public readonly record struct Planetodetic(double Longitude, double Latitude, double Altitude)
     {

@@ -1,6 +1,6 @@
 namespace IO.Astrodynamics;
 
-public class Constants
+public static class Constants
 {
     /// <summary>
     /// Gravitational constant m3/kg/s2

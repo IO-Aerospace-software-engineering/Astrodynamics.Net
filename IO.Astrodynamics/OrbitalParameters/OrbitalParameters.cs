@@ -92,7 +92,7 @@ public abstract class OrbitalParameters : IEquatable<OrbitalParameters>
     /// Get vector to descending node unitless
     /// </summary>
     /// <returns></returns>
-    public virtual Vector3 DescendingNodeVector()
+    public Vector3 DescendingNodeVector()
     {
         return AscendingNodeVector().Inverse();
     }
@@ -230,7 +230,7 @@ public abstract class OrbitalParameters : IEquatable<OrbitalParameters>
     /// Get perigee vector
     /// </summary>
     /// <returns></returns>
-    public virtual Vector3 PerigeeVector()
+    public Vector3 PerigeeVector()
     {
         if (Eccentricity() == 0.0)
         {
@@ -244,7 +244,7 @@ public abstract class OrbitalParameters : IEquatable<OrbitalParameters>
     /// Get apogee vector
     /// </summary>
     /// <returns></returns>
-    public virtual Vector3 ApogeeVector()
+    public Vector3 ApogeeVector()
     {
         if (Eccentricity() == 0.0)
         {
@@ -289,7 +289,7 @@ public abstract class OrbitalParameters : IEquatable<OrbitalParameters>
 
     public bool IsParabolic()
     {
-        return Eccentricity() == 1.0;
+        return System.Math.Abs(Eccentricity() - 1.0) < double.Epsilon;
     }
 
     public bool IsHyperbolic()

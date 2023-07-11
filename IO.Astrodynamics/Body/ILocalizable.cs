@@ -32,7 +32,6 @@ namespace IO.Astrodynamics.Body
         ///     Find time windows based on occultation constraint
         /// </summary>
         /// <param name="searchWindow"></param>
-        /// <param name="target"></param>
         /// <param name="targetShape"></param>
         /// <param name="frontBody"></param>
         /// <param name="frontShape"></param>

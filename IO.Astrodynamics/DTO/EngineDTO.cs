@@ -7,12 +7,12 @@ namespace IO.Astrodynamics.DTO;
 [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
 public struct EngineDTO
 {
-    public int Id;
-    public string SerialNumber;
-    public string FuelTankSerialNumber;
-    public string Name;
-    public double Isp;
-    public double FuelFlow;
+    public readonly int Id;
+    public readonly string SerialNumber;
+    public readonly string FuelTankSerialNumber;
+    public readonly string Name;
+    public readonly double Isp;
+    public readonly double FuelFlow;
 
     public EngineDTO(int id, string name, double fuelFlow, string serialNumber, string fuelTankSerialNumber, double isp)
     {

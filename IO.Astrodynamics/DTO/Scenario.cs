@@ -11,15 +11,15 @@ public struct Scenario
     private const int SITESIZE = 10;
     private const int CELESTIALBODIESIZE = 10;
 
-    public string Name;
+    public readonly string Name;
     public Window Window;
     public Spacecraft Spacecraft;
 
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = SITESIZE)]
-    public Site[] Sites;
+    public readonly Site[] Sites;
 
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = CELESTIALBODIESIZE)]
-    public int[] CelestialBodiesId;
+    public readonly int[] CelestialBodiesId;
 
     public string Error { get; } = string.Empty;
 

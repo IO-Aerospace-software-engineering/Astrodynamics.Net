@@ -2,7 +2,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -20,7 +19,6 @@ using IO.Astrodynamics.Time;
 using ApsidalAlignmentManeuver = IO.Astrodynamics.Maneuver.ApsidalAlignmentManeuver;
 using CelestialBody = IO.Astrodynamics.DTO.CelestialBody;
 using CombinedManeuver = IO.Astrodynamics.Maneuver.CombinedManeuver;
-using EquinoctialElements = IO.Astrodynamics.DTO.EquinoctialElements;
 using Instrument = IO.Astrodynamics.Body.Spacecraft.Instrument;
 using InstrumentPointingToAttitude = IO.Astrodynamics.Maneuver.InstrumentPointingToAttitude;
 using Launch = IO.Astrodynamics.DTO.Launch;
@@ -72,12 +70,6 @@ public class API
     private static extern bool UnloadKernelsProxy(string directoryPath);
 
     [DllImport(@"IO.Astrodynamics", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-    private static extern string TDBToStringProxy(double secondsFromJ2000);
-
-    [DllImport(@"IO.Astrodynamics", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-    private static extern string UTCToStringProxy(double secondsFromJ2000);
-
-    [DllImport(@"IO.Astrodynamics", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     private static extern void FindWindowsOnDistanceConstraintProxy(Window searchWindow, int observerId,
         int targetId, string constraint, double value, string aberration, double stepSize, [In] [Out] Window[] windows);
 
@@ -114,12 +106,6 @@ public class API
         string frame, string aberration, double stepSize, [In] [Out] StateVector[] stateVectors);
 
     [DllImport(@"IO.Astrodynamics", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-    private static extern double ConvertUTCToTDBProxy(double utc);
-
-    [DllImport(@"IO.Astrodynamics", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-    private static extern double ConvertTDBToUTCProxy(double tdb);
-
-    [DllImport(@"IO.Astrodynamics", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     private static extern bool
         WriteEphemerisProxy(string filePath, int objectId, StateVector[] stateVectors, uint size);
 
@@ -130,16 +116,6 @@ public class API
     private static extern FrameTransformation TransformFrameProxy(string fromFrame, string toFrame, double epoch);
 
     [DllImport(@"IO.Astrodynamics", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-    private static extern StateVector ConvertEquinoctialElementsToStateVectorProxy(
-        EquinoctialElements equinoctialElements);
-
-    [DllImport(@"IO.Astrodynamics", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-    private static extern StateVector ConvertConicElementsToStateVectorProxy(ConicElements conicElements);
-
-    [DllImport(@"IO.Astrodynamics", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-    private static extern RaDec ConvertStateVectorToEquatorialCoordinatesProxy(StateVector stateVector);
-
-    [DllImport(@"IO.Astrodynamics", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     private static extern StateVector ReadEphemerisAtGivenEpochProxy(double epoch, int observerId, int targetId,
         string frame, string aberration);
 
@@ -148,7 +124,7 @@ public class API
         double epoch);
 
     [DllImport(@"IO.Astrodynamics", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-    private static extern DTO.TLEElements GetTLEElementsProxy(string line1, string line2, string line3);
+    private static extern TLEElements GetTLEElementsProxy(string line1, string line2, string line3);
 
     private static IntPtr Resolver(string libraryName, Assembly assembly, DllImportSearchPath? searchPath)
     {
@@ -197,13 +173,10 @@ public class API
             Scenario scenarioDto = new Scenario(scenario.Name,
                 new Window(scenario.Window.StartDate.SecondsFromJ2000TDB(),
                     scenario.Window.EndDate.SecondsFromJ2000TDB()));
-            foreach (var site in scenario.Sites)
+            for (int j = 0; j < scenario.Sites.Count; j++)
             {
-                for (int j = 0; j < scenario.Sites.Count(); j++)
-                {
-                    scenarioDto.Sites[j] = _mapper.Map<Site>(scenario.Sites.ElementAt(j));
-                    scenarioDto.Sites[j].DirectoryPath = outputDirectory.CreateSubdirectory("Sites").FullName;
-                }
+                scenarioDto.Sites[j] = _mapper.Map<Site>(scenario.Sites.ElementAt(j));
+                scenarioDto.Sites[j].DirectoryPath = outputDirectory.CreateSubdirectory("Sites").FullName;
             }
 
             foreach (var spacecraft in scenario.Spacecrafts)
@@ -287,20 +260,20 @@ public class API
                                 maneuver.Engines.ElementAt(k).SerialNumber;
                         }
                     }
-                    else if (maneuver is ApogeeHeightManeuver)
+                    else if (maneuver is ApogeeHeightManeuver heightManeuver)
                     {
                         int idx = scenarioDto.Spacecraft.ApogeeHeightChangingManeuvers.Count(x => x.ManeuverOrder > -1);
                         scenarioDto.Spacecraft.ApogeeHeightChangingManeuvers[
                                 scenarioDto.Spacecraft.ApogeeHeightChangingManeuvers.Count(x => x.ManeuverOrder > -1)] =
-                            new ApogeeHeightChangingManeuver(order, maneuver.ManeuverHoldDuration.TotalSeconds,
-                                maneuver.MinimumEpoch.SecondsFromJ2000TDB(),
-                                (maneuver as ApogeeHeightManeuver).TargetApogee);
+                            new ApogeeHeightChangingManeuver(order, heightManeuver.ManeuverHoldDuration.TotalSeconds,
+                                heightManeuver.MinimumEpoch.SecondsFromJ2000TDB(),
+                                heightManeuver.TargetApogee);
 
                         //Add engines
-                        for (int k = 0; k < maneuver.Engines.Count; k++)
+                        for (int k = 0; k < heightManeuver.Engines.Count; k++)
                         {
                             scenarioDto.Spacecraft.ApogeeHeightChangingManeuvers[idx].Engines[k] =
-                                maneuver.Engines.ElementAt(k).SerialNumber;
+                                heightManeuver.Engines.ElementAt(k).SerialNumber;
                         }
                     }
                     else if (maneuver is ApsidalAlignmentManeuver)
@@ -319,61 +292,60 @@ public class API
                                 maneuver.Engines.ElementAt(k).SerialNumber;
                         }
                     }
-                    else if (maneuver is CombinedManeuver)
+                    else if (maneuver is CombinedManeuver combinedManeuver)
                     {
                         int idx = scenarioDto.Spacecraft.CombinedManeuvers.Count(x => x.ManeuverOrder > -1);
                         scenarioDto.Spacecraft.CombinedManeuvers[
                                 scenarioDto.Spacecraft.CombinedManeuvers.Count(x => x.ManeuverOrder > -1)] =
                             new DTO.CombinedManeuver(order,
-                                maneuver.ManeuverHoldDuration.TotalSeconds, maneuver.MinimumEpoch.SecondsFromJ2000TDB(),
-                                (maneuver as CombinedManeuver).TargetPerigeeHeight,
-                                (maneuver as CombinedManeuver).TargetInclination);
+                                combinedManeuver.ManeuverHoldDuration.TotalSeconds, combinedManeuver.MinimumEpoch.SecondsFromJ2000TDB(),
+                                combinedManeuver.TargetPerigeeHeight,
+                                combinedManeuver.TargetInclination);
 
                         //Add engines
-                        for (int k = 0; k < maneuver.Engines.Count; k++)
+                        for (int k = 0; k < combinedManeuver.Engines.Count; k++)
                         {
                             scenarioDto.Spacecraft.CombinedManeuvers[idx].Engines[k] =
-                                maneuver.Engines.ElementAt(k).SerialNumber;
+                                combinedManeuver.Engines.ElementAt(k).SerialNumber;
                         }
                     }
-                    else if (maneuver is PerigeeHeightManeuver)
+                    else if (maneuver is PerigeeHeightManeuver perigeeHeightManeuver)
                     {
                         int idx = scenarioDto.Spacecraft.PerigeeHeightChangingManeuvers.Count(x =>
                             x.ManeuverOrder > -1);
                         scenarioDto.Spacecraft.PerigeeHeightChangingManeuvers[
                                 scenarioDto.Spacecraft.PerigeeHeightChangingManeuvers.Count(x =>
                                     x.ManeuverOrder > -1)] =
-                            new PerigeeHeightChangingManeuver(order, maneuver.ManeuverHoldDuration.TotalSeconds,
-                                maneuver.MinimumEpoch.SecondsFromJ2000TDB(),
-                                (maneuver as PerigeeHeightManeuver).TargetPerigeeHeight);
+                            new PerigeeHeightChangingManeuver(order, perigeeHeightManeuver.ManeuverHoldDuration.TotalSeconds,
+                                perigeeHeightManeuver.MinimumEpoch.SecondsFromJ2000TDB(),
+                                perigeeHeightManeuver.TargetPerigeeHeight);
                         //Add engines
-                        for (int k = 0; k < maneuver.Engines.Count; k++)
+                        for (int k = 0; k < perigeeHeightManeuver.Engines.Count; k++)
                         {
                             scenarioDto.Spacecraft.PerigeeHeightChangingManeuvers[idx].Engines[k] =
-                                maneuver.Engines.ElementAt(k).SerialNumber;
+                                perigeeHeightManeuver.Engines.ElementAt(k).SerialNumber;
                         }
                     }
-                    else if (maneuver is PhasingManeuver)
+                    else if (maneuver is PhasingManeuver phasingManeuver)
                     {
-                        StateVector target = _mapper.Map<StateVector>(maneuver.TargetOrbit.ToStateVector());
+                        StateVector target = _mapper.Map<StateVector>(phasingManeuver.TargetOrbit.ToStateVector());
                         int idx = scenarioDto.Spacecraft.PhasingManeuver.Count(x => x.ManeuverOrder > -1);
                         scenarioDto.Spacecraft.PhasingManeuver[
                                 scenarioDto.Spacecraft.PhasingManeuver.Count(x => x.ManeuverOrder > -1)] =
                             new DTO.PhasingManeuver(
                                 order,
-                                maneuver.ManeuverHoldDuration.TotalSeconds, maneuver.MinimumEpoch.SecondsFromJ2000TDB(),
-                                (int)(maneuver as PhasingManeuver).RevolutionNumber, target);
+                                phasingManeuver.ManeuverHoldDuration.TotalSeconds, phasingManeuver.MinimumEpoch.SecondsFromJ2000TDB(),
+                                (int)phasingManeuver.RevolutionNumber, target);
                         //Add engines
-                        for (int k = 0; k < maneuver.Engines.Count; k++)
+                        for (int k = 0; k < phasingManeuver.Engines.Count; k++)
                         {
                             scenarioDto.Spacecraft.PhasingManeuver[idx].Engines[k] =
-                                maneuver.Engines.ElementAt(k).SerialNumber;
+                                phasingManeuver.Engines.ElementAt(k).SerialNumber;
                         }
                     }
-                    else if (maneuver is InstrumentPointingToAttitude)
+                    else if (maneuver is InstrumentPointingToAttitude instManeuver)
                     {
                         int idx = scenarioDto.Spacecraft.PointingToAttitudes.Count(x => x.ManeuverOrder > -1);
-                        var instManeuver = maneuver as InstrumentPointingToAttitude;
                         scenarioDto.Spacecraft.PointingToAttitudes[
                                 scenarioDto.Spacecraft.PointingToAttitudes.Count(x => x.ManeuverOrder > -1)] =
                             new DTO.InstrumentPointingToAttitude(order, instManeuver.Instrument.NaifId,
@@ -381,10 +353,10 @@ public class API
                                 instManeuver.ManeuverHoldDuration.TotalSeconds,
                                 instManeuver.MinimumEpoch.SecondsFromJ2000TDB());
                         //Add engines
-                        for (int k = 0; k < maneuver.Engines.Count; k++)
+                        for (int k = 0; k < instManeuver.Engines.Count; k++)
                         {
                             scenarioDto.Spacecraft.PointingToAttitudes[idx].Engines[k] =
-                                maneuver.Engines.ElementAt(k).SerialNumber;
+                                instManeuver.Engines.ElementAt(k).SerialNumber;
                         }
                     }
                     else if (maneuver is ProgradeAttitude)
@@ -539,8 +511,7 @@ public class API
         {
             if (!LoadKernelsProxy(path.FullName))
             {
-                throw new InvalidOperationException(
-                    $"Kernel can't be loaded. You can have more details on standard output");
+                throw new InvalidOperationException($"Kernel {path.FullName} can't be loaded. You can have more details on standard output");
             }
         }
     }
@@ -556,8 +527,7 @@ public class API
         {
             if (!UnloadKernelsProxy(path.FullName))
             {
-                throw new InvalidOperationException(
-                    "Kernel can't be unloaded. You can have more details on standard output");
+                throw new InvalidOperationException($"Kernel {path.FullName} can't be unloaded. You can have more details on standard output");
             }
         }
     }
@@ -594,7 +564,7 @@ public class API
             //Build result 
             List<LaunchWindow> launchWindows = new List<LaunchWindow>();
 
-            for (int i = 0; i < windows.Count(); i++)
+            for (int i = 0; i < windows.Length; i++)
             {
                 launchWindows.Add(new LaunchWindow(_mapper.Map<Window, Time.Window>(windows[i]),
                     launchDto.InertialInsertionVelocity[i], launchDto.NonInertialInsertionVelocity[i],
@@ -908,7 +878,7 @@ public class API
                 throw new ArgumentException("Value cannot be an empty collection.", nameof(stateVectors));
             bool res = WriteEphemerisProxy(filePath.FullName, naifObject.NaifId,
                 _mapper.Map<StateVector[]>(stateVectors),
-                (uint)enumerable.Count());
+                (uint)enumerable.Length);
             if (res == false)
             {
                 throw new InvalidOperationException(

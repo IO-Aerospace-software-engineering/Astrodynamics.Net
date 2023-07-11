@@ -141,9 +141,8 @@ public readonly record struct Matrix
         int n = Rows;
         double[,] result = new double[Rows, Columns];
 
-        double[,] lum; // combined lower & upper
         int[] perm; // out parameter
-        Decompose(out lum, out perm); // ignore return
+        Decompose(out var lum, out perm); // ignore return
 
         double[] b = new double[n];
         for (int i = 0; i < n; ++i)

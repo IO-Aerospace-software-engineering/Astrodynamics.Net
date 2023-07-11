@@ -4,7 +4,9 @@ namespace IO.Astrodynamics.DTO;
 
 public struct RaDec
 {
-    public double RightAscencion = 0.0, Declination = 0.0, Radius = 0.0;
+    public readonly double RightAscencion = 0.0;
+    public readonly double Declination = 0.0;
+    public readonly double Radius = 0.0;
 
     public RaDec(double rightAscencion, double declination, double radius)
     {

@@ -1,8 +1,9 @@
 using System;
+using System.Globalization;
 using System.Text.Json.Serialization;
 
 namespace IO.Astrodynamics.Time;
-public record struct Window
+public readonly record struct Window
 {
     public DateTime StartDate { get; }
     public DateTime EndDate { get; }
@@ -90,6 +91,6 @@ public record struct Window
 
     public override string ToString()
     {
-        return $"From {StartDate.ToString()} to {EndDate.ToString()} - Length {Length.ToString()}";
+        return $"From {StartDate.ToString(CultureInfo.InvariantCulture)} to {EndDate.ToString(CultureInfo.InvariantCulture)} - Length {Length.ToString()}";
     }
 }

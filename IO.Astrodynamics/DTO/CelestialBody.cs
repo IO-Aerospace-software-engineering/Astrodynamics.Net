@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 namespace IO.Astrodynamics.DTO;
 
 [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
-public struct CelestialBody
+public readonly struct CelestialBody
 {
     public int Id { get; }
     public int CenterOfMotionId { get; }

@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using IO.Astrodynamics.Body;
 using IO.Astrodynamics.Frames;
 
