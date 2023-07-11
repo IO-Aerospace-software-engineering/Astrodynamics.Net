@@ -82,4 +82,19 @@ public class WindowTests
         Window w2 = new Window(new DateTime(2021, 01, 04), new DateTime(2021, 01, 12));
         Assert.Equal(w1.GetIntersection(w2), new Window(new DateTime(2021, 01, 04), new DateTime(2021, 01, 10)));
     }
+    
+    [Fact]
+    void WindowsGetIntersectionException()
+    {
+        Window w1 = new Window(new DateTime(2021, 01, 02), new DateTime(2021, 01, 10));
+        Window w2 = new Window(new DateTime(2021, 01, 14), new DateTime(2021, 01, 22));
+        Assert.Throws<ArgumentException>(()=>w1.GetIntersection(w2));
+    }
+    
+    [Fact]
+    void String()
+    {
+        Window w1 = new Window(new DateTime(2021, 01, 02), new DateTime(2021, 01, 10));
+        Assert.Equal("From 01/02/2021 00:00:00 to 01/10/2021 00:00:00 - Length 8.00:00:00",w1.ToString());
+    }
 }

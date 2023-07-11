@@ -19,7 +19,7 @@ public struct Scenario
     public readonly Site[] Sites;
 
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = CELESTIALBODIESIZE)]
-    public readonly int[] CelestialBodiesId;
+    public readonly int[] AdditionalCelestialBodiesId;
 
     public string Error { get; } = string.Empty;
 
@@ -28,8 +28,8 @@ public struct Scenario
         Name = name;
         Window = window;
         Sites = ArrayBuilder.ArrayOf<Site>(SITESIZE);
-        CelestialBodiesId = new int[CELESTIALBODIESIZE];
-        Array.Fill(CelestialBodiesId, -1);
+        AdditionalCelestialBodiesId = new int[CELESTIALBODIESIZE];
+        Array.Fill(AdditionalCelestialBodiesId, -1);
     }
     
     public bool HasError()

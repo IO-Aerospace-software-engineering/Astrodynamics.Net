@@ -752,4 +752,13 @@ public class APITest
         Assert.Equal(9, tle.O);
         Assert.Equal(10, tle.M);
     }
+    
+    [Fact]
+    void Planetocentric()
+    {
+        DTO.Planetocentric tle = new Planetocentric(1, 2, 3);
+        Assert.Equal(1, tle.longitude);
+        Assert.Equal(2, tle.latitude);
+        Assert.Equal(3, tle.radius);
+    }
 }

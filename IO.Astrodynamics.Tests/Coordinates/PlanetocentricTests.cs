@@ -38,4 +38,12 @@ public class PlanetocentricTests
         Assert.Equal(new Planetodetic(-116.79445837000002, 35.24719500924553, 1073.2434613695368),
             new Planetodetic(res.Longitude * Astrodynamics.Constants.Rad2Deg, res.Latitude * Astrodynamics.Constants.Rad2Deg, res.Altitude));
     }
+
+    [Fact]
+    public void Radius()
+    {
+        var plan = new Planetocentric(-116.79445837 * Astrodynamics.Constants.Deg2Rad, 35.06601815 * Astrodynamics.Constants.Deg2Rad, 6372125.09695);
+        var radius = plan.RadiusFromPlanetocentricLatitude(TestHelpers.EarthAtJ2000.EquatorialRadius, TestHelpers.EarthAtJ2000.Flattening);
+        Assert.Equal(6371054.241003811, radius);
+    }
 }

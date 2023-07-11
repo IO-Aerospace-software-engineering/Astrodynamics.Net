@@ -21,4 +21,11 @@ public class BarycenterTests
         Assert.Equal(4.035032355022598E+14, earthbc.GM);
         Assert.Equal(0, earthbc.InitialOrbitalParameters.Observer.NaifId);
     }
+    
+    [Fact]
+    public void Mass()
+    {
+        var earthbc = new Barycenter(Barycenters.EARTH_BARYCENTER.NaifId);
+        Assert.Equal(6.045626290431354E+24, earthbc.GetTotalMass());
+    }
 }

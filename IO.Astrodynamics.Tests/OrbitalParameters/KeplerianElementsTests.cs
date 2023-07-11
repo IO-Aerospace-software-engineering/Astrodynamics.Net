@@ -18,7 +18,7 @@ namespace IO.Astrodynamics.Tests.OrbitalParameters
         [Fact]
         public void Create()
         {
-            CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH.NaifId);
+            CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH);
             DateTime epoch = DateTime.Now;
             KeplerianElements ke = new KeplerianElements(20000, 0.5, 30.0 * IO.Astrodynamics.Constants.Deg2Rad,
                 40.0 * IO.Astrodynamics.Constants.Deg2Rad,
@@ -70,7 +70,7 @@ namespace IO.Astrodynamics.Tests.OrbitalParameters
         [Fact]
         public void ToKeplerian()
         {
-            CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH.NaifId);
+            CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH);
             DateTime epoch = DateTime.Now;
             KeplerianElements ke = new KeplerianElements(20000, 0.5, 30.0 * IO.Astrodynamics.Constants.Deg2Rad,
                 40.0 * IO.Astrodynamics.Constants.Deg2Rad,
@@ -83,7 +83,7 @@ namespace IO.Astrodynamics.Tests.OrbitalParameters
         [Fact]
         public void ToStateVector()
         {
-            CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH.NaifId);
+            CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH);
 
             KeplerianElements ke = new KeplerianElements(6.800803544958167E+06, 1.353139738203394E-03,
                 5.171921958517460E+01 * IO.Astrodynamics.Constants.Deg2Rad,
@@ -103,7 +103,7 @@ namespace IO.Astrodynamics.Tests.OrbitalParameters
         [Fact]
         public void TrueAnomaly10()
         {
-            CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH.NaifId);
+            CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH);
 
             KeplerianElements ke = new KeplerianElements(20000, 0.5, 30.0 * IO.Astrodynamics.Constants.Deg2Rad,
                 40.0 * IO.Astrodynamics.Constants.Deg2Rad,
@@ -116,7 +116,7 @@ namespace IO.Astrodynamics.Tests.OrbitalParameters
         [Fact]
         public void TrueAnomaly0()
         {
-            CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH.NaifId);
+            CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH);
 
             KeplerianElements ke = new KeplerianElements(20000, 0.5, 30.0 * IO.Astrodynamics.Constants.Deg2Rad,
                 40.0 * IO.Astrodynamics.Constants.Deg2Rad,
@@ -129,7 +129,7 @@ namespace IO.Astrodynamics.Tests.OrbitalParameters
         [Fact]
         public void TrueAnomaly180()
         {
-            CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH.NaifId);
+            CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH);
 
             KeplerianElements ke = new KeplerianElements(20000, 0.5, 30.0 * IO.Astrodynamics.Constants.Deg2Rad,
                 40.0 * IO.Astrodynamics.Constants.Deg2Rad,
@@ -143,7 +143,7 @@ namespace IO.Astrodynamics.Tests.OrbitalParameters
         [Fact]
         public void TrueAnomaly300()
         {
-            CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH.NaifId);
+            CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH);
 
             KeplerianElements ke = new KeplerianElements(20000, 0.5, 30.0 * IO.Astrodynamics.Constants.Deg2Rad,
                 40.0 * IO.Astrodynamics.Constants.Deg2Rad,
@@ -157,7 +157,7 @@ namespace IO.Astrodynamics.Tests.OrbitalParameters
         [Fact]
         public void ExcentricityVector()
         {
-            CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH.NaifId);
+            CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH);
 
             KeplerianElements ke = new KeplerianElements(7487.36, 0.0918, 0.0, 0.0, 0.0,
                 0.0 * IO.Astrodynamics.Constants.Deg2Rad,
@@ -172,7 +172,7 @@ namespace IO.Astrodynamics.Tests.OrbitalParameters
         [Fact]
         public void AscendingNodeVector()
         {
-            CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH.NaifId);
+            CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH);
 
             KeplerianElements ke = new KeplerianElements(8811.47, 0.228, IO.Astrodynamics.Constants.PI2 * 0.5, 0.0, 0.0,
                 0.0 * IO.Astrodynamics.Constants.Deg2Rad, earth, DateTime.UtcNow, Frames.Frame.ICRF);
@@ -186,7 +186,7 @@ namespace IO.Astrodynamics.Tests.OrbitalParameters
         [Fact]
         public void DescendingNodeVector()
         {
-            CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH.NaifId);
+            CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH);
 
             KeplerianElements ke = new KeplerianElements(8811.47, 0.228, IO.Astrodynamics.Constants.PI2 * 0.5, 0.0, 0.0,
                 0.0 * IO.Astrodynamics.Constants.Deg2Rad, earth, DateTime.UtcNow, Frames.Frame.ICRF);
@@ -200,7 +200,7 @@ namespace IO.Astrodynamics.Tests.OrbitalParameters
         [Fact]
         public void EccentricAnomaly()
         {
-            CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH.NaifId);
+            CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH);
 
             KeplerianElements ke = new KeplerianElements(20000, 0.5, 30.0 * IO.Astrodynamics.Constants.Deg2Rad,
                 40.0 * IO.Astrodynamics.Constants.Deg2Rad,
@@ -214,7 +214,7 @@ namespace IO.Astrodynamics.Tests.OrbitalParameters
         [Fact]
         public void SpecificAngularMomentum()
         {
-            CelestialBody sun = new CelestialBody(Stars.Sun.NaifId);
+            CelestialBody sun = new CelestialBody(Stars.Sun);
 
             KeplerianElements ke = new KeplerianElements(149753367811.78582, 0.0010241359778564595, 0.0, 0.0, 0.0, 0.0,
                 sun, DateTime.UtcNow, Frames.Frame.ICRF);
@@ -227,7 +227,7 @@ namespace IO.Astrodynamics.Tests.OrbitalParameters
         [Fact]
         public void SpecificOrbitalEnergyMomentum()
         {
-            CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH.NaifId);
+            CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH);
 
             KeplerianElements ke = new KeplerianElements(6800811.78582, 0.00134,
                 51.71 * IO.Astrodynamics.Constants.Deg2Rad,
@@ -241,7 +241,7 @@ namespace IO.Astrodynamics.Tests.OrbitalParameters
         [Fact]
         public void PerigeeVectorAnomaly()
         {
-            CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH.NaifId);
+            CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH);
 
             KeplerianElements ke = new KeplerianElements(20000, 0.5, 30.0 * IO.Astrodynamics.Constants.Deg2Rad,
                 40.0 * IO.Astrodynamics.Constants.Deg2Rad,
@@ -258,7 +258,7 @@ namespace IO.Astrodynamics.Tests.OrbitalParameters
         [Fact]
         public void ApogeeVectorAnomaly()
         {
-            CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH.NaifId);
+            CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH);
 
             KeplerianElements ke = new KeplerianElements(20000, 0.5, 30.0 * IO.Astrodynamics.Constants.Deg2Rad,
                 40.0 * IO.Astrodynamics.Constants.Deg2Rad,
@@ -275,7 +275,7 @@ namespace IO.Astrodynamics.Tests.OrbitalParameters
         [Fact]
         public void TrueAnomalyToMeanAnomaly()
         {
-            CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH.NaifId);
+            CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH);
 
             KeplerianElements km0 = new KeplerianElements(20000, 0.3, 0.0, 0.0, 0.0, 0.0, earth, DateTime.UtcNow,
                 Frames.Frame.ICRF);
@@ -310,7 +310,7 @@ namespace IO.Astrodynamics.Tests.OrbitalParameters
         [Fact]
         public void Equality()
         {
-            CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH.NaifId);
+            CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH);
             DateTime epoch = DateTime.Now;
             KeplerianElements ke = new KeplerianElements(20000, 0.5, 30.0 * IO.Astrodynamics.Constants.Deg2Rad,
                 40.0 * IO.Astrodynamics.Constants.Deg2Rad,

@@ -2,11 +2,8 @@ using System;
 
 namespace IO.Astrodynamics.Body.Spacecraft
 {
-
     public class Clock : IEquatable<Clock>
     {
-        
-
         public string Name { get; }
         public double Resolution { get; }
 
@@ -25,12 +22,12 @@ namespace IO.Astrodynamics.Body.Spacecraft
             Name = name;
             Resolution = resolution;
         }
-        
+
         public bool Equals(Clock other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return string.Equals(Name, other.Name, StringComparison.OrdinalIgnoreCase);
+            return string.Equals(Name, other.Name, StringComparison.OrdinalIgnoreCase) && System.Math.Abs(Resolution - other.Resolution) < double.Epsilon;
         }
 
         public override bool Equals(object obj)

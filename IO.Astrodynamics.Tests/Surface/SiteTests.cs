@@ -22,7 +22,7 @@ namespace IO.Astrodynamics.Tests.Surface
         public void StateVector()
         {
             var epoch = new DateTime(2000, 1, 1, 12, 0, 0);
-            CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH.NaifId);
+            CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH);
             Site site = new Site(13, "DSS-13", earth);
 
             var sv = site.GetEphemeris(epoch, earth, Frames.Frame.ICRF, Aberration.None);
@@ -106,7 +106,7 @@ namespace IO.Astrodynamics.Tests.Surface
         public void GetEphemeris()
         {
             var epoch = new DateTime(2000, 1, 1, 12, 0, 0);
-            CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH.NaifId);
+            CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH);
             Site site = new Site(13, "DSS-13", earth);
 
             var sv = site.GetEphemeris(new Window(epoch, epoch + TimeSpan.FromDays(1.0)), earth, Frames.Frame.ICRF, Aberration.None, TimeSpan.FromDays(1.0)).ToArray();
@@ -121,7 +121,7 @@ namespace IO.Astrodynamics.Tests.Surface
         [Fact]
         public void GetPosition()
         {
-            CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH.NaifId);
+            CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH);
             Site site = new Site(13, "DSS-13", earth);
 
             var sv = site.InitialOrbitalParameters.ToStateVector().Position;
@@ -133,7 +133,7 @@ namespace IO.Astrodynamics.Tests.Surface
         public void GetVelocity()
         {
             var epoch = new DateTime(2000, 1, 1, 12, 0, 0);
-            CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH.NaifId);
+            CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH);
             Site site = new Site(13, "DSS-13", earth);
 
             var sv = site.GetEphemeris(epoch, earth, Frames.Frame.ICRF, Aberration.None).ToStateVector().Velocity;
@@ -145,10 +145,10 @@ namespace IO.Astrodynamics.Tests.Surface
         public void GetAngularSepartion()
         {
             var epoch = new DateTime(2000, 1, 1, 12, 0, 0);
-            CelestialBody moon = new CelestialBody(PlanetsAndMoons.MOON.NaifId);
+            CelestialBody moon = new CelestialBody(PlanetsAndMoons.MOON);
             Site site = new Site(13, "DSS-13", TestHelpers.EarthAtJ2000);
 
-            var separation = site.AngularSeparation(epoch, moon, site.Body.InitialOrbitalParameters.Observer, Aberration.None);
+            var separation = site.AngularSeparation(epoch, moon, TestHelpers.Sun, Aberration.None);
 
             Assert.Equal(0.9844974681377541, separation);
         }
@@ -156,7 +156,7 @@ namespace IO.Astrodynamics.Tests.Surface
         [Fact]
         public void FindWindowsOnDistanceConstraint()
         {
-            CelestialBody moon = new CelestialBody(PlanetsAndMoons.MOON.NaifId);
+            CelestialBody moon = new CelestialBody(PlanetsAndMoons.MOON);
             Site site = new Site(13, "DSS-13", TestHelpers.EarthAtJ2000);
 
             var res = site.FindWindowsOnDistanceConstraint(new Window(DateTimeExtension.CreateTDB(220881665.18391809), DateTimeExtension.CreateTDB(228657665.18565452)),
@@ -172,7 +172,7 @@ namespace IO.Astrodynamics.Tests.Surface
         [Fact]
         public void FindWindowsOnOccultationConstraint()
         {
-            CelestialBody moon = new CelestialBody(PlanetsAndMoons.MOON.NaifId);
+            CelestialBody moon = new CelestialBody(PlanetsAndMoons.MOON);
             Site site = new Site(13, "DSS-13", TestHelpers.EarthAtJ2000);
 
             var res = site.FindWindowsOnOccultationConstraint(new Window(DateTime.Parse("2005-10-03 00:00:00"), DateTime.Parse("2005-10-04 00:00:00")),
@@ -233,6 +233,27 @@ namespace IO.Astrodynamics.Tests.Surface
             Assert.False(site.Equals((object)site2));
             Assert.False(site.Equals((object)null));
             Assert.True(site.Equals((object)site));
+        }
+
+        [Fact]
+        public void Mass()
+        {
+            Site site = new Site(13, "DSS-13", TestHelpers.EarthAtJ2000,
+                new Planetodetic(-116.79445837 * Astrodynamics.Constants.Deg2Rad, 35.24716450 * Astrodynamics.Constants.Deg2Rad, 1070.85059));
+            Assert.Equal(0.0, site.Mass);
+            Assert.Equal(0.0, site.GM);
+        }
+
+        [Fact]
+        public void CenterOfMotion()
+        {
+            Site site = new Site(13, "DSS-13", TestHelpers.EarthAtJ2000,
+                new Planetodetic(-116.79445837 * Astrodynamics.Constants.Deg2Rad, 35.24716450 * Astrodynamics.Constants.Deg2Rad, 1070.85059));
+            var res = site.GetCentersOfMotion().ToArray();
+            Assert.Equal(3, res.Count());
+            Assert.Equal(399, res[0].NaifId);
+            Assert.Equal(3, res[1].NaifId);
+            Assert.Equal(0, res[2].NaifId);
         }
     }
 }

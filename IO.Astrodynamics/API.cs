@@ -182,19 +182,15 @@ public class API
             foreach (var spacecraft in scenario.Spacecrafts)
             {
                 //Reset for each propagation
-                Array.Clear(scenarioDto.CelestialBodiesId);
-
-                //Add mains involved bodies
-                foreach (var celestialBody in spacecraft.GetCentersOfMotion().ToArray())
+                for (int j = 0; j < scenarioDto.AdditionalCelestialBodiesId.Length; j++)
                 {
-                    scenarioDto.CelestialBodiesId[scenarioDto.CelestialBodiesId.Count(x => x > 0)] =
-                        celestialBody.NaifId;
+                    scenarioDto.AdditionalCelestialBodiesId[j] = -1;
                 }
 
                 //add additional celestial bodies
                 foreach (var celestialBody in scenario.AdditionalCelstialBodies)
                 {
-                    scenarioDto.CelestialBodiesId[scenarioDto.CelestialBodiesId.Count(x => x > 0)] = celestialBody.NaifId;
+                    scenarioDto.AdditionalCelestialBodiesId[scenarioDto.AdditionalCelestialBodiesId.Count(x => x > -1)] = celestialBody.NaifId;
                 }
 
                 //Define parking orbit
@@ -951,7 +947,7 @@ public class API
             var res = ConvertTLEToStateVectorProxy(line1, line2, line3, epoch.SecondsFromJ2000TDB());
             return new OrbitalParameters.StateVector(_mapper.Map<Vector3>(res.Position),
                 _mapper.Map<Vector3>(res.Velocity),
-                new Body.CelestialBody(PlanetsAndMoons.EARTH.NaifId, Frame.ECLIPTIC, epoch), epoch,
+                new Body.CelestialBody(PlanetsAndMoons.EARTH, Frame.ECLIPTIC, epoch), epoch,
                 new Frame(res.Frame));
         }
     }
