@@ -20,7 +20,7 @@ namespace IO.Astrodynamics.Tests.Maneuvers
             Engine eng = new Engine("My engine", "model 1","sn1", 350.0, 50.0, fuelTank10);
 
 
-            var targetOrbit = new KeplerianElements(150000000.0, 1.0, 0.0, 0.0, 0.0, 0.0, TestHelpers.Sun, new DateTime(2021, 01, 01), Frames.Frame.ECLIPTIC);
+            var targetOrbit = new KeplerianElements(150000000.0, 1.0, 0.0, 0.0, 0.0, 0.0, TestHelpers.Sun, new DateTime(2021, 01, 01), Frames.Frame.ECLIPTIC_J2000);
 
             PlaneAlignmentManeuver planeAlignmentManeuver = new PlaneAlignmentManeuver(new DateTime(2021, 01, 01), TimeSpan.FromDays(1.0), targetOrbit, eng);
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace IO.Astrodynamics.Time;
 
@@ -46,6 +47,11 @@ public static class DateTimeExtension
 
     public static readonly DateTime J2000 = new DateTime(2000, 01, 01, 12, 0, 0, DateTimeKind.Unspecified);
 
+    public const double JULIAN_J1950 = 2433282.5;
+    public const double JULIAN_J2000 = 2451545.0;
+    public const double JULIAN_YEAR = 365.25;
+    public const double SECONDS_PER_DAY = 86400.0;
+
     /// <summary>
     /// Convert datetime to TDB
     /// </summary>
@@ -63,7 +69,8 @@ public static class DateTimeExtension
             date = date.ToUniversalTime();
         }
 
-        return DateTime.SpecifyKind(date.AddSeconds(OFFSET + LeapSeconds.Count(x => x < date)), DateTimeKind.Unspecified);
+        return DateTime.SpecifyKind(date.AddSeconds(OFFSET + LeapSeconds.Count(x => x < date)),
+            DateTimeKind.Unspecified);
     }
 
     /// <summary>
@@ -87,6 +94,16 @@ public static class DateTimeExtension
     }
 
     /// <summary>
+    /// Convert to julian date
+    /// </summary>
+    /// <param name="date"></param>
+    /// <returns></returns>
+    public static double ToJulianDate(this DateTime date)
+    {
+        return date.ToOADate () + 2415018.5;//julian date at 1899-12-30 00:00:00
+    }
+
+    /// <summary>
     /// Seconds from J2000 relative to TDB
     /// </summary>
     /// <param name="date"></param>
@@ -101,16 +118,48 @@ public static class DateTimeExtension
         return (date - J2000).TotalSeconds;
     }
 
+    /// <summary>
+    /// Create TDB from seconds elapsed from J2000
+    /// </summary>
+    /// <param name="secondsFromJ2000"></param>
+    /// <returns></returns>
     public static DateTime CreateTDB(double secondsFromJ2000)
     {
         return J2000.AddSeconds(secondsFromJ2000).ToTDB();
     }
 
+    /// <summary>
+    /// Create UTC from seconds elapsed from J2000
+    /// </summary>
+    /// <param name="secondsFromJ2000"></param>
+    /// <returns></returns>
     public static DateTime CreateUTC(double secondsFromJ2000)
     {
         var date = J2000.AddSeconds(secondsFromJ2000);
         DateTime.SpecifyKind(date, DateTimeKind.Utc);
         return DateTime.SpecifyKind(date, DateTimeKind.Utc).ToUTC();
+    }
+
+    /// <summary>
+    /// Create TDB from Julian date
+    /// </summary>
+    /// <param name="secondsFromJ2000"></param>
+    /// <returns></returns>
+    public static DateTime CreateTDBFromJD(double julianDate)
+    {
+        var sinceEpoch = julianDate - 2440587.500000D;
+        return new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Unspecified).AddDays(sinceEpoch);
+    }
+
+    /// <summary>
+    /// Create UTC from Julian date
+    /// </summary>
+    /// <param name="secondsFromJ2000"></param>
+    /// <returns></returns>
+    public static DateTime CreateUTCFromJD(double julianDate)
+    {
+        var sinceEpoch = julianDate - JULIAN_J2000;
+        return new DateTime(2000, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddDays(sinceEpoch);
     }
 
     public static string ToFormattedString(this DateTime date)

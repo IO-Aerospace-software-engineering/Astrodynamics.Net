@@ -20,7 +20,7 @@ public class CelestialBody : Body
     {
     }
 
-    public CelestialBody(int naifId) : this(naifId, Frame.ECLIPTIC, DateTimeExtension.J2000)
+    public CelestialBody(int naifId) : this(naifId, Frame.ECLIPTIC_J2000, DateTimeExtension.J2000)
     {
     }
 
@@ -51,7 +51,7 @@ public class CelestialBody : Body
         if (InitialOrbitalParameters != null)
         {
             var mainBody = new CelestialBody(ExtendedInformation.CenterOfMotionId);
-            var a = this.GetEphemeris(InitialOrbitalParameters.Epoch, mainBody, Frame.ECLIPTIC, Aberration.None).SemiMajorAxis();
+            var a = this.GetEphemeris(InitialOrbitalParameters.Epoch, mainBody, Frame.ECLIPTIC_J2000, Aberration.None).SemiMajorAxis();
             SphereOfInfluence = InitialOrbitalParameters != null ? SphereOfInluence(a, Mass, mainBody.Mass) : double.PositiveInfinity;
         }
     }

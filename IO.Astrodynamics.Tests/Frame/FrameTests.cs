@@ -25,7 +25,7 @@ public class FrameTests
     [Fact]
     public void ToInertialFrame()
     {
-        var so = Frames.Frame.ICRF.ToFrame(Frames.Frame.ECLIPTIC, DateTimeExtension.J2000);
+        var so = Frames.Frame.ICRF.ToFrame(Frames.Frame.ECLIPTIC_J2000, DateTimeExtension.J2000);
         Assert.Equal(so,
             new StateOrientation(new Quaternion(0.9791532214288993, new Vector3(-0.20312303898231013, 0.0, 0.0)), Vector3.Zero, DateTimeExtension.J2000, Frames.Frame.ICRF));
     }
@@ -56,11 +56,11 @@ public class FrameTests
     {
         Assert.Equal(new Frames.Frame("J2000"), Frames.Frame.ICRF);
         Assert.True(new Frames.Frame("J2000") == Frames.Frame.ICRF);
-        Assert.True(Frames.Frame.ECLIPTIC != Frames.Frame.ICRF);
-        Assert.True(Frames.Frame.ECLIPTIC.Equals(Frames.Frame.ECLIPTIC));
-        Assert.True(Frames.Frame.ECLIPTIC.Equals((object)Frames.Frame.ECLIPTIC));
-        Assert.False(Frames.Frame.ECLIPTIC.Equals(null));
-        Assert.False(Frames.Frame.ECLIPTIC.Equals((object)null));
-        Assert.False(Frames.Frame.ECLIPTIC.Equals("null"));
+        Assert.True(Frames.Frame.ECLIPTIC_J2000 != Frames.Frame.ICRF);
+        Assert.True(Frames.Frame.ECLIPTIC_J2000.Equals(Frames.Frame.ECLIPTIC_J2000));
+        Assert.True(Frames.Frame.ECLIPTIC_J2000.Equals((object)Frames.Frame.ECLIPTIC_J2000));
+        Assert.False(Frames.Frame.ECLIPTIC_J2000.Equals(null));
+        Assert.False(Frames.Frame.ECLIPTIC_J2000.Equals((object)null));
+        Assert.False(Frames.Frame.ECLIPTIC_J2000.Equals("null"));
     }
 }

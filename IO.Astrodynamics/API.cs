@@ -947,7 +947,7 @@ public class API
             var res = ConvertTLEToStateVectorProxy(line1, line2, line3, epoch.SecondsFromJ2000TDB());
             return new OrbitalParameters.StateVector(_mapper.Map<Vector3>(res.Position),
                 _mapper.Map<Vector3>(res.Velocity),
-                new Body.CelestialBody(PlanetsAndMoons.EARTH, Frame.ECLIPTIC, epoch), epoch,
+                new Body.CelestialBody(PlanetsAndMoons.EARTH, Frame.ECLIPTIC_J2000, epoch), epoch,
                 new Frame(res.Frame));
         }
     }

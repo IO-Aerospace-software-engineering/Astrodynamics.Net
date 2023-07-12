@@ -278,7 +278,7 @@ namespace IO.Astrodynamics.Tests.OrbitalParameters
             var sv = new StateVector(new Vector3(-26499033.67742509, 132757417.33833946, 57556718.47053819), new Vector3(-29.79426007, -5.01805231, -2.17539380), earth,
                 new DateTime(2000, 1, 1, 12, 0, 0), Frames.Frame.ICRF);
 
-            double[] res = sv.ToFrame(Frames.Frame.ECLIPTIC).ToStateVector().ToArray();
+            double[] res = sv.ToFrame(Frames.Frame.ECLIPTIC_J2000).ToStateVector().ToArray();
             Assert.Equal(-26499033.67742509, res[0]);
             Assert.Equal(144697296.7925432, res[1]);
             Assert.Equal(-611.1494260467589, res[2]);

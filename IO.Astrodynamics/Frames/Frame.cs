@@ -8,7 +8,11 @@ public class Frame : IEquatable<Frame>
     public string Name { get; }
 
     public static readonly Frame ICRF = new Frame("J2000");
-    public static readonly Frame ECLIPTIC = new Frame("ECLIPJ2000");
+    public static readonly Frame ECLIPTIC_B1950 = new Frame("ECLIPB1950");
+    public static readonly Frame ECLIPTIC_J2000 = new Frame("ECLIPJ2000");
+    public static readonly Frame GALACTIC_SYSTEM2 = new Frame("GALACTIC");
+    public static readonly Frame B1950 = new Frame("B1950");
+    public static readonly Frame FK4 = new Frame("FK4");
 
     public Frame(string name)
     {
