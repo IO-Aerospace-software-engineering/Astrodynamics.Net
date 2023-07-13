@@ -44,6 +44,11 @@ public class CelestialBody : Body
     
         UpdateSphereOfInfluence();
     }
+    
+    public CelestialBody(int naifId, string name, double mass, OrbitalParameters.OrbitalParameters initialOrbitalParameters) : base(naifId, name, mass, initialOrbitalParameters)
+    {
+        SphereOfInfluence = double.PositiveInfinity;
+    }
 
     private void UpdateSphereOfInfluence()
     {

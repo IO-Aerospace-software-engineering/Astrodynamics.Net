@@ -116,6 +116,14 @@ public abstract class Body : ILocalizable, IEquatable<Body>
         return API.Instance.ReadEphemeris(searchWindow, observer, this, frame, aberration, stepSize);
     }
 
+    /// <summary>
+    /// GetEphemeris
+    /// </summary>
+    /// <param name="epoch"></param>
+    /// <param name="observer"></param>
+    /// <param name="frame"></param>
+    /// <param name="aberration"></param>
+    /// <returns></returns>
     public OrbitalParameters.OrbitalParameters GetEphemeris(DateTime epoch, ILocalizable observer, Frame frame,
         Aberration aberration)
     {
