@@ -20,7 +20,7 @@ namespace IO.Astrodynamics.Tests.Maneuvers
         {
             CelestialBody sun = new CelestialBody(Stars.Sun);
 
-            var ke = new KeplerianElements(150000000.0, 0.0, 0.0, 0.0, 0.0, 0.0, sun, new DateTime(2021, 01, 01), Frames.Frame.ECLIPTIC);
+            var ke = new KeplerianElements(150000000.0, 0.0, 0.0, 0.0, 0.0, 0.0, sun, new DateTime(2021, 01, 01), Frames.Frame.ECLIPTIC_J2000);
             Clock clk1 = new Clock("My clock", 1.0 / 256.0);
             Payload pl1 = new Payload("pl1", 300,"sn");
             Spacecraft spc1 = new Spacecraft(-1001, "MySpacecraft", 1000.0,10000.0,clk1,ke);
@@ -33,7 +33,7 @@ namespace IO.Astrodynamics.Tests.Maneuvers
             spc1.AddPayload(pl1);
             spc1.AddEngine(eng);
 
-            var targetOrbit = new KeplerianElements(150000000.0, 1.0, 0.0, 0.0, 0.0, 0.0, sun, new DateTime(2021, 01, 01), Frames.Frame.ECLIPTIC);
+            var targetOrbit = new KeplerianElements(150000000.0, 1.0, 0.0, 0.0, 0.0, 0.0, sun, new DateTime(2021, 01, 01), Frames.Frame.ECLIPTIC_J2000);
 
             ApsidalAlignmentManeuver maneuver = new ApsidalAlignmentManeuver(new DateTime(2021, 1, 1), TimeSpan.FromDays(1.0), targetOrbit, spc1.Engines.ToArray());
             Assert.Single(maneuver.Engines);

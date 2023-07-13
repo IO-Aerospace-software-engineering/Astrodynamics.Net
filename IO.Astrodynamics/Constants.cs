@@ -17,4 +17,5 @@ public static class Constants
     public const double CivilTwilight = 6.0 * Deg2Rad;
     public const double NauticalTwilight = 12.0 * Deg2Rad;
     public const double AstronomicalTwilight = 18.0 * Deg2Rad;
+    public const double Parsec2Meters = 3.085677581E+16;
 }

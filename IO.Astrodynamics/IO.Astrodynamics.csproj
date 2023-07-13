@@ -6,6 +6,7 @@
         <Nullable>disable</Nullable>
         <AssemblyName>IO.Astrodynamics.Net</AssemblyName>
         <Company>IO</Company>
+        <LangVersion>10</LangVersion>
 
     </PropertyGroup>
 

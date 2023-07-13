@@ -20,14 +20,14 @@ public class CelestialBody : Body
     {
     }
 
-    public CelestialBody(int naifId) : this(naifId, Frame.ECLIPTIC, DateTimeExtension.J2000)
+    public CelestialBody(int naifId) : this(naifId, Frame.ECLIPTIC_J2000, DateTimeExtension.J2000)
     {
     }
 
     public CelestialBody(NaifObject naifObject, Frame frame, DateTime epoch) : this(naifObject.NaifId, frame, epoch)
     {
     }
-    
+
     public CelestialBody(int naifId, Frame frame, DateTime epoch) : base(naifId, frame, epoch)
     {
         PolarRadius = ExtendedInformation.Radii.Z;
@@ -35,28 +35,42 @@ public class CelestialBody : Body
         Flattening = (EquatorialRadius - PolarRadius) / EquatorialRadius;
         if (double.IsNaN(Flattening))
         {
-            Flattening = double.PositiveInfinity;
+            Flattening = 0.0;
         }
+
         Frame = string.IsNullOrEmpty(ExtendedInformation.FrameName)
             ? throw new InvalidOperationException(
                 "Celestial body frame can't be defined, please check if you have loaded associated kernels")
             : new Frame(ExtendedInformation.FrameName);
-    
+
         UpdateSphereOfInfluence();
+    }
+
+    public CelestialBody(int naifId, string name, double mass, double polarRadius = 0.0, double equatorialRadius = 0.0,
+        OrbitalParameters.OrbitalParameters initialOrbitalParameters = null) : base(
+        naifId, name, mass, initialOrbitalParameters)
+    {
+        PolarRadius = polarRadius;
+        EquatorialRadius = equatorialRadius;
+        Flattening = (EquatorialRadius - PolarRadius) / EquatorialRadius;
+        if (double.IsNaN(Flattening))
+        {
+            Flattening = 0.0;
+        }
+
+        SphereOfInfluence = double.PositiveInfinity;
     }
 
     private void UpdateSphereOfInfluence()
     {
         SphereOfInfluence = double.PositiveInfinity;
-        if (InitialOrbitalParameters != null)
-        {
-            var mainBody = new CelestialBody(ExtendedInformation.CenterOfMotionId);
-            var a = this.GetEphemeris(InitialOrbitalParameters.Epoch, mainBody, Frame.ECLIPTIC, Aberration.None).SemiMajorAxis();
-            SphereOfInfluence = InitialOrbitalParameters != null ? SphereOfInluence(a, Mass, mainBody.Mass) : double.PositiveInfinity;
-        }
+        if (InitialOrbitalParameters == null) return;
+        var mainBody = new CelestialBody(ExtendedInformation.CenterOfMotionId);
+        var a = this.GetEphemeris(InitialOrbitalParameters.Epoch, mainBody, Frame.ECLIPTIC_J2000, Aberration.None).SemiMajorAxis();
+        SphereOfInfluence = InitialOrbitalParameters != null ? SphereOfInluence(a, Mass, mainBody.Mass) : double.PositiveInfinity;
     }
 
-    private double SphereOfInluence(double a, double minorMass, double majorMass)
+    private static double SphereOfInluence(double a, double minorMass, double majorMass)
     {
         return a * System.Math.Pow(minorMass / majorMass, 2.0 / 5.0);
     }

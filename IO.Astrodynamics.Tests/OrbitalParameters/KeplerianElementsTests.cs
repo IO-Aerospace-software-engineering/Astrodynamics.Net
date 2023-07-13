@@ -99,6 +99,26 @@ namespace IO.Astrodynamics.Tests.OrbitalParameters
             Assert.Equal(-5477.646280596454, sv.Velocity.Y, 6);
             Assert.Equal(-5297.633402454895, sv.Velocity.Z, 6);
         }
+        
+        [Fact]
+        public void ToStateVector2()
+        {
+            CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH);
+
+            Astrodynamics.OrbitalParameters.OrbitalParameters ke = new KeplerianElements(6.800803544958167E+06, 1.353139738203394E-03,
+                5.171921958517460E+01 * IO.Astrodynamics.Constants.Deg2Rad,
+                3.257605322534260E+01 * IO.Astrodynamics.Constants.Deg2Rad,
+                1.062574316262159E+02 * IO.Astrodynamics.Constants.Deg2Rad,
+                4.541224977546975E+01 * IO.Astrodynamics.Constants.Deg2Rad, earth,
+                DateTimeExtension.CreateTDB(663724800.00001490), Frames.Frame.ICRF);
+            StateVector sv = ke.ToStateVector(DateTimeExtension.CreateTDB(663724800.00001490));
+            Assert.Equal(-6116559.468933809, sv.Position.X, 6);
+            Assert.Equal(-1546174.6944518015, sv.Position.Y, 6);
+            Assert.Equal(2521950.161516389, sv.Position.Z, 6);
+            Assert.Equal(-807.8383114627195, sv.Velocity.X, 6);
+            Assert.Equal(-5477.646280596454, sv.Velocity.Y, 6);
+            Assert.Equal(-5297.633402454895, sv.Velocity.Z, 6);
+        }
 
         [Fact]
         public void TrueAnomaly10()

@@ -23,7 +23,7 @@ namespace IO.Astrodynamics.Tests.OrbitalParameters
         public void RelativeToICRF()
         {
             var so = new StateOrientation(new Quaternion(Vector3.VectorX, 10.0 * IO.Astrodynamics.Constants.Deg2Rad),
-                Vector3.Zero, DateTime.MaxValue, Frames.Frame.ECLIPTIC);
+                Vector3.Zero, DateTime.MaxValue, Frames.Frame.ECLIPTIC_J2000);
             var res = so.RelativeToICRF();
             Assert.NotNull(so);
 

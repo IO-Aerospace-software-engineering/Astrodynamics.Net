@@ -35,7 +35,7 @@ public class CelestialBodyTests
     [Fact]
     public void Create2()
     {
-        CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH, Frames.Frame.ECLIPTIC, DateTimeExtension.J2000);
+        CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH, Frames.Frame.ECLIPTIC_J2000, DateTimeExtension.J2000);
 
         Assert.Equal(399, earth.NaifId);
         Assert.Equal("EARTH", earth.Name);
@@ -65,7 +65,7 @@ public class CelestialBodyTests
         Assert.Equal(DateTimeExtension.J2000, moon.InitialOrbitalParameters.Epoch);
         Assert.Equal(new Vector3(-288065172.3454155, -271638576.61683005, 35830480.397877164), moon.InitialOrbitalParameters.ToStateVector().Position);
         Assert.Equal(new Vector3(635.7121052811876, -722.1021012684569, -11.36665431333672), moon.InitialOrbitalParameters.ToStateVector().Velocity);
-        Assert.Equal(Frames.Frame.ECLIPTIC, moon.InitialOrbitalParameters.Frame);
+        Assert.Equal(Frames.Frame.ECLIPTIC_J2000, moon.InitialOrbitalParameters.Frame);
     }
 
     // [Fact]
@@ -123,7 +123,7 @@ public class CelestialBodyTests
     {
         var sun = TestHelpers.Sun;
         var earth = TestHelpers.EarthAtJ2000;
-        var res = sun.AngularSize(earth.GetEphemeris(DateTimeExtension.J2000, sun, Frames.Frame.ECLIPTIC, Aberration.None).ToStateVector().Position.Magnitude());
+        var res = sun.AngularSize(earth.GetEphemeris(DateTimeExtension.J2000, sun, Frames.Frame.ECLIPTIC_J2000, Aberration.None).ToStateVector().Position.Magnitude());
         Assert.Equal(0.009459, res, 6);
     }
 

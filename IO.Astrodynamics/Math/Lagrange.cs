@@ -41,12 +41,10 @@ namespace IO.Astrodynamics.Math
                 Vector3 velTerm = data[i].Velocity;
                 for (int j = 0; j < n; j++)
                 {
-                    if (j != i)
-                    {
-                        var t = (idx - data[j].Epoch.SecondsFromJ2000TDB()) / (data[i].Epoch.SecondsFromJ2000TDB() - data[j].Epoch.SecondsFromJ2000TDB());
-                        posTerm *= t;
-                        velTerm *= t;
-                    }
+                    if (j == i) continue;
+                    var t = (idx - data[j].Epoch.SecondsFromJ2000TDB()) / (data[i].Epoch.SecondsFromJ2000TDB() - data[j].Epoch.SecondsFromJ2000TDB());
+                    posTerm *= t;
+                    velTerm *= t;
                 }
                 // Add current term to result
                 result.Position += posTerm;

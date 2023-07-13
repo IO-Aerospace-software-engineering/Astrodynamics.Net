@@ -1,4 +1,3 @@
-using System.Text.Json.Serialization;
 
 namespace IO.Astrodynamics.Math
 {
@@ -13,7 +12,6 @@ namespace IO.Astrodynamics.Math
         public static Vector3 VectorZ { get; } = new Vector3(0.0, 0.0, 1.0);
         public static Vector3 Zero { get; } = new Vector3(0.0, 0.0, 0.0);
 
-        [JsonConstructor]
         public Vector3(double x, double y, double z)
         {
             X = x;

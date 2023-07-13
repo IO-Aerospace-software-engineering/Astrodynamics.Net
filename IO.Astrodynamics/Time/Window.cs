@@ -1,6 +1,5 @@
 using System;
 using System.Globalization;
-using System.Text.Json.Serialization;
 
 namespace IO.Astrodynamics.Time;
 public readonly record struct Window
@@ -14,7 +13,6 @@ public readonly record struct Window
     /// </summary>
     /// <param name="startDate"></param>
     /// <param name="endDate"></param>
-    [JsonConstructor]
     public Window(DateTime startDate, DateTime endDate)
     {
         if (startDate > endDate)

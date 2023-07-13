@@ -55,7 +55,7 @@ namespace IO.Astrodynamics.Tests.Body
             CelestialBody sun = new CelestialBody(Stars.Sun);
 
             var ke = new KeplerianElements(150000000.0, 0.0, 0.0, 0.0, 0.0, 0.0, sun, DateTime.UtcNow,
-                Frames.Frame.ECLIPTIC);
+                Frames.Frame.ECLIPTIC_J2000);
             Clock clk1 = new Clock("My clock", 1.0 / 256.0);
             Payload pl1 = new Payload("pl1", 300, "sn1");
             Spacecraft spc1 = new Spacecraft(-1001, "MySpacecraft", 1000.0, 10000.0, clk1, ke);
@@ -112,7 +112,7 @@ namespace IO.Astrodynamics.Tests.Body
         {
             Clock clk = new Clock("My clock", 1.0 / 256.0);
             var ke = new KeplerianElements(150000000.0, 0.0, 0.0, 0.0, 0.0, 0.0, TestHelpers.Sun, DateTime.UtcNow,
-                Frames.Frame.ECLIPTIC);
+                Frames.Frame.ECLIPTIC_J2000);
             Spacecraft spc = new Spacecraft(-1001, "MySpacecraft", 1000.0, 10000.0, clk, ke);
 
             FuelTank fuelTank = new FuelTank("My fuel tank", "ft2021", "sn1", 4000.0, 4000.0);
@@ -129,7 +129,7 @@ namespace IO.Astrodynamics.Tests.Body
         public void AddEngineWithUnknowFuelTank()
         {
             var ke = new KeplerianElements(150000000.0, 0.0, 0.0, 0.0, 0.0, 0.0, TestHelpers.Sun, DateTime.UtcNow,
-                Frames.Frame.ECLIPTIC);
+                Frames.Frame.ECLIPTIC_J2000);
             Clock clk = new Clock("My clock", 1.0 / 256.0);
             Spacecraft spc = new Spacecraft(-1001, "MySpacecraft", 1000.0, 10000.0, clk, ke);
 
@@ -142,7 +142,7 @@ namespace IO.Astrodynamics.Tests.Body
         public void AddFuelTank()
         {
             var ke = new KeplerianElements(150000000.0, 0.0, 0.0, 0.0, 0.0, 0.0, TestHelpers.Sun, DateTime.UtcNow,
-                Frames.Frame.ECLIPTIC);
+                Frames.Frame.ECLIPTIC_J2000);
             Clock clk = new Clock("My clock", 1.0 / 256.0);
             Spacecraft spc = new Spacecraft(-1001, "MySpacecraft", 1000.0, 10000.0, clk, ke);
 
@@ -157,7 +157,7 @@ namespace IO.Astrodynamics.Tests.Body
         public void AddPayload()
         {
             var ke = new KeplerianElements(150000000.0, 0.0, 0.0, 0.0, 0.0, 0.0, TestHelpers.Sun, DateTime.UtcNow,
-                Frames.Frame.ECLIPTIC);
+                Frames.Frame.ECLIPTIC_J2000);
             Clock clk = new Clock("My clock", 1.0 / 256.0);
             Spacecraft spc = new Spacecraft(-1001, "MySpacecraft", 1000.0, 10000.0, clk, ke);
 
@@ -172,7 +172,7 @@ namespace IO.Astrodynamics.Tests.Body
         public void AddInstrument()
         {
             var ke = new KeplerianElements(150000000.0, 0.0, 0.0, 0.0, 0.0, 0.0, TestHelpers.Sun, DateTime.UtcNow,
-                Frames.Frame.ECLIPTIC);
+                Frames.Frame.ECLIPTIC_J2000);
             Clock clk = new Clock("My clock", 1.0 / 256.0);
             Spacecraft spc = new Spacecraft(-1001, "MySpacecraft", 1000.0, 10000.0, clk, ke);
 
@@ -188,7 +188,7 @@ namespace IO.Astrodynamics.Tests.Body
         public void GetTotalMass()
         {
             var ke = new KeplerianElements(150000000.0, 0.0, 0.0, 0.0, 0.0, 0.0, TestHelpers.Sun, DateTime.UtcNow,
-                Frames.Frame.ECLIPTIC);
+                Frames.Frame.ECLIPTIC_J2000);
             Clock clk = new Clock("My clock", 1.0 / 256.0);
 
             Spacecraft spc = new Spacecraft(-1001, "MySpacecraft", 1000.0, 10000.0, clk, ke);
@@ -236,7 +236,7 @@ namespace IO.Astrodynamics.Tests.Body
         public void Dependancies()
         {
             var ke = new KeplerianElements(150000000.0, 0.0, 0.0, 0.0, 0.0, 0.0, TestHelpers.Sun, DateTime.UtcNow,
-                Frames.Frame.ECLIPTIC);
+                Frames.Frame.ECLIPTIC_J2000);
             Clock clk1 = new Clock("My clock", 1.0 / 256.0);
             Payload pl1 = new Payload("pl1", 300, "sn1");
             Spacecraft spc1 = new Spacecraft(-1001, "MySpacecraft", 1000.0, 10000.0, clk1, ke);
@@ -304,7 +304,7 @@ namespace IO.Astrodynamics.Tests.Body
         {
             Clock clk = new Clock("My clock", 1.0 / 256.0);
             var ke = new KeplerianElements(150000000.0, 0.0, 0.0, 0.0, 0.0, 0.0, TestHelpers.Sun, DateTime.UtcNow,
-                Frames.Frame.ECLIPTIC);
+                Frames.Frame.ECLIPTIC_J2000);
             Spacecraft spc = new Spacecraft(-1001, "MySpacecraft", 1000.0, 10000.0, clk, ke);
 
             FuelTank fuelTank = new FuelTank("My fuel tank", "ft2021", "sn1", 4000.0, 4000.0);
@@ -325,7 +325,7 @@ namespace IO.Astrodynamics.Tests.Body
         public void SetParent()
         {
             var ke = new KeplerianElements(150000000.0, 0.0, 0.0, 0.0, 0.0, 0.0, TestHelpers.Sun, DateTime.UtcNow,
-                Frames.Frame.ECLIPTIC);
+                Frames.Frame.ECLIPTIC_J2000);
             Clock clk1 = new Clock("My clock", 1.0 / 256.0);
             Payload pl1 = new Payload("pl1", 300, "sn1");
             Spacecraft spc1 = new Spacecraft(-1001, "MySpacecraft", 1000.0, 10000.0, clk1, ke);

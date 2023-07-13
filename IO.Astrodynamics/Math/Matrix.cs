@@ -190,11 +190,9 @@ public readonly record struct Matrix
             for (int i = j + 1; i < n; ++i) // find pivot index
             {
                 double xij = System.Math.Abs(lum[i, j]);
-                if (xij > max)
-                {
-                    max = xij;
-                    piv = i;
-                }
+                if (!(xij > max)) continue;
+                max = xij;
+                piv = i;
             } // i
 
             if (piv != j)
@@ -217,15 +215,14 @@ public readonly record struct Matrix
             }
 
             double xjj = lum[j, j];
-            if (xjj != 0.0)
+            if (xjj == 0.0) continue;
+
+            for (int i = j + 1; i < n; ++i)
             {
-                for (int i = j + 1; i < n; ++i)
-                {
-                    double xij = lum[i, j] / xjj;
-                    lum[i, j] = xij;
-                    for (int k = j + 1; k < n; ++k)
-                        lum[i, k] -= xij * lum[j, k];
-                }
+                double xij = lum[i, j] / xjj;
+                lum[i, j] = xij;
+                for (int k = j + 1; k < n; ++k)
+                    lum[i, k] -= xij * lum[j, k];
             }
         } // j
 
