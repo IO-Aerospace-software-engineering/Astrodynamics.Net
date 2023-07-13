@@ -94,25 +94,32 @@ public class DateTimeTests
         var jd = DateTimeExtension.J2000.ToJulianDate();
         Assert.Equal(DateTimeExtension.JULIAN_J2000, jd);
     }
-    
+
     [Fact]
     public void ToJulian2()
     {
-        var jd = new DateTime(1950,1,1,0,0,0,DateTimeKind.Utc);
+        var jd = new DateTime(1950, 1, 1, 0, 0, 0, DateTimeKind.Utc);
         Assert.Equal(2433282.5000000000, jd.ToJulianDate());
     }
 
     [Fact]
-    public void FromJulian()
+    public void TDBFromJulian()
     {
         var date = DateTimeExtension.CreateTDBFromJD(DateTimeExtension.JULIAN_J2000);
         Assert.Equal(DateTimeExtension.J2000, date);
     }
-    
+
+    [Fact]
+    public void UTCFromJulian()
+    {
+        var date = DateTimeExtension.CreateUTCFromJD(DateTimeExtension.JULIAN_J2000);
+        Assert.Equal(new DateTime(2000, 1, 1, 12, 0, 0, DateTimeKind.Utc), date);
+    }
+
     [Fact]
     public void FromJulian2()
     {
         var date = DateTimeExtension.CreateTDBFromJD(2433282.5000000000);
-        Assert.Equal(new DateTime(1950,1,1,0,0,0,DateTimeKind.Utc), date);
+        Assert.Equal(new DateTime(1950, 1, 1, 0, 0, 0, DateTimeKind.Utc), date);
     }
 }

@@ -141,8 +141,8 @@ public static class DateTimeExtension
     /// <returns></returns>
     public static DateTime CreateTDBFromJD(double julianDate)
     {
-        var sinceEpoch = julianDate - 2440587.500000D;
-        return new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Unspecified).AddDays(sinceEpoch);
+        var sinceEpoch = julianDate - JULIAN_J2000;
+        return new DateTime(2000, 1, 1, 12, 0, 0, DateTimeKind.Unspecified).AddDays(sinceEpoch);
     }
 
     /// <summary>
@@ -153,7 +153,7 @@ public static class DateTimeExtension
     public static DateTime CreateUTCFromJD(double julianDate)
     {
         var sinceEpoch = julianDate - JULIAN_J2000;
-        return new DateTime(2000, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddDays(sinceEpoch);
+        return new DateTime(2000, 1, 1, 12, 0, 0, DateTimeKind.Utc).AddDays(sinceEpoch);
     }
 
     public static string ToFormattedString(this DateTime date)
