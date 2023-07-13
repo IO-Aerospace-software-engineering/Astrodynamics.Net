@@ -59,8 +59,16 @@ namespace IO.Astrodynamics.Tests.Coordinates
             var moon = TestHelpers.MoonAtJ2000;
             var earth = TestHelpers.EarthAtJ2000;
             var eq = moon.GetEphemeris(DateTimeExtension.J2000, earth, Frames.Frame.ICRF, Aberration.None).ToEquatorial();
+            
             Assert.Equal(new Equatorial(-0.19024413568211912, 3.8824377884372114, 402448639.8873273), eq);
-            Assert.Equal(new Vector3(-291608384.63343555, -266716833.3942334, -76102487.09990202), eq.ToCartesian());
+            if (OperatingSystem.IsWindows())
+            {
+                Assert.Equal(new Vector3(-291608384.63343555, -266716833.39423338, -76102487.09990202), eq.ToCartesian());
+            }
+            else
+            {
+                Assert.Equal(new Vector3(-291608384.63343555, -266716833.3942334, -76102487.09990202), eq.ToCartesian());
+            }
         }
     }
 }
