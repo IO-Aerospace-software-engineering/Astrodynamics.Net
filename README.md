@@ -9,7 +9,7 @@ C++ Velocity + .Net productivity = ❤️
 
 This framework provides the following features :
 
-* Load [JPL Spice kernels](https://naif.jpl.nasa.gov/naif/data.html)
+* Work with [JPL Spice kernels](https://naif.jpl.nasa.gov/naif/data.html) and stars
 * Compute and convert orbital parameters
   * State vector
   * Two lines elements
@@ -21,8 +21,12 @@ This framework provides the following features :
   * Planetodetic
   * Planetodentric
 * Frame transformation
-  * ICRF
-  * Ecliptic
+  * ICRF / J2000
+  * Ecliptic_J2000
+  * Ecliptic_B1950
+  * Galactic
+  * B1950
+  * FK4
   * Body fixed frames and ITRF93 (High accuracy earth fixed frame)
 * Configure spacecraft
   * Clock

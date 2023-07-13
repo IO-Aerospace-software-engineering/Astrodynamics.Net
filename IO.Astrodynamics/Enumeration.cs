@@ -11,10 +11,6 @@ public static class Enumeration
     {
         var field = value.GetType().GetField(value.ToString());
 
-        var attribute
-            = Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute))
-                as DescriptionAttribute;
-
-        return attribute == null ? value.ToString() : attribute.Description;
+        return Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute)) is not DescriptionAttribute attribute ? value.ToString() : attribute.Description;
     }
 }

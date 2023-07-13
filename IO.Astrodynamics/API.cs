@@ -240,175 +240,200 @@ public class API
                 int order = 0;
                 while (maneuver != null)
                 {
-                    if (maneuver is PlaneAlignmentManeuver)
+                    switch (maneuver)
                     {
-                        StateVector target = _mapper.Map<StateVector>(maneuver.TargetOrbit.ToStateVector());
-                        int idx = scenarioDto.Spacecraft.OrbitalPlaneChangingManeuvers.Count(x => x.ManeuverOrder > -1);
-                        scenarioDto.Spacecraft.OrbitalPlaneChangingManeuvers[idx] = new OrbitalPlaneChangingManeuver(
-                            order,
-                            maneuver.ManeuverHoldDuration.TotalSeconds,
-                            maneuver.MinimumEpoch.SecondsFromJ2000TDB(), target);
-
-                        //Add engines
-                        for (int k = 0; k < maneuver.Engines.Count; k++)
+                        case PlaneAlignmentManeuver:
                         {
-                            scenarioDto.Spacecraft.OrbitalPlaneChangingManeuvers[idx].Engines[k] =
-                                maneuver.Engines.ElementAt(k).SerialNumber;
-                        }
-                    }
-                    else if (maneuver is ApogeeHeightManeuver heightManeuver)
-                    {
-                        int idx = scenarioDto.Spacecraft.ApogeeHeightChangingManeuvers.Count(x => x.ManeuverOrder > -1);
-                        scenarioDto.Spacecraft.ApogeeHeightChangingManeuvers[
-                                scenarioDto.Spacecraft.ApogeeHeightChangingManeuvers.Count(x => x.ManeuverOrder > -1)] =
-                            new ApogeeHeightChangingManeuver(order, heightManeuver.ManeuverHoldDuration.TotalSeconds,
-                                heightManeuver.MinimumEpoch.SecondsFromJ2000TDB(),
-                                heightManeuver.TargetApogee);
-
-                        //Add engines
-                        for (int k = 0; k < heightManeuver.Engines.Count; k++)
-                        {
-                            scenarioDto.Spacecraft.ApogeeHeightChangingManeuvers[idx].Engines[k] =
-                                heightManeuver.Engines.ElementAt(k).SerialNumber;
-                        }
-                    }
-                    else if (maneuver is ApsidalAlignmentManeuver)
-                    {
-                        StateVector target = _mapper.Map<StateVector>(maneuver.TargetOrbit.ToStateVector());
-                        int idx = scenarioDto.Spacecraft.ApsidalAlignmentManeuvers.Count(x => x.ManeuverOrder > -1);
-                        scenarioDto.Spacecraft.ApsidalAlignmentManeuvers[
-                                scenarioDto.Spacecraft.ApsidalAlignmentManeuvers.Count(x => x.ManeuverOrder > -1)] =
-                            new DTO.ApsidalAlignmentManeuver(order, maneuver.ManeuverHoldDuration.TotalSeconds,
+                            StateVector target = _mapper.Map<StateVector>(maneuver.TargetOrbit.ToStateVector());
+                            int idx = scenarioDto.Spacecraft.OrbitalPlaneChangingManeuvers.Count(x => x.ManeuverOrder > -1);
+                            scenarioDto.Spacecraft.OrbitalPlaneChangingManeuvers[idx] = new OrbitalPlaneChangingManeuver(
+                                order,
+                                maneuver.ManeuverHoldDuration.TotalSeconds,
                                 maneuver.MinimumEpoch.SecondsFromJ2000TDB(), target);
 
-                        //Add engines
-                        for (int k = 0; k < maneuver.Engines.Count; k++)
-                        {
-                            scenarioDto.Spacecraft.ApsidalAlignmentManeuvers[idx].Engines[k] =
-                                maneuver.Engines.ElementAt(k).SerialNumber;
-                        }
-                    }
-                    else if (maneuver is CombinedManeuver combinedManeuver)
-                    {
-                        int idx = scenarioDto.Spacecraft.CombinedManeuvers.Count(x => x.ManeuverOrder > -1);
-                        scenarioDto.Spacecraft.CombinedManeuvers[
-                                scenarioDto.Spacecraft.CombinedManeuvers.Count(x => x.ManeuverOrder > -1)] =
-                            new DTO.CombinedManeuver(order,
-                                combinedManeuver.ManeuverHoldDuration.TotalSeconds, combinedManeuver.MinimumEpoch.SecondsFromJ2000TDB(),
-                                combinedManeuver.TargetPerigeeHeight,
-                                combinedManeuver.TargetInclination);
+                            //Add engines
+                            for (int k = 0; k < maneuver.Engines.Count; k++)
+                            {
+                                scenarioDto.Spacecraft.OrbitalPlaneChangingManeuvers[idx].Engines[k] =
+                                    maneuver.Engines.ElementAt(k).SerialNumber;
+                            }
 
-                        //Add engines
-                        for (int k = 0; k < combinedManeuver.Engines.Count; k++)
-                        {
-                            scenarioDto.Spacecraft.CombinedManeuvers[idx].Engines[k] =
-                                combinedManeuver.Engines.ElementAt(k).SerialNumber;
+                            break;
                         }
-                    }
-                    else if (maneuver is PerigeeHeightManeuver perigeeHeightManeuver)
-                    {
-                        int idx = scenarioDto.Spacecraft.PerigeeHeightChangingManeuvers.Count(x =>
-                            x.ManeuverOrder > -1);
-                        scenarioDto.Spacecraft.PerigeeHeightChangingManeuvers[
-                                scenarioDto.Spacecraft.PerigeeHeightChangingManeuvers.Count(x =>
-                                    x.ManeuverOrder > -1)] =
-                            new PerigeeHeightChangingManeuver(order, perigeeHeightManeuver.ManeuverHoldDuration.TotalSeconds,
-                                perigeeHeightManeuver.MinimumEpoch.SecondsFromJ2000TDB(),
-                                perigeeHeightManeuver.TargetPerigeeHeight);
-                        //Add engines
-                        for (int k = 0; k < perigeeHeightManeuver.Engines.Count; k++)
+                        case ApogeeHeightManeuver heightManeuver:
                         {
-                            scenarioDto.Spacecraft.PerigeeHeightChangingManeuvers[idx].Engines[k] =
-                                perigeeHeightManeuver.Engines.ElementAt(k).SerialNumber;
+                            int idx = scenarioDto.Spacecraft.ApogeeHeightChangingManeuvers.Count(x => x.ManeuverOrder > -1);
+                            scenarioDto.Spacecraft.ApogeeHeightChangingManeuvers[
+                                    scenarioDto.Spacecraft.ApogeeHeightChangingManeuvers.Count(x => x.ManeuverOrder > -1)] =
+                                new ApogeeHeightChangingManeuver(order, heightManeuver.ManeuverHoldDuration.TotalSeconds,
+                                    heightManeuver.MinimumEpoch.SecondsFromJ2000TDB(),
+                                    heightManeuver.TargetApogee);
+
+                            //Add engines
+                            for (int k = 0; k < heightManeuver.Engines.Count; k++)
+                            {
+                                scenarioDto.Spacecraft.ApogeeHeightChangingManeuvers[idx].Engines[k] =
+                                    heightManeuver.Engines.ElementAt(k).SerialNumber;
+                            }
+
+                            break;
                         }
-                    }
-                    else if (maneuver is PhasingManeuver phasingManeuver)
-                    {
-                        StateVector target = _mapper.Map<StateVector>(phasingManeuver.TargetOrbit.ToStateVector());
-                        int idx = scenarioDto.Spacecraft.PhasingManeuver.Count(x => x.ManeuverOrder > -1);
-                        scenarioDto.Spacecraft.PhasingManeuver[
-                                scenarioDto.Spacecraft.PhasingManeuver.Count(x => x.ManeuverOrder > -1)] =
-                            new DTO.PhasingManeuver(
-                                order,
-                                phasingManeuver.ManeuverHoldDuration.TotalSeconds, phasingManeuver.MinimumEpoch.SecondsFromJ2000TDB(),
-                                (int)phasingManeuver.RevolutionNumber, target);
-                        //Add engines
-                        for (int k = 0; k < phasingManeuver.Engines.Count; k++)
+                        case ApsidalAlignmentManeuver:
                         {
-                            scenarioDto.Spacecraft.PhasingManeuver[idx].Engines[k] =
-                                phasingManeuver.Engines.ElementAt(k).SerialNumber;
+                            StateVector target = _mapper.Map<StateVector>(maneuver.TargetOrbit.ToStateVector());
+                            int idx = scenarioDto.Spacecraft.ApsidalAlignmentManeuvers.Count(x => x.ManeuverOrder > -1);
+                            scenarioDto.Spacecraft.ApsidalAlignmentManeuvers[
+                                    scenarioDto.Spacecraft.ApsidalAlignmentManeuvers.Count(x => x.ManeuverOrder > -1)] =
+                                new DTO.ApsidalAlignmentManeuver(order, maneuver.ManeuverHoldDuration.TotalSeconds,
+                                    maneuver.MinimumEpoch.SecondsFromJ2000TDB(), target);
+
+                            //Add engines
+                            for (int k = 0; k < maneuver.Engines.Count; k++)
+                            {
+                                scenarioDto.Spacecraft.ApsidalAlignmentManeuvers[idx].Engines[k] =
+                                    maneuver.Engines.ElementAt(k).SerialNumber;
+                            }
+
+                            break;
                         }
-                    }
-                    else if (maneuver is InstrumentPointingToAttitude instManeuver)
-                    {
-                        int idx = scenarioDto.Spacecraft.PointingToAttitudes.Count(x => x.ManeuverOrder > -1);
-                        scenarioDto.Spacecraft.PointingToAttitudes[
-                                scenarioDto.Spacecraft.PointingToAttitudes.Count(x => x.ManeuverOrder > -1)] =
-                            new DTO.InstrumentPointingToAttitude(order, instManeuver.Instrument.NaifId,
-                                instManeuver.Target.NaifId,
-                                instManeuver.ManeuverHoldDuration.TotalSeconds,
-                                instManeuver.MinimumEpoch.SecondsFromJ2000TDB());
-                        //Add engines
-                        for (int k = 0; k < instManeuver.Engines.Count; k++)
+                        case CombinedManeuver combinedManeuver:
                         {
-                            scenarioDto.Spacecraft.PointingToAttitudes[idx].Engines[k] =
-                                instManeuver.Engines.ElementAt(k).SerialNumber;
+                            int idx = scenarioDto.Spacecraft.CombinedManeuvers.Count(x => x.ManeuverOrder > -1);
+                            scenarioDto.Spacecraft.CombinedManeuvers[
+                                    scenarioDto.Spacecraft.CombinedManeuvers.Count(x => x.ManeuverOrder > -1)] =
+                                new DTO.CombinedManeuver(order,
+                                    combinedManeuver.ManeuverHoldDuration.TotalSeconds, combinedManeuver.MinimumEpoch.SecondsFromJ2000TDB(),
+                                    combinedManeuver.TargetPerigeeHeight,
+                                    combinedManeuver.TargetInclination);
+
+                            //Add engines
+                            for (int k = 0; k < combinedManeuver.Engines.Count; k++)
+                            {
+                                scenarioDto.Spacecraft.CombinedManeuvers[idx].Engines[k] =
+                                    combinedManeuver.Engines.ElementAt(k).SerialNumber;
+                            }
+
+                            break;
                         }
-                    }
-                    else if (maneuver is ProgradeAttitude)
-                    {
-                        int idx = scenarioDto.Spacecraft.ProgradeAttitudes.Count(x => x.ManeuverOrder > -1);
-                        scenarioDto.Spacecraft.ProgradeAttitudes[
-                                scenarioDto.Spacecraft.ProgradeAttitudes.Count(x => x.ManeuverOrder > -1)] =
-                            new DTO.ProgradeAttitude(order, maneuver.ManeuverHoldDuration.TotalSeconds,
-                                maneuver.MinimumEpoch.SecondsFromJ2000TDB());
-                        //Add engines
-                        for (int k = 0; k < maneuver.Engines.Count; k++)
+                        case PerigeeHeightManeuver perigeeHeightManeuver:
                         {
-                            scenarioDto.Spacecraft.ProgradeAttitudes[idx].Engines[k] =
-                                maneuver.Engines.ElementAt(k).SerialNumber;
+                            int idx = scenarioDto.Spacecraft.PerigeeHeightChangingManeuvers.Count(x =>
+                                x.ManeuverOrder > -1);
+                            scenarioDto.Spacecraft.PerigeeHeightChangingManeuvers[
+                                    scenarioDto.Spacecraft.PerigeeHeightChangingManeuvers.Count(x =>
+                                        x.ManeuverOrder > -1)] =
+                                new PerigeeHeightChangingManeuver(order, perigeeHeightManeuver.ManeuverHoldDuration.TotalSeconds,
+                                    perigeeHeightManeuver.MinimumEpoch.SecondsFromJ2000TDB(),
+                                    perigeeHeightManeuver.TargetPerigeeHeight);
+                            //Add engines
+                            for (int k = 0; k < perigeeHeightManeuver.Engines.Count; k++)
+                            {
+                                scenarioDto.Spacecraft.PerigeeHeightChangingManeuvers[idx].Engines[k] =
+                                    perigeeHeightManeuver.Engines.ElementAt(k).SerialNumber;
+                            }
+
+                            break;
                         }
-                    }
-                    else if (maneuver is RetrogradeAttitude)
-                    {
-                        int idx = scenarioDto.Spacecraft.RetrogradeAttitudes.Count(x => x.ManeuverOrder > -1);
-                        scenarioDto.Spacecraft.RetrogradeAttitudes[
-                                scenarioDto.Spacecraft.RetrogradeAttitudes.Count(x => x.ManeuverOrder > -1)] =
-                            new DTO.RetrogradeAttitude(order, maneuver.ManeuverHoldDuration.TotalSeconds,
-                                maneuver.MinimumEpoch.SecondsFromJ2000TDB());
-                        //Add engines
-                        for (int k = 0; k < maneuver.Engines.Count; k++)
+                        case PhasingManeuver phasingManeuver:
                         {
-                            scenarioDto.Spacecraft.RetrogradeAttitudes[idx].Engines[k] =
-                                maneuver.Engines.ElementAt(k).SerialNumber;
+                            StateVector target = _mapper.Map<StateVector>(phasingManeuver.TargetOrbit.ToStateVector());
+                            int idx = scenarioDto.Spacecraft.PhasingManeuver.Count(x => x.ManeuverOrder > -1);
+                            scenarioDto.Spacecraft.PhasingManeuver[
+                                    scenarioDto.Spacecraft.PhasingManeuver.Count(x => x.ManeuverOrder > -1)] =
+                                new DTO.PhasingManeuver(
+                                    order,
+                                    phasingManeuver.ManeuverHoldDuration.TotalSeconds, phasingManeuver.MinimumEpoch.SecondsFromJ2000TDB(),
+                                    (int)phasingManeuver.RevolutionNumber, target);
+                            //Add engines
+                            for (int k = 0; k < phasingManeuver.Engines.Count; k++)
+                            {
+                                scenarioDto.Spacecraft.PhasingManeuver[idx].Engines[k] =
+                                    phasingManeuver.Engines.ElementAt(k).SerialNumber;
+                            }
+
+                            break;
                         }
-                    }
-                    else if (maneuver is NadirAttitude)
-                    {
-                        int idx = scenarioDto.Spacecraft.NadirAttitudes.Count(x => x.ManeuverOrder > -1);
-                        scenarioDto.Spacecraft.NadirAttitudes[
-                                scenarioDto.Spacecraft.NadirAttitudes.Count(x => x.ManeuverOrder > -1)] =
-                            new DTO.NadirAttitude(order, maneuver.ManeuverHoldDuration.TotalSeconds,
-                                maneuver.MinimumEpoch.SecondsFromJ2000TDB());
-                        //Add engines
-                        for (int k = 0; k < maneuver.Engines.Count; k++)
+                        case InstrumentPointingToAttitude instManeuver:
                         {
-                            scenarioDto.Spacecraft.NadirAttitudes[idx].Engines[k] =
-                                maneuver.Engines.ElementAt(k).SerialNumber;
+                            int idx = scenarioDto.Spacecraft.PointingToAttitudes.Count(x => x.ManeuverOrder > -1);
+                            scenarioDto.Spacecraft.PointingToAttitudes[
+                                    scenarioDto.Spacecraft.PointingToAttitudes.Count(x => x.ManeuverOrder > -1)] =
+                                new DTO.InstrumentPointingToAttitude(order, instManeuver.Instrument.NaifId,
+                                    instManeuver.Target.NaifId,
+                                    instManeuver.ManeuverHoldDuration.TotalSeconds,
+                                    instManeuver.MinimumEpoch.SecondsFromJ2000TDB());
+                            //Add engines
+                            for (int k = 0; k < instManeuver.Engines.Count; k++)
+                            {
+                                scenarioDto.Spacecraft.PointingToAttitudes[idx].Engines[k] =
+                                    instManeuver.Engines.ElementAt(k).SerialNumber;
+                            }
+
+                            break;
                         }
-                    }
-                    else if (maneuver is ZenithAttitude)
-                    {
-                        int idx = scenarioDto.Spacecraft.ZenithAttitudes.Count(x => x.ManeuverOrder > -1);
-                        scenarioDto.Spacecraft.ZenithAttitudes[
-                                scenarioDto.Spacecraft.ZenithAttitudes.Count(x => x.ManeuverOrder > -1)] =
-                            new DTO.ZenithAttitude(order, maneuver.ManeuverHoldDuration.TotalSeconds,
-                                maneuver.MinimumEpoch.SecondsFromJ2000TDB());
-                        //Add engines
-                        for (int k = 0; k < maneuver.Engines.Count; k++)
+                        case ProgradeAttitude:
                         {
-                            scenarioDto.Spacecraft.ZenithAttitudes[idx].Engines[k] =
-                                maneuver.Engines.ElementAt(k).SerialNumber;
+                            int idx = scenarioDto.Spacecraft.ProgradeAttitudes.Count(x => x.ManeuverOrder > -1);
+                            scenarioDto.Spacecraft.ProgradeAttitudes[
+                                    scenarioDto.Spacecraft.ProgradeAttitudes.Count(x => x.ManeuverOrder > -1)] =
+                                new DTO.ProgradeAttitude(order, maneuver.ManeuverHoldDuration.TotalSeconds,
+                                    maneuver.MinimumEpoch.SecondsFromJ2000TDB());
+                            //Add engines
+                            for (int k = 0; k < maneuver.Engines.Count; k++)
+                            {
+                                scenarioDto.Spacecraft.ProgradeAttitudes[idx].Engines[k] =
+                                    maneuver.Engines.ElementAt(k).SerialNumber;
+                            }
+
+                            break;
+                        }
+                        case RetrogradeAttitude:
+                        {
+                            int idx = scenarioDto.Spacecraft.RetrogradeAttitudes.Count(x => x.ManeuverOrder > -1);
+                            scenarioDto.Spacecraft.RetrogradeAttitudes[
+                                    scenarioDto.Spacecraft.RetrogradeAttitudes.Count(x => x.ManeuverOrder > -1)] =
+                                new DTO.RetrogradeAttitude(order, maneuver.ManeuverHoldDuration.TotalSeconds,
+                                    maneuver.MinimumEpoch.SecondsFromJ2000TDB());
+                            //Add engines
+                            for (int k = 0; k < maneuver.Engines.Count; k++)
+                            {
+                                scenarioDto.Spacecraft.RetrogradeAttitudes[idx].Engines[k] =
+                                    maneuver.Engines.ElementAt(k).SerialNumber;
+                            }
+
+                            break;
+                        }
+                        case NadirAttitude:
+                        {
+                            int idx = scenarioDto.Spacecraft.NadirAttitudes.Count(x => x.ManeuverOrder > -1);
+                            scenarioDto.Spacecraft.NadirAttitudes[
+                                    scenarioDto.Spacecraft.NadirAttitudes.Count(x => x.ManeuverOrder > -1)] =
+                                new DTO.NadirAttitude(order, maneuver.ManeuverHoldDuration.TotalSeconds,
+                                    maneuver.MinimumEpoch.SecondsFromJ2000TDB());
+                            //Add engines
+                            for (int k = 0; k < maneuver.Engines.Count; k++)
+                            {
+                                scenarioDto.Spacecraft.NadirAttitudes[idx].Engines[k] =
+                                    maneuver.Engines.ElementAt(k).SerialNumber;
+                            }
+
+                            break;
+                        }
+                        case ZenithAttitude:
+                        {
+                            int idx = scenarioDto.Spacecraft.ZenithAttitudes.Count(x => x.ManeuverOrder > -1);
+                            scenarioDto.Spacecraft.ZenithAttitudes[
+                                    scenarioDto.Spacecraft.ZenithAttitudes.Count(x => x.ManeuverOrder > -1)] =
+                                new DTO.ZenithAttitude(order, maneuver.ManeuverHoldDuration.TotalSeconds,
+                                    maneuver.MinimumEpoch.SecondsFromJ2000TDB());
+                            //Add engines
+                            for (int k = 0; k < maneuver.Engines.Count; k++)
+                            {
+                                scenarioDto.Spacecraft.ZenithAttitudes[idx].Engines[k] =
+                                    maneuver.Engines.ElementAt(k).SerialNumber;
+                            }
+
+                            break;
                         }
                     }
 

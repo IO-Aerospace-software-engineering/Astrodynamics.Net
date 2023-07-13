@@ -15,10 +15,10 @@ namespace IO.Astrodynamics.OrbitalParameters
         /// </summary>
         /// <param name="position"></param>
         /// <param name="velocity"></param>
-        /// <param name="centerOfMotion"></param>
+        /// <param name="observer"></param>
         /// <param name="epoch"></param>
         /// <param name="frame"></param>
-        public StateVector(Vector3 position, Vector3 velocity, ILocalizable centerOfMotion, DateTime epoch, Frame frame) : base(centerOfMotion, epoch, frame)
+        public StateVector(Vector3 position, Vector3 velocity, ILocalizable observer, DateTime epoch, Frame frame) : base(observer, epoch, frame)
         {
             Position = position;
             Velocity = velocity;

@@ -22,7 +22,7 @@ namespace IO.Astrodynamics.Tests.Coordinates
         {
             Equatorial eq = new Equatorial(1.0, 2.0, 3.0);
             Assert.Equal(1.0, eq.Declination);
-            Assert.Equal(2.0, eq.RightAscencion);
+            Assert.Equal(2.0, eq.RightAscension);
             Assert.Equal(3.0, eq.Distance);
         }
 
@@ -51,6 +51,16 @@ namespace IO.Astrodynamics.Tests.Coordinates
                 new Vector3(-0.48702480142667454, -0.26438331399030518, -0.17175837261637006), earth, epoch,
                 Frames.Frame.ICRF));
             Assert.Equal(new Equatorial(0.406773808779999, 2.1904536325374035, 380284.26703704614), eq);
+        }
+
+        [Fact]
+        public void ToCartesian()
+        {
+            var moon = TestHelpers.MoonAtJ2000;
+            var earth = TestHelpers.EarthAtJ2000;
+            var eq = moon.GetEphemeris(DateTimeExtension.J2000, earth, Frames.Frame.ICRF, Aberration.None).ToEquatorial();
+            Assert.Equal(new Equatorial(-0.19024413568211912, 3.8824377884372114, 402448639.8873273), eq);
+            Assert.Equal(new Vector3(-291608384.63343555, -266716833.3942334, -76102487.09990202), eq.ToCartesian());
         }
     }
 }

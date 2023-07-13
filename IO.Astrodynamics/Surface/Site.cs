@@ -22,11 +22,9 @@ namespace IO.Astrodynamics.Surface
         {
             List<ILocalizable> celestialBodies = new List<ILocalizable>();
 
-            if (InitialOrbitalParameters?.Observer != null)
-            {
-                celestialBodies.Add(InitialOrbitalParameters.Observer);
-                celestialBodies.AddRange(InitialOrbitalParameters.Observer.GetCentersOfMotion());
-            }
+            if (InitialOrbitalParameters?.Observer == null) return celestialBodies;
+            celestialBodies.Add(InitialOrbitalParameters.Observer);
+            celestialBodies.AddRange(InitialOrbitalParameters.Observer.GetCentersOfMotion());
 
             return celestialBodies;
         }
@@ -157,8 +155,7 @@ namespace IO.Astrodynamics.Surface
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
-            return Equals((Site)obj);
+            return obj.GetType() == this.GetType() && Equals((Site)obj);
         }
 
         public override int GetHashCode()

@@ -35,22 +35,22 @@ namespace IO.Astrodynamics.OrbitalParameters
                 throw new ArgumentException("Eccentricity must be a positive number");
             }
 
-            if (inclination < -Constants.PI || inclination > Constants.PI)
+            if (inclination is < -Constants.PI or > Constants.PI)
             {
                 throw new ArgumentException("Inclination must be in range [-PI,PI] ");
             }
 
-            if (rigthAscendingNode < 0.0 || rigthAscendingNode > Constants._2PI)
+            if (rigthAscendingNode is < 0.0 or > Constants._2PI)
             {
                 throw new ArgumentException("Rigth ascending node must be in range [0.0,2*PI] ");
             }
 
-            if (argumentOfPeriapsis < 0.0 || argumentOfPeriapsis > Constants._2PI)
+            if (argumentOfPeriapsis is < 0.0 or > Constants._2PI)
             {
                 throw new ArgumentException("Argument of periapsis must be in range [0.0,2*PI] ");
             }
 
-            if (meanAnomaly < 0.0 || meanAnomaly > Constants._2PI)
+            if (meanAnomaly is < 0.0 or > Constants._2PI)
             {
                 throw new ArgumentException("Mean anomaly must be in range [0.0,2*PI] ");
             }

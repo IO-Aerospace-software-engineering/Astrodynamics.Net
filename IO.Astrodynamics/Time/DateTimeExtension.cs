@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Runtime.CompilerServices;
 
 namespace IO.Astrodynamics.Time;
 
@@ -85,12 +84,7 @@ public static class DateTimeExtension
             return date;
         }
 
-        if (date.Kind == DateTimeKind.Local)
-        {
-            return date.ToUniversalTime();
-        }
-
-        return date.AddSeconds(-(OFFSET + LeapSeconds.Count(x => x < date)));
+        return date.Kind == DateTimeKind.Local ? date.ToUniversalTime() : date.AddSeconds(-(OFFSET + LeapSeconds.Count(x => x < date)));
     }
 
     /// <summary>
@@ -143,7 +137,7 @@ public static class DateTimeExtension
     /// <summary>
     /// Create TDB from Julian date
     /// </summary>
-    /// <param name="secondsFromJ2000"></param>
+    /// <param name="julianDate"></param>
     /// <returns></returns>
     public static DateTime CreateTDBFromJD(double julianDate)
     {
@@ -154,7 +148,7 @@ public static class DateTimeExtension
     /// <summary>
     /// Create UTC from Julian date
     /// </summary>
-    /// <param name="secondsFromJ2000"></param>
+    /// <param name="julianDate"></param>
     /// <returns></returns>
     public static DateTime CreateUTCFromJD(double julianDate)
     {

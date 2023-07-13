@@ -15,23 +15,20 @@ public abstract class Body : ILocalizable, IEquatable<Body>
     public double GM { get; }
 
     public OrbitalParameters.OrbitalParameters InitialOrbitalParameters { get; internal set; }
-    
 
     private readonly HashSet<Body> _satellites = new();
     public IReadOnlyCollection<Body> Satellites => _satellites;
 
-    //Used for performance improvement and avoid duplicated call in Celestial body
+    //Used for performance improvement and avoid duplicated call in Celestial body API
     protected DTO.CelestialBody ExtendedInformation;
 
+    public bool IsSpacecraft => NaifId < 0;
     public bool IsBarycenter => NaifId is >= 0 and < 10;
-
     public bool IsSun => NaifId == 10;
-
     public bool IsPlanet => NaifId is > 100 and < 1000 && (NaifId % 100) == 99;
-
     public bool IsMoon => NaifId is > 100 and < 1000 && (NaifId % 100) != 99;
-
-    public bool IsAsteroid => this.NaifId > 1000;
+    public bool IsAsteroid => this.NaifId is > 1000 and < 1000000000;
+    public bool IsStar => this.NaifId > 1000000000;
 
     /// <summary>
     /// 
@@ -52,16 +49,11 @@ public abstract class Body : ILocalizable, IEquatable<Body>
         Mass = ExtendedInformation.GM / Constants.G;
         GM = ExtendedInformation.GM;
 
-        if (NaifId != Stars.Sun.NaifId && NaifId != Barycenters.SOLAR_SYSTEM_BARYCENTER.NaifId)
-        {
-            // if (IsPlanet || IsMoon)
-            //     InitialOrbitalParameters = GetEphemeris(epoch, new CelestialBody(ExtendedInformation.CenterOfMotionId), frame, Aberration.None);
-            
-            if (IsPlanet || IsMoon||IsBarycenter)
-                InitialOrbitalParameters = GetEphemeris(epoch, new Barycenter(ExtendedInformation.BarycenterOfMotionId), frame, Aberration.None);
+        if (NaifId == Stars.Sun.NaifId || NaifId == Barycenters.SOLAR_SYSTEM_BARYCENTER.NaifId) return;
+        if (IsPlanet || IsMoon || IsBarycenter)
+            InitialOrbitalParameters = GetEphemeris(epoch, new Barycenter(ExtendedInformation.BarycenterOfMotionId), frame, Aberration.None);
 
-            (InitialOrbitalParameters?.Observer as Body)?._satellites.Add(this);
-        }
+        (InitialOrbitalParameters?.Observer as Body)?._satellites.Add(this);
     }
 
     /// <summary>
@@ -86,6 +78,7 @@ public abstract class Body : ILocalizable, IEquatable<Body>
         NaifId = naifId;
         Name = name;
         Mass = mass;
+        GM = mass * Constants.G;
         InitialOrbitalParameters = initialOrbitalParameters;
         (InitialOrbitalParameters?.Observer as CelestialBody)?._satellites.Add(this);
     }
@@ -189,11 +182,9 @@ public abstract class Body : ILocalizable, IEquatable<Body>
     {
         List<ILocalizable> celestialBodies = new List<ILocalizable>();
 
-        if (InitialOrbitalParameters?.Observer != null)
-        {
-            celestialBodies.Add(InitialOrbitalParameters.Observer);
-            celestialBodies.AddRange(InitialOrbitalParameters.Observer.GetCentersOfMotion());
-        }
+        if (InitialOrbitalParameters?.Observer == null) return celestialBodies;
+        celestialBodies.Add(InitialOrbitalParameters.Observer);
+        celestialBodies.AddRange(InitialOrbitalParameters.Observer.GetCentersOfMotion());
 
         return celestialBodies;
     }

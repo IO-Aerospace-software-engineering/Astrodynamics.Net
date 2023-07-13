@@ -8,11 +8,20 @@ namespace IO.Astrodynamics.Tests.Body;
 
 public class StarTests
 {
+    public StarTests()
+    {
+        API.Instance.LoadKernels(Constants.SolarSystemKernelPath);
+    }
+
     [Fact]
     public void Create()
     {
-        var star = new Star(1, "spec", 2, 0.3792, new Equatorial(10, 20), 4, 5, 6, 7, 8, 9, DateTimeExtension.J2000);
+        var star = new Star(1, "star1", 1E+30, "spec", 2, 0.3792, new Equatorial(10, 20), 4, 5, 6, 7, 8, 9, DateTimeExtension.J2000);
         Assert.Equal(1, star.CatalogNumber);
+        Assert.Equal(1000000001, star.NaifId);
+        Assert.Equal("star1", star.Name);
+        Assert.Equal(1E+30, star.Mass);
+        Assert.Equal(6.674299999999999E+19, star.GM);
         Assert.Equal("spec", star.SpectralType);
         Assert.Equal(2, star.VisualMagnitude);
         Assert.Equal(DateTimeExtension.J2000, star.Epoch);
@@ -24,30 +33,65 @@ public class StarTests
         Assert.Equal(8, star.DeclinationSigmaProperMotion);
         Assert.Equal(9, star.RightAscensionSigmaProperMotion);
         Assert.Equal(0.3792, star.Parallax);
+        Assert.Equal(8.1373353929324900E+16, star.Distance);
+        Assert.Null(star.InitialOrbitalParameters);
+        Assert.Equal(0.0, star.Flattening);
     }
 
     [Fact]
     public void GetEquatorialCoordinates()
     {
-        var star = new Star(1, "spec", 2, 0.3792, new Equatorial(10, 20), 4, 5, 6, 7, 8, 9, DateTimeExtension.J2000);
+        var star = new Star(1, "star1", 1E+30, "spec", 2, 0.3792, new Equatorial(10, 20), 4, 5, 6, 7, 8, 9, DateTimeExtension.J2000);
         var res = star.GetEquatorialCoordinates(new DateTime(2001, 1, 1, 12, 0, 0));
-        Assert.Equal(new Equatorial(14.008213552361397, 25.010266940451746, 2.6371308016877637), res);
+        Assert.Equal(new Equatorial(1.4418429380022246, 6.160711018912988, 8.1373353929324900E+16), res);
+    }
+
+    [Fact]
+    public void GetEquatorialCoordinates2()
+    {
+        var star = new Star(1, "star1", 1E+30, "spec", 2, 0.3792, new Equatorial(10 - (Astrodynamics.Constants.PI2 * 10), 20 - (Astrodynamics.Constants._2PI * 10)), 4, 5, 6, 7, 8,
+            9, DateTimeExtension.J2000);
+        var res = star.GetEquatorialCoordinates(new DateTime(2001, 1, 1, 12, 0, 0));
+        Assert.Equal(new Equatorial(-0.12895338879267282, 6.160711018912984, 8.1373353929324900E+16), res);
     }
 
     [Fact]
     public void GetDeclinationSigma()
     {
-        var star = new Star(1, "spec", 2, 0.3792, new Equatorial(10, 20), 4, 5, 6, 7, 8, 9, DateTimeExtension.J2000);
+        var star = new Star(1, "star1", 1E+30, "spec", 2, 0.3792, new Equatorial(10, 20), 4, 5, 6, 7, 8, 9, DateTimeExtension.J2000);
         var res = star.GetDeclinationSigma(new DateTime(2001, 1, 1, 12, 0, 0));
-        Assert.Equal(10.013146534697984, res);
+        Assert.Equal(0.5883685739286051, res);
     }
+
 
     [Fact]
     public void GetRightAscensionSigma()
     {
-        var star = new Star(1, "spec", 2, 0.3792, new Equatorial(10, 20), 4, 5, 6, 7, 8, 9, DateTimeExtension.J2000);
+        var star = new Star(1, "star1", 1E+30, "spec", 2, 0.3792, new Equatorial(10, 20), 4, 5, 6, 7, 8, 9, DateTimeExtension.J2000);
         var res = star.GetRightAscensionSigma(new DateTime(2001, 1, 1, 12, 0, 0));
-        Assert.Equal(11.416347506941577, res);
+        Assert.Equal(5.1331621997619905, res);
     }
-    
+
+    [Fact]
+    public void Propagate()
+    {
+        var epoch = new DateTime(2001, 1, 1);
+        var observer = new Barycenter(0);
+        var star = new Star(1, "star1", 1E+30, "spec", 2, 0.3792, new Equatorial(1, 1), 0.1, 0.1, 0, 0, 0, 0, epoch);
+        star.Propagate(new Window(epoch, epoch + TimeSpan.FromDays(365 * 4)), TimeSpan.FromDays(365));
+        var eph0 = star.GetEphemeris(epoch, observer, Frames.Frame.ICRF, Aberration.None);
+        var eph1 = star.GetEphemeris(epoch.Add(TimeSpan.FromDays(365)), observer, Frames.Frame.ICRF, Aberration.None);
+        var eph2 = star.GetEphemeris(epoch.Add(TimeSpan.FromDays(365 + 365)), observer, Frames.Frame.ICRF, Aberration.None);
+        Assert.Equal(1.0, eph0.ToEquatorial().RightAscension, 12);
+        Assert.Equal(1.0, eph0.ToEquatorial().Declination, 12);
+        Assert.Equal(8.1373353929324900E+16, eph0.ToEquatorial().Distance);
+
+        Assert.Equal(1.1, eph1.ToEquatorial().RightAscension, 3);
+        Assert.Equal(1.1, eph1.ToEquatorial().Declination, 3);
+        Assert.Equal(8.1373353929324900E+16, eph1.ToEquatorial().Distance);
+
+        Assert.Equal(1.2, eph2.ToEquatorial().RightAscension, 3);
+        Assert.Equal(1.2, eph2.ToEquatorial().Declination, 3);
+        Assert.Equal(8.1373353929324910E+16, eph2.ToEquatorial().Distance);
+    }
 }

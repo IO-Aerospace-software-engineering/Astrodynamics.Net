@@ -42,7 +42,7 @@
                 end +=Constants._2PI;
             }
 
-            end = end - Start;
+            end -= Start;
 
             if (end < 0.0)
             {
