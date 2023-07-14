@@ -18,6 +18,7 @@ public struct Site
     public AzimuthRange[] Ranges;
 
     public string DirectoryPath = null;
+    public string Error { get; } = string.Empty;
 
 
     public Site(int naifId, int bodyId, Planetodetic coordinates, string name, string directoryPath) : this()
@@ -28,5 +29,10 @@ public struct Site
         Name = name;
         DirectoryPath = directoryPath;
         Ranges = ArrayBuilder.ArrayOf<AzimuthRange>(AZIMUTHRANGESIZE);
+    }
+    
+    public bool HasError()
+    {
+        return !string.IsNullOrEmpty(Error);
     }
 }

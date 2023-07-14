@@ -18,9 +18,6 @@
         <None Update="resources\IO.Astrodynamics.lib">
           <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Update="resources\libIO.Astrodynamics.so">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
     </ItemGroup>
 
     <ItemGroup>
@@ -31,6 +28,13 @@
 
     <ItemGroup>
       <PackageReference Include="AutoMapper" Version="12.0.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="..\..\Astrodynamics\cmake-build-release\IO.Astrodynamics\libIO.Astrodynamics.so">
+        <Link>resources/libIO.Astrodynamics.so</Link>
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
     </ItemGroup>
 
 </Project>

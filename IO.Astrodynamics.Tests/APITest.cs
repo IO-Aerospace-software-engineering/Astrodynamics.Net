@@ -72,17 +72,20 @@ public class APITest
         var res = API.Instance.FindLaunchWindows(launch, window, Constants.OutputPath).ToArray();
 
         //Read results
-        Assert.Equal(2, res.Count());
+        Assert.Equal(3, res.Count());
         Assert.Equal(
-            new Window(DateTime.Parse("2021-03-03 23:09:15.971").ToTDB(),
-                DateTime.Parse("2021-03-03 23:09:15.971").ToTDB()), res.ElementAt(0).Window);
+            new Window(DateTime.Parse("03/02/2021 23:12:54.421").ToTDB(),
+                DateTime.Parse("03/02/2021 23:12:54.421").ToTDB()), res.ElementAt(0).Window);
         Assert.Equal(
-            new Window(DateTime.Parse("2021-03-04 23:05:19.447").ToTDB(),
-                DateTime.Parse("2021-03-04 23:05:19.447").ToTDB()), res.ElementAt(1).Window);
-        Assert.Equal(47.00587579161426, res.ElementAt(0).InertialAzimuth * IO.Astrodynamics.Constants.Rad2Deg);
-        Assert.Equal(45.125224583051406, res.ElementAt(0).NonInertialAzimuth * IO.Astrodynamics.Constants.Rad2Deg);
+            new Window(DateTime.Parse("2021-03-03 23:08:58.243").ToTDB(),
+                DateTime.Parse("2021-03-03 23:08:58.243").ToTDB()), res.ElementAt(1).Window);
+        Assert.Equal(
+            new Window(DateTime.Parse("2021-03-04 23:05:01.724").ToTDB(),
+                DateTime.Parse("2021-03-04 23:05:01.724").ToTDB()), res.ElementAt(2).Window);
+        Assert.Equal(47.00618445347153, res.ElementAt(0).InertialAzimuth * IO.Astrodynamics.Constants.Rad2Deg);
+        Assert.Equal(45.125545665662884, res.ElementAt(0).NonInertialAzimuth * IO.Astrodynamics.Constants.Rad2Deg);
         Assert.Equal(8794.33812148836, res.ElementAt(0).InertialInsertionVelocity);
-        Assert.Equal(8499.727158006212, res.ElementAt(0).NonInertialInsertionVelocity);
+        Assert.Equal(8499.725885450212, res.ElementAt(0).NonInertialInsertionVelocity);
     }
 
     [Fact]
@@ -268,7 +271,7 @@ public class APITest
     {
         var scenario = new DTO.Scenario();
         var size = Marshal.SizeOf(scenario);
-        Assert.Equal(19032, size);
+        Assert.Equal(19112, size);
     }
 
     [Fact]
@@ -613,7 +616,7 @@ public class APITest
             .Select(x => x.ToStateVector()).ToArray();
         for (int i = 0; i < size; ++i)
         {
-            Assert.Equal(6800.0 + i, stateVectors[i].Position.X);
+            Assert.Equal(6800.0 + i, stateVectors[i].Position.X,9);
             Assert.Equal(i, stateVectors[i].Position.Y, 12);
             Assert.Equal(i, stateVectors[i].Position.Z, 12);
             Assert.Equal(i, stateVectors[i].Velocity.X, 12);

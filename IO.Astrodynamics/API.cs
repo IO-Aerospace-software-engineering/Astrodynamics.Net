@@ -126,6 +126,9 @@ public class API
     [DllImport(@"IO.Astrodynamics", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     private static extern TLEElements GetTLEElementsProxy(string line1, string line2, string line3);
 
+    [DllImport(@"IO.Astrodynamics", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+    private static extern void PropagateSiteProxy(DTO.Window window, [In] [Out] ref DTO.Site site);
+
     private static IntPtr Resolver(string libraryName, Assembly assembly, DllImportSearchPath? searchPath)
     {
         var libHandle = IntPtr.Zero;
@@ -154,6 +157,23 @@ public class API
         lock (lockObject)
         {
             return GetSpiceVersionProxy();
+        }
+    }
+
+    public void PropagateSite(in Time.Window window, Surface.Site site, DirectoryInfo outputDirectory)
+    {
+        lock (lockObject)
+        {
+            var siteDto = _mapper.Map<DTO.Site>(site);
+            siteDto.DirectoryPath = outputDirectory.CreateSubdirectory("Sites").FullName;
+            var windowDto = _mapper.Map<Window>(window);
+            PropagateSiteProxy(windowDto, ref siteDto);
+            if (siteDto.HasError())
+            {
+                throw new InvalidOperationException($"Site can't be propagated : {siteDto.Error}");
+            }
+
+            LoadKernels(outputDirectory.CreateSubdirectory("Sites"));
         }
     }
 
@@ -198,9 +218,7 @@ public class API
                     _mapper.Map<StateVector>(spacecraft.InitialOrbitalParameters.ToStateVector());
 
                 //Create and configure spacecraft
-                scenarioDto.Spacecraft = new DTO.Spacecraft(spacecraft.NaifId, spacecraft.Name,
-                    spacecraft.DryOperatingMass,
-                    spacecraft.MaximumOperatingMass, parkingOrbit,
+                scenarioDto.Spacecraft = new DTO.Spacecraft(spacecraft.NaifId, spacecraft.Name, spacecraft.DryOperatingMass, spacecraft.MaximumOperatingMass, parkingOrbit,
                     outputDirectory.CreateSubdirectory("Spacecrafts").FullName);
 
                 for (int j = 0; j < spacecraft.FuelTanks.Count; j++)
