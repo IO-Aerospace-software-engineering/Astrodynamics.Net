@@ -58,7 +58,7 @@ public class API
     private static extern string GetSpiceVersionProxy();
 
     [DllImport(@"IO.Astrodynamics", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-    private static extern void PropagateProxy([In] [Out] ref Scenario scenario);
+    private static extern void PropagateSpacecraftProxy([In] [Out] ref Scenario scenario);
 
     [DllImport(@"IO.Astrodynamics", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     private static extern void LaunchProxy([In] [Out] ref Launch launch);
@@ -147,6 +147,9 @@ public class API
 
         return libHandle;
     }
+
+    //Use the same lock for all cspice calls because it doesn't support multithreading.
+    private static object lockObject = new object();
 
     /// <summary>
     ///     Get spice toolkit version number
@@ -459,7 +462,7 @@ public class API
                     order++;
                 }
 
-                PropagateProxy(ref scenarioDto);
+                PropagateSpacecraftProxy(ref scenarioDto);
                 if (scenarioDto.HasError())
                 {
                     throw new InvalidOperationException($"Scenario can't be executed : {scenarioDto.Error}");
@@ -535,9 +538,6 @@ public class API
         }
     }
 
-
-    //Use the same lock for all cspice calls because it doesn't support multithreading.
-    private static object lockObject = new object();
 
     /// <summary>
     ///     Load kernel at given path
