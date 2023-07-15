@@ -100,13 +100,13 @@ namespace IO.Astrodynamics.Tests.Mission
                     spacecraft.Engines.First()))
                 .SetNextManeuver(new ApogeeHeightManeuver(DateTime.MinValue, TimeSpan.Zero, 15866666.666666666,
                     spacecraft.Engines.First()))
-                .SetNextManeuver(new ZenithAttitude(DateTime.MinValue, TimeSpan.Zero, engine))
-                .SetNextManeuver(new RetrogradeAttitude(DateTime.MinValue, TimeSpan.Zero, engine))
-                .SetNextManeuver(new ProgradeAttitude(DateTime.MinValue, TimeSpan.Zero, engine));
+                .SetNextManeuver(new ZenithAttitude(DateTime.MinValue, TimeSpan.FromMinutes(1), engine))
+                .SetNextManeuver(new RetrogradeAttitude(DateTime.MinValue, TimeSpan.FromMinutes(1), engine))
+                .SetNextManeuver(new ProgradeAttitude(DateTime.MinValue, TimeSpan.FromMinutes(1), engine));
             spacecraft.SetStandbyManeuver(planeAlignmentManeuver);
 
             scenario.AddSpacecraft(spacecraft);
-            scenario.Propagate(Constants.OutputPath);
+            var summary = scenario.Simulate(Constants.OutputPath);
 
             // Read maneuver results
             var maneuver = spacecraft.StandbyManeuver;
@@ -156,6 +156,17 @@ namespace IO.Astrodynamics.Tests.Mission
             Assert.Equal(new Vector3(134.61069118237498, -81.41939868308344, -184.2992402533224),
                 ((ImpulseManeuver)maneuver).DeltaV);
             Assert.Equal(429.19025843695215, maneuver.FuelBurned);
+
+            Assert.Equal(scenario.Window, summary.Window);
+            Assert.Single(summary.SpacecraftSummaries);
+            var maneuverWindow = summary.SpacecraftSummaries.First().ManeuverWindow;
+            if (maneuverWindow != null)
+            {
+                Assert.Equal(new DateTime(2021, 3, 4, 0, 32, 42, 853, DateTimeKind.Unspecified), maneuverWindow.Value.StartDate);
+                Assert.Equal(new DateTime(2021, 3, 4, 5, 27, 55, 476, DateTimeKind.Unspecified), maneuverWindow.Value.EndDate);
+            }
+
+            Assert.Equal(2446.224510859071, summary.SpacecraftSummaries.First().FuelConsumption);
         }
 
         [Fact]
@@ -187,7 +198,7 @@ namespace IO.Astrodynamics.Tests.Mission
             Astrodynamics.Mission.Mission mission = new Astrodynamics.Mission.Mission("mission01");
             Scenario scenario = new Scenario("scn1", mission, new Window(startPropagator, end));
             Assert.Throws<ArgumentNullException>(() => scenario.AddSpacecraft(null));
-            Assert.Throws<InvalidOperationException>(() => scenario.Propagate(new DirectoryInfo("/")));
+            Assert.Throws<InvalidOperationException>(() => scenario.Simulate(new DirectoryInfo("/")));
         }
     }
 }

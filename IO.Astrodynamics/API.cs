@@ -191,6 +191,7 @@ public class API
         if (outputDirectory == null) throw new ArgumentNullException(nameof(outputDirectory));
         lock (lockObject)
         {
+            outputDirectory = outputDirectory.CreateSubdirectory(scenario.Mission.Name).CreateSubdirectory(scenario.Name);
             API.Instance.UnloadKernels(outputDirectory);
 
             Scenario scenarioDto = new Scenario(scenario.Name,
@@ -533,6 +534,46 @@ public class API
                     mnv.ManeuverWindow = _mapper.Map<Time.Window>(maneuverResult.ManeuverWindow);
                     mnv.DeltaV = _mapper.Map<Vector3>(maneuverResult.DeltaV);
                     mnv.FuelBurned = maneuverResult.FuelBurned;
+                }
+                
+                foreach (var maneuverResult in scenarioDto.Spacecraft.NadirAttitudes.Where(x =>
+                             x.ManeuverOrder > -1))
+                {
+                    var mnv = spacecraft.GetManeuvers()[maneuverResult.ManeuverOrder] as Maneuver.Maneuver;
+                    mnv.AttitudeWindow = _mapper.Map<Time.Window>(maneuverResult.Window);
+                    mnv.ManeuverWindow = _mapper.Map<Time.Window>(maneuverResult.Window);
+                }
+                
+                foreach (var maneuverResult in scenarioDto.Spacecraft.ZenithAttitudes.Where(x =>
+                             x.ManeuverOrder > -1))
+                {
+                    var mnv = spacecraft.GetManeuvers()[maneuverResult.ManeuverOrder] as Maneuver.Maneuver;
+                    mnv.AttitudeWindow = _mapper.Map<Time.Window>(maneuverResult.Window);
+                    mnv.ManeuverWindow = _mapper.Map<Time.Window>(maneuverResult.Window);
+                }
+                
+                foreach (var maneuverResult in scenarioDto.Spacecraft.ProgradeAttitudes.Where(x =>
+                             x.ManeuverOrder > -1))
+                {
+                    var mnv = spacecraft.GetManeuvers()[maneuverResult.ManeuverOrder] as Maneuver.Maneuver;
+                    mnv.AttitudeWindow = _mapper.Map<Time.Window>(maneuverResult.Window);
+                    mnv.ManeuverWindow = _mapper.Map<Time.Window>(maneuverResult.Window);
+                }
+                
+                foreach (var maneuverResult in scenarioDto.Spacecraft.RetrogradeAttitudes.Where(x =>
+                             x.ManeuverOrder > -1))
+                {
+                    var mnv = spacecraft.GetManeuvers()[maneuverResult.ManeuverOrder] as Maneuver.Maneuver;
+                    mnv.AttitudeWindow = _mapper.Map<Time.Window>(maneuverResult.Window);
+                    mnv.ManeuverWindow = _mapper.Map<Time.Window>(maneuverResult.Window);
+                }
+                
+                foreach (var maneuverResult in scenarioDto.Spacecraft.PointingToAttitudes.Where(x =>
+                             x.ManeuverOrder > -1))
+                {
+                    var mnv = spacecraft.GetManeuvers()[maneuverResult.ManeuverOrder] as Maneuver.Maneuver;
+                    mnv.AttitudeWindow = _mapper.Map<Time.Window>(maneuverResult.Window);
+                    mnv.ManeuverWindow = _mapper.Map<Time.Window>(maneuverResult.Window);
                 }
             }
         }

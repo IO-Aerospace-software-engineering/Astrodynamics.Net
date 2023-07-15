@@ -77,14 +77,22 @@ namespace IO.Astrodynamics.Mission
         /// </summary>
         /// <param name="outputDirectory">Output folder used to write files</param>
         /// <exception cref="InvalidOperationException"></exception>
-        public void Propagate(DirectoryInfo outputDirectory)
+        public ScenarioSummary Simulate(DirectoryInfo outputDirectory)
         {
             if (_spacecrafts.Count == 0 && _sites.Count == 0)
             {
-                throw new InvalidOperationException("There is nothing to propagate");
+                throw new InvalidOperationException("There is nothing to simulate");
             }
 
             API.Instance.PropagateScenario(this, outputDirectory);
+
+            ScenarioSummary scenarioSummary = new ScenarioSummary(this.Window);
+            foreach (var spacecraft in _spacecrafts)
+            {
+                scenarioSummary.AddSpacecraftSummary(spacecraft.GetSummary());
+            }
+
+            return scenarioSummary;
         }
 
         public bool Equals(Scenario other)

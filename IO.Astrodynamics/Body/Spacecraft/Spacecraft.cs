@@ -4,6 +4,7 @@ using System.Linq;
 using IO.Astrodynamics.Frames;
 using IO.Astrodynamics.Math;
 using IO.Astrodynamics.OrbitalParameters;
+using IO.Astrodynamics.Time;
 
 
 namespace IO.Astrodynamics.Body.Spacecraft
@@ -218,6 +219,27 @@ namespace IO.Astrodynamics.Body.Spacecraft
         public StateOrientation GetOrientation(Frame referenceFrame, in DateTime epoch)
         {
             return referenceFrame.ToFrame(Frame, epoch);
+        }
+
+        internal SpacecraftSummary GetSummary()
+        {
+            var maneuvers = GetManeuvers();
+            double fuel = 0.0;
+            Window? maneuverWindow = null;
+
+            if (maneuvers.Count > 0)
+            {
+                var windows = GetManeuvers().Select(x => x.Value.ManeuverWindow);
+                var enumerable = windows as Window[] ?? windows.ToArray();
+                maneuverWindow = enumerable.FirstOrDefault();
+                fuel = GetManeuvers().Sum(x => x.Value.FuelBurned);
+                foreach (var win in enumerable.Skip(1))
+                {
+                    maneuverWindow = maneuverWindow.Value.Merge(win);
+                }
+            }
+
+            return new SpacecraftSummary(this, maneuverWindow, fuel);
         }
     }
 }
