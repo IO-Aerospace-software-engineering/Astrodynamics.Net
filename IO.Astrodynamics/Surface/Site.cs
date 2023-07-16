@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using IO.Astrodynamics.Body;
 using IO.Astrodynamics.Coordinates;
 using IO.Astrodynamics.Frames;
@@ -142,6 +143,11 @@ namespace IO.Astrodynamics.Surface
             return API.Instance.FindWindowsOnIlluminationConstraint(searchWindow, observer, Body, Body.Frame, Planetodetic, illuminationType, relationalOperator, value,
                 adjustValue,
                 aberration, stepSize, illuminationSource, method);
+        }
+
+        public void Propagate(Window window, DirectoryInfo outputDirectoryInfo)
+        {
+            API.Instance.PropagateSite(window, this, outputDirectoryInfo);
         }
 
         public bool Equals(Site other)

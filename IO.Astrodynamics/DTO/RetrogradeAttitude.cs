@@ -12,9 +12,9 @@ public struct RetrogradeAttitude
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = Spacecraft.ENGINESIZE)]
     public readonly string[] Engines;
 
-    private readonly double AttitudeHoldDuration;
-    private readonly double MinimumEpoch;
-    private readonly Window Window;
+    public readonly double AttitudeHoldDuration;
+    public readonly double MinimumEpoch;
+    public readonly Window Window;
 
     public RetrogradeAttitude() : this(-1, 0.0, double.MinValue)
     {

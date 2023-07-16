@@ -58,7 +58,7 @@ public class API
     private static extern string GetSpiceVersionProxy();
 
     [DllImport(@"IO.Astrodynamics", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-    private static extern void PropagateProxy([In] [Out] ref Scenario scenario);
+    private static extern void PropagateSpacecraftProxy([In] [Out] ref Scenario scenario);
 
     [DllImport(@"IO.Astrodynamics", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     private static extern void LaunchProxy([In] [Out] ref Launch launch);
@@ -126,6 +126,9 @@ public class API
     [DllImport(@"IO.Astrodynamics", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     private static extern TLEElements GetTLEElementsProxy(string line1, string line2, string line3);
 
+    [DllImport(@"IO.Astrodynamics", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+    private static extern void PropagateSiteProxy(DTO.Window window, [In] [Out] ref DTO.Site site);
+
     private static IntPtr Resolver(string libraryName, Assembly assembly, DllImportSearchPath? searchPath)
     {
         var libHandle = IntPtr.Zero;
@@ -145,6 +148,9 @@ public class API
         return libHandle;
     }
 
+    //Use the same lock for all cspice calls because it doesn't support multithreading.
+    private static object lockObject = new object();
+
     /// <summary>
     ///     Get spice toolkit version number
     /// </summary>
@@ -154,6 +160,23 @@ public class API
         lock (lockObject)
         {
             return GetSpiceVersionProxy();
+        }
+    }
+
+    public void PropagateSite(in Time.Window window, Surface.Site site, DirectoryInfo outputDirectory)
+    {
+        lock (lockObject)
+        {
+            var siteDto = _mapper.Map<DTO.Site>(site);
+            siteDto.DirectoryPath = outputDirectory.CreateSubdirectory("Sites").FullName;
+            var windowDto = _mapper.Map<Window>(window);
+            PropagateSiteProxy(windowDto, ref siteDto);
+            if (siteDto.HasError())
+            {
+                throw new InvalidOperationException($"Site can't be propagated : {siteDto.Error}");
+            }
+
+            LoadKernels(outputDirectory.CreateSubdirectory("Sites"));
         }
     }
 
@@ -168,6 +191,7 @@ public class API
         if (outputDirectory == null) throw new ArgumentNullException(nameof(outputDirectory));
         lock (lockObject)
         {
+            outputDirectory = outputDirectory.CreateSubdirectory(scenario.Mission.Name).CreateSubdirectory(scenario.Name);
             API.Instance.UnloadKernels(outputDirectory);
 
             Scenario scenarioDto = new Scenario(scenario.Name,
@@ -198,9 +222,7 @@ public class API
                     _mapper.Map<StateVector>(spacecraft.InitialOrbitalParameters.ToStateVector());
 
                 //Create and configure spacecraft
-                scenarioDto.Spacecraft = new DTO.Spacecraft(spacecraft.NaifId, spacecraft.Name,
-                    spacecraft.DryOperatingMass,
-                    spacecraft.MaximumOperatingMass, parkingOrbit,
+                scenarioDto.Spacecraft = new DTO.Spacecraft(spacecraft.NaifId, spacecraft.Name, spacecraft.DryOperatingMass, spacecraft.MaximumOperatingMass, parkingOrbit,
                     outputDirectory.CreateSubdirectory("Spacecrafts").FullName);
 
                 for (int j = 0; j < spacecraft.FuelTanks.Count; j++)
@@ -441,7 +463,7 @@ public class API
                     order++;
                 }
 
-                PropagateProxy(ref scenarioDto);
+                PropagateSpacecraftProxy(ref scenarioDto);
                 if (scenarioDto.HasError())
                 {
                     throw new InvalidOperationException($"Scenario can't be executed : {scenarioDto.Error}");
@@ -513,13 +535,50 @@ public class API
                     mnv.DeltaV = _mapper.Map<Vector3>(maneuverResult.DeltaV);
                     mnv.FuelBurned = maneuverResult.FuelBurned;
                 }
+                
+                foreach (var maneuverResult in scenarioDto.Spacecraft.NadirAttitudes.Where(x =>
+                             x.ManeuverOrder > -1))
+                {
+                    var mnv = spacecraft.GetManeuvers()[maneuverResult.ManeuverOrder] as Maneuver.Maneuver;
+                    mnv.AttitudeWindow = _mapper.Map<Time.Window>(maneuverResult.Window);
+                    mnv.ManeuverWindow = _mapper.Map<Time.Window>(maneuverResult.Window);
+                }
+                
+                foreach (var maneuverResult in scenarioDto.Spacecraft.ZenithAttitudes.Where(x =>
+                             x.ManeuverOrder > -1))
+                {
+                    var mnv = spacecraft.GetManeuvers()[maneuverResult.ManeuverOrder] as Maneuver.Maneuver;
+                    mnv.AttitudeWindow = _mapper.Map<Time.Window>(maneuverResult.Window);
+                    mnv.ManeuverWindow = _mapper.Map<Time.Window>(maneuverResult.Window);
+                }
+                
+                foreach (var maneuverResult in scenarioDto.Spacecraft.ProgradeAttitudes.Where(x =>
+                             x.ManeuverOrder > -1))
+                {
+                    var mnv = spacecraft.GetManeuvers()[maneuverResult.ManeuverOrder] as Maneuver.Maneuver;
+                    mnv.AttitudeWindow = _mapper.Map<Time.Window>(maneuverResult.Window);
+                    mnv.ManeuverWindow = _mapper.Map<Time.Window>(maneuverResult.Window);
+                }
+                
+                foreach (var maneuverResult in scenarioDto.Spacecraft.RetrogradeAttitudes.Where(x =>
+                             x.ManeuverOrder > -1))
+                {
+                    var mnv = spacecraft.GetManeuvers()[maneuverResult.ManeuverOrder] as Maneuver.Maneuver;
+                    mnv.AttitudeWindow = _mapper.Map<Time.Window>(maneuverResult.Window);
+                    mnv.ManeuverWindow = _mapper.Map<Time.Window>(maneuverResult.Window);
+                }
+                
+                foreach (var maneuverResult in scenarioDto.Spacecraft.PointingToAttitudes.Where(x =>
+                             x.ManeuverOrder > -1))
+                {
+                    var mnv = spacecraft.GetManeuvers()[maneuverResult.ManeuverOrder] as Maneuver.Maneuver;
+                    mnv.AttitudeWindow = _mapper.Map<Time.Window>(maneuverResult.Window);
+                    mnv.ManeuverWindow = _mapper.Map<Time.Window>(maneuverResult.Window);
+                }
             }
         }
     }
 
-
-    //Use the same lock for all cspice calls because it doesn't support multithreading.
-    private static object lockObject = new object();
 
     /// <summary>
     ///     Load kernel at given path
