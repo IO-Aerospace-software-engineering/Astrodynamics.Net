@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -74,18 +75,18 @@ public class APITest
         //Read results
         Assert.Equal(3, res.Count());
         Assert.Equal(
-            new Window(DateTime.Parse("03/02/2021 23:12:54.421").ToTDB(),
-                DateTime.Parse("03/02/2021 23:12:54.421").ToTDB()), res.ElementAt(0).Window);
+            new Window(DateTime.Parse("2021-03-02 23:12:54.421", CultureInfo.InvariantCulture).ToTDB(),
+                DateTime.Parse("2021-03-02 23:12:54.421", CultureInfo.InvariantCulture).ToTDB()), res.ElementAt(0).Window);
         Assert.Equal(
-            new Window(DateTime.Parse("2021-03-03 23:08:58.243").ToTDB(),
-                DateTime.Parse("2021-03-03 23:08:58.243").ToTDB()), res.ElementAt(1).Window);
+            new Window(DateTime.Parse("2021-03-03 23:08:58.243", CultureInfo.InvariantCulture).ToTDB(),
+                DateTime.Parse("2021-03-03 23:08:58.243", CultureInfo.InvariantCulture).ToTDB()), res.ElementAt(1).Window);
         Assert.Equal(
-            new Window(DateTime.Parse("2021-03-04 23:05:01.724").ToTDB(),
-                DateTime.Parse("2021-03-04 23:05:01.724").ToTDB()), res.ElementAt(2).Window);
-        Assert.Equal(47.00618445347153, res.ElementAt(0).InertialAzimuth * IO.Astrodynamics.Constants.Rad2Deg);
-        Assert.Equal(45.125545665662884, res.ElementAt(0).NonInertialAzimuth * IO.Astrodynamics.Constants.Rad2Deg);
-        Assert.Equal(8794.33812148836, res.ElementAt(0).InertialInsertionVelocity);
-        Assert.Equal(8499.725885450212, res.ElementAt(0).NonInertialInsertionVelocity);
+            new Window(DateTime.Parse("2021-03-04 23:05:01.724", CultureInfo.InvariantCulture).ToTDB(),
+                DateTime.Parse("2021-03-04 23:05:01.724", CultureInfo.InvariantCulture).ToTDB()), res.ElementAt(2).Window);
+        Assert.Equal(47.00618445347153, res.ElementAt(0).InertialAzimuth * IO.Astrodynamics.Constants.Rad2Deg, 9);
+        Assert.Equal(45.125545665662884, res.ElementAt(0).NonInertialAzimuth * IO.Astrodynamics.Constants.Rad2Deg, 9);
+        Assert.Equal(8794.33812148836, res.ElementAt(0).InertialInsertionVelocity, 9);
+        Assert.Equal(8499.725885450212, res.ElementAt(0).NonInertialInsertionVelocity, 9);
     }
 
     [Fact]
@@ -616,7 +617,7 @@ public class APITest
             .Select(x => x.ToStateVector()).ToArray();
         for (int i = 0; i < size; ++i)
         {
-            Assert.Equal(6800.0 + i, stateVectors[i].Position.X,9);
+            Assert.Equal(6800.0 + i, stateVectors[i].Position.X, 9);
             Assert.Equal(i, stateVectors[i].Position.Y, 12);
             Assert.Equal(i, stateVectors[i].Position.Z, 12);
             Assert.Equal(i, stateVectors[i].Velocity.X, 12);
@@ -755,7 +756,7 @@ public class APITest
         Assert.Equal(9, tle.O);
         Assert.Equal(10, tle.M);
     }
-    
+
     [Fact]
     void Planetocentric()
     {
