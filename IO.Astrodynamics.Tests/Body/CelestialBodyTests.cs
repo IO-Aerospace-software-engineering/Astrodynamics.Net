@@ -29,7 +29,7 @@ public class CelestialBodyTests
         Assert.Equal(6356751.9, earth.PolarRadius);
         Assert.Equal(6378136.6, earth.EquatorialRadius);
         Assert.Equal(0.0033528131084554157, earth.Flattening);
-        Assert.Equal(1, (earth.InitialOrbitalParameters.Observer as Astrodynamics.Body.Body)?.Satellites.Count);
+        Assert.Equal(1, (earth.InitialOrbitalParameters.Observer as Astrodynamics.Body.CelestialItem)?.Satellites.Count);
     }
 
     [Fact]
@@ -45,7 +45,7 @@ public class CelestialBodyTests
         Assert.Equal(6356751.9, earth.PolarRadius);
         Assert.Equal(6378136.6, earth.EquatorialRadius);
         Assert.Equal(0.0033528131084554157, earth.Flattening);
-        Assert.Equal(1, (earth.InitialOrbitalParameters.Observer as Astrodynamics.Body.Body)?.Satellites.Count);
+        Assert.Equal(1, (earth.InitialOrbitalParameters.Observer as Astrodynamics.Body.CelestialItem)?.Satellites.Count);
     }
 
     [Fact]

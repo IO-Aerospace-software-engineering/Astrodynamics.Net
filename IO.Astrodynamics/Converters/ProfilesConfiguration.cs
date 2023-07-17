@@ -48,8 +48,8 @@ public class ProfilesConfiguration
             cfg.CreateMap<Planetocentric, DTO.Planetocentric>().ConstructUsing(x => new DTO.Planetocentric(x.Longitude, x.Latitude, x.Radius));
 
             cfg.CreateMap<Site, DTO.Site>()
-                .ConstructUsing(x => new DTO.Site(x.NaifId, x.Body.NaifId, Mapper.Map<DTO.Planetodetic>(x.Planetodetic), x.Name, string.Empty))
-                .ForMember(x => x.BodyId, o => o.MapFrom(x => x.Body.NaifId))
+                .ConstructUsing(x => new DTO.Site(x.NaifId, x.CelestialItem.NaifId, Mapper.Map<DTO.Planetodetic>(x.Planetodetic), x.Name, string.Empty))
+                .ForMember(x => x.BodyId, o => o.MapFrom(x => x.CelestialItem.NaifId))
                 .ForMember(x => x.Coordinates, o => o.MapFrom(x => x.Planetodetic))
                 .ForMember(x => x.Ranges, o => o.Ignore())
                 .ForMember(x => x.Id, o => o.MapFrom(x => x.NaifId))

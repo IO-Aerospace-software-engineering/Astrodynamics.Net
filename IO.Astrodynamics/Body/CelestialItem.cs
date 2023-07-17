@@ -7,7 +7,7 @@ using Window = IO.Astrodynamics.Time.Window;
 
 namespace IO.Astrodynamics.Body;
 
-public abstract class Body : ILocalizable, IEquatable<Body>
+public abstract class CelestialItem : ILocalizable, IEquatable<CelestialItem>
 {
     public int NaifId { get; }
     public string Name { get; }
@@ -16,10 +16,10 @@ public abstract class Body : ILocalizable, IEquatable<Body>
 
     public OrbitalParameters.OrbitalParameters InitialOrbitalParameters { get; internal set; }
 
-    private readonly HashSet<Body> _satellites = new();
-    public IReadOnlyCollection<Body> Satellites => _satellites;
+    private readonly HashSet<CelestialItem> _satellites = new();
+    public IReadOnlyCollection<CelestialItem> Satellites => _satellites;
 
-    //Used for performance improvement and avoid duplicated call in Celestial body API
+    //Used for performance improvement and avoid duplicated call in Celestial celestialItem API
     protected DTO.CelestialBody ExtendedInformation;
 
     public bool IsSpacecraft => NaifId < 0;
@@ -37,14 +37,14 @@ public abstract class Body : ILocalizable, IEquatable<Body>
     /// <param name="naifId">Naif identifier</param>
     /// <param name="frame">Initial orbital parameters frame</param>
     /// <param name="epoch">Epoch</param>
-    protected Body(int naifId, Frame frame, DateTime epoch)
+    protected CelestialItem(int naifId, Frame frame, DateTime epoch)
     {
         ExtendedInformation = API.Instance.GetCelestialBodyInfo(naifId);
 
         NaifId = naifId;
         Name = string.IsNullOrEmpty(ExtendedInformation.Name)
             ? throw new InvalidOperationException(
-                "Celestial body name can't be defined, please check if you have loaded associated kernels")
+                "Celestial celestialItem name can't be defined, please check if you have loaded associated kernels")
             : ExtendedInformation.Name;
 
         Mass = ExtendedInformation.GM / Constants.G;
@@ -54,7 +54,7 @@ public abstract class Body : ILocalizable, IEquatable<Body>
         if (IsPlanet || IsMoon || IsBarycenter)
             InitialOrbitalParameters = GetEphemeris(epoch, new Barycenter(ExtendedInformation.BarycenterOfMotionId), frame, Aberration.None);
 
-        (InitialOrbitalParameters?.Observer as Body)?._satellites.Add(this);
+        (InitialOrbitalParameters?.Observer as CelestialItem)?._satellites.Add(this);
     }
 
     /// <summary>
@@ -64,16 +64,16 @@ public abstract class Body : ILocalizable, IEquatable<Body>
     /// <param name="name"></param>
     /// <param name="mass"></param>
     /// <param name="initialOrbitalParameters"></param>
-    protected Body(int naifId, string name, double mass, OrbitalParameters.OrbitalParameters initialOrbitalParameters)
+    protected CelestialItem(int naifId, string name, double mass, OrbitalParameters.OrbitalParameters initialOrbitalParameters)
     {
         if (string.IsNullOrEmpty(name))
         {
-            throw new ArgumentException("Body must have a name");
+            throw new ArgumentException("CelestialItem must have a name");
         }
 
-        if (mass <= 0)
+        if (mass < 0)
         {
-            throw new ArgumentException("Body must have a mass");
+            throw new ArgumentException("CelestialItem can't have a negative mass");
         }
 
         NaifId = naifId;
@@ -84,14 +84,14 @@ public abstract class Body : ILocalizable, IEquatable<Body>
         (InitialOrbitalParameters?.Observer as CelestialBody)?._satellites.Add(this);
     }
 
-    internal void AddSatellite(Body body)
+    internal void AddSatellite(CelestialItem celestialItem)
     {
-        _satellites.Add(body);
+        _satellites.Add(celestialItem);
     }
 
-    internal void RemoveSatellite(Body body)
+    internal void RemoveSatellite(CelestialItem celestialItem)
     {
-        _satellites.Remove(body);
+        _satellites.Remove(celestialItem);
     }
 
     /// <summary>
@@ -125,7 +125,7 @@ public abstract class Body : ILocalizable, IEquatable<Body>
     }
 
     /// <summary>
-    /// Return the angular size of a body relative to the distance
+    /// Return the angular size of a celestialItem relative to the distance
     /// </summary>
     /// <param name="distance"></param>
     /// <returns></returns>
@@ -216,7 +216,7 @@ public abstract class Body : ILocalizable, IEquatable<Body>
     
 
 
-    public bool Equals(Body other)
+    public bool Equals(CelestialItem other)
     {
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;
@@ -228,7 +228,7 @@ public abstract class Body : ILocalizable, IEquatable<Body>
         if (ReferenceEquals(null, obj)) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != this.GetType()) return false;
-        return Equals((Body)obj);
+        return Equals((CelestialItem)obj);
     }
 
     public override int GetHashCode()
@@ -236,12 +236,12 @@ public abstract class Body : ILocalizable, IEquatable<Body>
         return NaifId;
     }
 
-    public static bool operator ==(Body left, Body right)
+    public static bool operator ==(CelestialItem left, CelestialItem right)
     {
         return Equals(left, right);
     }
 
-    public static bool operator !=(Body left, Body right)
+    public static bool operator !=(CelestialItem left, CelestialItem right)
     {
         return !Equals(left, right);
     }

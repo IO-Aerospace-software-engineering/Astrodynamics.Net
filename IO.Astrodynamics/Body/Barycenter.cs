@@ -4,7 +4,7 @@ using IO.Astrodynamics.Time;
 
 namespace IO.Astrodynamics.Body;
 
-public class Barycenter : Body
+public class Barycenter : CelestialItem
 {
     public Barycenter(int naifId) : this(naifId, DateTimeExtension.J2000)
     {

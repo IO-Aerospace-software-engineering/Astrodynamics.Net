@@ -9,7 +9,7 @@ using IO.Astrodynamics.Time;
 
 namespace IO.Astrodynamics.Body.Spacecraft
 {
-    public class Spacecraft : Body
+    public class Spacecraft : CelestialItem
     {
         public static readonly Vector3 Front = Vector3.VectorY;
         public static readonly Vector3 Back = Front.Inverse();

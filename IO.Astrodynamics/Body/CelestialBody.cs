@@ -7,7 +7,7 @@ using IO.Astrodynamics.Time;
 
 namespace IO.Astrodynamics.Body;
 
-public class CelestialBody : Body
+public class CelestialBody : CelestialItem
 {
     public double PolarRadius { get; }
     public double EquatorialRadius { get; }
@@ -40,7 +40,7 @@ public class CelestialBody : Body
 
         Frame = string.IsNullOrEmpty(ExtendedInformation.FrameName)
             ? throw new InvalidOperationException(
-                "Celestial body frame can't be defined, please check if you have loaded associated kernels")
+                "Celestial celestialItem frame can't be defined, please check if you have loaded associated kernels")
             : new Frame(ExtendedInformation.FrameName);
 
         UpdateSphereOfInfluence();
@@ -76,7 +76,7 @@ public class CelestialBody : Body
     }
 
     /// <summary>
-    /// Compute body radius from geocentric latitude
+    /// Compute celestialItem radius from geocentric latitude
     /// </summary>
     /// <param name="latitude">Geocentric latitude</param>
     /// <returns></returns>

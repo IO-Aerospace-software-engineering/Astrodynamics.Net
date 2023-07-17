@@ -91,7 +91,7 @@ namespace IO.Astrodynamics.Tests.Surface
             Assert.Equal(13, site.Id);
             Assert.Equal(TestHelpers.EarthAtJ2000.NaifId * 1000 + site.Id, site.NaifId);
             Assert.Equal("DSS-13", site.Name);
-            Assert.Equal(TestHelpers.EarthAtJ2000, site.Body);
+            Assert.Equal(TestHelpers.EarthAtJ2000, site.CelestialItem);
         }
 
         [Fact]

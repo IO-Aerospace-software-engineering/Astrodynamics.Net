@@ -15,7 +15,7 @@ namespace IO.Astrodynamics.Surface
         public int Id { get; }
         public int NaifId { get; }
         public string Name { get; }
-        public CelestialBody Body { get; }
+        public CelestialBody CelestialItem { get; }
         public Planetodetic Planetodetic { get; }
         public OrbitalParameters.OrbitalParameters InitialOrbitalParameters { get; }
 
@@ -34,30 +34,30 @@ namespace IO.Astrodynamics.Surface
         public double GM { get; } = 0.0;
         public double Mass { get; } = 0.0;
 
-        public Site(int id, string name, CelestialBody body) : this(id, name, body, new Planetodetic(double.NaN, double.NaN, double.NaN))
+        public Site(int id, string name, CelestialBody celestialItem) : this(id, name, celestialItem, new Planetodetic(double.NaN, double.NaN, double.NaN))
         {
         }
 
-        public Site(int id, string name, CelestialBody body, Planetodetic planetodetic)
+        public Site(int id, string name, CelestialBody celestialItem, Planetodetic planetodetic)
         {
-            if (body == null) throw new ArgumentNullException(nameof(body));
+            if (celestialItem == null) throw new ArgumentNullException(nameof(celestialItem));
             if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id));
             if (string.IsNullOrEmpty(name)) throw new ArgumentException("Value cannot be null or empty.", nameof(name));
             Name = name;
-            Body = body;
+            CelestialItem = celestialItem;
             Id = id;
-            NaifId = body.NaifId * 1000 + id;
+            NaifId = celestialItem.NaifId * 1000 + id;
             Frame = new Frame(name.ToUpper() + "_TOPO");
             if (double.IsNaN(planetodetic.Latitude))
             {
-                InitialOrbitalParameters = GetEphemeris(DateTimeExtension.J2000, Body, Body.Frame, Aberration.None);
-                Planetodetic = GetPlanetocentricCoordinates().ToPlanetodetic(Body.Flattening, Body.EquatorialRadius);
+                InitialOrbitalParameters = GetEphemeris(DateTimeExtension.J2000, CelestialItem, CelestialItem.Frame, Aberration.None);
+                Planetodetic = GetPlanetocentricCoordinates().ToPlanetodetic(CelestialItem.Flattening, CelestialItem.EquatorialRadius);
             }
             else
             {
                 Planetodetic = planetodetic;
-                InitialOrbitalParameters = new StateVector(Planetodetic.ToPlanetocentric(Body.Flattening, Body.EquatorialRadius).ToCartesianCoordinates(), Vector3.Zero, Body,
-                    DateTimeExtension.J2000, Body.Frame);
+                InitialOrbitalParameters = new StateVector(Planetodetic.ToPlanetocentric(CelestialItem.Flattening, CelestialItem.EquatorialRadius).ToCartesianCoordinates(), Vector3.Zero, CelestialItem,
+                    DateTimeExtension.J2000, CelestialItem.Frame);
             }
         }
 
@@ -140,7 +140,7 @@ namespace IO.Astrodynamics.Surface
             RelationnalOperator relationalOperator, double value, double adjustValue, Aberration aberration, TimeSpan stepSize, INaifObject illuminationSource,
             string method = "Ellipsoid")
         {
-            return API.Instance.FindWindowsOnIlluminationConstraint(searchWindow, observer, Body, Body.Frame, Planetodetic, illuminationType, relationalOperator, value,
+            return API.Instance.FindWindowsOnIlluminationConstraint(searchWindow, observer, CelestialItem, CelestialItem.Frame, Planetodetic, illuminationType, relationalOperator, value,
                 adjustValue,
                 aberration, stepSize, illuminationSource, method);
         }
