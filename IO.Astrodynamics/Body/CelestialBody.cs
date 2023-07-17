@@ -75,11 +75,6 @@ public class CelestialBody : Body
         return a * System.Math.Pow(minorMass / majorMass, 2.0 / 5.0);
     }
 
-    public override double GetTotalMass()
-    {
-        return Mass;
-    }
-
     /// <summary>
     /// Compute body radius from geocentric latitude
     /// </summary>

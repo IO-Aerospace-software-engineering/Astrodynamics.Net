@@ -131,8 +131,7 @@ public class CelestialBodyTests
     public void GetMass()
     {
         var earth = TestHelpers.EarthAtJ2000;
-        var res = earth.GetTotalMass();
-        Assert.Equal(5.972168398724899E+24, res);
+        Assert.Equal(5.972168398724899E+24, earth.Mass);
     }
 
     [Fact]

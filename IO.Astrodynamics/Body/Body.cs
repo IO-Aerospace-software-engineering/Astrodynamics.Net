@@ -29,6 +29,7 @@ public abstract class Body : ILocalizable, IEquatable<Body>
     public bool IsMoon => NaifId is > 100 and < 1000 && (NaifId % 100) != 99;
     public bool IsAsteroid => this.NaifId is > 1000 and < 1000000000;
     public bool IsStar => this.NaifId > 1000000000;
+    public bool IsLagrangePoint => this.NaifId is 391 or 392 or 393 or 394 or 395;
 
     /// <summary>
     /// 
@@ -212,7 +213,7 @@ public abstract class Body : ILocalizable, IEquatable<Body>
         return Name;
     }
 
-    public abstract double GetTotalMass();
+    
 
 
     public bool Equals(Body other)
