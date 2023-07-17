@@ -16,18 +16,38 @@ public class CelestialBody : CelestialItem
     public double SphereOfInfluence { get; private set; }
     public Frame Frame { get; }
 
+    /// <summary>
+    /// Instantiate celestial body from naif object with default parameters (Ecliptic J2000 at J2000 epoch)
+    /// </summary>
+    /// <param name="naifObject"></param>
     public CelestialBody(NaifObject naifObject) : this(naifObject.NaifId)
     {
     }
 
+    /// <summary>
+    /// Instantiate celestial body from naif id with default parameters (Ecliptic J2000 at J2000 epoch)
+    /// </summary>
+    /// <param name="naifId"></param>
     public CelestialBody(int naifId) : this(naifId, Frame.ECLIPTIC_J2000, DateTimeExtension.J2000)
     {
     }
 
+    /// <summary>
+    /// Instantiate celestial body from naif object with orbital parameters at given frame and epoch
+    /// </summary>
+    /// <param name="naifObject"></param>
+    /// <param name="frame"></param>
+    /// <param name="epoch"></param>
     public CelestialBody(NaifObject naifObject, Frame frame, DateTime epoch) : this(naifObject.NaifId, frame, epoch)
     {
     }
 
+    /// <summary>
+    /// Instantiate celestial body from naif id with orbital parameters at given frame and epoch
+    /// </summary>
+    /// <param name="naifId"></param>
+    /// <param name="frame"></param>
+    /// <param name="epoch"></param>
     public CelestialBody(int naifId, Frame frame, DateTime epoch) : base(naifId, frame, epoch)
     {
         PolarRadius = ExtendedInformation.Radii.Z;
@@ -46,7 +66,16 @@ public class CelestialBody : CelestialItem
         UpdateSphereOfInfluence();
     }
 
-    public CelestialBody(int naifId, string name, double mass, double polarRadius = 0.0, double equatorialRadius = 0.0,
+    /// <summary>
+    /// Instantiate celestial body from custom parameters
+    /// </summary>
+    /// <param name="naifId"></param>
+    /// <param name="name"></param>
+    /// <param name="mass"></param>
+    /// <param name="polarRadius"></param>
+    /// <param name="equatorialRadius"></param>
+    /// <param name="initialOrbitalParameters"></param>
+    protected CelestialBody(int naifId, string name, double mass, double polarRadius = 0.0, double equatorialRadius = 0.0,
         OrbitalParameters.OrbitalParameters initialOrbitalParameters = null) : base(
         naifId, name, mass, initialOrbitalParameters)
     {

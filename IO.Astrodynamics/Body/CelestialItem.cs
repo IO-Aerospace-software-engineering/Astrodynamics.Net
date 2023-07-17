@@ -32,7 +32,7 @@ public abstract class CelestialItem : ILocalizable, IEquatable<CelestialItem>
     public bool IsLagrangePoint => this.NaifId is 391 or 392 or 393 or 394 or 395;
 
     /// <summary>
-    /// 
+    /// Instantiate celestial item from naif id with orbital parameters at given frame and epoch
     /// </summary>
     /// <param name="naifId">Naif identifier</param>
     /// <param name="frame">Initial orbital parameters frame</param>
