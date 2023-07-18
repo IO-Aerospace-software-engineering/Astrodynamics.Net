@@ -970,7 +970,7 @@ public class API
     }
 
     /// <summary>
-    ///     Get celestial body information like radius, GM, name, associated frame, ...
+    ///     Get celestial celestialItem information like radius, GM, name, associated frame, ...
     /// </summary>
     /// <param name="naifId"></param>
     /// <returns></returns>
@@ -982,7 +982,7 @@ public class API
             if (res.HasError())
             {
                 throw new InvalidOperationException(
-                    $"An error occured while reading celestial body information : {res.Error}");
+                    $"An error occured while reading celestial celestialItem information : {res.Error}");
             }
 
             return res;
@@ -1039,7 +1039,7 @@ public class API
     /// <summary>
     /// Create TLE
     /// </summary>
-    /// <param name="line1">Body identifier</param>
+    /// <param name="line1">CelestialItem identifier</param>
     /// <param name="line2">line 1</param>
     /// <param name="line3">line 2</param>
     /// <returns></returns>

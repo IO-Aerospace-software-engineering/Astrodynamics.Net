@@ -3,7 +3,7 @@
 [![Continous integration](https://github.com/IO-Aerospace-software-engineering/SDK.Net/actions/workflows/ci.yml/badge.svg)](https://github.com/IO-Aerospace-software-engineering/SDK.Net/actions/workflows/ci.yml)
 [![Continous deployment](https://github.com/IO-Aerospace-software-engineering/SDK.Net/actions/workflows/cd.yml/badge.svg)](https://github.com/IO-Aerospace-software-engineering/SDK.Net/actions/workflows/cd.yml)
 
-IO.Astrodynamics.Net is a .Net astrodynamics framework based on [IO.Astrodynamics native library](https://github.com/IO-Aerospace-software-engineering/Astrodynamics) and get the best of both worlds :
+IO.Astrodynamics.Net is a .Net astrodynamics framework based on [IO.Astrodynamics native library](https://github.com/IO-Aerospace-software-engineering/Astrodynamics), it provides the best of both worlds :
 
 C++ Velocity + .Net productivity = ❤️
 
@@ -20,7 +20,14 @@ This framework provides the following features :
   * Horizontal
   * Planetodetic
   * Planetodentric
-* Frame transformation
+* Manipulate celestial items
+  * Stars
+  * Planets
+  * Moons
+  * Barycenters
+  * Lagrange points
+  * Comets ans asteroids
+* Transform frames
   * ICRF / J2000
   * Ecliptic_J2000
   * Ecliptic_B1950
@@ -33,26 +40,25 @@ This framework provides the following features :
   * Fuel tank
   * Engines
   * Instrument
-* Spacecraft propagator
-  * Impulsive maneuvers
-  * Fuel balance
-* Impulse maneuvers :
-  * Apogee height
-  * Perigee height
-  * Plane alignment
-  * Combined maneuver
-  * Apsidal alignment
-  * Phasing
-* Attitudes
-  * Instrument pointing toward an object
-  * Nadir
-  * Zenith
-  * Prograde
-  * Retrograde
-* Surface site on any celestial body
+* Propagate spacecraft
+  * Impulse maneuvers :
+    * Apogee height
+    * Perigee height
+    * Plane alignment
+    * Combined maneuver
+    * Apsidal alignment
+    * Phasing
+    * Fuel balance
+  * Attitudes
+    * Instrument pointing toward an object
+    * Nadir
+    * Zenith
+    * Prograde
+    * Retrograde
+* Manipulate surface site on any celestial body
 * Evaluate launch opportunities
 * Use or convert different time referential (TDB, UTC, Local)
-* Get celestial body information based on Naif kernels
+* Get celestial item information based on Naif kernels
 * Find time windows based on distance constraints from spacecraft, celestial body or ground site
 * Find time windows based on occultation constraints from spacecraft, celestial body or ground site
 * Find time windows based on coordinate constraints from spacecraft, celestial body or ground site

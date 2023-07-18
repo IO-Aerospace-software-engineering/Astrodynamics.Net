@@ -9,7 +9,7 @@ using IO.Astrodynamics.Time;
 
 namespace IO.Astrodynamics.Body.Spacecraft
 {
-    public class Spacecraft : Body
+    public class Spacecraft : CelestialItem
     {
         public static readonly Vector3 Front = Vector3.VectorY;
         public static readonly Vector3 Back = Front.Inverse();
@@ -141,7 +141,7 @@ namespace IO.Astrodynamics.Body.Spacecraft
         /// Get Dry operating mass + fuel+ payloads + children
         /// </summary>
         /// <returns></returns>
-        public override double GetTotalMass()
+        public double GetTotalMass()
         {
             return DryOperatingMass + FuelTanks.Sum(x => x.InitialQuantity) + Payloads.Sum(x => x.Mass) +
                    (Child != null ? Child.GetTotalMass() : 0.0);

@@ -15,11 +15,11 @@ namespace IO.Astrodynamics.Surface
         /// </summary>
         /// <param name="id"></param>
         /// <param name="name">Site name</param>
-        /// <param name="body">Celestial body</param>
+        /// <param name="celestialItem">Celestial celestialItem</param>
         /// <param name="planetodetic">Planetodetic coordinates</param>
         /// <param name="launchAzimuths">Allowed launch azimuths</param>
-        public LaunchSite(int id, string name, CelestialBody body, in Planetodetic planetodetic, params AzimuthRange[] launchAzimuths) : base(id, name,
-            body, planetodetic)
+        public LaunchSite(int id, string name, CelestialBody celestialItem, in Planetodetic planetodetic, params AzimuthRange[] launchAzimuths) : base(id, name,
+            celestialItem, planetodetic)
         {
             _azimuthRanges = new List<AzimuthRange>(launchAzimuths);
         }

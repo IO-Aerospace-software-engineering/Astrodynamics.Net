@@ -11,7 +11,9 @@
 	<s:Boolean x:Key="/Default/Environment/Filtering/ExcludeCoverageFilters/=IO_002EAstrodynamics_002ENet_003B_002A_003BIO_002EAstrodynamics_002ECoordinates_002EPlanetodetic_003Bset_005FAltitude/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/Environment/Filtering/ExcludeCoverageFilters/=IO_002EAstrodynamics_002ENet_003B_002A_003BIO_002EAstrodynamics_002ECoordinates_002EPlanetodetic_003Bset_005FLatitude/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/Environment/Filtering/ExcludeCoverageFilters/=IO_002EAstrodynamics_002ENet_003B_002A_003BIO_002EAstrodynamics_002ECoordinates_002EPlanetodetic_003Bset_005FLongitude/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/Environment/Filtering/ExcludeCoverageFilters/=IO_002EAstrodynamics_002ENet_003B_002A_003BIO_002EAstrodynamics_002EDTO_002EVector3D_003BGetHashCode/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/Environment/Filtering/ExcludeCoverageFilters/=IO_002EAstrodynamics_002ENet_003B_002A_003BIO_002EAstrodynamics_002EFrames_002EFrame_003BGetHashCode/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/Environment/Filtering/ExcludeCoverageFilters/=IO_002EAstrodynamics_002ENet_003B_002A_003BIO_002EAstrodynamics_002EManeuver_002ELowThrustManeuver_003B_002A/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/Environment/Filtering/ExcludeCoverageFilters/=IO_002EAstrodynamics_002ENet_003B_002A_003BIO_002EAstrodynamics_002EMath_002EMatrix_003BGetHashCode/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/Environment/Filtering/ExcludeCoverageFilters/=IO_002EAstrodynamics_002ENet_003B_002A_003BIO_002EAstrodynamics_002EMath_002EMatrix_003BGetRow/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/Environment/Filtering/ExcludeCoverageFilters/=IO_002EAstrodynamics_002ENet_003B_002A_003BIO_002EAstrodynamics_002EMission_002EScenario_003BGetHashCode/@EntryIndexedValue">True</s:Boolean>

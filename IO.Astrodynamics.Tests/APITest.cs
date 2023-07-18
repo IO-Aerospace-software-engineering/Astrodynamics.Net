@@ -632,7 +632,7 @@ public class APITest
     [Fact]
     void GetCelestialBodyInformation()
     {
-        //Read celestial body information from spice kernels
+        //Read celestial celestialItem information from spice kernels
         var res = API.Instance.GetCelestialBodyInfo(TestHelpers.EarthAtJ2000.NaifId);
         Assert.Equal(PlanetsAndMoons.EARTH.NaifId, res.Id);
         Assert.Equal(Stars.Sun.NaifId, res.CenterOfMotionId);
@@ -730,11 +730,11 @@ public class APITest
     [Fact]
     void CelestialBody()
     {
-        DTO.CelestialBody celestialBody = new CelestialBody(1, 2, 3, "body", new Vector3D(1.0, 2.0, 3.0), 123, "frame", 147);
+        DTO.CelestialBody celestialBody = new CelestialBody(1, 2, 3, "celestialItem", new Vector3D(1.0, 2.0, 3.0), 123, "frame", 147);
         Assert.Equal(1, celestialBody.Id);
         Assert.Equal(2, celestialBody.CenterOfMotionId);
         Assert.Equal(3, celestialBody.BarycenterOfMotionId);
-        Assert.Equal("body", celestialBody.Name);
+        Assert.Equal("celestialItem", celestialBody.Name);
         Assert.Equal(new Vector3D(1.0, 2.0, 3.0), celestialBody.Radii);
         Assert.Equal(147, celestialBody.FrameId);
         Assert.Equal("frame", celestialBody.FrameName);

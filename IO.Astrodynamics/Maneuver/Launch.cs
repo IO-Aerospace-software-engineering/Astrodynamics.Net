@@ -11,7 +11,7 @@ namespace IO.Astrodynamics.Maneuver
         public LaunchSite LaunchSite { get; }
         public Site RecoverySite { get; }
         public OrbitalParameters.OrbitalParameters TargetOrbit { get; }
-        public Body.Body TargetBody { get; }
+        public Body.CelestialItem TargetCelestialItem { get; }
         public bool? LaunchByDay { get; }
         public double Twilight { get; }
         
@@ -21,16 +21,16 @@ namespace IO.Astrodynamics.Maneuver
         /// </summary>
         /// <param name="launchSite">Launch from</param>
         /// <param name="recoverySite">Recovery site</param>
-        /// <param name="targetBody">Body in orbit to reach</param>
+        /// <param name="targetCelestialItem">CelestialItem in orbit to reach</param>
         /// <param name="twilight">Twilight definition</param>
         /// <param name="launchByDay">Define if launch should occur by day. If undefined launch can occur everytime</param>
         /// <exception cref="ArgumentNullException"></exception>
-        public Launch(LaunchSite launchSite, Site recoverySite, Body.Body targetBody, double twilight,
+        public Launch(LaunchSite launchSite, Site recoverySite, Body.CelestialItem targetCelestialItem, double twilight,
             bool? launchByDay)
         {
             LaunchSite = launchSite ?? throw new ArgumentNullException(nameof(launchSite));
             RecoverySite = recoverySite ?? throw new ArgumentNullException(nameof(recoverySite));
-            TargetBody = targetBody ?? throw new ArgumentNullException(nameof(targetBody));
+            TargetCelestialItem = targetCelestialItem ?? throw new ArgumentNullException(nameof(targetCelestialItem));
             LaunchByDay = launchByDay;
             Twilight = twilight;
         }

@@ -27,7 +27,7 @@ namespace IO.Astrodynamics.Tests.Maneuvers
             Assert.Equal(site, launch.LaunchSite);
             Assert.Equal(recoverySite, launch.RecoverySite);
             Assert.True(launch.LaunchByDay);
-            Assert.Equal(TestHelpers.Moon, launch.TargetBody);
+            Assert.Equal(TestHelpers.Moon, launch.TargetCelestialItem);
             Assert.Null(launch.TargetOrbit);
         }
 
@@ -42,7 +42,7 @@ namespace IO.Astrodynamics.Tests.Maneuvers
             Assert.Equal(recoverySite, launch.RecoverySite);
             Assert.True(launch.LaunchByDay);
             Assert.Equal(TestHelpers.Moon.InitialOrbitalParameters, launch.TargetOrbit);
-            Assert.Null(launch.TargetBody);
+            Assert.Null(launch.TargetCelestialItem);
         }
 
         [Fact]

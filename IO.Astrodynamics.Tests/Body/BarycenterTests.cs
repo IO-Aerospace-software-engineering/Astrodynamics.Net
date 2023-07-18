@@ -26,6 +26,6 @@ public class BarycenterTests
     public void Mass()
     {
         var earthbc = new Barycenter(Barycenters.EARTH_BARYCENTER.NaifId);
-        Assert.Equal(6.045626290431354E+24, earthbc.GetTotalMass());
+        Assert.Equal(6.045626290431354E+24, earthbc.Mass);
     }
 }
