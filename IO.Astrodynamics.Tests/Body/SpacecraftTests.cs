@@ -101,7 +101,8 @@ namespace IO.Astrodynamics.Tests.Body
             scenario.AddSpacecraft(spacecraft);
 
             //Execute scenario
-            API.Instance.PropagateScenario(scenario, Constants.OutputPath);
+            API.Instance.PropagateScenario(scenario, Constants.OutputPath.CreateSubdirectory(scenario.Mission.Name).CreateSubdirectory(scenario.Name).CreateSubdirectory("Sites"),
+                Constants.OutputPath.CreateSubdirectory(scenario.Mission.Name).CreateSubdirectory(scenario.Name).CreateSubdirectory("Spacecrafts"));
             var orientation = spacecraft.GetOrientation(Frames.Frame.ICRF, start);
             Vector3.VectorY.Rotate(orientation.Rotation);
         }

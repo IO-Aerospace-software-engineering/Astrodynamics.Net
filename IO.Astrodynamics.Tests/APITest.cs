@@ -144,9 +144,16 @@ public class APITest
         spacecraft.SetStandbyManeuver(planeAlignmentManeuver);
 
         scenario.AddSpacecraft(spacecraft);
-        API.Instance.PropagateScenario(scenario, Constants.OutputPath);
-        Assert.Throws<ArgumentNullException>(() => API.Instance.PropagateScenario(null, Constants.OutputPath));
-        Assert.Throws<ArgumentNullException>(() => API.Instance.PropagateScenario(scenario, null));
+        API.Instance.PropagateScenario(scenario, Constants.OutputPath.CreateSubdirectory(scenario.Mission.Name).CreateSubdirectory(scenario.Name).CreateSubdirectory("Sites"),
+            Constants.OutputPath.CreateSubdirectory(scenario.Mission.Name).CreateSubdirectory(scenario.Name).CreateSubdirectory("Spacecrafts"));
+        Assert.Throws<ArgumentNullException>(() => API.Instance.PropagateScenario(null,
+            Constants.OutputPath.CreateSubdirectory(scenario.Mission.Name).CreateSubdirectory(scenario.Name).CreateSubdirectory("Sites"),
+            Constants.OutputPath.CreateSubdirectory(scenario.Mission.Name).CreateSubdirectory(scenario.Name).CreateSubdirectory("Spacecrafts")));
+        Assert.Throws<ArgumentNullException>(() => API.Instance.PropagateScenario(scenario, null,
+            Constants.OutputPath.CreateSubdirectory(scenario.Mission.Name).CreateSubdirectory(scenario.Name).CreateSubdirectory("Spacecrafts")));
+        Assert.Throws<ArgumentNullException>(() => API.Instance.PropagateScenario(scenario,
+            Constants.OutputPath.CreateSubdirectory(scenario.Mission.Name).CreateSubdirectory(scenario.Name).CreateSubdirectory("Sites"), null));
+
 
         // Read maneuver results
         var maneuver = spacecraft.StandbyManeuver;
@@ -238,7 +245,8 @@ public class APITest
         spacecraft.SetStandbyManeuver(combinedManeuver);
 
         scenario.AddSpacecraft(spacecraft);
-        API.Instance.PropagateScenario(scenario, Constants.OutputPath);
+        API.Instance.PropagateScenario(scenario, Constants.OutputPath.CreateSubdirectory(scenario.Mission.Name).CreateSubdirectory(scenario.Name).CreateSubdirectory("Sites"),
+            Constants.OutputPath.CreateSubdirectory(scenario.Mission.Name).CreateSubdirectory(scenario.Name).CreateSubdirectory("Spacecrafts"));
 
         // Read maneuver results
         var maneuver = spacecraft.StandbyManeuver;
@@ -446,7 +454,8 @@ public class APITest
         scenario.AddSpacecraft(spacecraft);
 
         //Execute scenario
-        API.Instance.PropagateScenario(scenario, Constants.OutputPath);
+        API.Instance.PropagateScenario(scenario, Constants.OutputPath.CreateSubdirectory(scenario.Mission.Name).CreateSubdirectory(scenario.Name).CreateSubdirectory("Sites"),
+            Constants.OutputPath.CreateSubdirectory(scenario.Mission.Name).CreateSubdirectory(scenario.Name).CreateSubdirectory("Spacecrafts"));
 
         //Find windows when the earth is in field of view of camera 600 
         var res = API.Instance.FindWindowsInFieldOfViewConstraint(
@@ -554,7 +563,8 @@ public class APITest
         scenario.AddSpacecraft(spacecraft);
 
         //Execute scenario
-        API.Instance.PropagateScenario(scenario, Constants.OutputPath);
+        API.Instance.PropagateScenario(scenario, Constants.OutputPath.CreateSubdirectory(scenario.Mission.Name).CreateSubdirectory(scenario.Name).CreateSubdirectory("Sites"),
+            Constants.OutputPath.CreateSubdirectory(scenario.Mission.Name).CreateSubdirectory(scenario.Name).CreateSubdirectory("Spacecrafts"));
 
         //Read spacecraft orientation
         var res = API.Instance.ReadOrientation(window, spacecraft, TimeSpan.FromSeconds(10.0), Frames.Frame.ICRF,

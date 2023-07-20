@@ -18,6 +18,9 @@ namespace IO.Astrodynamics.Mission
         public IReadOnlyCollection<Body.Spacecraft.Spacecraft> Spacecrafts => _spacecrafts;
         private readonly HashSet<Site> _sites = new();
         public IReadOnlyCollection<Site> Sites => _sites;
+        public DirectoryInfo RootDirectory { get; private set; }
+        public DirectoryInfo SpacecraftDirectory { get; private set; }
+        public DirectoryInfo SiteDirectory { get; private set; }
 
         /// <summary>
         /// Constructor
@@ -79,18 +82,27 @@ namespace IO.Astrodynamics.Mission
         /// <exception cref="InvalidOperationException"></exception>
         public ScenarioSummary Simulate(DirectoryInfo outputDirectory)
         {
+            RootDirectory = null;
+            SpacecraftDirectory = null;
+            SiteDirectory = null;
+
             if (_spacecrafts.Count == 0 && _sites.Count == 0)
             {
                 throw new InvalidOperationException("There is nothing to simulate");
             }
 
-            API.Instance.PropagateScenario(this, outputDirectory);
+            RootDirectory = outputDirectory.CreateSubdirectory(this.Mission.Name).CreateSubdirectory(this.Name);
+            SpacecraftDirectory = RootDirectory.CreateSubdirectory("Spacecrafts");
+            SiteDirectory = RootDirectory.CreateSubdirectory("Sites");
 
-            ScenarioSummary scenarioSummary = new ScenarioSummary(this.Window);
+            API.Instance.PropagateScenario(this, SiteDirectory, SpacecraftDirectory);
+
+            ScenarioSummary scenarioSummary = new ScenarioSummary(this.Window, SiteDirectory, SpacecraftDirectory);
             foreach (var spacecraft in _spacecrafts)
             {
                 scenarioSummary.AddSpacecraftSummary(spacecraft.GetSummary());
             }
+
 
             return scenarioSummary;
         }
