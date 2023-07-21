@@ -18,19 +18,28 @@ namespace IO.Astrodynamics.Cosmographia;
 
 public class CosmographiaExporter
 {
-    public async Task Export(Scenario scenario, DirectoryInfo outputDirectory)
+    public async Task ExportAsync(Scenario scenario, DirectoryInfo outputDirectory)
     {
-        ExportRawData(scenario, outputDirectory);
+        if (!scenario.IsSimulated)
+        {
+            throw new InvalidOperationException("The scenario has not yet been simulated. Call the Simulate method on the scenario before calling the cosmographia exporter.");
+        }
 
-        await ExportSpiceKernelsAsync(scenario, outputDirectory);
+        var missionOutputDirectory = outputDirectory.CreateSubdirectory($"{scenario.Mission.Name}_{scenario.Name}");
 
-        await ExportSpacecraftsAsync(scenario, outputDirectory);
+        missionOutputDirectory.Delete(true);
 
-        await ExportSensors(scenario, outputDirectory);
+        ExportRawData(scenario, missionOutputDirectory);
 
-        await ExportObservations(scenario, outputDirectory);
+        await ExportSpiceKernelsAsync(scenario, missionOutputDirectory);
 
-        await ExportLoader(scenario, outputDirectory);
+        await ExportSpacecraftsAsync(scenario, missionOutputDirectory);
+
+        await ExportSensors(scenario, missionOutputDirectory);
+
+        await ExportObservations(scenario, missionOutputDirectory);
+
+        await ExportLoader(scenario, missionOutputDirectory);
     }
 
     private static async Task ExportLoader(Scenario scenario, DirectoryInfo outputDirectory)
@@ -58,19 +67,30 @@ public class CosmographiaExporter
         {
             var maneuvers = spacecraft.GetManeuvers().Values.OfType<InstrumentPointingToAttitude>().ToArray();
             var maneuversGroupedByInstruments = maneuvers.GroupBy(x => x.Instrument);
+            observationJson.items = new ObservationItems[maneuversGroupedByInstruments.Count()];
             int idx = 0;
             foreach (var maneuverByInstrument in maneuversGroupedByInstruments)
             {
-                //add instrument item
+                observationJson.items[idx] = new ObservationItems();
+                observationJson.items[idx].obsClass = "observation";
+                observationJson.items[idx].name = $"{spacecraft.Name.ToUpper()}_{maneuverByInstrument.Key.Name.ToUpper()}_OBSERVATIONS";
+                observationJson.items[idx].startTime = scenario.Window.StartDate.ToFormattedString();
+                observationJson.items[idx].endTime = scenario.Window.EndDate.ToFormattedString();
+                observationJson.items[idx].center = char.ToUpper(spacecraft.InitialOrbitalParameters.Observer.Name[0]) +
+                                                    spacecraft.InitialOrbitalParameters.Observer.Name.Substring(1).ToLower();
                 observationJson.items[idx].trajectoryFrame = new ObservationTrajectoryFrame();
                 observationJson.items[idx].trajectoryFrame.type = "BodyFixed";
-                observationJson.items[idx].trajectoryFrame.body = spacecraft.InitialOrbitalParameters.Observer.Name;
+                observationJson.items[idx].trajectoryFrame.body = char.ToUpper(spacecraft.InitialOrbitalParameters.Observer.Name[0]) +
+                                                                  spacecraft.InitialOrbitalParameters.Observer.Name.Substring(1).ToLower();
+
+                observationJson.items[idx].bodyFrame = new ObservationBodyFrame();
                 observationJson.items[idx].bodyFrame.type = "BodyFixed";
-                observationJson.items[idx].bodyFrame.body = spacecraft.InitialOrbitalParameters.Observer.Name;
+                observationJson.items[idx].bodyFrame.body = char.ToUpper(spacecraft.InitialOrbitalParameters.Observer.Name[0]) +
+                                                            spacecraft.InitialOrbitalParameters.Observer.Name.Substring(1).ToLower();;
 
                 observationJson.items[idx].geometry = new ObservationGeometry();
                 observationJson.items[idx].geometry.type = "Observations";
-                observationJson.items[idx].geometry.sensor = maneuverByInstrument.Key.Name;
+                observationJson.items[idx].geometry.sensor = $"{spacecraft.Name.ToUpper()}_{maneuverByInstrument.Key.Name.ToUpper()}";
                 Random rnd = new Random();
                 observationJson.items[idx].geometry.footprintColor = new[]
                 {
@@ -82,6 +102,8 @@ public class CosmographiaExporter
                 observationJson.items[idx].geometry.alongTrackDivisions = 500;
                 observationJson.items[idx].geometry.shadowVolumeScaleFactor = 1.75;
                 observationJson.items[idx].geometry.fillInObservations = false;
+
+                observationJson.items[idx].geometry.groups = new ObservationGroup[maneuverByInstrument.Count()];
                 int groupIdx = 0;
                 foreach (var maneuver in maneuverByInstrument)
                 {
@@ -105,23 +127,25 @@ public class CosmographiaExporter
         SensorRootObject sensorJson = new SensorRootObject();
         sensorJson.name = $"{scenario.Mission.Name}_{scenario.Name}";
         sensorJson.version = "1.0";
+        sensorJson.items = new SensorItem[scenario.Spacecrafts.Sum(x => x.Intruments.Count)];
+        int idx = 0;
         foreach (var spacecraft in scenario.Spacecrafts)
         {
-            int idx = 0;
             foreach (var instrument in spacecraft.Intruments)
             {
                 sensorJson.items[idx] = new SensorItem();
-                sensorJson.items[idx].center = spacecraft.Name;
-                sensorJson.items[idx].name = instrument.Name;
+                sensorJson.items[idx].center = spacecraft.Name.ToUpper();
+                sensorJson.items[idx].name = $"{spacecraft.Name.ToUpper()}_{instrument.Name.ToUpper()}";
                 sensorJson.items[idx].startTime = scenario.Window.StartDate.ToFormattedString();
                 sensorJson.items[idx].endTime = scenario.Window.EndDate.ToFormattedString();
-                sensorJson.items[idx].parent = spacecraft.Name;
+                sensorJson.items[idx].parent = spacecraft.Name.ToUpper();
                 sensorJson.items[idx].sensorClass = "sensor";
 
                 sensorJson.items[idx].geometry = new SensorGeometry();
                 sensorJson.items[idx].geometry.type = "Spice";
-                sensorJson.items[idx].geometry.instrName = instrument.Name;
-                sensorJson.items[idx].geometry.target = spacecraft.InitialOrbitalParameters.Observer.Name;
+                sensorJson.items[idx].geometry.instrName = $"{spacecraft.Name.ToUpper()}_{instrument.Name.ToUpper()}";
+                sensorJson.items[idx].geometry.target = char.ToUpper(spacecraft.InitialOrbitalParameters.Observer.Name[0]) +
+                                                        spacecraft.InitialOrbitalParameters.Observer.Name.Substring(1).ToLower();
                 sensorJson.items[idx].geometry.range = 100000;
                 sensorJson.items[idx].geometry.rangeTracking = true;
                 Random rnd = new Random();
@@ -148,25 +172,26 @@ public class CosmographiaExporter
         Models.SpacecraftRootObject spacecraftJson = new SpacecraftRootObject();
         spacecraftJson.name = $"{scenario.Mission.Name}_{scenario.Name}";
         spacecraftJson.version = "1.0";
-
+        spacecraftJson.items = new SpacecraftItem[scenario.Spacecrafts.Count];
         int idx = 0;
         foreach (var spacecraft in scenario.Spacecrafts)
         {
             spacecraftJson.items[idx] = new SpacecraftItem();
-            spacecraftJson.items[idx].name = spacecraft.Name;
-            spacecraftJson.items[idx].center = spacecraft.InitialOrbitalParameters.Observer.Name;
+            spacecraftJson.items[idx].name = spacecraft.Name.ToUpper();
+            spacecraftJson.items[idx].center = char.ToUpper(spacecraft.InitialOrbitalParameters.Observer.Name[0]) +
+                                               spacecraft.InitialOrbitalParameters.Observer.Name.Substring(1).ToLower();
             spacecraftJson.items[idx].spacecraftClass = "spacecraft";
             spacecraftJson.items[idx].startTime = scenario.Window.StartDate.ToFormattedString();
             spacecraftJson.items[idx].endTime = scenario.Window.EndDate.ToFormattedString();
 
             spacecraftJson.items[idx].trajectory = new SpacecraftTrajectory();
-            spacecraftJson.items[idx].trajectory.center = spacecraft.InitialOrbitalParameters.Observer.Name;
-            spacecraftJson.items[idx].trajectory.target = spacecraft.Name;
+            spacecraftJson.items[idx].trajectory.center = spacecraftJson.items[idx].center;
+            spacecraftJson.items[idx].trajectory.target = spacecraft.Name.ToUpper();
             spacecraftJson.items[idx].trajectory.type = "Spice";
 
             spacecraftJson.items[idx].bodyFrame = new SpacecraftBodyFrame();
-            spacecraftJson.items[idx].bodyFrame.name = spacecraft.Frame.Name;
-            spacecraftJson.items[idx].bodyFrame.type = "spice";
+            spacecraftJson.items[idx].bodyFrame.name = spacecraft.Frame.Name.ToUpper();
+            spacecraftJson.items[idx].bodyFrame.type = "Spice";
 
             spacecraftJson.items[idx].geometry = new SpacecraftGeometry();
             spacecraftJson.items[idx].geometry.type = "Globe";
@@ -176,17 +201,17 @@ public class CosmographiaExporter
             Random rnd = new Random();
             spacecraftJson.items[idx].label.color = new[]
             {
-                rnd.NextDouble(), rnd.NextDouble(), rnd.NextDouble()
+                rnd.NextDouble() * 1.3, rnd.NextDouble() * 1.3, rnd.NextDouble() * 1.3
             };
             spacecraftJson.items[idx].label.showText = true;
 
             spacecraftJson.items[idx].trajectoryPlot = new SpacecraftTrajectoryPlot();
             spacecraftJson.items[idx].trajectoryPlot.color = spacecraftJson.items[0].label.color;
-            spacecraftJson.items[idx].trajectoryPlot.duration = $"{spacecraft.InitialOrbitalParameters.Period().Days} d";
+            spacecraftJson.items[idx].trajectoryPlot.duration = $"{spacecraft.InitialOrbitalParameters.Period().TotalDays} d";
             spacecraftJson.items[idx].trajectoryPlot.fade = 1;
-            spacecraftJson.items[idx].trajectoryPlot.lead = $"{spacecraft.InitialOrbitalParameters.Period().Days * 0.1} d";
+            spacecraftJson.items[idx].trajectoryPlot.lead = $"{spacecraft.InitialOrbitalParameters.Period().TotalDays * 0.1} d";
             spacecraftJson.items[idx].trajectoryPlot.visible = true;
-            spacecraftJson.items[idx].trajectoryPlot.lineWidth = 5;
+            spacecraftJson.items[idx].trajectoryPlot.lineWidth = 3;
 
             idx++;
         }
@@ -197,7 +222,7 @@ public class CosmographiaExporter
 
     private static async Task ExportSpiceKernelsAsync(Scenario scenario, DirectoryInfo outputDirectory)
     {
-        var files = scenario.RootDirectory.GetFiles("*.*", SearchOption.AllDirectories);
+        var files = outputDirectory.GetFiles("*.*", SearchOption.AllDirectories);
         Models.SpiceRootObject spiceJson = new SpiceRootObject();
         spiceJson.version = "1.0";
         spiceJson.name = $"{scenario.Mission.Name}_{scenario.Name}";

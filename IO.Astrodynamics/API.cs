@@ -184,14 +184,15 @@ public class API
     ///  Execute the scenario
     /// </summary>
     /// <param name="scenario"></param>
-    /// <param name="outputDirectory"></param>
+    /// <param name="siteDirectoryInfo"></param>
+    /// <param name="spacecraftDirectoryInfo"></param>
     public void PropagateScenario(Mission.Scenario scenario, DirectoryInfo siteDirectoryInfo, DirectoryInfo spacecraftDirectoryInfo)
     {
         if (scenario == null) throw new ArgumentNullException(nameof(scenario));
-        // if (outputDirectory == null) throw new ArgumentNullException(nameof(outputDirectory));
+        if (siteDirectoryInfo == null) throw new ArgumentNullException(nameof(siteDirectoryInfo));
+        if (spacecraftDirectoryInfo == null) throw new ArgumentNullException(nameof(spacecraftDirectoryInfo));
         lock (lockObject)
         {
-            // outputDirectory = outputDirectory.CreateSubdirectory(scenario.Mission.Name).CreateSubdirectory(scenario.Name);
             API.Instance.UnloadKernels(siteDirectoryInfo);
             API.Instance.UnloadKernels(spacecraftDirectoryInfo);
 

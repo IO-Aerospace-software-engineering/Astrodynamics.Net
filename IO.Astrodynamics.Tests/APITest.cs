@@ -570,7 +570,6 @@ public class APITest
         var res = API.Instance.ReadOrientation(window, spacecraft, TimeSpan.FromSeconds(10.0), Frames.Frame.ICRF,
             TimeSpan.FromSeconds(10.0)).ToArray();
 
-
         //Read results
         Assert.Equal(0.7071067811865476, res.ElementAt(0).Rotation.W);
         Assert.Equal(0.0, res.ElementAt(0).Rotation.VectorPart.X);
