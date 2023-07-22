@@ -33,6 +33,8 @@ public class CosmographiaExporter
 
         await ExportSpiceKernelsAsync(scenario, missionOutputDirectory);
 
+        await ExportSites(scenario, missionOutputDirectory);
+
         await ExportSpacecraftsAsync(scenario, missionOutputDirectory);
 
         await ExportSensors(scenario, missionOutputDirectory);
@@ -42,18 +44,56 @@ public class CosmographiaExporter
         await ExportLoader(scenario, missionOutputDirectory);
     }
 
+    private static async Task ExportSites(Scenario scenario, DirectoryInfo outputDirectory)
+    {
+        var sitesByBody = scenario.Sites.GroupBy(x => x.CelestialBody);
+        foreach (var siteByBody in sitesByBody)
+        {
+            SiteRootObject siteJson = new SiteRootObject();
+            siteJson.name = $"{scenario.Mission.Name}_{scenario.Name}";
+            var bodyName = char.ToUpper(siteByBody.Key.Name[0]) + siteByBody.Key.Name.Substring(1).ToLower();
+            siteJson.version = "1.0";
+            siteJson.items = new SiteItem[1];
+            siteJson.items[0] = new SiteItem();
+            siteJson.items[0].name = $"{bodyName} surface sites";
+            siteJson.items[0].body = bodyName;
+            siteJson.items[0].type = "FeatureLabels";
+            siteJson.items[0].features = new SiteFeature[siteByBody.Count()];
+            int idx = 0;
+            foreach (var site in siteByBody)
+            {
+                siteJson.items[0].features[idx] = new SiteFeature();
+                siteJson.items[0].features[idx].name = site.Name;
+                siteJson.items[0].features[idx].code = "AA";
+                siteJson.items[0].features[idx].origin = string.Empty;
+                siteJson.items[0].features[idx].diameter = 1000.0;
+                siteJson.items[0].features[idx].longitude = site.Planetodetic.Longitude * Constants.Rad2Deg;
+                siteJson.items[0].features[idx].latitude = site.Planetodetic.Latitude * Constants.Rad2Deg;
+                siteJson.items[0].features[idx].link = String.Empty;
+                idx++;
+            }
+
+            await using var fileStream = File.Create(Path.Combine(outputDirectory.FullName, $"{bodyName.ToLower()}-features.json"));
+            await JsonSerializer.SerializeAsync(fileStream, siteJson);
+        }
+    }
+
     private static async Task ExportLoader(Scenario scenario, DirectoryInfo outputDirectory)
     {
+        var siteFiles = outputDirectory.GetFiles("*-features.json", SearchOption.TopDirectoryOnly);
         LoadRootObject loaderJson = new LoadRootObject();
         loaderJson.name = $"{scenario.Mission.Name}_{scenario.Name}";
         loaderJson.version = "1.0";
-        loaderJson.require = new[]
+        List<string> files = new List<string>()
         {
             Path.Combine(outputDirectory.FullName, "spice.json"),
             Path.Combine(outputDirectory.FullName, "spacecrafts.json"),
             Path.Combine(outputDirectory.FullName, "sensors.json"),
             Path.Combine(outputDirectory.FullName, "observations.json")
         };
+        files.AddRange(siteFiles.Select(x => x.FullName));
+        loaderJson.require = files.ToArray();
+        
         await using var fileStream = File.Create(Path.Combine(outputDirectory.FullName, $"{scenario.Mission.Name}_{scenario.Name}.json"));
         await JsonSerializer.SerializeAsync(fileStream, loaderJson);
     }
@@ -86,7 +126,8 @@ public class CosmographiaExporter
                 observationJson.items[idx].bodyFrame = new ObservationBodyFrame();
                 observationJson.items[idx].bodyFrame.type = "BodyFixed";
                 observationJson.items[idx].bodyFrame.body = char.ToUpper(spacecraft.InitialOrbitalParameters.Observer.Name[0]) +
-                                                            spacecraft.InitialOrbitalParameters.Observer.Name.Substring(1).ToLower();;
+                                                            spacecraft.InitialOrbitalParameters.Observer.Name.Substring(1).ToLower();
+                ;
 
                 observationJson.items[idx].geometry = new ObservationGeometry();
                 observationJson.items[idx].geometry.type = "Observations";

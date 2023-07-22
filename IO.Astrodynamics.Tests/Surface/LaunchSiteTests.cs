@@ -16,7 +16,7 @@ namespace IO.Astrodynamics.Tests.Surface
         {
             LaunchSite site = new LaunchSite(33,"l1", TestHelpers.EarthAtJ2000, new Planetodetic(1.0, 2.0, 3.0), new AzimuthRange(1.0, 2.0));
             Assert.Equal("l1", site.Name);
-            Assert.Equal(TestHelpers.EarthAtJ2000, site.CelestialItem);
+            Assert.Equal(TestHelpers.EarthAtJ2000, site.CelestialBody);
             Assert.Equal(new Planetodetic(1.0, 2.0, 3.0), site.Planetodetic);
             Assert.Single(site.AzimuthRanges);
             Assert.Equal(new AzimuthRange(1.0, 2.0), site.AzimuthRanges.First());

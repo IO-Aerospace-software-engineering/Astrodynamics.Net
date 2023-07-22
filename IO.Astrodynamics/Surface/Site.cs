@@ -15,7 +15,7 @@ namespace IO.Astrodynamics.Surface
         public int Id { get; }
         public int NaifId { get; }
         public string Name { get; }
-        public CelestialBody CelestialItem { get; }
+        public CelestialBody CelestialBody { get; }
         public Planetodetic Planetodetic { get; }
         public OrbitalParameters.OrbitalParameters InitialOrbitalParameters { get; }
 
@@ -44,20 +44,20 @@ namespace IO.Astrodynamics.Surface
             if (id <= 0) throw new ArgumentOutOfRangeException(nameof(id));
             if (string.IsNullOrEmpty(name)) throw new ArgumentException("Value cannot be null or empty.", nameof(name));
             Name = name;
-            CelestialItem = celestialItem;
+            CelestialBody = celestialItem;
             Id = id;
             NaifId = celestialItem.NaifId * 1000 + id;
             Frame = new Frame(name.ToUpper() + "_TOPO");
             if (double.IsNaN(planetodetic.Latitude))
             {
-                InitialOrbitalParameters = GetEphemeris(DateTimeExtension.J2000, CelestialItem, CelestialItem.Frame, Aberration.None);
-                Planetodetic = GetPlanetocentricCoordinates().ToPlanetodetic(CelestialItem.Flattening, CelestialItem.EquatorialRadius);
+                InitialOrbitalParameters = GetEphemeris(DateTimeExtension.J2000, CelestialBody, CelestialBody.Frame, Aberration.None);
+                Planetodetic = GetPlanetocentricCoordinates().ToPlanetodetic(CelestialBody.Flattening, CelestialBody.EquatorialRadius);
             }
             else
             {
                 Planetodetic = planetodetic;
-                InitialOrbitalParameters = new StateVector(Planetodetic.ToPlanetocentric(CelestialItem.Flattening, CelestialItem.EquatorialRadius).ToCartesianCoordinates(), Vector3.Zero, CelestialItem,
-                    DateTimeExtension.J2000, CelestialItem.Frame);
+                InitialOrbitalParameters = new StateVector(Planetodetic.ToPlanetocentric(CelestialBody.Flattening, CelestialBody.EquatorialRadius).ToCartesianCoordinates(), Vector3.Zero, CelestialBody,
+                    DateTimeExtension.J2000, CelestialBody.Frame);
             }
         }
 
@@ -140,7 +140,7 @@ namespace IO.Astrodynamics.Surface
             RelationnalOperator relationalOperator, double value, double adjustValue, Aberration aberration, TimeSpan stepSize, INaifObject illuminationSource,
             string method = "Ellipsoid")
         {
-            return API.Instance.FindWindowsOnIlluminationConstraint(searchWindow, observer, CelestialItem, CelestialItem.Frame, Planetodetic, illuminationType, relationalOperator, value,
+            return API.Instance.FindWindowsOnIlluminationConstraint(searchWindow, observer, CelestialBody, CelestialBody.Frame, Planetodetic, illuminationType, relationalOperator, value,
                 adjustValue,
                 aberration, stepSize, illuminationSource, method);
         }
