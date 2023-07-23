@@ -91,4 +91,72 @@ public class ExporterTests
         CosmographiaExporter exporter = new CosmographiaExporter();
         await exporter.ExportAsync(scenario, new DirectoryInfo("CosmographiaExport"));
     }
+
+    [Fact]
+    public async Task ExportSpacecraftReachTarget()
+    {
+        DateTime start = DateTimeExtension.CreateUTC(667915269.18539762).ToTDB();//3/2/2021 00:02:18
+        DateTime startPropagator = DateTimeExtension.CreateUTC(668085555.829810).ToTDB();//3/3/2021 23:20:25
+        DateTime end = DateTimeExtension.CreateUTC(668174400.000000).ToTDB();// 3/5/2021 00:01:09
+
+        Astrodynamics.Mission.Mission mission = new Astrodynamics.Mission.Mission("mission01");
+        Scenario scenario = new Scenario("scn1", mission, new Window(startPropagator, end));
+        scenario.AddAdditionalCelestialBody(TestHelpers.MoonAtJ2000);
+
+        //Define parking orbit
+        StateVector parkingOrbit = new StateVector(
+            new Vector3(5056554.1874925727, 4395595.4942363985, 0.0),
+            new Vector3(-3708.6305608890916, 4266.2914313011433, 6736.8538488755494), TestHelpers.EarthAtJ2000,
+            start, Frames.Frame.ICRF);
+
+        //Define target orbit
+        StateVector targetOrbit = new StateVector(
+            new Vector3(4390853.7278876612, 5110607.0005866792, 917659.86391987884),
+            new Vector3(-4979.4693432656513, 3033.2639866911495, 6933.1803797017265), TestHelpers.EarthAtJ2000,
+            start, Frames.Frame.ICRF);
+
+        //Create and configure spacecraft1
+        Clock clock1 = new Clock("clk1", System.Math.Pow(2.0, 16.0));
+        Spacecraft spacecraft1 =
+            new Spacecraft(-1790, "Target", 1000.0, 10000.0, clock1, targetOrbit);
+
+        FuelTank fuelTank1 = new FuelTank("ft1", "model1", "sn1", 9000.0, 9000.0);
+        Engine engine1 = new Engine("engine1", "model1", "sn1", 450.0, 50.0, fuelTank1);
+        spacecraft1.AddFuelTank(fuelTank1);
+        spacecraft1.AddEngine(engine1);
+        spacecraft1.AddPayload(new Payload("payload1", 50.0, "pay01"));
+        spacecraft1.AddInstrument(
+            new Instrument(-1790601, "CAM601", "mod1", 10.0 * IO.Astrodynamics.Constants.Deg2Rad,
+                InstrumentShape.Circular, Vector3.VectorZ, Vector3.VectorX, Vector3.VectorX));
+        scenario.AddSpacecraft(spacecraft1);
+
+        //Create and configure spacecraft2
+        Clock clock2 = new Clock("clk2", System.Math.Pow(2.0, 16.0));
+        Spacecraft spacecraft2 =
+            new Spacecraft(-1791, "Chaser", 1000.0, 10000.0, clock2, parkingOrbit);
+
+        FuelTank fuelTank2 = new FuelTank("ft1", "model1", "sn1", 9000.0, 9000.0);
+        Engine engine2 = new Engine("engine1", "model1", "sn1", 450.0, 50.0, fuelTank2);
+        spacecraft2.AddFuelTank(fuelTank2);
+        spacecraft2.AddEngine(engine2);
+        spacecraft2.AddPayload(new Payload("payload1", 50.0, "pay01"));
+        spacecraft2.AddInstrument(
+            new Instrument(-1791602, "CAM602", "mod1", 10.0 * IO.Astrodynamics.Constants.Deg2Rad,
+                InstrumentShape.Circular, Vector3.VectorY, Vector3.VectorX, Vector3.Zero));
+
+        var planeAlignmentManeuver = new PlaneAlignmentManeuver(DateTime.MinValue, TimeSpan.Zero,
+            targetOrbit, spacecraft2.Engines.First());
+        planeAlignmentManeuver.SetNextManeuver(new ApsidalAlignmentManeuver(DateTime.MinValue,
+                TimeSpan.Zero, targetOrbit, spacecraft2.Engines.First()))
+            .SetNextManeuver(new PhasingManeuver(DateTime.MinValue, TimeSpan.Zero, targetOrbit, 1,
+                spacecraft2.Engines.First()))
+            .SetNextManeuver(new ApogeeHeightManeuver(DateTime.MinValue, TimeSpan.Zero, 15866666.666666666,
+                spacecraft2.Engines.First()));
+
+        spacecraft2.SetStandbyManeuver(planeAlignmentManeuver);
+        scenario.AddSpacecraft(spacecraft2);
+        var summary = scenario.Simulate(Constants.OutputPath);
+        CosmographiaExporter cosmographiaExporter = new CosmographiaExporter();
+        await cosmographiaExporter.ExportAsync(scenario, new DirectoryInfo("CosmographiaExport"));
+    }
 }

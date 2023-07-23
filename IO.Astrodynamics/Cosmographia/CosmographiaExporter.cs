@@ -86,14 +86,14 @@ public class CosmographiaExporter
         loaderJson.version = "1.0";
         List<string> files = new List<string>()
         {
-            Path.Combine(outputDirectory.FullName, "spice.json"),
-            Path.Combine(outputDirectory.FullName, "spacecrafts.json"),
-            Path.Combine(outputDirectory.FullName, "sensors.json"),
-            Path.Combine(outputDirectory.FullName, "observations.json")
+            Path.Combine("spice.json"),
+            Path.Combine("spacecrafts.json"),
+            Path.Combine("sensors.json"),
+            Path.Combine("observations.json")
         };
-        files.AddRange(siteFiles.Select(x => x.FullName));
+        files.AddRange(siteFiles.Select(x => Path.GetRelativePath(outputDirectory.FullName, x.FullName)));
         loaderJson.require = files.ToArray();
-        
+
         await using var fileStream = File.Create(Path.Combine(outputDirectory.FullName, $"{scenario.Mission.Name}_{scenario.Name}.json"));
         await JsonSerializer.SerializeAsync(fileStream, loaderJson);
     }
@@ -236,7 +236,7 @@ public class CosmographiaExporter
 
             spacecraftJson.items[idx].geometry = new SpacecraftGeometry();
             spacecraftJson.items[idx].geometry.type = "Globe";
-            spacecraftJson.items[idx].geometry.radii = new[] { 0.001, 0.001, 0.001 };
+            spacecraftJson.items[idx].geometry.radii = new[] { 0.02, 0.02, 0.02 };
 
             spacecraftJson.items[idx].label = new SpacecraftLabel();
             Random rnd = new Random();
@@ -247,7 +247,7 @@ public class CosmographiaExporter
             spacecraftJson.items[idx].label.showText = true;
 
             spacecraftJson.items[idx].trajectoryPlot = new SpacecraftTrajectoryPlot();
-            spacecraftJson.items[idx].trajectoryPlot.color = spacecraftJson.items[0].label.color;
+            spacecraftJson.items[idx].trajectoryPlot.color = spacecraftJson.items[idx].label.color;
             spacecraftJson.items[idx].trajectoryPlot.duration = $"{spacecraft.InitialOrbitalParameters.Period().TotalDays} d";
             spacecraftJson.items[idx].trajectoryPlot.fade = 1;
             spacecraftJson.items[idx].trajectoryPlot.lead = $"{spacecraft.InitialOrbitalParameters.Period().TotalDays * 0.1} d";
@@ -267,7 +267,7 @@ public class CosmographiaExporter
         Models.SpiceRootObject spiceJson = new SpiceRootObject();
         spiceJson.version = "1.0";
         spiceJson.name = $"{scenario.Mission.Name}_{scenario.Name}";
-        spiceJson.spiceKernels = files.Select(x => x.FullName).ToArray();
+        spiceJson.spiceKernels = files.Select(x => Path.GetRelativePath(outputDirectory.FullName, x.FullName)).ToArray();
         await using var fileStream = File.Create(Path.Combine(outputDirectory.FullName, "spice.json"));
         await JsonSerializer.SerializeAsync(fileStream, spiceJson);
     }
