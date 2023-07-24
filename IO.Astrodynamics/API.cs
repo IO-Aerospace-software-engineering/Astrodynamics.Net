@@ -184,15 +184,17 @@ public class API
     ///  Execute the scenario
     /// </summary>
     /// <param name="scenario"></param>
-    /// <param name="outputDirectory"></param>
-    public void PropagateScenario(Mission.Scenario scenario, DirectoryInfo outputDirectory)
+    /// <param name="siteDirectoryInfo"></param>
+    /// <param name="spacecraftDirectoryInfo"></param>
+    public void PropagateScenario(Mission.Scenario scenario, DirectoryInfo siteDirectoryInfo, DirectoryInfo spacecraftDirectoryInfo)
     {
         if (scenario == null) throw new ArgumentNullException(nameof(scenario));
-        if (outputDirectory == null) throw new ArgumentNullException(nameof(outputDirectory));
+        if (siteDirectoryInfo == null) throw new ArgumentNullException(nameof(siteDirectoryInfo));
+        if (spacecraftDirectoryInfo == null) throw new ArgumentNullException(nameof(spacecraftDirectoryInfo));
         lock (lockObject)
         {
-            outputDirectory = outputDirectory.CreateSubdirectory(scenario.Mission.Name).CreateSubdirectory(scenario.Name);
-            API.Instance.UnloadKernels(outputDirectory);
+            API.Instance.UnloadKernels(siteDirectoryInfo);
+            API.Instance.UnloadKernels(spacecraftDirectoryInfo);
 
             Scenario scenarioDto = new Scenario(scenario.Name,
                 new Window(scenario.Window.StartDate.SecondsFromJ2000TDB(),
@@ -200,7 +202,7 @@ public class API
             for (int j = 0; j < scenario.Sites.Count; j++)
             {
                 scenarioDto.Sites[j] = _mapper.Map<Site>(scenario.Sites.ElementAt(j));
-                scenarioDto.Sites[j].DirectoryPath = outputDirectory.CreateSubdirectory("Sites").FullName;
+                scenarioDto.Sites[j].DirectoryPath = siteDirectoryInfo.FullName;
             }
 
             foreach (var spacecraft in scenario.Spacecrafts)
@@ -223,7 +225,7 @@ public class API
 
                 //Create and configure spacecraft
                 scenarioDto.Spacecraft = new DTO.Spacecraft(spacecraft.NaifId, spacecraft.Name, spacecraft.DryOperatingMass, spacecraft.MaximumOperatingMass, parkingOrbit,
-                    outputDirectory.CreateSubdirectory("Spacecrafts").FullName);
+                    spacecraftDirectoryInfo.FullName);
 
                 for (int j = 0; j < spacecraft.FuelTanks.Count; j++)
                 {
@@ -469,7 +471,8 @@ public class API
                     throw new InvalidOperationException($"Scenario can't be executed : {scenarioDto.Error}");
                 }
 
-                LoadKernels(outputDirectory);
+                LoadKernels(siteDirectoryInfo);
+                LoadKernels(spacecraftDirectoryInfo);
 
                 foreach (var maneuverResult in
                          scenarioDto.Spacecraft.CombinedManeuvers.Where(x => x.ManeuverOrder > -1))
@@ -535,7 +538,7 @@ public class API
                     mnv.DeltaV = _mapper.Map<Vector3>(maneuverResult.DeltaV);
                     mnv.FuelBurned = maneuverResult.FuelBurned;
                 }
-                
+
                 foreach (var maneuverResult in scenarioDto.Spacecraft.NadirAttitudes.Where(x =>
                              x.ManeuverOrder > -1))
                 {
@@ -543,7 +546,7 @@ public class API
                     mnv.AttitudeWindow = _mapper.Map<Time.Window>(maneuverResult.Window);
                     mnv.ManeuverWindow = _mapper.Map<Time.Window>(maneuverResult.Window);
                 }
-                
+
                 foreach (var maneuverResult in scenarioDto.Spacecraft.ZenithAttitudes.Where(x =>
                              x.ManeuverOrder > -1))
                 {
@@ -551,7 +554,7 @@ public class API
                     mnv.AttitudeWindow = _mapper.Map<Time.Window>(maneuverResult.Window);
                     mnv.ManeuverWindow = _mapper.Map<Time.Window>(maneuverResult.Window);
                 }
-                
+
                 foreach (var maneuverResult in scenarioDto.Spacecraft.ProgradeAttitudes.Where(x =>
                              x.ManeuverOrder > -1))
                 {
@@ -559,7 +562,7 @@ public class API
                     mnv.AttitudeWindow = _mapper.Map<Time.Window>(maneuverResult.Window);
                     mnv.ManeuverWindow = _mapper.Map<Time.Window>(maneuverResult.Window);
                 }
-                
+
                 foreach (var maneuverResult in scenarioDto.Spacecraft.RetrogradeAttitudes.Where(x =>
                              x.ManeuverOrder > -1))
                 {
@@ -567,7 +570,7 @@ public class API
                     mnv.AttitudeWindow = _mapper.Map<Time.Window>(maneuverResult.Window);
                     mnv.ManeuverWindow = _mapper.Map<Time.Window>(maneuverResult.Window);
                 }
-                
+
                 foreach (var maneuverResult in scenarioDto.Spacecraft.PointingToAttitudes.Where(x =>
                              x.ManeuverOrder > -1))
                 {

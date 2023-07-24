@@ -18,6 +18,11 @@ namespace IO.Astrodynamics.Mission
         public IReadOnlyCollection<Body.Spacecraft.Spacecraft> Spacecrafts => _spacecrafts;
         private readonly HashSet<Site> _sites = new();
         public IReadOnlyCollection<Site> Sites => _sites;
+        public DirectoryInfo RootDirectory { get; private set; }
+        public DirectoryInfo SpacecraftDirectory { get; private set; }
+        public DirectoryInfo SiteDirectory { get; private set; }
+
+        public bool IsSimulated => RootDirectory?.Exists == true && SpacecraftDirectory?.Exists == true && SiteDirectory?.Exists == true;
 
         /// <summary>
         /// Constructor
@@ -79,19 +84,30 @@ namespace IO.Astrodynamics.Mission
         /// <exception cref="InvalidOperationException"></exception>
         public ScenarioSummary Simulate(DirectoryInfo outputDirectory)
         {
+            RootDirectory = null;
+            SpacecraftDirectory = null;
+            SiteDirectory = null;
+
             if (_spacecrafts.Count == 0 && _sites.Count == 0)
             {
                 throw new InvalidOperationException("There is nothing to simulate");
             }
 
-            API.Instance.PropagateScenario(this, outputDirectory);
+            var rootDirectory = outputDirectory.CreateSubdirectory(this.Mission.Name).CreateSubdirectory(this.Name);
+            var spacecraftDirectory = rootDirectory.CreateSubdirectory("Spacecrafts");
+            var siteDirectory = rootDirectory.CreateSubdirectory("Sites");
 
-            ScenarioSummary scenarioSummary = new ScenarioSummary(this.Window);
+            API.Instance.PropagateScenario(this, siteDirectory, spacecraftDirectory);
+
+            ScenarioSummary scenarioSummary = new ScenarioSummary(this.Window, siteDirectory, spacecraftDirectory);
             foreach (var spacecraft in _spacecrafts)
             {
                 scenarioSummary.AddSpacecraftSummary(spacecraft.GetSummary());
             }
 
+            RootDirectory = outputDirectory.CreateSubdirectory(this.Mission.Name).CreateSubdirectory(this.Name);
+            SpacecraftDirectory = rootDirectory.CreateSubdirectory("Spacecrafts");
+            SiteDirectory = rootDirectory.CreateSubdirectory("Sites");
             return scenarioSummary;
         }
 
