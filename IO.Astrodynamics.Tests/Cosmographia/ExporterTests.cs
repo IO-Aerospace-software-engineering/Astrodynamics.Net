@@ -72,9 +72,13 @@ public class ExporterTests
     {
         Astrodynamics.Mission.Mission mission = new Astrodynamics.Mission.Mission("Cosmographia");
         Scenario scenario = new Scenario("export3", mission, new Window(DateTimeExtension.J2000.AddYears(21), DateTimeExtension.J2000.AddYears(21).AddDays(1.0)));
-        Site site = new Site(28, "CapCanaveral", TestHelpers.EarthAtJ2000,
-            new Planetodetic(-80.6 * Astrodynamics.Constants.Deg2Rad, 28.4 * Astrodynamics.Constants.Deg2Rad, 0.0));
+        Site site3 = new Site(14, "DSS-14", TestHelpers.EarthAtJ2000);
+        Site site = new Site(34, "DSS-34", TestHelpers.EarthAtJ2000);
+        Site site2 = new Site(65, "DSS-65", TestHelpers.EarthAtJ2000);
+        
         scenario.AddSite(site);
+        scenario.AddSite(site2);
+        scenario.AddSite(site3);
         Spacecraft spacecraft = new Spacecraft(-334, "Lois", 1000.0, 2000.0, new Clock("clockspc1", 1 / 256.0),
             new KeplerianElements(11800000.0, 0.3, 1.0, 0.0, 0.0, 0.0, TestHelpers.EarthAtJ2000, DateTimeExtension.J2000, Frames.Frame.ICRF));
         var instrument = new Instrument(-334100, "camera_hires", "camdeluxe", 0.5, InstrumentShape.Circular, Vector3.VectorZ, Vector3.VectorY, Vector3.Zero);

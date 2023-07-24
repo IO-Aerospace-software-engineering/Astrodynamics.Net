@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using IO.Astrodynamics.Body.Spacecraft;
 using IO.Astrodynamics.Cosmographia.Models;
 using IO.Astrodynamics.Maneuver;
 using IO.Astrodynamics.Mission;
@@ -18,6 +19,9 @@ namespace IO.Astrodynamics.Cosmographia;
 
 public class CosmographiaExporter
 {
+    private readonly Dictionary<Spacecraft, double[]> _spacecraftColors = new Dictionary<Spacecraft, double[]>();
+    private readonly Dictionary<Instrument, double[]> _instrumentColors = new Dictionary<Instrument, double[]>();
+
     public async Task ExportAsync(Scenario scenario, DirectoryInfo outputDirectory)
     {
         if (!scenario.IsSimulated)
@@ -44,7 +48,7 @@ public class CosmographiaExporter
         await ExportLoader(scenario, missionOutputDirectory);
     }
 
-    private static async Task ExportSites(Scenario scenario, DirectoryInfo outputDirectory)
+    private async Task ExportSites(Scenario scenario, DirectoryInfo outputDirectory)
     {
         var sitesByBody = scenario.Sites.GroupBy(x => x.CelestialBody);
         foreach (var siteByBody in sitesByBody)
@@ -78,7 +82,7 @@ public class CosmographiaExporter
         }
     }
 
-    private static async Task ExportLoader(Scenario scenario, DirectoryInfo outputDirectory)
+    private async Task ExportLoader(Scenario scenario, DirectoryInfo outputDirectory)
     {
         var siteFiles = outputDirectory.GetFiles("*-features.json", SearchOption.TopDirectoryOnly);
         LoadRootObject loaderJson = new LoadRootObject();
@@ -98,7 +102,7 @@ public class CosmographiaExporter
         await JsonSerializer.SerializeAsync(fileStream, loaderJson);
     }
 
-    private static async Task ExportObservations(Scenario scenario, DirectoryInfo outputDirectory)
+    private async Task ExportObservations(Scenario scenario, DirectoryInfo outputDirectory)
     {
         ObservationRootObject observationJson = new ObservationRootObject();
         observationJson.name = $"{scenario.Mission.Name}_{scenario.Name}";
@@ -127,16 +131,11 @@ public class CosmographiaExporter
                 observationJson.items[idx].bodyFrame.type = "BodyFixed";
                 observationJson.items[idx].bodyFrame.body = char.ToUpper(spacecraft.InitialOrbitalParameters.Observer.Name[0]) +
                                                             spacecraft.InitialOrbitalParameters.Observer.Name.Substring(1).ToLower();
-                ;
 
                 observationJson.items[idx].geometry = new ObservationGeometry();
                 observationJson.items[idx].geometry.type = "Observations";
                 observationJson.items[idx].geometry.sensor = $"{spacecraft.Name.ToUpper()}_{maneuverByInstrument.Key.Name.ToUpper()}";
-                Random rnd = new Random();
-                observationJson.items[idx].geometry.footprintColor = new[]
-                {
-                    rnd.NextDouble(), rnd.NextDouble(), rnd.NextDouble()
-                };
+                observationJson.items[idx].geometry.footprintColor = _instrumentColors[maneuverByInstrument.Key];
                 observationJson.items[idx].geometry.footprintOpacity = 0.4;
                 observationJson.items[idx].geometry.showResWithColor = false;
                 observationJson.items[idx].geometry.sideDivisions = 125;
@@ -163,7 +162,7 @@ public class CosmographiaExporter
         }
     }
 
-    private static async Task ExportSensors(Scenario scenario, DirectoryInfo outputDirectory)
+    private async Task ExportSensors(Scenario scenario, DirectoryInfo outputDirectory)
     {
         SensorRootObject sensorJson = new SensorRootObject();
         sensorJson.name = $"{scenario.Mission.Name}_{scenario.Name}";
@@ -172,6 +171,8 @@ public class CosmographiaExporter
         int idx = 0;
         foreach (var spacecraft in scenario.Spacecrafts)
         {
+            var spcColor = GetSpacecraftColor(spacecraft);
+
             foreach (var instrument in spacecraft.Intruments)
             {
                 sensorJson.items[idx] = new SensorItem();
@@ -189,13 +190,14 @@ public class CosmographiaExporter
                                                         spacecraft.InitialOrbitalParameters.Observer.Name.Substring(1).ToLower();
                 sensorJson.items[idx].geometry.range = 100000;
                 sensorJson.items[idx].geometry.rangeTracking = true;
-                Random rnd = new Random();
-                sensorJson.items[idx].geometry.frustumColor = new[]
+                
+                _instrumentColors[instrument]=new[]
                 {
-                    rnd.NextDouble(), rnd.NextDouble(), rnd.NextDouble()
+                    spcColor[0] * (1.0 + (idx + 1) * 0.1), spcColor[1] * (1.0 + (idx + 1) * 0.1), spcColor[2] * (1.0 + (idx + 1) * 0.1)
                 };
+                sensorJson.items[idx].geometry.frustumColor = _instrumentColors[instrument];
                 sensorJson.items[idx].geometry.frustumBaseLineWidth = 3;
-                sensorJson.items[idx].geometry.frustumOpacity = 0.3;
+                sensorJson.items[idx].geometry.frustumOpacity = 0.2;
                 sensorJson.items[idx].geometry.gridOpacity = 1;
                 sensorJson.items[idx].geometry.footprintOpacity = 0.8;
                 sensorJson.items[idx].geometry.sideDivisions = 300;
@@ -208,7 +210,7 @@ public class CosmographiaExporter
         await JsonSerializer.SerializeAsync(fileStream, sensorJson);
     }
 
-    private static async Task ExportSpacecraftsAsync(Scenario scenario, DirectoryInfo outputDirectory)
+    private async Task ExportSpacecraftsAsync(Scenario scenario, DirectoryInfo outputDirectory)
     {
         Models.SpacecraftRootObject spacecraftJson = new SpacecraftRootObject();
         spacecraftJson.name = $"{scenario.Mission.Name}_{scenario.Name}";
@@ -239,13 +241,10 @@ public class CosmographiaExporter
             spacecraftJson.items[idx].geometry.radii = new[] { 0.02, 0.02, 0.02 };
 
             spacecraftJson.items[idx].label = new SpacecraftLabel();
-            Random rnd = new Random();
-            spacecraftJson.items[idx].label.color = new[]
-            {
-                rnd.NextDouble() * 1.3, rnd.NextDouble() * 1.3, rnd.NextDouble() * 1.3
-            };
+
             spacecraftJson.items[idx].label.showText = true;
 
+            spacecraftJson.items[idx].label.color = GetSpacecraftColor(spacecraft);
             spacecraftJson.items[idx].trajectoryPlot = new SpacecraftTrajectoryPlot();
             spacecraftJson.items[idx].trajectoryPlot.color = spacecraftJson.items[idx].label.color;
             spacecraftJson.items[idx].trajectoryPlot.duration = $"{spacecraft.InitialOrbitalParameters.Period().TotalDays} d";
@@ -261,7 +260,24 @@ public class CosmographiaExporter
         await JsonSerializer.SerializeAsync(fileStream, spacecraftJson);
     }
 
-    private static async Task ExportSpiceKernelsAsync(Scenario scenario, DirectoryInfo outputDirectory)
+    private double[] GetSpacecraftColor(Spacecraft spacecraft)
+    {
+        _spacecraftColors.TryGetValue(spacecraft, out double[] color);
+
+        if (color == null)
+        {
+            Random rnd = new Random();
+            color = new[]
+            {
+                rnd.NextDouble() * 1.3, rnd.NextDouble() * 1.3, rnd.NextDouble() * 1.3
+            };
+            _spacecraftColors[spacecraft] = color;
+        }
+
+        return color;
+    }
+
+    private async Task ExportSpiceKernelsAsync(Scenario scenario, DirectoryInfo outputDirectory)
     {
         var files = outputDirectory.GetFiles("*.*", SearchOption.AllDirectories);
         Models.SpiceRootObject spiceJson = new SpiceRootObject();
@@ -272,7 +288,7 @@ public class CosmographiaExporter
         await JsonSerializer.SerializeAsync(fileStream, spiceJson);
     }
 
-    private static void ExportRawData(Scenario scenario, DirectoryInfo outputDirectory)
+    private void ExportRawData(Scenario scenario, DirectoryInfo outputDirectory)
     {
         CopyDirectory(scenario.RootDirectory, outputDirectory, true);
     }
