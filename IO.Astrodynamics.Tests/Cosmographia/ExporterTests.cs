@@ -45,24 +45,44 @@ public class ExporterTests
     [Fact]
     public async Task ExportWithObservationPropagation()
     {
+        //Create mission
         Astrodynamics.Mission.Mission mission = new Astrodynamics.Mission.Mission("Cosmographia");
-        Scenario scenario = new Scenario("export2", mission, new Window(DateTimeExtension.J2000.AddYears(21), DateTimeExtension.J2000.AddYears(21).AddDays(1.0)));
-        Spacecraft spacecraft = new Spacecraft(-334, "Lois", 1000.0, 2000.0, new Clock("clockspc1", 1 / 256.0),
-            new KeplerianElements(11800000.0, 0.3, 1.0, 0.0, 0.0, 0.0, TestHelpers.EarthAtJ2000, DateTimeExtension.J2000, Frames.Frame.ICRF));
-        var instrument = new Instrument(-334100, "camera_hires", "camdeluxe", 0.5, InstrumentShape.Circular, Vector3.VectorZ, Vector3.VectorY, Vector3.Zero);
+        
+        //Create a scenario for the mission
+        Scenario scenario = new Scenario("export2", mission, new Window(DateTimeExtension.J2000.AddYears(21), DateTimeExtension.J2000.AddYears(21).AddDays(1.0))); 
+        
+        //Configure a spacecraft
+        Spacecraft spacecraft = new Spacecraft(-334, "Spacecraft", 1000.0, 2000.0, new Clock("clockspc1", 1 / 256.0),
+            new KeplerianElements(6800000.0, 0.3, 1.0, 0.0, 0.0, 0.0, TestHelpers.MoonAtJ2000, DateTimeExtension.J2000, Frames.Frame.ICRF));
+        
+        //Configure and attach an instrument to the spacecraft
+        var instrument = new Instrument(-334100, "camera_hires", "camdeluxe", 0.03, InstrumentShape.Rectangular, Vector3.VectorZ, Vector3.VectorY, Vector3.Zero, 0.048);
         spacecraft.AddInstrument(instrument);
+        
+        //Add a fuel tank
         spacecraft.AddFuelTank(new FuelTank("fuelTank1", "fuelTankModel", "456", 2000.0, 2000.0));
+        
+        //Add an engine
         spacecraft.AddEngine(new Engine("engine1", "engineModel", "1234", 450, 50.0, spacecraft.FuelTanks.First()));
+        
+        //Attach the spacecraft to the scenario
         scenario.AddSpacecraft(spacecraft);
+        
+        //Configure the first maneuver
         var initialManeuver = new InstrumentPointingToAttitude(scenario.Window.StartDate.AddMinutes(10.0), TimeSpan.FromHours(1.0), instrument,
-            spacecraft.InitialOrbitalParameters.Observer,
-            spacecraft.Engines.First());
+            spacecraft.InitialOrbitalParameters.Observer, spacecraft.Engines.First());
+        
+        //Configure the second maneuver and link it to the first maneuver
         initialManeuver.SetNextManeuver(new InstrumentPointingToAttitude(scenario.Window.StartDate.AddHours(2.0), TimeSpan.FromHours(1.0), instrument,
-            spacecraft.InitialOrbitalParameters.Observer,
-            spacecraft.Engines.First()));
+            spacecraft.InitialOrbitalParameters.Observer, spacecraft.Engines.First()));
+        
+        //Set the first maneuver in standby
         spacecraft.SetStandbyManeuver(initialManeuver);
+        
+        //Run the simulation
         scenario.Simulate(Constants.OutputPath);
 
+        //Export scenario to Cosmographia
         CosmographiaExporter exporter = new CosmographiaExporter();
         await exporter.ExportAsync(scenario, new DirectoryInfo("CosmographiaExport"));
     }
@@ -75,20 +95,18 @@ public class ExporterTests
         Site site3 = new Site(14, "DSS-14", TestHelpers.EarthAtJ2000);
         Site site = new Site(34, "DSS-34", TestHelpers.EarthAtJ2000);
         Site site2 = new Site(65, "DSS-65", TestHelpers.EarthAtJ2000);
-        
+
         scenario.AddSite(site);
         scenario.AddSite(site2);
         scenario.AddSite(site3);
-        Spacecraft spacecraft = new Spacecraft(-334, "Lois", 1000.0, 2000.0, new Clock("clockspc1", 1 / 256.0),
+        Spacecraft spacecraft = new Spacecraft(-334, "Spacecraft", 1000.0, 2000.0, new Clock("clockspc1", 1 / 256.0),
             new KeplerianElements(11800000.0, 0.3, 1.0, 0.0, 0.0, 0.0, TestHelpers.EarthAtJ2000, DateTimeExtension.J2000, Frames.Frame.ICRF));
-        var instrument = new Instrument(-334100, "camera_hires", "camdeluxe", 0.5, InstrumentShape.Circular, Vector3.VectorZ, Vector3.VectorY, Vector3.Zero);
+        var instrument = new Instrument(-334100, "Antenna", "antdeluxe", 0.2, InstrumentShape.Circular, Vector3.VectorZ, Vector3.VectorY, Vector3.Zero);
         spacecraft.AddInstrument(instrument);
         spacecraft.AddFuelTank(new FuelTank("fuelTank1", "fuelTankModel", "456", 2000.0, 2000.0));
         spacecraft.AddEngine(new Engine("engine1", "engineModel", "1234", 450, 50.0, spacecraft.FuelTanks.First()));
         scenario.AddSpacecraft(spacecraft);
-        var initialManeuver = new InstrumentPointingToAttitude(scenario.Window.StartDate.AddMinutes(10.0), TimeSpan.FromHours(1.0), instrument, site, spacecraft.Engines.First());
-        initialManeuver.SetNextManeuver(new InstrumentPointingToAttitude(scenario.Window.StartDate.AddHours(2.0), TimeSpan.FromHours(1.0), instrument, site,
-            spacecraft.Engines.First()));
+        var initialManeuver = new InstrumentPointingToAttitude(scenario.Window.StartDate.AddHours(7.25), TimeSpan.FromHours(0.5), instrument, site, spacecraft.Engines.First());
         spacecraft.SetStandbyManeuver(initialManeuver);
         scenario.Simulate(Constants.OutputPath);
 
@@ -99,9 +117,9 @@ public class ExporterTests
     [Fact]
     public async Task ExportSpacecraftReachTarget()
     {
-        DateTime start = DateTimeExtension.CreateUTC(667915269.18539762).ToTDB();//3/2/2021 00:02:18
-        DateTime startPropagator = DateTimeExtension.CreateUTC(668085555.829810).ToTDB();//3/3/2021 23:20:25
-        DateTime end = DateTimeExtension.CreateUTC(668174400.000000).ToTDB();// 3/5/2021 00:01:09
+        DateTime start = DateTimeExtension.CreateUTC(667915269.18539762).ToTDB(); //3/2/2021 00:02:18
+        DateTime startPropagator = DateTimeExtension.CreateUTC(668085555.829810).ToTDB(); //3/3/2021 23:20:25
+        DateTime end = DateTimeExtension.CreateUTC(668174400.000000).ToTDB(); // 3/5/2021 00:01:09
 
         Astrodynamics.Mission.Mission mission = new Astrodynamics.Mission.Mission("mission01");
         Scenario scenario = new Scenario("scn1", mission, new Window(startPropagator, end));
