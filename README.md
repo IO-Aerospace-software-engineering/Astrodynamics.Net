@@ -3,13 +3,14 @@
 [![Continous integration](https://github.com/IO-Aerospace-software-engineering/SDK.Net/actions/workflows/ci.yml/badge.svg)](https://github.com/IO-Aerospace-software-engineering/SDK.Net/actions/workflows/ci.yml)
 [![Continous deployment](https://github.com/IO-Aerospace-software-engineering/SDK.Net/actions/workflows/cd.yml/badge.svg)](https://github.com/IO-Aerospace-software-engineering/SDK.Net/actions/workflows/cd.yml)
 
-IO.Astrodynamics.Net is a .Net astrodynamics framework based on [IO.Astrodynamics native library](https://github.com/IO-Aerospace-software-engineering/Astrodynamics), it provides the best of both worlds :
+IO.Astrodynamics.Net is a .Net astrodynamics framework based on cspice toolkit(N 67) developped by the JPL and [IO.Astrodynamics native library](https://github.com/IO-Aerospace-software-engineering/Astrodynamics), it provides the best of both worlds :
 
 C++ Velocity + .Net productivity = ❤️
 
 This framework provides the following features :
 
 * Work with [JPL Spice kernels](https://naif.jpl.nasa.gov/naif/data.html) and stars
+* Export simulation to [Cosmographia](https://naif.jpl.nasa.gov/naif/cosmographia.html)
 * Compute and convert orbital parameters
   * State vector
   * Two lines elements
@@ -26,7 +27,7 @@ This framework provides the following features :
   * Moons
   * Barycenters
   * Lagrange points
-  * Comets ans asteroids
+  * Comets and asteroids
 * Transform frames
   * ICRF / J2000
   * Ecliptic_J2000
@@ -50,7 +51,7 @@ This framework provides the following features :
     * Phasing
     * Fuel balance
   * Attitudes
-    * Instrument pointing toward an object
+    * Instrument pointing toward an object (Surface site, celestial body, spacecraft,...)
     * Nadir
     * Zenith
     * Prograde
