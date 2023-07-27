@@ -97,7 +97,7 @@ public class APITest
         DateTime startPropagator = DateTimeExtension.CreateUTC(668085555.829810).ToTDB();
         DateTime end = DateTimeExtension.CreateUTC(668174400.000000).ToTDB();
 
-        Astrodynamics.Mission.Mission mission = new Astrodynamics.Mission.Mission("mission01");
+        Astrodynamics.Mission.Mission mission = new Astrodynamics.Mission.Mission("mission08");
         Scenario scenario = new Scenario("scn1", mission, new Window(startPropagator, end));
         scenario.AddAdditionalCelestialBody(TestHelpers.MoonAtJ2000);
         scenario.AddSite(new Site(132, "MySite", earth, new Planetodetic(0.5, 0.3, 0.0)));
@@ -213,7 +213,7 @@ public class APITest
         DateTime startPropagator = DateTimeExtension.CreateUTC(668085555.829810).ToTDB();
         DateTime end = DateTimeExtension.CreateUTC(668174400.000000).ToTDB();
 
-        Astrodynamics.Mission.Mission mission = new Astrodynamics.Mission.Mission("mission01");
+        Astrodynamics.Mission.Mission mission = new Astrodynamics.Mission.Mission("mission07");
         Scenario scenario = new Scenario("scn1", mission, new Window(startPropagator, end));
         scenario.AddAdditionalCelestialBody(TestHelpers.MoonAtJ2000);
         scenario.AddSite(new Site(132, "MySite", earth, new Planetodetic(0.5, 0.3, 0.0)));
@@ -428,7 +428,7 @@ public class APITest
         DateTime end = start.AddSeconds(6448.0);
 
         //Configure scenario
-        Scenario scenario = new Scenario("Scenario_A", new Astrodynamics.Mission.Mission("mission01"),
+        Scenario scenario = new Scenario("Scenario_A", new Astrodynamics.Mission.Mission("mission09"),
             new Window(start, end));
         scenario.AddAdditionalCelestialBody(TestHelpers.MoonAtJ2000);
 
@@ -528,6 +528,27 @@ public class APITest
     }
 
     [Fact]
+    public void ReadLongEphemeris()
+    {
+        var searchWindow = new Window(DateTimeExtension.CreateTDB(0.0), DateTimeExtension.CreateTDB(15000.0));
+        var res = API.Instance.ReadEphemeris(searchWindow, TestHelpers.EarthAtJ2000, TestHelpers.MoonAtJ2000,
+            Frames.Frame.ICRF, Aberration.LT, TimeSpan.FromSeconds(1.0)).Select(x => x.ToStateVector());
+
+        Assert.Equal(15001, res.Count());
+
+        var stateVectors = res as StateVector[] ?? res.ToArray();
+        Assert.Equal(-291569264.48965073, stateVectors[0].Position.X);
+        Assert.Equal(-266709187.1624887, stateVectors[0].Position.Y);
+        Assert.Equal(-76099155.244104564, stateVectors[0].Position.Z);
+        Assert.Equal(643.53061483971885, stateVectors[0].Velocity.X);
+        Assert.Equal(-666.08181440799092, stateVectors[0].Velocity.Y);
+        Assert.Equal(-301.32283209101018, stateVectors[0].Velocity.Z);
+        Assert.Equal(PlanetsAndMoons.EARTH.NaifId, stateVectors[0].Observer.NaifId);
+        Assert.Equal(Frames.Frame.ICRF, stateVectors[0].Frame);
+        Assert.Equal(0.0, stateVectors[0].Epoch.SecondsFromJ2000TDB());
+    }
+
+    [Fact]
     public void ReadOrientation()
     {
         DateTime start = DateTimeExtension.CreateTDB(662778000.0);
@@ -535,7 +556,7 @@ public class APITest
         Window window = new Window(start, end);
 
         //Configure scenario
-        Scenario scenario = new Scenario("Scenario_B", new Astrodynamics.Mission.Mission("mission01"), window);
+        Scenario scenario = new Scenario("Scenario_B", new Astrodynamics.Mission.Mission("mission10"), window);
         scenario.AddAdditionalCelestialBody(TestHelpers.MoonAtJ2000);
 
         //Define parking orbit

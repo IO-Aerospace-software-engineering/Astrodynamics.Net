@@ -76,7 +76,7 @@ namespace IO.Astrodynamics.Tests.Body
             DateTime end = start.AddSeconds(6448.0);
 
             //Configure scenario
-            Scenario scenario = new Scenario("Scenario_A", new IO.Astrodynamics.Mission.Mission("mission01"),
+            Scenario scenario = new Scenario("Scenario_A", new IO.Astrodynamics.Mission.Mission("mission05"),
                 new Window(start, end));
             scenario.AddAdditionalCelestialBody(TestHelpers.MoonAtJ2000);
 

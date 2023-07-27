@@ -62,7 +62,7 @@ namespace IO.Astrodynamics.Tests.Mission
             DateTime startPropagator = DateTimeExtension.CreateUTC(668085555.829810).ToTDB();
             DateTime end = DateTimeExtension.CreateUTC(668174400.000000).ToTDB();
 
-            Astrodynamics.Mission.Mission mission = new Astrodynamics.Mission.Mission("mission01");
+            Astrodynamics.Mission.Mission mission = new Astrodynamics.Mission.Mission("mission02");
             Scenario scenario = new Scenario("scn1", mission, new Window(startPropagator, end));
             scenario.AddAdditionalCelestialBody(TestHelpers.MoonAtJ2000);
 
@@ -172,10 +172,10 @@ namespace IO.Astrodynamics.Tests.Mission
         [Fact]
         public void Equality()
         {
-            Astrodynamics.Mission.Mission mission = new Astrodynamics.Mission.Mission("mission01");
+            Astrodynamics.Mission.Mission mission = new Astrodynamics.Mission.Mission("mission02");
             Scenario scenario = new Scenario("scn1", mission, new Window(DateTime.MinValue, DateTime.MaxValue));
 
-            Astrodynamics.Mission.Mission mission2 = new Astrodynamics.Mission.Mission("mission02");
+            Astrodynamics.Mission.Mission mission2 = new Astrodynamics.Mission.Mission("mission03");
             Scenario scenario2 = new Scenario("scn1", mission2, new Window(DateTime.MinValue, DateTime.MaxValue));
 
             Assert.True(scenario != scenario2);
@@ -195,7 +195,7 @@ namespace IO.Astrodynamics.Tests.Mission
             DateTime startPropagator = DateTimeExtension.CreateUTC(668085555.829810).ToTDB();
             DateTime end = DateTimeExtension.CreateUTC(668174400.000000).ToTDB();
 
-            Astrodynamics.Mission.Mission mission = new Astrodynamics.Mission.Mission("mission01");
+            Astrodynamics.Mission.Mission mission = new Astrodynamics.Mission.Mission("mission04");
             Scenario scenario = new Scenario("scn1", mission, new Window(startPropagator, end));
             Assert.Throws<ArgumentNullException>(() => scenario.AddSpacecraft(null));
             Assert.Throws<InvalidOperationException>(() => scenario.Simulate(new DirectoryInfo("/")));
