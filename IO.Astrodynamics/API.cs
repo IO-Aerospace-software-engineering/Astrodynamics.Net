@@ -195,6 +195,10 @@ public class API
         {
             API.Instance.UnloadKernels(siteDirectoryInfo);
             API.Instance.UnloadKernels(spacecraftDirectoryInfo);
+            
+            //Clean outputs
+            siteDirectoryInfo.Delete(true);
+            spacecraftDirectoryInfo.Delete(true);
 
             Scenario scenarioDto = new Scenario(scenario.Name,
                 new Window(scenario.Window.StartDate.SecondsFromJ2000TDB(),
@@ -683,9 +687,7 @@ public class API
                 windows[i] = new Window(double.NaN, double.NaN);
             }
 
-            FindWindowsOnDistanceConstraintProxy(_mapper.Map<Window>(searchWindow), observer.NaifId, target.NaifId,
-                relationalOperator.GetDescription(),
-                value,
+            FindWindowsOnDistanceConstraintProxy(_mapper.Map<Window>(searchWindow), observer.NaifId, target.NaifId, relationalOperator.GetDescription(), value,
                 aberration.GetDescription(),
                 stepSize.TotalSeconds, windows);
             return _mapper.Map<Time.Window[]>(windows.Where(x => !double.IsNaN(x.Start)));
@@ -876,14 +878,26 @@ public class API
         if (frame == null) throw new ArgumentNullException(nameof(frame));
         lock (lockObject)
         {
-            if (frame == null) throw new ArgumentNullException(nameof(frame));
-            var stateVectors = new StateVector[10000];
-            ReadEphemerisProxy(_mapper.Map<Window>(searchWindow), observer.NaifId, target.NaifId, frame.Name,
-                aberration.GetDescription(), stepSize.TotalSeconds,
-                stateVectors);
-            return stateVectors.Where(x => !string.IsNullOrEmpty(x.Frame)).Select(x =>
-                new OrbitalParameters.StateVector(_mapper.Map<Vector3>(x.Position),
-                    _mapper.Map<Vector3>(x.Velocity), observer, DateTimeExtension.CreateTDB(x.Epoch), frame));
+            const int messageSize = 10000;
+            List<OrbitalParameters.OrbitalParameters> orbitalParameters = new List<OrbitalParameters.OrbitalParameters>();
+            int occurences = (int)(searchWindow.Length / stepSize / messageSize);
+           
+
+            for (int i = 0; i <= occurences; i++)
+            {
+                var start = searchWindow.StartDate + i * messageSize * stepSize;
+                var end = start + messageSize * stepSize > searchWindow.EndDate ? searchWindow.EndDate : (start + messageSize * stepSize)-stepSize;
+                var window = new Time.Window(start, end);
+                var stateVectors = new StateVector[messageSize];
+                ReadEphemerisProxy(_mapper.Map<Window>(window), observer.NaifId, target.NaifId, frame.Name,
+                    aberration.GetDescription(), stepSize.TotalSeconds,
+                    stateVectors);
+                orbitalParameters.AddRange(stateVectors.Where(x => !string.IsNullOrEmpty(x.Frame)).Select(x =>
+                    new OrbitalParameters.StateVector(_mapper.Map<Vector3>(x.Position),
+                        _mapper.Map<Vector3>(x.Velocity), observer, DateTimeExtension.CreateTDB(x.Epoch), frame)));
+            }
+
+            return orbitalParameters;
         }
     }
 

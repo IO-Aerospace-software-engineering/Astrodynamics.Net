@@ -121,8 +121,8 @@ public class ExporterTests
         DateTime startPropagator = DateTimeExtension.CreateUTC(668085555.829810).ToTDB(); //3/3/2021 23:20:25
         DateTime end = DateTimeExtension.CreateUTC(668174400.000000).ToTDB(); // 3/5/2021 00:01:09
 
-        Astrodynamics.Mission.Mission mission = new Astrodynamics.Mission.Mission("mission01");
-        Scenario scenario = new Scenario("scn1", mission, new Window(startPropagator, end));
+        Astrodynamics.Mission.Mission mission = new Astrodynamics.Mission.Mission("ReachTarget");
+        Scenario scenario = new Scenario("Scenario1", mission, new Window(startPropagator, end));
         scenario.AddAdditionalCelestialBody(TestHelpers.MoonAtJ2000);
 
         //Define parking orbit

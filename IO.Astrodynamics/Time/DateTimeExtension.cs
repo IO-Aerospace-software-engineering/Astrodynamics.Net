@@ -84,7 +84,8 @@ public static class DateTimeExtension
             return date;
         }
 
-        return date.Kind == DateTimeKind.Local ? date.ToUniversalTime() : date.AddSeconds(-(OFFSET + LeapSeconds.Count(x => x < date)));
+        var utc= date.Kind == DateTimeKind.Local ? date.ToUniversalTime() : date.AddSeconds(-(OFFSET + LeapSeconds.Count(x => x < date)));
+        return DateTime.SpecifyKind(utc, DateTimeKind.Utc);
     }
 
     /// <summary>
