@@ -13908,8 +13908,8 @@ namespace IO.Astrodynamics.PDS.V4.MissionInformation {
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://pds.nasa.gov/pds4/msn/v1")]
-    [System.Xml.Serialization.XmlRootAttribute(Namespace="http://pds.nasa.gov/pds4/msn/v1", IsNullable=false)]
-    public partial class Mission_Information {
+    [System.Xml.Serialization.XmlRootAttribute(ElementName = "Mission_Information",Namespace="http://pds.nasa.gov/pds4/msn/v1", IsNullable=false)]
+    public partial class Mission_Information_1K00_1300 {
         
         private mission_phase_name mission_phase_nameField;
         
