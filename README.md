@@ -11,6 +11,10 @@ This framework provides the following features :
 
 * Work with [JPL Spice kernels](https://naif.jpl.nasa.gov/naif/data.html) and stars
 * Export simulation to [Cosmographia](https://naif.jpl.nasa.gov/naif/cosmographia.html)
+* PDS Archive Management
+  * Generate archive from object
+  * Generate object from archive
+  * Validate archive from Xml schemas
 * Compute and convert orbital parameters
   * State vector
   * Two lines elements
