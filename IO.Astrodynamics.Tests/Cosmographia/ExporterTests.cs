@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using IO.Astrodynamics.Body.Spacecraft;
-using IO.Astrodynamics.Coordinates;
 using IO.Astrodynamics.Cosmographia;
 using IO.Astrodynamics.Maneuver;
 using IO.Astrodynamics.Math;

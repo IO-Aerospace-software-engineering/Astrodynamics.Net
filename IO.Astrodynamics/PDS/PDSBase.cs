@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
+using IO.Astrodynamics.Helpers;
 
 namespace IO.Astrodynamics.PDS;
 
@@ -74,7 +75,7 @@ public abstract class PDSBase<T> where T : class
     public string GenerateArchive(T pdsEntity)
     {
         XmlSerializer serializer = new XmlSerializer(typeof(T));
-        using var sw = new StringWriter();
+        using var sw = new Utf8StringWriter();
         serializer.Serialize(sw, pdsEntity);
         return sw.ToString();
     }
