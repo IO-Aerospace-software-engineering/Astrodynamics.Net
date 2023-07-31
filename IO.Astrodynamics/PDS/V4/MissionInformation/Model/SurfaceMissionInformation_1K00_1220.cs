@@ -14776,7 +14776,7 @@ namespace Schemas {
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace="http://pds.nasa.gov/pds4/msn_surface/v1")]
     [System.Xml.Serialization.XmlRootAttribute(ElementName = "Mission_Information", Namespace="http://pds.nasa.gov/pds4/msn_surface/v1", IsNullable=false)]
-    public partial class Surface_Mission_Information_1K00_1200 {
+    public partial class Surface_Mission_Information_1K00_1220 {
         
         private Command_Execution command_ExecutionField;
         

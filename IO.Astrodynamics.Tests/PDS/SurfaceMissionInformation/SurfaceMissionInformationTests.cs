@@ -13,7 +13,7 @@ public class SurfaceMissionInformationTests
     public void Create()
     {
         PDSSurfaceMissionInformation pds = new PDSSurfaceMissionInformation();
-        Surface_Mission_Information_1K00_1200 ms = new Surface_Mission_Information_1K00_1200();
+        Surface_Mission_Information_1K00_1220 ms = new Surface_Mission_Information_1K00_1220();
     }
 
     [Fact]
