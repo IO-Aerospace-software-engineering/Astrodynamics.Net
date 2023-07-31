@@ -33,4 +33,17 @@
       <PackageReference Include="AutoMapper" Version="12.0.1" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Remove="PDS\V4\Schemas\PDS4_MSN_1K00_1300.xsd" />
+      <EmbeddedResource Include="PDS\V4\Schemas\PDS4_MSN_1K00_1300.xsd" />
+      <None Remove="PDS\V4\Schemas\PDS4_PDS_1K00.xsd" />
+      <EmbeddedResource Include="PDS\V4\Schemas\PDS4_PDS_1K00.xsd" />
+      <None Remove="PDS\V4\Schemas\PDS4_PDS_1K00.JSON" />
+      <None Remove="PDS\V4\Schemas\PDS4_MSN_1K00_1300.JSON" />
+      <None Remove="PDS\V4\Schemas\PDS4_MSN_SURFACE_1K00_1220.xsd" />
+      <EmbeddedResource Include="PDS\V4\Schemas\PDS4_MSN_SURFACE_1K00_1220.xsd">
+        <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      </EmbeddedResource>
+    </ItemGroup>
+
 </Project>

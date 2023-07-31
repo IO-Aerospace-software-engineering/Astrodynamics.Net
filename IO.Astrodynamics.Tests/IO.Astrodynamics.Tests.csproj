@@ -97,6 +97,18 @@
       <None Update="Data\SolarSystem\L5_de431.bsp">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
+      <None Update="PDS\MissionInformation\test1_FAIL.xml">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="PDS\MissionInformation\test1_VALID.xml">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="PDS\SurfaceMissionInformation\test1_FAIL.xml">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="PDS\SurfaceMissionInformation\test1_VALID.xml">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
 </Project>
