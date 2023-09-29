@@ -157,52 +157,50 @@ public class APITest
 
         // Read maneuver results
         var maneuver = spacecraft.StandbyManeuver;
-        Assert.Equal("2021-03-04T00:32:42.8530000 (TDB)", maneuver.ManeuverWindow.StartDate.ToFormattedString());
-        Assert.Equal("2021-03-04T00:32:51.1750000 (TDB)", maneuver.ManeuverWindow.EndDate.ToFormattedString());
-        Assert.Equal("2021-03-04T00:32:42.8530000 (TDB)", maneuver.ThrustWindow.StartDate.ToFormattedString());
-        Assert.Equal("2021-03-04T00:32:51.1750000 (TDB)", maneuver.ThrustWindow.EndDate.ToFormattedString());
-        Assert.Equal(8.322, maneuver.ThrustWindow.Length.TotalSeconds);
+        Assert.Equal("2021-03-04T00:32:49.8180000 (TDB)", maneuver.ManeuverWindow.StartDate.ToFormattedString());
+        Assert.Equal("2021-03-04T00:32:58.2100000 (TDB)", maneuver.ManeuverWindow.EndDate.ToFormattedString());
+        Assert.Equal("2021-03-04T00:32:49.8180000 (TDB)", maneuver.ThrustWindow.StartDate.ToFormattedString());
+        Assert.Equal("2021-03-04T00:32:58.2100000 (TDB)", maneuver.ThrustWindow.EndDate.ToFormattedString());
+        Assert.Equal(8.392, maneuver.ThrustWindow.Length.TotalSeconds);
         Assert.Equal(
-            OperatingSystem.IsWindows()
-                ? new Vector3(-96.24969153329536, 106.87570557408037, -118.85491757561407)
-                : new Vector3(-96.24969153329532, 106.87570557408036, -118.8549175756141),
+                 new Vector3(-97.07142021113363, 107.83054000114183, -119.89750368038308),
             ((ImpulseManeuver)maneuver).DeltaV);
 
 
-        Assert.Equal(416.05846464958046, maneuver.FuelBurned);
+        Assert.Equal(419.6270875080256, maneuver.FuelBurned);
 
         maneuver = maneuver.NextManeuver;
 
-        Assert.Equal("2021-03-04T01:15:43.7650000 (TDB)", maneuver.ManeuverWindow.StartDate.ToFormattedString());
-        Assert.Equal("2021-03-04T01:16:06.2630000 (TDB)", maneuver.ManeuverWindow.EndDate.ToFormattedString());
-        Assert.Equal("2021-03-04T01:15:43.7650000 (TDB)", maneuver.ThrustWindow.StartDate.ToFormattedString());
-        Assert.Equal("2021-03-04T01:16:06.2630000 (TDB)", maneuver.ThrustWindow.EndDate.ToFormattedString());
-        Assert.Equal(22.498, maneuver.ThrustWindow.Length.TotalSeconds);
-        Assert.Equal(new Vector3(-464.41021258790715, -169.04739776233373, 236.60242077364546),
+        Assert.Equal("2021-03-04T01:15:39.8410000 (TDB)", maneuver.ManeuverWindow.StartDate.ToFormattedString());
+        Assert.Equal("2021-03-04T01:16:02.1870000 (TDB)", maneuver.ManeuverWindow.EndDate.ToFormattedString());
+        Assert.Equal("2021-03-04T01:15:39.8410000 (TDB)", maneuver.ThrustWindow.StartDate.ToFormattedString());
+        Assert.Equal("2021-03-04T01:16:02.1870000 (TDB)", maneuver.ThrustWindow.EndDate.ToFormattedString());
+        Assert.Equal(22.346, maneuver.ThrustWindow.Length.TotalSeconds);
+        Assert.Equal(new Vector3(-462.37361865043476, -165.7923214353268, 234.3316344286659),
             ((ImpulseManeuver)maneuver).DeltaV);
-        Assert.Equal(1124.9109588311214, maneuver.FuelBurned);
+        Assert.Equal(1117.349455081975, maneuver.FuelBurned);
 
         maneuver = maneuver.NextManeuver;
 
-        Assert.Equal("2021-03-04T01:16:15.2420000 (TDB)", maneuver.ManeuverWindow.StartDate.ToFormattedString());
-        Assert.Equal("2021-03-04T04:59:26.0020000 (TDB)", maneuver.ManeuverWindow.EndDate.ToFormattedString());
-        Assert.Equal("2021-03-04T01:16:15.2420000 (TDB)", maneuver.ThrustWindow.StartDate.ToFormattedString());
-        Assert.Equal("2021-03-04T01:16:24.7860000 (TDB)", maneuver.ThrustWindow.EndDate.ToFormattedString());
-        Assert.Equal(9.544, maneuver.ThrustWindow.Length.TotalSeconds);
-        Assert.Equal(new Vector3(-139.84356439550467, 85.45236321040375, 194.9465061905696),
+        Assert.Equal("2021-03-04T01:16:13.2430000 (TDB)", maneuver.ManeuverWindow.StartDate.ToFormattedString());
+        Assert.Equal("2021-03-04T04:59:20.7690000 (TDB)", maneuver.ManeuverWindow.EndDate.ToFormattedString());
+        Assert.Equal("2021-03-04T01:16:13.2430000 (TDB)", maneuver.ThrustWindow.StartDate.ToFormattedString());
+        Assert.Equal("2021-03-04T01:16:22.7850000 (TDB)", maneuver.ThrustWindow.EndDate.ToFormattedString());
+        Assert.Equal(9.542, maneuver.ThrustWindow.Length.TotalSeconds);
+        Assert.Equal(new Vector3(-139.4953930672767, 85.72345306943599, 194.88266433187357),
             ((ImpulseManeuver)maneuver).DeltaV);
-        Assert.Equal(477.1687287505631, maneuver.FuelBurned);
+        Assert.Equal(477.1217927049922, maneuver.FuelBurned);
 
         maneuver = maneuver.NextManeuver;
 
-        Assert.Equal("2021-03-04T05:24:41.7260000 (TDB)", maneuver.ManeuverWindow.StartDate.ToFormattedString());
-        Assert.Equal("2021-03-04T05:24:50.3020000 (TDB)", maneuver.ManeuverWindow.EndDate.ToFormattedString());
-        Assert.Equal("2021-03-04T05:24:41.7260000 (TDB)", maneuver.ThrustWindow.StartDate.ToFormattedString());
-        Assert.Equal("2021-03-04T05:24:50.3020000 (TDB)", maneuver.ThrustWindow.EndDate.ToFormattedString());
-        Assert.Equal(8.576, maneuver.ThrustWindow.Length.TotalSeconds);
-        Assert.Equal(new Vector3(134.60544087761212, -81.21356746567504, -184.1142205427825),
+        Assert.Equal("2021-03-04T05:23:58.7300000 (TDB)", maneuver.ManeuverWindow.StartDate.ToFormattedString());
+        Assert.Equal("2021-03-04T05:24:07.2980000 (TDB)", maneuver.ManeuverWindow.EndDate.ToFormattedString());
+        Assert.Equal("2021-03-04T05:23:58.7300000 (TDB)", maneuver.ThrustWindow.StartDate.ToFormattedString());
+        Assert.Equal("2021-03-04T05:24:07.2980000 (TDB)", maneuver.ThrustWindow.EndDate.ToFormattedString());
+        Assert.Equal(8.568, maneuver.ThrustWindow.Length.TotalSeconds);
+        Assert.Equal(new Vector3(134.22725061486776, -81.4515454171397, -183.87034411714475),
             ((ImpulseManeuver)maneuver).DeltaV);
-        Assert.Equal(428.7647661063749, maneuver.FuelBurned);
+        Assert.Equal(428.43642901863194, maneuver.FuelBurned);
     }
 
     [Fact]
@@ -250,29 +248,29 @@ public class APITest
 
         // Read maneuver results
         var maneuver = spacecraft.StandbyManeuver;
-        Assert.Equal("2021-03-04T01:33:26.9870000 (TDB)", maneuver.ManeuverWindow.StartDate.ToFormattedString());
-        Assert.Equal("2021-03-04T01:33:29.0410000 (TDB)", maneuver.ManeuverWindow.EndDate.ToFormattedString());
-        Assert.Equal("2021-03-04T01:33:26.9870000 (TDB)", maneuver.ThrustWindow.StartDate.ToFormattedString());
-        Assert.Equal("2021-03-04T01:33:29.0410000 (TDB)", maneuver.ThrustWindow.EndDate.ToFormattedString());
-        Assert.Equal(2.054, maneuver.ThrustWindow.Length.TotalSeconds);
+        Assert.Equal("2021-03-04T01:33:26.9840000 (TDB)", maneuver.ManeuverWindow.StartDate.ToFormattedString());
+        Assert.Equal("2021-03-04T01:33:29.0440000 (TDB)", maneuver.ManeuverWindow.EndDate.ToFormattedString());
+        Assert.Equal("2021-03-04T01:33:26.9840000 (TDB)", maneuver.ThrustWindow.StartDate.ToFormattedString());
+        Assert.Equal("2021-03-04T01:33:29.0440000 (TDB)", maneuver.ThrustWindow.EndDate.ToFormattedString());
+        Assert.Equal(2.06, maneuver.ThrustWindow.Length.TotalSeconds);
         Assert.Equal(
             OperatingSystem.IsWindows()
-                ? new Vector3(-0.7082645446926676, 42.94509438155569, -14.496533116862793)
-                : new Vector3(-0.7082645446926676, 42.94509438155569, -14.496533116862793),
+                ? new Vector3(6.066382531915998, 42.796836641095524, -14.017583387512786)
+                : new Vector3(6.066382531915998, 42.796836641095524, -14.017583387512786),
             ((ImpulseManeuver)maneuver).DeltaV);
 
 
-        Assert.Equal(102.70768592609926, maneuver.FuelBurned);
+        Assert.Equal(102.95428440862457, maneuver.FuelBurned);
 
         maneuver = maneuver.NextManeuver;
 
-        Assert.Equal("2021-03-04T01:33:30.9520000 (TDB)", maneuver.ManeuverWindow.StartDate.ToFormattedString());
-        Assert.Equal("2021-03-04T01:33:31.0760000 (TDB)", maneuver.ManeuverWindow.EndDate.ToFormattedString());
-        Assert.Equal("2021-03-04T01:33:30.9520000 (TDB)", maneuver.ThrustWindow.StartDate.ToFormattedString());
-        Assert.Equal("2021-03-04T01:33:31.0760000 (TDB)", maneuver.ThrustWindow.EndDate.ToFormattedString());
-        Assert.Equal(0.124, maneuver.ThrustWindow.Length.TotalSeconds);
-        Assert.Equal(new Vector3(0.030567886004072634, 1.465587812773031, 2.333508329724585), ((ImpulseManeuver)maneuver).DeltaV);
-        Assert.Equal(6.209769612151995, maneuver.FuelBurned);
+        Assert.Equal("2021-03-04T04:18:00.5620000 (TDB)", maneuver.ManeuverWindow.StartDate.ToFormattedString());
+        Assert.Equal("2021-03-04T04:18:01.4660000 (TDB)", maneuver.ManeuverWindow.EndDate.ToFormattedString());
+        Assert.Equal("2021-03-04T04:18:00.5620000 (TDB)", maneuver.ThrustWindow.StartDate.ToFormattedString());
+        Assert.Equal("2021-03-04T04:18:01.4660000 (TDB)", maneuver.ThrustWindow.EndDate.ToFormattedString());
+        Assert.Equal(0.904, maneuver.ThrustWindow.Length.TotalSeconds);
+        Assert.Equal(new Vector3(0.6113332076713799, 10.73124391955393, 16.972613829157716), ((ImpulseManeuver)maneuver).DeltaV);
+        Assert.Equal(45.18038354496138, maneuver.FuelBurned);
     }
 
     [Fact]
@@ -467,8 +465,8 @@ public class APITest
         //Read results
         Assert.Equal(2, res.Count());
         Assert.Equal("2021-06-10T00:00:00.0000000 (TDB)", res.ElementAt(0).StartDate.ToFormattedString());
-        Assert.Equal("2021-06-10T00:29:03.3090000 (TDB)", res.ElementAt(0).EndDate.ToFormattedString());
-        Assert.Equal("2021-06-10T01:04:03.5060000 (TDB)", res.ElementAt(1).StartDate.ToFormattedString());
+        Assert.Equal("2021-06-10T00:29:05.3690000 (TDB)", res.ElementAt(0).EndDate.ToFormattedString());
+        Assert.Equal("2021-06-10T01:03:45.4720000 (TDB)", res.ElementAt(1).StartDate.ToFormattedString());
         Assert.Equal("2021-06-10T01:47:27.0000000 (TDB)", res.ElementAt(1).EndDate.ToFormattedString());
 
         Assert.Throws<ArgumentNullException>(() => API.Instance.FindWindowsInFieldOfViewConstraint(

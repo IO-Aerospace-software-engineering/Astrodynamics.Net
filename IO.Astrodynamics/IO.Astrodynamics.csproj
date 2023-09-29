@@ -12,15 +12,6 @@
 
     <ItemGroup>
         <None Remove="resources\libIO.SDK.so" />
-        <None Update="resources\IO.Astrodynamics.dll">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="resources\IO.Astrodynamics.lib">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="resources\libIO.Astrodynamics.so">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
     </ItemGroup>
 
     <ItemGroup>
@@ -44,6 +35,21 @@
       <EmbeddedResource Include="PDS\V4\Schemas\PDS4_MSN_SURFACE_1K00_1220.xsd">
         <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       </EmbeddedResource>
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="resources\IO.Astrodynamics.dll" />
+      <Content Include="resources\IO.Astrodynamics.dll">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <None Remove="resources\IO.Astrodynamics.lib" />
+      <Content Include="resources\IO.Astrodynamics.lib">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <None Remove="resources\libIO.Astrodynamics.so" />
+      <Content Include="resources\libIO.Astrodynamics.so">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
     </ItemGroup>
 
 </Project>
