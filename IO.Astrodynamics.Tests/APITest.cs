@@ -163,9 +163,7 @@ public class APITest
         Assert.Equal("2021-03-04T00:32:58.2100000 (TDB)", maneuver.ThrustWindow.EndDate.ToFormattedString());
         Assert.Equal(8.392, maneuver.ThrustWindow.Length.TotalSeconds);
         Assert.Equal(
-            OperatingSystem.IsWindows()
-                ? new Vector3(-96.24969153329536, 106.87570557408037, -118.85491757561407)
-                : new Vector3(-97.07142021113363, 107.83054000114183, -119.89750368038308),
+                 new Vector3(-97.07142021113363, 107.83054000114183, -119.89750368038308),
             ((ImpulseManeuver)maneuver).DeltaV);
 
 
