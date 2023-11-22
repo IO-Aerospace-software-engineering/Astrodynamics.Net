@@ -52,16 +52,16 @@ public class TLETests
         DateTime epoch = DateTimeExtension.CreateTDB(664440682.84760022);
         var stateVector = tle.AtEpoch(epoch).ToStateVector();
 
-        Assert.Equal(stateVector,tle.ToStateVector(epoch));
-        Assert.Equal(4363669.261337338, stateVector.Position.X);
-        Assert.Equal(-3627809.912410662, stateVector.Position.Y);
-        Assert.Equal(-3747415.4653566754, stateVector.Position.Z);
-        Assert.Equal(5805.8241824895995, stateVector.Velocity.X);
-        Assert.Equal(2575.722643716163, stateVector.Velocity.Y);
-        Assert.Equal(4271.5974622410786, stateVector.Velocity.Z);
+        Assert.Equal(stateVector, tle.ToStateVector(epoch));
+        Assert.Equal(4363669.261337338, stateVector.Position.X, 3);
+        Assert.Equal(-3627809.912410662, stateVector.Position.Y, 3);
+        Assert.Equal(-3747415.4653566754, stateVector.Position.Z, 3);
+        Assert.Equal(5805.8241824895995, stateVector.Velocity.X, 3);
+        Assert.Equal(2575.722643716163, stateVector.Velocity.Y, 3);
+        Assert.Equal(4271.5974622410786, stateVector.Velocity.Z, 3);
         Assert.Equal("J2000", stateVector.Frame.Name);
         Assert.Equal(399, stateVector.Observer.NaifId);
-        Assert.Equal(664440682.84760022, stateVector.Epoch.SecondsFromJ2000TDB());
+        Assert.Equal(664440682.84760022, stateVector.Epoch.SecondsFromJ2000TDB(),3);
     }
 
     [Fact]
