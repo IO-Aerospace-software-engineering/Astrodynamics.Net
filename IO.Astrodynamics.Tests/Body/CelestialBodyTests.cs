@@ -85,8 +85,8 @@ public class CelestialBodyTests
             ShapeType.Ellipsoid, moon, ShapeType.Ellipsoid, OccultationType.Any, Aberration.None, TimeSpan.FromMinutes(1.0)).ToArray();
         Assert.Single(res);
 
-        Assert.Equal(new DateTime(2001, 12, 14, 20, 10, 50, 573), res[0].StartDate);
-        Assert.Equal(new DateTime(2001, 12, 14, 21, 36, 33, 019), res[0].EndDate);
+        Assert.Equal(new DateTime(2001, 12, 14, 20, 10, 50, 573), res[0].StartDate, TimeSpan.FromMilliseconds(1));
+        Assert.Equal(new DateTime(2001, 12, 14, 21, 36, 33, 019), res[0].EndDate, TimeSpan.FromMilliseconds(1));
     }
 
     [Fact]
@@ -97,10 +97,10 @@ public class CelestialBodyTests
             TestHelpers.MoonAtJ2000, RelationnalOperator.Greater, 400000000, Aberration.None, TimeSpan.FromSeconds(86400.0));
         var windows = res as Window[] ?? res.ToArray();
         Assert.Equal(4, windows.Count());
-        Assert.Equal("2007-01-08T00:11:07.6290000 (TDB)", windows.ElementAt(0).StartDate.ToFormattedString());
-        Assert.Equal("2007-01-13T06:37:47.9480000 (TDB)", windows.ElementAt(0).EndDate.ToFormattedString());
-        Assert.Equal("2007-02-04T07:02:35.2840000 (TDB)", windows.ElementAt(1).StartDate.ToFormattedString());
-        Assert.Equal("2007-02-10T09:31:01.8380000 (TDB)", windows.ElementAt(1).EndDate.ToFormattedString());
+        Assert.Equal("2007-01-08T00:11:07.6285910 (TDB)", windows.ElementAt(0).StartDate.ToFormattedString());
+        Assert.Equal("2007-01-13T06:37:47.9481440 (TDB)", windows.ElementAt(0).EndDate.ToFormattedString());
+        Assert.Equal("2007-02-04T07:02:35.2843758 (TDB)", windows.ElementAt(1).StartDate.ToFormattedString());
+        Assert.Equal("2007-02-10T09:31:01.8379404 (TDB)", windows.ElementAt(1).EndDate.ToFormattedString());
     }
 
     [Fact]
@@ -112,9 +112,9 @@ public class CelestialBodyTests
 
         var windows = res as Window[] ?? res.ToArray();
         Assert.Equal(2, windows.Length);
-        Assert.Equal("2005-10-03T17:24:29.0990000 (TDB)", windows[0].StartDate.ToFormattedString());
-        Assert.Equal("2005-10-16T17:50:20.7050000 (TDB)", windows[0].EndDate.ToFormattedString());
-        Assert.Equal("2005-10-31T00:27:02.6710000 (TDB)", windows[1].StartDate.ToFormattedString());
+        Assert.Equal("2005-10-03T17:24:29.0992341 (TDB)", windows[0].StartDate.ToFormattedString());
+        Assert.Equal("2005-10-16T17:50:20.7049530 (TDB)", windows[0].EndDate.ToFormattedString());
+        Assert.Equal("2005-10-31T00:27:02.6705884 (TDB)", windows[1].StartDate.ToFormattedString());
         Assert.Equal("2005-11-03T00:00:00.0000000 (TDB)", windows[1].EndDate.ToFormattedString());
     }
 

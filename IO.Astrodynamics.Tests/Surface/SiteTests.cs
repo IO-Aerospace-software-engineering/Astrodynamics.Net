@@ -163,10 +163,10 @@ namespace IO.Astrodynamics.Tests.Surface
                 TestHelpers.MoonAtJ2000, RelationnalOperator.Greater, 400000000, Aberration.None, TimeSpan.FromSeconds(86400.0));
             var windows = res as Window[] ?? res.ToArray();
             Assert.Equal(2, windows.Count());
-            Assert.Equal("2007-02-03T17:02:04.4460000 (TDB)", windows.ElementAt(0).StartDate.ToFormattedString());
-            Assert.Equal("2007-02-09T10:31:41.4310000 (TDB)", windows.ElementAt(0).EndDate.ToFormattedString());
-            Assert.Equal("2007-03-30T11:09:38.6990000 (TDB)", windows.ElementAt(1).StartDate.ToFormattedString());
-            Assert.Equal("2007-04-01T00:01:05.1860000 (TDB)", windows.ElementAt(1).EndDate.ToFormattedString());
+            Assert.Equal("2007-02-03T17:02:04.4461595 (TDB)", windows.ElementAt(0).StartDate.ToFormattedString());
+            Assert.Equal("2007-02-09T10:31:41.4309832 (TDB)", windows.ElementAt(0).EndDate.ToFormattedString());
+            Assert.Equal("2007-03-30T11:09:38.6987997 (TDB)", windows.ElementAt(1).StartDate.ToFormattedString());
+            Assert.Equal("2007-04-01T00:01:05.1856544 (TDB)", windows.ElementAt(1).EndDate.ToFormattedString());
         }
 
         [Fact]
@@ -179,8 +179,8 @@ namespace IO.Astrodynamics.Tests.Surface
                 TestHelpers.Sun, ShapeType.Ellipsoid, TestHelpers.MoonAtJ2000, ShapeType.Ellipsoid, OccultationType.Partial, Aberration.None, TimeSpan.FromSeconds(360.0));
             var windows = res as Window[] ?? res.ToArray();
             Assert.Single(windows);
-            Assert.Equal("2005-10-03T08:37:48.4010000 (TDB)", windows.ElementAt(0).StartDate.ToFormattedString());
-            Assert.Equal("2005-10-03T10:15:20.0620000 (TDB)", windows.ElementAt(0).EndDate.ToFormattedString());
+            Assert.Equal("2005-10-03T08:37:48.4010840 (TDB)", windows.ElementAt(0).StartDate.ToFormattedString());
+            Assert.Equal("2005-10-03T10:15:20.0624047 (TDB)", windows.ElementAt(0).EndDate.ToFormattedString());
         }
 
         [Fact]
@@ -194,9 +194,9 @@ namespace IO.Astrodynamics.Tests.Surface
 
             var windows = res as Window[] ?? res.ToArray();
             Assert.Equal(2, windows.Length);
-            Assert.Equal("2005-10-03T13:52:57.9510000 (TDB)", windows[0].StartDate.ToFormattedString());
-            Assert.Equal("2005-10-17T03:42:05.5380000 (TDB)", windows[0].EndDate.ToFormattedString());
-            Assert.Equal("2005-10-30T16:50:14.1420000 (TDB)", windows[1].StartDate.ToFormattedString());
+            Assert.Equal("2005-10-03T13:52:57.9512678 (TDB)", windows[0].StartDate.ToFormattedString());
+            Assert.Equal("2005-10-17T03:42:05.5379366 (TDB)", windows[0].EndDate.ToFormattedString());
+            Assert.Equal("2005-10-30T16:50:14.1421977 (TDB)", windows[1].StartDate.ToFormattedString());
             Assert.Equal("2005-11-03T00:00:00.0000000 (TDB)", windows[1].EndDate.ToFormattedString());
         }
 
@@ -212,8 +212,8 @@ namespace IO.Astrodynamics.Tests.Surface
 
             var windows = res as Window[] ?? res.ToArray();
             Assert.Single(windows);
-            Assert.Equal("2021-05-17T12:51:01.1100000 (TDB)", windows[0].StartDate.ToFormattedString());
-            Assert.Equal("2021-05-18T02:55:45.3300000 (TDB)", windows[0].EndDate.ToFormattedString());
+            Assert.Equal("2021-05-17T12:51:01.1096973 (TDB)", windows[0].StartDate.ToFormattedString());
+            Assert.Equal("2021-05-18T02:55:45.3297069 (TDB)", windows[0].EndDate.ToFormattedString());
         }
 
         [Fact]
