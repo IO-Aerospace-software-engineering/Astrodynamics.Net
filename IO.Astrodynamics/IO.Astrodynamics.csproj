@@ -1,12 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
         <ImplicitUsings>disable</ImplicitUsings>
         <Nullable>disable</Nullable>
         <AssemblyName>IO.Astrodynamics.Net</AssemblyName>
         <Company>IO</Company>
-        <LangVersion>10</LangVersion>
+        <LangVersion>12</LangVersion>
+        <TargetFramework>net8.0</TargetFramework>
 
     </PropertyGroup>
 

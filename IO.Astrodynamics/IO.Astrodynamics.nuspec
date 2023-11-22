@@ -4,7 +4,7 @@
         <id>IO.Astrodynamics</id>
         <authors>Sylvain Guillet</authors>
         <copyright>Sylvain Guillet</copyright>
-        <version>1.8.0</version>
+        <version>1.9.0</version>
         <title>Astrodynamics framework</title>
         <icon>images\dragonfly-dark-trans.png</icon>
         <readme>docs\README.md</readme>
@@ -12,7 +12,7 @@
         <license type="expression">LGPL-3.0-or-later</license>
         <description>This astrodynamics framework provides tools to manipulate orbital parameters, run spacecraft propagation, evaluate impulse maneuvers, generate fuel balance, ...</description>
         <dependencies>
-            <group targetFramework="net6.0">
+            <group targetFramework="net8.0">
                 <dependency id="AutoMapper" version="12.0.1"/>
             </group>            
         </dependencies>
@@ -20,7 +20,7 @@
     </metadata>
     <files>
         <!-- binding libraries -->
-        <file src="bin/Release/net6.0/IO.Astrodynamics.Net.dll" target="lib/net6.0"/>
+        <file src="bin/Release/net8.0/IO.Astrodynamics.Net.dll" target="lib/net8.0"/>
         <!-- native libraries -->
         <file src="resources/IO.Astrodynamics.dll" target="runtimes/windows10-x64"/>
         <file src="resources/IO.Astrodynamics.lib" target="runtimes/windows10-x64"/>

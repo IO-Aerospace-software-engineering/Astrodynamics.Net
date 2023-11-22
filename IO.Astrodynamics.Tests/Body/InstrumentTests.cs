@@ -104,8 +104,8 @@ namespace IO.Astrodynamics.Tests.Body
             //Read results
             Assert.Equal(2, res.Count());
             Assert.Equal("2021-06-10T00:00:00.0000000 (TDB)", res.ElementAt(0).StartDate.ToFormattedString());
-            Assert.Equal("2021-06-10T00:29:05.3690000 (TDB)", res.ElementAt(0).EndDate.ToFormattedString());
-            Assert.Equal("2021-06-10T01:03:45.4720000 (TDB)", res.ElementAt(1).StartDate.ToFormattedString());
+            Assert.Equal("2021-06-10T00:29:05.3691494 (TDB)", res.ElementAt(0).EndDate.ToFormattedString());
+            Assert.Equal("2021-06-10T01:03:45.4719345 (TDB)", res.ElementAt(1).StartDate.ToFormattedString());
             Assert.Equal("2021-06-10T01:47:27.0000000 (TDB)", res.ElementAt(1).EndDate.ToFormattedString());
 
             Assert.Throws<ArgumentNullException>(() => spacecraft.Intruments.First().FindWindowsInFieldOfViewConstraint(
