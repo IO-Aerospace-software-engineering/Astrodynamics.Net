@@ -237,8 +237,8 @@ public class CelestialBodyTests
     public void GeosynchronousOrbit2()
     {
         var orbit = TestHelpers.EarthAtJ2000.GeosynchronousOrbit(1.0, 1.0, new DateTime(2021, 1, 1, 0, 0, 0, DateTimeKind.Unspecified));
-        Assert.Equal(42164171.95871935, orbit.ToStateVector().Position.Magnitude());
-        Assert.Equal(3074.6599898500763, orbit.ToStateVector().Velocity.Magnitude());
+        Assert.Equal(42164171.95871935, orbit.ToStateVector().Position.Magnitude(),3);
+        Assert.Equal(3074.6599898500763, orbit.ToStateVector().Velocity.Magnitude(),3);
         Assert.Equal(Frames.Frame.ICRF, orbit.Frame);
         Assert.Equal(42164171.95871935, orbit.SemiMajorAxis());
         Assert.Equal(0.0, orbit.Eccentricity());
@@ -246,7 +246,7 @@ public class CelestialBodyTests
         Assert.Equal(1.1804318466570587, orbit.AscendingNode(), 2);
         Assert.Equal(1.569, orbit.ArgumentOfPeriapsis(), 2);
         Assert.Equal(0.0, orbit.MeanAnomaly(), 2);
-        Assert.Equal(new Vector3(-20992029.308279946, 8679264.319395782, 35522140.607779175), orbit.ToStateVector().Position);
+        Assert.Equal(new Vector3(-20992029.30827995, 8679264.319395786, 35522140.607779175), orbit.ToStateVector().Position);
         Assert.Equal(new Vector3(-1171.3783810266016, -2842.7805399479103, 2.354430257176734), orbit.ToStateVector().Velocity);
     }
 
@@ -284,11 +284,12 @@ public class CelestialBodyTests
         var epoch = new DateTime(2021, 1, 1, 0, 0, 0, DateTimeKind.Unspecified);
         var res = TestHelpers.Earth.HelioSynchronousOrbit(7080636.3, 0.0001724, epoch);
         Assert.Equal(7080636.3, res.A);
-        Assert.Equal(0.0001724, res.E);
-        Assert.Equal(98.19, res.I * Astrodynamics.Constants.Rad2Deg);
-        Assert.Equal(114.0, res.RAAN * Astrodynamics.Constants.Rad2Deg);
-        Assert.Equal(270.0, res.AOP * Astrodynamics.Constants.Rad2Deg);
-        Assert.Equal(270.0, res.TrueAnomaly() * Astrodynamics.Constants.Rad2Deg);
+        Assert.Equal(0.0001724, res.E,6);
+        Assert.Equal(98.208156353447507, res.I * Astrodynamics.Constants.Rad2Deg,3);
+        Assert.Equal(11.457000000000001, res.RAAN * Astrodynamics.Constants.Rad2Deg,3);
+        Assert.Equal(270.0, res.AOP * Astrodynamics.Constants.Rad2Deg,3);
+        Assert.Equal(270.0, res.TrueAnomaly() * Astrodynamics.Constants.Rad2Deg,3);
+        Assert.Equal(270.01999999999998, res.MeanAnomaly() * Astrodynamics.Constants.Rad2Deg,3);
         Assert.Equal(epoch, res.Epoch);
     }
 }

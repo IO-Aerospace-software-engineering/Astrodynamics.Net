@@ -173,12 +173,12 @@ public class CelestialBody : CelestialItem
         double e22 = (1 - e2) * (1 - e2);
         double sqrtGM = System.Math.Sqrt(GM);
         double re2 = EquatorialRadius * EquatorialRadius;
-        double mo = InitialOrbitalParameters.MeanMotion();
-        double i = System.Math.Acos((2.0 * a72 * e22 * InitialOrbitalParameters.MeanMotion()) / (3.0 * sqrtGM * -J2 * re2));
+        var ephemeris = GetEphemeris(epochAtDescendingNode, sun, Frame.ICRF, Aberration.LT);
+        double i = System.Math.Acos((2.0 * a72 * e22 * ephemeris.MeanMotion()) / (3.0 * sqrtGM * -J2 * re2));
 
-        var sunVector = GetEphemeris(epochAtDescendingNode, sun, Frame.ICRF, Aberration.LT).ToStateVector().Position;
+        var sunVector = ephemeris.ToStateVector().Position.Inverse();
         Math.Plane sunPlane = new Math.Plane(Vector3.VectorZ.Rotate(Frame.ToFrame(Frame.ICRF, epochAtDescendingNode).Rotation).Cross(sunVector), 0.0);
-        double raanLongitude = sunPlane.GetAngle(Vector3.VectorY.Rotate(Frame.ToFrame(Frame.ICRF, epochAtDescendingNode).Rotation));
+        double raanLongitude = sunPlane.GetAngle(Vector3.VectorY);
 
         if (sunVector.Y > 0.0)
         {
@@ -191,9 +191,9 @@ public class CelestialBody : CelestialItem
             raanLongitude += Constants._2PI;
         }
 
-        double m = OrbitalParameters.OrbitalParameters.TrueAnomalyToMeanAnomaly(Constants.PI2 + Constants._2PI, eccentricity);
+        double m = OrbitalParameters.OrbitalParameters.TrueAnomalyToMeanAnomaly(Constants.PI + Constants.PI2, eccentricity);
 
-        return new KeplerianElements(semiMajorAxis, eccentricity, i, raanLongitude, Constants.PI2 + Constants.PI2, m, this, epochAtDescendingNode, Frame.ICRF);
+        return new KeplerianElements(semiMajorAxis, eccentricity, i, raanLongitude, Constants.PI + Constants.PI2, m, this, epochAtDescendingNode, Frame.ICRF);
     }
 
     public TimeSpan TrueSolarDay(DateTime epoch)
