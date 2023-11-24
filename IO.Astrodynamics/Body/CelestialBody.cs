@@ -1,7 +1,9 @@
 using System;
+using System.Linq;
 using System.Numerics;
 using IO.Astrodynamics.Coordinates;
 using IO.Astrodynamics.Frames;
+using IO.Astrodynamics.Math;
 using IO.Astrodynamics.OrbitalParameters;
 using IO.Astrodynamics.SolarSystemObjects;
 using IO.Astrodynamics.Surface;
@@ -19,6 +21,10 @@ public class CelestialBody : CelestialItem
 
     public double SphereOfInfluence { get; private set; }
     public Frame Frame { get; }
+
+    public double J2 { get; }
+    public double J3 { get; }
+    public double J4 { get; }
 
     /// <summary>
     /// Instantiate celestial body from naif object with default parameters (Ecliptic J2000 at J2000 epoch)
@@ -57,6 +63,9 @@ public class CelestialBody : CelestialItem
         PolarRadius = ExtendedInformation.Radii.Z;
         EquatorialRadius = ExtendedInformation.Radii.X;
         Flattening = (EquatorialRadius - PolarRadius) / EquatorialRadius;
+        J2 = ExtendedInformation.J2;
+        J3 = ExtendedInformation.J3;
+        J4 = ExtendedInformation.J4;
         if (double.IsNaN(Flattening))
         {
             Flattening = 0.0;
@@ -148,5 +157,65 @@ public class CelestialBody : CelestialItem
         var inertialVelocity = icrfRot.Cross(icrfPos).Normalize() * System.Math.Sqrt(GM / radius);
         var sv = new StateVector(icrfPos, inertialVelocity, this, epoch, Frame.ICRF);
         return new KeplerianElements(radius, 0.0, sv.Inclination(), sv.AscendingNode(), (sv.ArgumentOfPeriapsis() + sv.MeanAnomaly()) % Constants._2PI, 0.0, this, epoch, sv.Frame);
+    }
+
+    public KeplerianElements HelioSynchronousOrbit(double semiMajorAxis, double eccentricity, DateTime epochAtDescendingNode)
+    {
+        CelestialBody sun = new CelestialBody(10);
+        double p = semiMajorAxis * (1 - eccentricity);
+        if (p < EquatorialRadius)
+        {
+            throw new ArgumentException("Orbit perigee is lower than equatorial radius");
+        }
+
+        double a72 = System.Math.Pow(semiMajorAxis, 3.5);
+        double e2 = eccentricity * eccentricity;
+        double e22 = (1 - e2) * (1 - e2);
+        double sqrtGM = System.Math.Sqrt(GM);
+        double re2 = EquatorialRadius * EquatorialRadius;
+        double mo = InitialOrbitalParameters.MeanMotion();
+        double i = System.Math.Acos((2.0 * a72 * e22 * InitialOrbitalParameters.MeanMotion()) / (3.0 * sqrtGM * -J2 * re2));
+
+        var sunVector = GetEphemeris(epochAtDescendingNode, sun, Frame.ICRF, Aberration.LT).ToStateVector().Position;
+        Math.Plane sunPlane = new Math.Plane(Vector3.VectorZ.Rotate(Frame.ToFrame(Frame.ICRF, epochAtDescendingNode).Rotation).Cross(sunVector), 0.0);
+        double raanLongitude = sunPlane.GetAngle(Vector3.VectorY.Rotate(Frame.ToFrame(Frame.ICRF, epochAtDescendingNode).Rotation));
+
+        if (sunVector.Y > 0.0)
+        {
+            raanLongitude *= -1.0;
+        }
+
+        //Make raan in range 0.0->2PI
+        if (raanLongitude < 0.0)
+        {
+            raanLongitude += Constants._2PI;
+        }
+
+        double m = OrbitalParameters.OrbitalParameters.TrueAnomalyToMeanAnomaly(Constants.PI2 + Constants._2PI, eccentricity);
+
+        return new KeplerianElements(semiMajorAxis, eccentricity, i, raanLongitude, Constants.PI2 + Constants.PI2, m, this, epochAtDescendingNode, Frame.ICRF);
+    }
+
+    public TimeSpan TrueSolarDay(DateTime epoch)
+    {
+        if (!this.IsPlanet)
+        {
+            throw new InvalidOperationException("At this time, the computation of true solar day works only with planets");
+        }
+
+        CelestialBody sun = new CelestialBody(10);
+        var sideralRotation = SideralRotationPeriod(epoch);
+        var eph0 = this.GetEphemeris(epoch, sun, Frame.ECLIPTIC_J2000, Aberration.LT).ToStateVector().Position;
+        var eph1 = this.GetEphemeris(epoch + sideralRotation, sun, Frame.ECLIPTIC_J2000, Aberration.LT).ToStateVector().Position;
+        var angle = eph0.Angle(eph1);
+        return sideralRotation + TimeSpan.FromSeconds(angle / GetOrientation(Frame.ICRF, epoch).AngularVelocity.Magnitude());
+    }
+
+    public KeplerianElements HelioSynchronousOrbit(double eccentricity, DateTime epochAtDescendingNode, int nbOrbitPerDay)
+    {
+        var trueSolarDay = TrueSolarDay(epochAtDescendingNode);
+        double t = trueSolarDay.TotalSeconds / nbOrbitPerDay;
+        double a = System.Math.Cbrt(((t * t) * GM) / (4 * Constants.PI * Constants.PI));
+        return HelioSynchronousOrbit(a, eccentricity, epochAtDescendingNode);
     }
 }

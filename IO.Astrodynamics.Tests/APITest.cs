@@ -259,7 +259,7 @@ public class APITest
         Assert.Equal("2021-03-04T04:18:01.4656137 (TDB)", maneuver.ManeuverWindow.EndDate.ToFormattedString());
         Assert.Equal("2021-03-04T04:18:00.5620061 (TDB)", maneuver.ThrustWindow.StartDate.ToFormattedString());
         Assert.Equal("2021-03-04T04:18:01.4656137 (TDB)", maneuver.ThrustWindow.EndDate.ToFormattedString());
-        Assert.Equal(0.90360759999999996, maneuver.ThrustWindow.Length.TotalSeconds,3);
+        Assert.Equal(0.90360759999999996, maneuver.ThrustWindow.Length.TotalSeconds, 3);
         Assert.Equal(new Vector3(0.6113331463337078, 10.731242700644234, 16.97261190194155), ((ImpulseManeuver)maneuver).DeltaV);
         Assert.Equal(45.180377988723926, maneuver.FuelBurned);
     }
@@ -663,6 +663,29 @@ public class APITest
         Assert.Equal(6378136.5999999998, res.Radii.X);
         Assert.Equal(6378136.5999999998, res.Radii.Y);
         Assert.Equal(6356751.9000000002, res.Radii.Z);
+        Assert.Equal(0.001082616, res.J2);
+        Assert.Equal(-2.5388099999999996E-06, res.J3);
+        Assert.Equal(-1.6559699999999999E-06, res.J4);
+    }
+    
+    [Fact]
+    void GetCelestialBodyInformationWithoutJ()
+    {
+        //Read celestial celestialItem information from spice kernels
+        var res = API.Instance.GetCelestialBodyInfo(TestHelpers.MoonAtJ2000.NaifId);
+        Assert.Equal(PlanetsAndMoons.MOON.NaifId, res.Id);
+        Assert.Equal(PlanetsAndMoons.EARTH.NaifId, res.CenterOfMotionId);
+        Assert.Equal(Barycenters.EARTH_BARYCENTER.NaifId, res.BarycenterOfMotionId);
+        Assert.Equal(PlanetsAndMoons.MOON.Name, res.Name);
+        Assert.Equal(31001, res.FrameId);
+        Assert.Equal("MOON_ME", res.FrameName);
+        Assert.Equal(4902800066163.7959, res.GM);
+        Assert.Equal(1737400.0, res.Radii.X);
+        Assert.Equal(1737400.0, res.Radii.Y);
+        Assert.Equal(1737400.0, res.Radii.Z);
+        Assert.Equal(double.NaN, res.J2);
+        Assert.Equal(double.NaN, res.J3);
+        Assert.Equal(double.NaN, res.J4);
     }
 
     [Fact]
@@ -749,7 +772,7 @@ public class APITest
     [Fact]
     void CelestialBody()
     {
-        DTO.CelestialBody celestialBody = new CelestialBody(1, 2, 3, "celestialItem", new Vector3D(1.0, 2.0, 3.0), 123, "frame", 147);
+        DTO.CelestialBody celestialBody = new CelestialBody(1, 2, 3, "celestialItem", new Vector3D(1.0, 2.0, 3.0), 123, "frame", 147, 1.0, 2.0, 3.0);
         Assert.Equal(1, celestialBody.Id);
         Assert.Equal(2, celestialBody.CenterOfMotionId);
         Assert.Equal(3, celestialBody.BarycenterOfMotionId);
@@ -758,6 +781,9 @@ public class APITest
         Assert.Equal(147, celestialBody.FrameId);
         Assert.Equal("frame", celestialBody.FrameName);
         Assert.Equal(123, celestialBody.GM);
+        Assert.Equal(1.0, celestialBody.J2);
+        Assert.Equal(2.0, celestialBody.J3);
+        Assert.Equal(3.0, celestialBody.J4);
     }
 
     [Fact]

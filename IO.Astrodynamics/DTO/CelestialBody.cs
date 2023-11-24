@@ -16,8 +16,11 @@ public readonly struct CelestialBody
     public string FrameName { get; }
     public int FrameId { get; }
     public string Error { get; } = string.Empty;
+    public double J2 { get; }
+    public double J3 { get; }
+    public double J4 { get; }
 
-    public CelestialBody(int id, int centerOfMotionId, int barycenterOfMotionId, string name, Vector3D radii, double gm, string frameName, int frameId)
+    public CelestialBody(int id, int centerOfMotionId, int barycenterOfMotionId, string name, Vector3D radii, double gm, string frameName, int frameId, double j2, double j3, double j4)
     {
         Id = id;
         CenterOfMotionId = centerOfMotionId;
@@ -26,6 +29,9 @@ public readonly struct CelestialBody
         GM = gm;
         FrameName = frameName;
         FrameId = frameId;
+        J2 = j2;
+        J3 = j3;
+        J4 = j4;
         BarycenterOfMotionId = barycenterOfMotionId;
     }
 

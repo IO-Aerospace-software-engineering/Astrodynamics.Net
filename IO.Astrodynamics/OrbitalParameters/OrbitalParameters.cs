@@ -134,15 +134,20 @@ public abstract class OrbitalParameters : IEquatable<OrbitalParameters>
     /// <returns></returns>
     public double MeanAnomaly(double trueAnomaly)
     {
+        return TrueAnomalyToMeanAnomaly(trueAnomaly, Eccentricity());
+    }
+
+    public static double TrueAnomalyToMeanAnomaly(double trueAnomaly, double eccentricity)
+    {
         if (trueAnomaly < 0.0)
         {
             trueAnomaly += Constants._2PI;
         }
 
         //X = cos E
-        double x = (Eccentricity() + System.Math.Cos(trueAnomaly)) / (1 + Eccentricity() * System.Math.Cos(trueAnomaly));
+        double x = (eccentricity + System.Math.Cos(trueAnomaly)) / (1 + eccentricity * System.Math.Cos(trueAnomaly));
         double eccAno = System.Math.Acos(x);
-        double M = eccAno - Eccentricity() * System.Math.Sin(eccAno);
+        double M = eccAno - eccentricity * System.Math.Sin(eccAno);
 
         if (trueAnomaly > Constants.PI)
         {
