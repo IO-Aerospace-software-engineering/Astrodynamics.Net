@@ -198,7 +198,7 @@ public abstract class OrbitalParameters : IEquatable<OrbitalParameters>
 
         return new StateVector(new Vector3(finalPos[0], finalPos[1], finalPos[2]), new Vector3(finalV[0], finalV[1], finalV[2]), Observer, Epoch, Frame);
     }
-    
+
     public virtual StateVector ToStateVector(DateTime epoch)
     {
         return AtEpoch(epoch).ToStateVector();
@@ -284,7 +284,7 @@ public abstract class OrbitalParameters : IEquatable<OrbitalParameters>
 
     public bool IsCircular()
     {
-        return Eccentricity() == 0.0;
+        return Eccentricity() < 1E-03;
     }
 
     public bool IsParabolic()

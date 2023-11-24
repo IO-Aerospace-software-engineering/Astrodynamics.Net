@@ -209,4 +209,44 @@ public class CelestialBodyTests
         Assert.Equal(DateTimeExtension.J2000, orientation.Epoch);
         Assert.Equal(Frames.Frame.ICRF, orientation.ReferenceFrame);
     }
+
+    [Fact]
+    public void EarthSideralRotationPerdiod()
+    {
+        var duration = TestHelpers.EarthAtJ2000.SideralRotationPeriod(DateTimeExtension.J2000);
+        Assert.Equal(TimeSpan.FromTicks(861640998130), duration);
+    }
+
+    [Fact]
+    public void MoonSideralRotationPerdiod()
+    {
+        var duration = TestHelpers.MoonAtJ2000.SideralRotationPeriod(DateTimeExtension.J2000);
+        Assert.Equal(TimeSpan.FromTicks(23603596749416), duration);
+    }
+
+    [Fact]
+    public void GeosynchronousOrbit()
+    {
+        var orbit = TestHelpers.EarthAtJ2000.GeosynchronousOrbit(0.0, 0.0, new DateTime(2021, 1, 1, 0, 0, 0, DateTimeKind.Unspecified));
+        Assert.Equal(42164171.958719358, orbit.ToStateVector().Position.Magnitude());
+        Assert.Equal(3074.6599898500758, orbit.ToStateVector().Velocity.Magnitude());
+        Assert.Equal(Frames.Frame.ICRF, orbit.Frame);
+    }
+    
+    [Fact]
+    public void GeosynchronousOrbit2()
+    {
+        var orbit = TestHelpers.EarthAtJ2000.GeosynchronousOrbit(1.0, 1.0, new DateTime(2021, 1, 1, 0, 0, 0, DateTimeKind.Unspecified));
+        Assert.Equal(42164171.95871935, orbit.ToStateVector().Position.Magnitude());
+        Assert.Equal(3074.6599898500763, orbit.ToStateVector().Velocity.Magnitude());
+        Assert.Equal(Frames.Frame.ICRF, orbit.Frame);
+        Assert.Equal(42164171.95871935, orbit.SemiMajorAxis());
+        Assert.Equal(0.0, orbit.Eccentricity());
+        Assert.Equal(1.0, orbit.Inclination(),2);
+        Assert.Equal(1.1804318466570587, orbit.AscendingNode(),2);
+        Assert.Equal(1.569, orbit.ArgumentOfPeriapsis(),2);
+        Assert.Equal(0.0, orbit.MeanAnomaly(),2);
+        Assert.Equal(new Vector3(-20992029.308279946,8679264.319395782,35522140.607779175),orbit.ToStateVector().Position);
+        Assert.Equal(new Vector3(-1171.3783810266016, -2842.7805399479103, 2.354430257176734),orbit.ToStateVector().Velocity);
+    }
 }

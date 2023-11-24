@@ -94,6 +94,15 @@ namespace IO.Astrodynamics.OrbitalParameters
 
         public override double TrueAnomaly()
         {
+            if (IsCircular())
+            {
+                if (Inclination() < 1E-03)
+                {
+                    return CircularNoInclinationTrueAnomaly();
+                }
+
+                return CircularTrueAnomaly();
+            }
             var e = EccentricityVector();
             var v = System.Math.Acos((e * Position) / (e.Magnitude() * Position.Magnitude()));
             if (Position * Velocity < 0.0)
@@ -102,6 +111,41 @@ namespace IO.Astrodynamics.OrbitalParameters
             }
 
             return v;
+        }
+
+        private double CircularTrueAnomaly()
+        {
+            var omega = AscendingNodeVector();
+            var v = System.Math.Acos((omega * Position) / (omega.Magnitude() * Position.Magnitude()));
+            if (Position.Z < 0.0)
+            {
+                v = Constants._2PI - v;
+            }
+
+            v -= ArgumentOfPeriapsis();
+            if (v < 0.0)
+            {
+                v += Constants._2PI;
+            }
+
+            return v % Constants._2PI;
+        }
+        
+        private double CircularNoInclinationTrueAnomaly()
+        {
+            var l = System.Math.Acos(Position.X / Position.Magnitude());
+            if (Velocity.X > 0)
+            {
+                l = Constants._2PI - l;
+            }
+
+            l = l - ArgumentOfPeriapsis() - AscendingNode();
+            if (l < 0.0)
+            {
+                l += Constants._2PI;
+            }
+
+            return l % Constants._2PI;
         }
 
         public override double EccentricAnomaly()

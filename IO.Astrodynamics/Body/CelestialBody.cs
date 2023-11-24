@@ -1,8 +1,12 @@
 using System;
+using System.Numerics;
+using IO.Astrodynamics.Coordinates;
 using IO.Astrodynamics.Frames;
 using IO.Astrodynamics.OrbitalParameters;
 using IO.Astrodynamics.SolarSystemObjects;
+using IO.Astrodynamics.Surface;
 using IO.Astrodynamics.Time;
+using Vector3 = IO.Astrodynamics.Math.Vector3;
 
 
 namespace IO.Astrodynamics.Body;
@@ -127,5 +131,22 @@ public class CelestialBody : CelestialItem
     public StateOrientation GetOrientation(Frame referenceFrame, in DateTime epoch)
     {
         return referenceFrame.ToFrame(Frame, epoch);
+    }
+
+    public TimeSpan SideralRotationPeriod(DateTime epoch)
+    {
+        return TimeSpan.FromSeconds(Constants._2PI / GetOrientation(Frame.ICRF, epoch).AngularVelocity.Magnitude());
+    }
+
+    public KeplerianElements GeosynchronousOrbit(double longitude, double latitude, DateTime epoch)
+    {
+        var sideralRotation2 = System.Math.Pow(SideralRotationPeriod(epoch).TotalSeconds, 2);
+        var radius = System.Math.Cbrt((GM * sideralRotation2) / (4 * Constants.PI * Constants.PI));
+        var bodyfFixedCoordinates = new Planetocentric(longitude, latitude, radius).ToCartesianCoordinates();
+        var icrfPos = bodyfFixedCoordinates.Rotate(Frame.ToFrame(Frame.ICRF, epoch).Rotation);
+        var icrfRot = Vector3.VectorZ.Rotate(Frame.ToFrame(Frame.ICRF, epoch).Rotation);
+        var inertialVelocity = icrfRot.Cross(icrfPos).Normalize() * System.Math.Sqrt(GM / radius);
+        var sv = new StateVector(icrfPos, inertialVelocity, this, epoch, Frame.ICRF);
+        return new KeplerianElements(radius, 0.0, sv.Inclination(), sv.AscendingNode(), (sv.ArgumentOfPeriapsis() + sv.MeanAnomaly()) % Constants._2PI, 0.0, this, epoch, sv.Frame);
     }
 }
