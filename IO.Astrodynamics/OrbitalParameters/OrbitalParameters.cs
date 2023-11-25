@@ -134,15 +134,20 @@ public abstract class OrbitalParameters : IEquatable<OrbitalParameters>
     /// <returns></returns>
     public double MeanAnomaly(double trueAnomaly)
     {
+        return TrueAnomalyToMeanAnomaly(trueAnomaly, Eccentricity());
+    }
+
+    public static double TrueAnomalyToMeanAnomaly(double trueAnomaly, double eccentricity)
+    {
         if (trueAnomaly < 0.0)
         {
             trueAnomaly += Constants._2PI;
         }
 
         //X = cos E
-        double x = (Eccentricity() + System.Math.Cos(trueAnomaly)) / (1 + Eccentricity() * System.Math.Cos(trueAnomaly));
+        double x = (eccentricity + System.Math.Cos(trueAnomaly)) / (1 + eccentricity * System.Math.Cos(trueAnomaly));
         double eccAno = System.Math.Acos(x);
-        double M = eccAno - Eccentricity() * System.Math.Sin(eccAno);
+        double M = eccAno - eccentricity * System.Math.Sin(eccAno);
 
         if (trueAnomaly > Constants.PI)
         {
@@ -198,7 +203,7 @@ public abstract class OrbitalParameters : IEquatable<OrbitalParameters>
 
         return new StateVector(new Vector3(finalPos[0], finalPos[1], finalPos[2]), new Vector3(finalV[0], finalV[1], finalV[2]), Observer, Epoch, Frame);
     }
-    
+
     public virtual StateVector ToStateVector(DateTime epoch)
     {
         return AtEpoch(epoch).ToStateVector();
@@ -284,7 +289,7 @@ public abstract class OrbitalParameters : IEquatable<OrbitalParameters>
 
     public bool IsCircular()
     {
-        return Eccentricity() == 0.0;
+        return Eccentricity() < 1E-03;
     }
 
     public bool IsParabolic()

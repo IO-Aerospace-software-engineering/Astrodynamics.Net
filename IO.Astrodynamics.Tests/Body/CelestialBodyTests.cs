@@ -209,4 +209,103 @@ public class CelestialBodyTests
         Assert.Equal(DateTimeExtension.J2000, orientation.Epoch);
         Assert.Equal(Frames.Frame.ICRF, orientation.ReferenceFrame);
     }
+
+    [Fact]
+    public void EarthSideralRotationPerdiod()
+    {
+        var duration = TestHelpers.EarthAtJ2000.SideralRotationPeriod(DateTimeExtension.J2000);
+        Assert.Equal(TimeSpan.FromTicks(861640998130), duration);
+    }
+
+    [Fact]
+    public void MoonSideralRotationPerdiod()
+    {
+        var duration = TestHelpers.MoonAtJ2000.SideralRotationPeriod(DateTimeExtension.J2000);
+        Assert.Equal(TimeSpan.FromTicks(23603596749416), duration);
+    }
+
+    [Fact]
+    public void GeosynchronousOrbit()
+    {
+        var orbit = TestHelpers.EarthAtJ2000.GeosynchronousOrbit(0.0, 0.0, new DateTime(2021, 1, 1, 0, 0, 0, DateTimeKind.Unspecified));
+        Assert.Equal(42164171.958719358, orbit.ToStateVector().Position.Magnitude());
+        Assert.Equal(3074.6599898500758, orbit.ToStateVector().Velocity.Magnitude());
+        Assert.Equal(Frames.Frame.ICRF, orbit.Frame);
+    }
+
+    [Fact]
+    public void GeosynchronousOrbit2()
+    {
+        var orbit = TestHelpers.EarthAtJ2000.GeosynchronousOrbit(1.0, 1.0, new DateTime(2021, 1, 1, 0, 0, 0, DateTimeKind.Unspecified));
+        Assert.Equal(42164171.95871935, orbit.ToStateVector().Position.Magnitude(), 3);
+        Assert.Equal(3074.6599898500763, orbit.ToStateVector().Velocity.Magnitude(), 3);
+        Assert.Equal(Frames.Frame.ICRF, orbit.Frame);
+        Assert.Equal(42164171.95871935, orbit.SemiMajorAxis());
+        Assert.Equal(0.0, orbit.Eccentricity());
+        Assert.Equal(1.0, orbit.Inclination(), 2);
+        Assert.Equal(1.1804318466570587, orbit.AscendingNode(), 2);
+        Assert.Equal(1.569, orbit.ArgumentOfPeriapsis(), 2);
+        Assert.Equal(0.0, orbit.MeanAnomaly(), 2);
+        Assert.Equal(new Vector3(-20992029.30827995, 8679264.319395786, 35522140.607779175), orbit.ToStateVector().Position, TestHelpers.VectorComparer);
+        Assert.Equal(new Vector3(-1171.3783810266016, -2842.7805399479103, 2.354430257176734), orbit.ToStateVector().Velocity, TestHelpers.VectorComparer);
+    }
+
+
+    [Fact]
+    public void TrueSolarDayJan()
+    {
+        var res1 = TestHelpers.Earth.TrueSolarDay(new DateTime(2021, 1, 1, 0, 0, 0, DateTimeKind.Unspecified));
+        Assert.Equal(86407.306035452566, res1.TotalSeconds, 3);
+    }
+
+    [Fact]
+    public void TrueSolarDayJMar()
+    {
+        var res1 = TestHelpers.Earth.TrueSolarDay(new DateTime(2021, 3, 26, 0, 0, 0, DateTimeKind.Unspecified));
+        Assert.Equal(86400.359514701879, res1.TotalSeconds, 3);
+    }
+
+    [Fact]
+    public void TrueSolarDayJul()
+    {
+        var res1 = TestHelpers.Earth.TrueSolarDay(new DateTime(2021, 7, 25, 0, 0, 0, DateTimeKind.Unspecified));
+        Assert.Equal(86392.011764653842, res1.TotalSeconds, 3);
+    }
+
+    [Fact]
+    public void TrueSolarDayDec()
+    {
+        var res1 = TestHelpers.Earth.TrueSolarDay(new DateTime(2021, 12, 22, 0, 0, 0, DateTimeKind.Unspecified));
+        Assert.Equal(86407.114275442393, res1.TotalSeconds, 3);
+    }
+
+    [Fact]
+    public void HelioSynchronousOrbit()
+    {
+        var epoch = new DateTime(2021, 1, 1, 0, 0, 0, DateTimeKind.Unspecified);
+        var res = TestHelpers.Earth.HelioSynchronousOrbit(7080636.3, 0.0001724, epoch);
+        Assert.Equal(7080636.3, res.A);
+        Assert.Equal(0.0001724, res.E, 6);
+        Assert.Equal(98.208156353447507, res.I * Astrodynamics.Constants.Rad2Deg, 3);
+        Assert.Equal(11.457000000000001, res.RAAN * Astrodynamics.Constants.Rad2Deg, 3);
+        Assert.Equal(270.0, res.AOP * Astrodynamics.Constants.Rad2Deg, 3);
+        Assert.Equal(270.0, res.TrueAnomaly() * Astrodynamics.Constants.Rad2Deg, 3);
+        Assert.Equal(270.01999999999998, res.MeanAnomaly() * Astrodynamics.Constants.Rad2Deg, 3);
+        Assert.Equal(epoch, res.Epoch);
+    }
+
+    [Fact]
+    public void PhaseHelioSynchronousOrbit()
+    {
+        var epoch = new DateTime(2021, 11, 22, 0, 0, 0, DateTimeKind.Unspecified);
+        var res = TestHelpers.Earth.HelioSynchronousOrbit(0.0001724, epoch, 14);
+        Assert.Equal(7272221.8761325106, res.A, 3);
+        Assert.Equal(0.0001724, res.E, 6);
+        Assert.Equal(99.018, res.I * Astrodynamics.Constants.Rad2Deg, 3);
+        Assert.Equal(327.43000000000001, res.RAAN * Astrodynamics.Constants.Rad2Deg, 3);
+        Assert.Equal(270.0, res.AOP * Astrodynamics.Constants.Rad2Deg, 3);
+        Assert.Equal(270.0, res.TrueAnomaly() * Astrodynamics.Constants.Rad2Deg, 3);
+        Assert.Equal(270.01999999999998, res.MeanAnomaly() * Astrodynamics.Constants.Rad2Deg, 3);
+        Assert.Equal(epoch, res.Epoch);
+    }
 }

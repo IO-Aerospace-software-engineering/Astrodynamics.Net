@@ -1,4 +1,5 @@
 using System;
+using System.Data;
 using IO.Astrodynamics.Body;
 using IO.Astrodynamics.Math;
 using IO.Astrodynamics.OrbitalParameters;
@@ -33,35 +34,35 @@ namespace IO.Astrodynamics.Tests.OrbitalParameters
             Assert.Equal(earth, ke.Observer);
             Assert.Equal(epoch, ke.Epoch);
             Assert.Equal(Frames.Frame.ICRF, ke.Frame);
-            Assert.Throws<ArgumentException>(()=>new KeplerianElements(-20000, 0.5, 30.0 * IO.Astrodynamics.Constants.Deg2Rad,
+            Assert.Throws<ArgumentException>(() => new KeplerianElements(-20000, 0.5, 30.0 * IO.Astrodynamics.Constants.Deg2Rad,
                 40.0 * IO.Astrodynamics.Constants.Deg2Rad,
                 50.0 * IO.Astrodynamics.Constants.Deg2Rad, 10.0 * IO.Astrodynamics.Constants.Deg2Rad, earth, epoch,
                 Frames.Frame.ICRF));
-            Assert.Throws<ArgumentException>(()=>new KeplerianElements(20000, -0.5, 30.0 * IO.Astrodynamics.Constants.Deg2Rad,
+            Assert.Throws<ArgumentException>(() => new KeplerianElements(20000, -0.5, 30.0 * IO.Astrodynamics.Constants.Deg2Rad,
                 40.0 * IO.Astrodynamics.Constants.Deg2Rad,
                 50.0 * IO.Astrodynamics.Constants.Deg2Rad, 10.0 * IO.Astrodynamics.Constants.Deg2Rad, earth, epoch,
                 Frames.Frame.ICRF));
-            Assert.Throws<ArgumentException>(()=>new KeplerianElements(20000, 0.5, 181 * IO.Astrodynamics.Constants.Deg2Rad,
+            Assert.Throws<ArgumentException>(() => new KeplerianElements(20000, 0.5, 181 * IO.Astrodynamics.Constants.Deg2Rad,
                 40.0 * IO.Astrodynamics.Constants.Deg2Rad,
                 50.0 * IO.Astrodynamics.Constants.Deg2Rad, 10.0 * IO.Astrodynamics.Constants.Deg2Rad, earth, epoch,
                 Frames.Frame.ICRF));
-            Assert.Throws<ArgumentException>(()=>new KeplerianElements(20000, 0.5, 30.0 * IO.Astrodynamics.Constants.Deg2Rad,
+            Assert.Throws<ArgumentException>(() => new KeplerianElements(20000, 0.5, 30.0 * IO.Astrodynamics.Constants.Deg2Rad,
                 -40.0 * IO.Astrodynamics.Constants.Deg2Rad,
                 50.0 * IO.Astrodynamics.Constants.Deg2Rad, 10.0 * IO.Astrodynamics.Constants.Deg2Rad, earth, epoch,
                 Frames.Frame.ICRF));
-            Assert.Throws<ArgumentException>(()=>new KeplerianElements(20000, 0.5, 30.0 * IO.Astrodynamics.Constants.Deg2Rad,
+            Assert.Throws<ArgumentException>(() => new KeplerianElements(20000, 0.5, 30.0 * IO.Astrodynamics.Constants.Deg2Rad,
                 40.0 * IO.Astrodynamics.Constants.Deg2Rad,
                 -50.0 * IO.Astrodynamics.Constants.Deg2Rad, 10.0 * IO.Astrodynamics.Constants.Deg2Rad, earth, epoch,
                 Frames.Frame.ICRF));
-            Assert.Throws<ArgumentException>(()=>new KeplerianElements(20000, 0.5, 30.0 * IO.Astrodynamics.Constants.Deg2Rad,
+            Assert.Throws<ArgumentException>(() => new KeplerianElements(20000, 0.5, 30.0 * IO.Astrodynamics.Constants.Deg2Rad,
                 40.0 * IO.Astrodynamics.Constants.Deg2Rad,
                 50.0 * IO.Astrodynamics.Constants.Deg2Rad, -10.0 * IO.Astrodynamics.Constants.Deg2Rad, earth, epoch,
                 Frames.Frame.ICRF));
-            Assert.Throws<ArgumentNullException>(()=>new KeplerianElements(20000, 0.5, 30.0 * IO.Astrodynamics.Constants.Deg2Rad,
+            Assert.Throws<ArgumentNullException>(() => new KeplerianElements(20000, 0.5, 30.0 * IO.Astrodynamics.Constants.Deg2Rad,
                 40.0 * IO.Astrodynamics.Constants.Deg2Rad,
                 50.0 * IO.Astrodynamics.Constants.Deg2Rad, 10.0 * IO.Astrodynamics.Constants.Deg2Rad, null, epoch,
                 Frames.Frame.ICRF));
-            Assert.Throws<ArgumentNullException>(()=>new KeplerianElements(20000, 0.5, 30.0 * IO.Astrodynamics.Constants.Deg2Rad,
+            Assert.Throws<ArgumentNullException>(() => new KeplerianElements(20000, 0.5, 30.0 * IO.Astrodynamics.Constants.Deg2Rad,
                 40.0 * IO.Astrodynamics.Constants.Deg2Rad,
                 50.0 * IO.Astrodynamics.Constants.Deg2Rad, 10.0 * IO.Astrodynamics.Constants.Deg2Rad, earth, epoch,
                 null));
@@ -99,7 +100,7 @@ namespace IO.Astrodynamics.Tests.OrbitalParameters
             Assert.Equal(-5477.646280596454, sv.Velocity.Y, 6);
             Assert.Equal(-5297.633402454895, sv.Velocity.Z, 6);
         }
-        
+
         [Fact]
         public void ToStateVector2()
         {
@@ -118,6 +119,31 @@ namespace IO.Astrodynamics.Tests.OrbitalParameters
             Assert.Equal(-807.8383114627195, sv.Velocity.X, 6);
             Assert.Equal(-5477.646280596454, sv.Velocity.Y, 6);
             Assert.Equal(-5297.633402454895, sv.Velocity.Z, 6);
+        }
+
+        [Fact]
+        public void SingularityZeroEccentricity()
+        {
+            KeplerianElements original = new KeplerianElements(42000000, 0.0, 1.0, 2.0, 1.0, 0.5, TestHelpers.EarthAtJ2000, DateTimeExtension.J2000, Frames.Frame.ICRF);
+            KeplerianElements transformed = original.ToStateVector().ToKeplerianElements();
+            Assert.Equal(original.A, transformed.A);
+            Assert.Equal(original.E, transformed.E, 6);
+            Assert.Equal(original.I, transformed.I, 6);
+            Assert.Equal(original.RAAN, transformed.RAAN);
+            Assert.Equal(original.MeanLongitude(), transformed.MeanLongitude());
+            Assert.Equal(original.AOP + original.M, transformed.AOP + transformed.M);
+        }
+
+        [Fact]
+        public void SingularityZeroEccentricityZeroInclination()
+        {
+            KeplerianElements original = new KeplerianElements(42000000, 0.0, 0.0, 2.0, 1.0, 0.5, TestHelpers.EarthAtJ2000, DateTimeExtension.J2000, Frames.Frame.ICRF);
+            var originalSv = original.ToStateVector();
+            KeplerianElements transformed = originalSv.ToKeplerianElements();
+            Assert.Equal(original.A, transformed.A);
+            Assert.Equal(original.E, transformed.E, 6);
+            Assert.Equal(original.I, transformed.I, 6);
+            Assert.Equal(original.MeanLongitude(), transformed.MeanLongitude(),6);
         }
 
         [Fact]

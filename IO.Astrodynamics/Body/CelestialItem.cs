@@ -213,9 +213,6 @@ public abstract class CelestialItem : ILocalizable, IEquatable<CelestialItem>
         return Name;
     }
 
-    
-
-
     public bool Equals(CelestialItem other)
     {
         if (ReferenceEquals(null, other)) return false;
