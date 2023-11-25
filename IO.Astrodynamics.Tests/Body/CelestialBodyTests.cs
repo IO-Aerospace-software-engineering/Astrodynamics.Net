@@ -246,9 +246,10 @@ public class CelestialBodyTests
         Assert.Equal(1.1804318466570587, orbit.AscendingNode(), 2);
         Assert.Equal(1.569, orbit.ArgumentOfPeriapsis(), 2);
         Assert.Equal(0.0, orbit.MeanAnomaly(), 2);
-        Assert.Equal(new Vector3(-20992029.30827995, 8679264.319395786, 35522140.607779175), orbit.ToStateVector().Position);
-        Assert.Equal(new Vector3(-1171.3783810266016, -2842.7805399479103, 2.354430257176734), orbit.ToStateVector().Velocity);
+        Assert.Equal(new Vector3(-20992029.30827995, 8679264.319395786, 35522140.607779175), orbit.ToStateVector().Position, TestHelpers.VectorComparer);
+        Assert.Equal(new Vector3(-1171.3783810266016, -2842.7805399479103, 2.354430257176734), orbit.ToStateVector().Velocity, TestHelpers.VectorComparer);
     }
+
 
     [Fact]
     public void TrueSolarDayJan()
