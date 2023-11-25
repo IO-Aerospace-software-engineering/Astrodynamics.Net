@@ -159,6 +159,16 @@ public class CelestialBody : CelestialItem
         return new KeplerianElements(radius, 0.0, sv.Inclination(), sv.AscendingNode(), (sv.ArgumentOfPeriapsis() + sv.MeanAnomaly()) % Constants._2PI, 0.0, this, epoch, sv.Frame);
     }
 
+    /// <summary>
+    /// Calculates the Keplerian elements for a heliosynchronous
+    /// orbit.
+    /// </summary>
+    /// <param name="semiMajorAxis">The semi-major axis of the orbit.</param>
+    /// <param name="eccentricity">The eccentricity of the orbit.</param>
+    /// <param name="epochAtDescendingNode">The epoch at the descending node.</param>
+    /// <returns>The Keplerian elements for the heliosynchronous orbit.</returns>
+    /// <exception cref="System.ArgumentException">Thrown when
+    /// the orbit perigee is lower than the equatorial radius.</exception>
     public KeplerianElements HelioSynchronousOrbit(double semiMajorAxis, double eccentricity, DateTime epochAtDescendingNode)
     {
         CelestialBody sun = new CelestialBody(10);
@@ -196,6 +206,19 @@ public class CelestialBody : CelestialItem
         return new KeplerianElements(semiMajorAxis, eccentricity, i, raanLongitude, Constants.PI + Constants.PI2, m, this, epochAtDescendingNode, Frame.ICRF);
     }
 
+    /// <summary>
+    /// Calculate the true solar day for a given epoch.
+    /// </summary>
+    /// <param name="epoch">The epoch for which to calculate the true solar day.</param>
+    /// <returns>The duration of the true solar day.</returns>
+    /// <remarks>
+    /// This method only works with planets.
+    /// It throws an <see cref="InvalidOperationException"/> if the current celestial body is not a planet.
+    /// It calculates the sideral rotation period and uses it to determine the angle of rotation between two points in the celestial body
+    /// 's ephemeris.
+    /// Finally, it returns the sideral rotation period plus the time it takes to rotate toward the sun using the angular velocity of
+    /// the celestial body at the given epoch.
+    /// </remarks>
     public TimeSpan TrueSolarDay(DateTime epoch)
     {
         if (!this.IsPlanet)
@@ -211,6 +234,14 @@ public class CelestialBody : CelestialItem
         return sideralRotation + TimeSpan.FromSeconds(angle / GetOrientation(Frame.ICRF, epoch).AngularVelocity.Magnitude());
     }
 
+    /// <summary>
+    /// Calculates the Keplerian elements of a phased heliosynchronous
+    /// orbit
+    /// </summary>
+    /// <param name="eccentricity">The eccentricity of the orbit</param>
+    /// <param name="epochAtDescendingNode">The epoch at the descending node</param>
+    /// <param name="nbOrbitPerDay">The number of orbits per day</param>
+    /// <returns>The calculated Keplerian elements</returns>
     public KeplerianElements HelioSynchronousOrbit(double eccentricity, DateTime epochAtDescendingNode, int nbOrbitPerDay)
     {
         var trueSolarDay = TrueSolarDay(epochAtDescendingNode);
