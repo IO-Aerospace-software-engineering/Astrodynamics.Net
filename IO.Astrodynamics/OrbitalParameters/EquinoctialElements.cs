@@ -6,7 +6,15 @@ namespace IO.Astrodynamics.OrbitalParameters
 {
     public class EquinoctialElements : OrbitalParameters, IEquatable<EquinoctialElements>
     {
-        
+        private double? _argumentOfPeriapsis;
+        private double? _ascendingNode;
+        private double? _eccentricAnomaly;
+        private double? _eccentricity;
+        private double? _inclination;
+        private double? _meanAnomaly;
+        private double? _semisMajorAxis;
+        private double? _trueAnomaly;
+
 
         /// <summary>
         /// Constructor
@@ -41,51 +49,64 @@ namespace IO.Astrodynamics.OrbitalParameters
 
         public override double ArgumentOfPeriapsis()
         {
-            return System.Math.Atan2(G * H - F * K, F * H + G * K);
+            _argumentOfPeriapsis ??= System.Math.Atan2(G * H - F * K, F * H + G * K);
+            return _argumentOfPeriapsis.Value;
         }
 
         public override double AscendingNode()
         {
-            return System.Math.Atan(K / H);
+            _ascendingNode ??= System.Math.Atan(K / H);
+            return _ascendingNode.Value;
         }
 
         public override double EccentricAnomaly()
         {
+            if (_eccentricAnomaly.HasValue)
+            {
+                return _eccentricAnomaly.Value;
+            }
+
             double v = TrueAnomaly();
             double e = Eccentricity();
-            return 2 * System.Math.Atan((System.Math.Tan(v / 2.0)) / System.Math.Sqrt((1 + e) / (1 - e)));
+            _eccentricAnomaly = 2 * System.Math.Atan((System.Math.Tan(v / 2.0)) / System.Math.Sqrt((1 + e) / (1 - e)));
+            return _eccentricAnomaly.Value;
         }
 
         public override double Eccentricity()
         {
-            return System.Math.Sqrt(F * F + G * G);
+            _eccentricity ??= System.Math.Sqrt(F * F + G * G);
+            return _eccentricity.Value;
         }
 
         public override double Inclination()
         {
-            return System.Math.Atan2(2 * System.Math.Sqrt(H * H + K * K), 1 - H * H - K * K);
+            _inclination ??= System.Math.Atan2(2 * System.Math.Sqrt(H * H + K * K), 1 - H * H - K * K);
+            return _inclination.Value;
         }
 
         public override double MeanAnomaly()
         {
-            return EccentricAnomaly() - Eccentricity() * System.Math.Sin(EccentricAnomaly());
+            _meanAnomaly ??= EccentricAnomaly() - Eccentricity() * System.Math.Sin(EccentricAnomaly());
+            return _meanAnomaly.Value;
         }
 
         public override double SemiMajorAxis()
         {
-            return P / (1 - F * F - G * G);
+            _semisMajorAxis ??= P / (1 - F * F - G * G);
+            return _semisMajorAxis.Value;
         }
 
         public override double TrueAnomaly()
         {
-            return L0 - (AscendingNode() + ArgumentOfPeriapsis());
+            _trueAnomaly ??= L0 - (AscendingNode() + ArgumentOfPeriapsis());
+            return _trueAnomaly.Value;
         }
 
         public override EquinoctialElements ToEquinoctial()
         {
             return this;
         }
-        
+
         public bool Equals(EquinoctialElements other)
         {
             if (ReferenceEquals(null, other)) return false;

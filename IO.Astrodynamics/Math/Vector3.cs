@@ -36,7 +36,19 @@ namespace IO.Astrodynamics.Math
 
         public double Angle(Vector3 vector)
         {
-            return System.Math.Acos(this * vector / (Magnitude() * vector.Magnitude()));
+            var angle= System.Math.Atan2(vector.Y, vector.X) - System.Math.Atan2(this.Y, this.X);
+            if (angle > Constants.PI)
+            {
+                angle -= Constants._2PI;
+            }
+            
+            if (angle < -Constants.PI)
+            {
+                angle += Constants._2PI;
+            }
+            
+            return angle;
+            //return System.Math.Acos(this * vector / (Magnitude() * vector.Magnitude()));
         }
 
         public Vector3 Inverse()

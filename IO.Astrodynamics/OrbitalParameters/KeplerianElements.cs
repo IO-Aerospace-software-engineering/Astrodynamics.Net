@@ -7,7 +7,9 @@ namespace IO.Astrodynamics.OrbitalParameters
 {
     public class KeplerianElements : OrbitalParameters, IEquatable<KeplerianElements>
     {
-        
+        private double? _eccentricAnomaly;
+        private double? _trueAnomaly;
+
 
         /// <summary>
         /// Constructor
@@ -82,16 +84,21 @@ namespace IO.Astrodynamics.OrbitalParameters
 
         public override double EccentricAnomaly()
         {
-            double tmpEA = M;
-            double EA = 0.0;
-
-            while (System.Math.Abs(tmpEA - EA) > 1E-09)
+            if (_eccentricAnomaly.HasValue)
             {
-                EA = tmpEA;
-                tmpEA = M + E * System.Math.Sin(EA);
+                return _eccentricAnomaly.Value;
             }
 
-            return EA;
+            double tmpEA = M;
+            _eccentricAnomaly = 0.0;
+
+            while (System.Math.Abs(tmpEA - _eccentricAnomaly.Value) > 1E-09)
+            {
+                _eccentricAnomaly = tmpEA;
+                tmpEA = M + E * System.Math.Sin(_eccentricAnomaly.Value);
+            }
+
+            return _eccentricAnomaly.Value;
         }
 
         public override double Eccentricity()
@@ -111,14 +118,19 @@ namespace IO.Astrodynamics.OrbitalParameters
 
         public override double TrueAnomaly()
         {
-            double EA = EccentricAnomaly();
-            double v = System.Math.Atan2(System.Math.Sqrt(1 - E * E) * System.Math.Sin(EA), System.Math.Cos(EA) - E);
-            if (v < 0.0)
+            if (_trueAnomaly.HasValue)
             {
-                v += Constants._2PI;
+                return _trueAnomaly.Value;
+            }
+            double EA = EccentricAnomaly();
+            _trueAnomaly = System.Math.Atan2(System.Math.Sqrt(1 - E * E) * System.Math.Sin(EA), System.Math.Cos(EA) - E);
+            if (_trueAnomaly < 0.0)
+            {
+                _trueAnomaly += Constants._2PI;
             }
 
-            return v % Constants._2PI;
+            _trueAnomaly %= Constants._2PI;
+            return _trueAnomaly.Value;
         }
 
         public override double MeanAnomaly()
@@ -130,7 +142,7 @@ namespace IO.Astrodynamics.OrbitalParameters
         {
             return this;
         }
-        
+
         public bool Equals(KeplerianElements other)
         {
             if (ReferenceEquals(null, other)) return false;

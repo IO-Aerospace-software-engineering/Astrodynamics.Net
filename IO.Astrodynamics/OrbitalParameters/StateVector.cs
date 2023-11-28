@@ -72,49 +72,56 @@ namespace IO.Astrodynamics.OrbitalParameters
 
         public override Vector3 AscendingNodeVector()
         {
-            if (!_ascendingNodeVector.HasValue)
+            if (_ascendingNodeVector.HasValue)
             {
-                if (Inclination() == 0.0)
-                {
-                    return Vector3.VectorX;
-                }
-
-                var h = SpecificAngularMomentum();
-                _ascendingNodeVector = new Vector3(-h.Y, h.X, 0.0);
+                return _ascendingNodeVector.Value;
             }
+
+            if (Inclination() == 0.0)
+            {
+                return Vector3.VectorX;
+            }
+
+            var h = SpecificAngularMomentum();
+            _ascendingNodeVector = new Vector3(-h.Y, h.X, 0.0);
 
             return _ascendingNodeVector.Value;
         }
 
         public override double AscendingNode()
         {
-            if (!_ascendingNode.HasValue)
+            if (_ascendingNode.HasValue)
             {
-                Vector3 n = AscendingNodeVector();
-
-                var omega = System.Math.Acos(n.X / n.Magnitude());
-                if (n.Y < 0.0)
-                {
-                    omega = 2 * System.Math.PI - omega;
-                }
-
-                _ascendingNode = omega;
+                return _ascendingNode.Value;
             }
+
+            Vector3 n = AscendingNodeVector();
+
+            var omega = System.Math.Acos(n.X / n.Magnitude());
+            if (n.Y < 0.0)
+            {
+                omega = 2 * System.Math.PI - omega;
+            }
+
+            _ascendingNode = omega;
+
 
             return _ascendingNode.Value;
         }
 
         public override double ArgumentOfPeriapsis()
         {
-            if (!_argumentOfPeriapsis.HasValue)
+            if (_argumentOfPeriapsis.HasValue)
             {
-                var n = AscendingNodeVector();
-                var e = EccentricityVector();
-                _argumentOfPeriapsis = System.Math.Acos((n * e) / (n.Magnitude() * e.Magnitude()));
-                if (e.Z < 0.0)
-                {
-                    _argumentOfPeriapsis = System.Math.PI * 2.0 - _argumentOfPeriapsis;
-                }
+                return _argumentOfPeriapsis.Value;
+            }
+
+            var n = AscendingNodeVector();
+            var e = EccentricityVector();
+            _argumentOfPeriapsis = System.Math.Acos((n * e) / (n.Magnitude() * e.Magnitude()));
+            if (e.Z < 0.0)
+            {
+                _argumentOfPeriapsis = System.Math.PI * 2.0 - _argumentOfPeriapsis;
             }
 
             return _argumentOfPeriapsis.Value;

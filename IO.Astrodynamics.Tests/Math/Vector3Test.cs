@@ -83,6 +83,51 @@ public class VectorTests
     }
 
     [Fact]
+    public void Angle2()
+    {
+        Vector3 m1 = new Vector3(1, 0, 0);
+        Vector3 m2 = new Vector3(0, 1, 0);
+        double angle = m2.Angle(m1);
+        Assert.Equal(-System.Math.PI / 2.0, angle);
+    }
+
+    [Fact]
+    public void Angle3()
+    {
+        Vector3 m1 = new Vector3(1, -1, 0);
+        Vector3 m2 = new Vector3(0, 1, 0);
+        double angle = m2.Angle(m1);
+        Assert.Equal(-2.3561944901923448, angle, 6);
+    }
+    
+    [Fact]
+    public void Angle4()
+    {
+        Vector3 m1 = new Vector3(0, -1, 0);
+        Vector3 m2 = new Vector3(0, 1, 0);
+        double angle = m2.Angle(m1);
+        Assert.Equal(-3.1415929999999999, angle, 6);
+    }
+    
+    [Fact]
+    public void Angle5()
+    {
+        Vector3 m1 = new Vector3(-1, -1, 0);
+        Vector3 m2 = new Vector3(0, 1, 0);
+        double angle = m2.Angle(m1);
+        Assert.Equal(2.3561939999999999, angle, 6);
+    }
+    
+    [Fact]
+    public void Angle6()
+    {
+        Vector3 m1 = new Vector3(-1, 0, 0);
+        Vector3 m2 = new Vector3(0, 1, 0);
+        double angle = m2.Angle(m1);
+        Assert.Equal(1.5707960000000001, angle, 6);
+    }
+
+    [Fact]
     public void To()
     {
         Vector3 m1 = new Vector3(10, 0, 0);
@@ -93,7 +138,7 @@ public class VectorTests
         Assert.Equal(0.0, q.VectorPart.Y);
         Assert.Equal(-0.7071067811865475, q.VectorPart.Z);
     }
-    
+
     [Fact]
     public void To2()
     {
