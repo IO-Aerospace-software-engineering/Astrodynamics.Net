@@ -12,14 +12,4 @@ public class NadirAttitude : Maneuver
     public NadirAttitude(DateTime minimumEpoch, TimeSpan maneuverHoldDuration, params Engine[] engines) : base(minimumEpoch, maneuverHoldDuration, engines)
     {
     }
-
-    public override void Execute(StateVector stateVector)
-    {
-        throw new NotImplementedException();
-    }
-
-    public override Vector3 ManeuverPointComputation(StateVector stateVector)
-    {
-        throw new NotImplementedException();
-    }
 }

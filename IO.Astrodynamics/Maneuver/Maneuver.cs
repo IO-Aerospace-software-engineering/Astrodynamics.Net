@@ -10,8 +10,6 @@ namespace IO.Astrodynamics.Maneuver
 {
     public abstract class Maneuver
     {
-        public static TimeSpan MANEUVER_POINT_UPDATE_DELAY = TimeSpan.FromMinutes(10.0);
-
         /// <summary>
         /// Gets or sets the ThrustWindow instance.
         /// </summary>
@@ -78,10 +76,6 @@ namespace IO.Astrodynamics.Maneuver
         /// </summary>
         public double FuelBurned { get; internal set; }
 
-        protected Vector3? ManeuverPoint { get; set; }
-        protected bool? IsInbound { get; private set; }
-
-        private DateTime? _latestManeuverPointUpdate;
 
         protected Maneuver(DateTime minimumEpoch, TimeSpan maneuverHoldDuration, OrbitalParameters.OrbitalParameters targetOrbit,
             params Engine[] engines)
@@ -111,48 +105,6 @@ namespace IO.Astrodynamics.Maneuver
         {
             NextManeuver = maneuver;
             return maneuver;
-        }
-
-        /// <summary>
-        /// Determines whether the given state vector satisfies the conditions for executing a maneuver.
-        /// </summary>
-        /// <param name="stateVector">The current state vector.</param>
-        /// <returns>True if the maneuver can be executed, false otherwise.</returns>
-        public virtual bool CanExecute(StateVector stateVector)
-        {
-            if (stateVector.Epoch < this.MinimumEpoch)
-            {
-                return false;
-            }
-
-            if (!_latestManeuverPointUpdate.HasValue || stateVector.Epoch - _latestManeuverPointUpdate.Value > MANEUVER_POINT_UPDATE_DELAY)
-            {
-                UpdateManeuverPoint(stateVector);
-            }
-
-            bool isInbound = ManeuverPoint != null && stateVector.Position.Angle(ManeuverPoint.Value) > 0.0;
-            if (isInbound || IsInbound != true)
-            {
-                IsInbound = isInbound;
-                return false;
-            }
-
-            return true;
-        }
-
-        //Compute maneuver parameters from maneuver point and parameters set by user in specified class
-        public abstract void Execute(StateVector stateVector);
-
-        public abstract Vector3 ManeuverPointComputation(StateVector stateVector);
-
-        /// <summary>
-        /// Updates the maneuver point based on the given state vector.
-        /// </summary>
-        /// <param name="stateVector">The state vector containing the necessary information.</param>
-        public void UpdateManeuverPoint(StateVector stateVector)
-        {
-            ManeuverPoint = ManeuverPointComputation(stateVector);
-            _latestManeuverPointUpdate = stateVector.Epoch;
         }
 
         public static double ComputeDeltaV(double isp, double initialMass, double finalMass)

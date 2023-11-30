@@ -17,16 +17,5 @@ namespace IO.Astrodynamics.Maneuver
         protected ImpulseManeuver(DateTime minimumEpoch, TimeSpan maneuverHoldDuration, OrbitalParameters.OrbitalParameters targetOrbit, params Engine[] engines) : base(minimumEpoch, maneuverHoldDuration, targetOrbit, engines)
         {
         }
-
-        public override void Execute(StateVector stateVector)
-        {
-            if (TargetOrbit.Frame != stateVector.Frame)
-            {
-                throw new InvalidOperationException("Maneuver must be executed in the same frame");
-            }
-
-            var newVelocity = stateVector.Position.Cross(TargetOrbit.SpecificAngularMomentum());
-            DeltaV = newVelocity - stateVector.Velocity;
-        }
     }
 }

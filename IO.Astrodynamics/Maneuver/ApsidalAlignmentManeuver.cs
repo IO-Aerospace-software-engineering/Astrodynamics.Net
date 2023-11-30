@@ -13,10 +13,5 @@ namespace IO.Astrodynamics.Maneuver
             engines)
         {
         }
-
-        public override Vector3 ManeuverPointComputation(StateVector stateVector)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

@@ -21,10 +21,5 @@ namespace IO.Astrodynamics.Maneuver
             TargetPerigeeHeight = perigeeRadius;
             TargetInclination = inclination;
         }
-
-        public override Vector3 ManeuverPointComputation(StateVector stateVector)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

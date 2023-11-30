@@ -20,10 +20,5 @@ namespace IO.Astrodynamics.Maneuver
             TargetTrueLongitude = trueLongitude;
             RevolutionNumber = revolutionNumber;
         }
-
-        public override Vector3 ManeuverPointComputation(StateVector stateVector)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

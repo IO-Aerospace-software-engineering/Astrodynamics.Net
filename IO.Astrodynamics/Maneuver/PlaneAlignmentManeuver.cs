@@ -11,10 +11,5 @@ namespace IO.Astrodynamics.Maneuver
             params Engine[] engines) : base(minimumEpoch, maneuverHoldDuration, targetOrbit, engines)
         {
         }
-
-        public override Vector3 ManeuverPointComputation(StateVector stateVector)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
