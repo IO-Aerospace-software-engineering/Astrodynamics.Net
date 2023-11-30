@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using BenchmarkDotNet.Attributes;
 using IO.Astrodynamics.Body;
 using IO.Astrodynamics.Body.Spacecraft;
 using IO.Astrodynamics.Maneuver;
@@ -56,6 +57,7 @@ namespace IO.Astrodynamics.Tests.Mission
         }
 
         [Fact]
+        [Benchmark]
         public void Propagate()
         {
             DateTime start = DateTimeExtension.CreateUTC(667915269.18539762).ToTDB();
