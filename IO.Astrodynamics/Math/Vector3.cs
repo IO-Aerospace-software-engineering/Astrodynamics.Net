@@ -1,4 +1,3 @@
-
 namespace IO.Astrodynamics.Math
 {
     public readonly record struct Vector3
@@ -36,19 +35,12 @@ namespace IO.Astrodynamics.Math
 
         public double Angle(Vector3 vector)
         {
-            var angle= System.Math.Atan2(vector.Y, vector.X) - System.Math.Atan2(this.Y, this.X);
-            if (angle > Constants.PI)
-            {
-                angle -= Constants._2PI;
-            }
-            
-            if (angle < -Constants.PI)
-            {
-                angle += Constants._2PI;
-            }
-            
-            return angle;
-            //return System.Math.Acos(this * vector / (Magnitude() * vector.Magnitude()));
+            return System.Math.Acos(this * vector / (Magnitude() * vector.Magnitude()));
+        }
+
+        public double Angle(Vector3 vector, Plane plane)
+        {
+            return double.Atan2(this.Cross(vector) * plane.Normal, this * vector);
         }
 
         public Vector3 Inverse()

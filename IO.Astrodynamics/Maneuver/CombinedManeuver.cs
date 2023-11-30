@@ -1,5 +1,7 @@
 using System;
 using IO.Astrodynamics.Body.Spacecraft;
+using IO.Astrodynamics.Math;
+using IO.Astrodynamics.OrbitalParameters;
 
 namespace IO.Astrodynamics.Maneuver
 {
@@ -18,6 +20,11 @@ namespace IO.Astrodynamics.Maneuver
         {
             TargetPerigeeHeight = perigeeRadius;
             TargetInclination = inclination;
+        }
+
+        public override Vector3 ManeuverPointComputation(StateVector stateVector)
+        {
+            throw new NotImplementedException();
         }
     }
 }
