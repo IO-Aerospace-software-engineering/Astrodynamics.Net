@@ -214,9 +214,6 @@ public class APITest
         //Define parking orbit
         KeplerianElements parkingOrbit = new KeplerianElements(10000000.0, 0.5, 1.0, 0.0, 0.0, 0.0, earth, DateTimeExtension.J2000, Frames.Frame.ICRF);
 
-        //Define target orbit
-        KeplerianElements targetOrbit = new KeplerianElements(10000000.0, 0.5, 1.0, 0.0, 0.0, 0.0, earth, DateTimeExtension.J2000, Frames.Frame.ICRF);
-
         //Create and configure spacecraft
         Clock clock = new Clock("clk1", System.Math.Pow(2.0, 16.0));
         Spacecraft spacecraft =

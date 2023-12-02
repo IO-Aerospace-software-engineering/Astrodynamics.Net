@@ -4,7 +4,7 @@ using BenchmarkDotNet.Attributes;
 
 namespace IO.Astrodynamics.Performance;
 
-[MarkdownExporter]
+[MarkdownExporterAttribute.GitHub]
 [MemoryDiagnoser]
 [SkewnessColumn]
 [KurtosisColumn]

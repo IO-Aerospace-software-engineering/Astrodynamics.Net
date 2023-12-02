@@ -40,7 +40,7 @@ namespace IO.Astrodynamics.Math
 
         public double Angle(Vector3 vector, Plane plane)
         {
-            return double.Atan2(this.Cross(vector) * plane.Normal, this * vector);
+            return double.Atan2(this.Cross(vector) * plane.Normal.Normalize(), this * vector);
         }
 
         public Vector3 Inverse()

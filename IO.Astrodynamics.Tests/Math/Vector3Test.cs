@@ -96,7 +96,7 @@ public class VectorTests
     {
         Vector3 m1 = new Vector3(1, -1, 0);
         Vector3 m2 = new Vector3(0, 1, 0);
-        double angle = m2.Angle(m1, Plane.Z);
+        double angle = m2.Angle(m1, new Plane(new Vector3(0.0,0.0,10.0),0.0));
         Assert.Equal(-2.3561944901923448, angle, 6);
     }
 
