@@ -92,14 +92,10 @@ namespace IO.Astrodynamics.Mission
             {
                 throw new InvalidOperationException("There is nothing to simulate");
             }
-            
-            
 
             var rootDirectory = outputDirectory.CreateSubdirectory(this.Mission.Name).CreateSubdirectory(this.Name);
             var spacecraftDirectory = rootDirectory.CreateSubdirectory("Spacecrafts");
             var siteDirectory = rootDirectory.CreateSubdirectory("Sites");
-            
-           
 
             API.Instance.PropagateScenario(this, siteDirectory, spacecraftDirectory);
 

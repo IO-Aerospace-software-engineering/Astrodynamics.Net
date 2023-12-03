@@ -5,6 +5,10 @@ public class Plane
     public Vector3 Normal { get; }
     public double Distance { get; }
 
+    public static Plane X { get; } = new Plane(Vector3.VectorX);
+    public static Plane Y { get; } = new Plane(Vector3.VectorY);
+    public static Plane Z { get; } = new Plane(Vector3.VectorZ);
+
     public Plane(Vector3 normal) : this(normal, 0.0)
     {
     }
