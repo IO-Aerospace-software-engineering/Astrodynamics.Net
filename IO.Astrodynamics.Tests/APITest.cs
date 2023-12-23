@@ -443,7 +443,6 @@ public class APITest
         //Execute scenario
         API.Instance.PropagateScenario(scenario, root.CreateSubdirectory("Sites"), root.CreateSubdirectory("Spacecrafts"));
 
-        API.Instance.LoadKernels(root);
         //Find windows when the earth is in field of view of camera 600 
         var res = API.Instance.FindWindowsInFieldOfViewConstraint(
             new Window(DateTimeExtension.CreateTDB(676555200.0), DateTimeExtension.CreateTDB(676561647.0)), spacecraft,
@@ -573,7 +572,6 @@ public class APITest
         //Execute scenario
         var root = Constants.OutputPath.CreateSubdirectory(scenario.Mission.Name).CreateSubdirectory(scenario.Name);
         API.Instance.PropagateScenario(scenario, root.CreateSubdirectory("Sites"), root.CreateSubdirectory("Spacecrafts"));
-        API.Instance.LoadKernels(root);
 
         //Read spacecraft orientation
         var res = API.Instance.ReadOrientation(window, spacecraft, TimeSpan.FromSeconds(10.0), Frames.Frame.ICRF,

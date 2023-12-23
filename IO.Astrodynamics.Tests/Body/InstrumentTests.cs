@@ -93,7 +93,7 @@ namespace IO.Astrodynamics.Tests.Body
             var root = Constants.OutputPath.CreateSubdirectory(scenario.Mission.Name).CreateSubdirectory(scenario.Name);
             //Execute scenario
             API.Instance.PropagateScenario(scenario, root.CreateSubdirectory("Sites"), root.CreateSubdirectory("Spacecrafts"));
-            API.Instance.LoadKernels(root);
+
             //Find windows when the earth is in field of view of camera 600 
             var res = spacecraft.Intruments.First().FindWindowsInFieldOfViewConstraint(
                 new Astrodynamics.Time.Window(DateTimeExtension.CreateTDB(676555200.0), DateTimeExtension.CreateTDB(676561647.0)), spacecraft,

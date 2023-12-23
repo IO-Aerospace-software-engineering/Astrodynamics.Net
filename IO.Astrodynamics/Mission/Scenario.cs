@@ -97,7 +97,15 @@ namespace IO.Astrodynamics.Mission
             SpacecraftDirectory = RootDirectory.CreateSubdirectory("Spacecrafts");
             SiteDirectory = RootDirectory.CreateSubdirectory("Sites");
 
-            API.Instance.PropagateScenario(this, SiteDirectory, SpacecraftDirectory);
+            try
+            {
+                API.Instance.PropagateScenario(this, SiteDirectory, SpacecraftDirectory);
+            }
+            finally
+            {
+                API.Instance.UnloadKernels(SiteDirectory);
+                API.Instance.UnloadKernels(SpacecraftDirectory);
+            }
 
             ScenarioSummary scenarioSummary = new ScenarioSummary(this.Window, SiteDirectory, SpacecraftDirectory);
             foreach (var spacecraft in _spacecrafts)

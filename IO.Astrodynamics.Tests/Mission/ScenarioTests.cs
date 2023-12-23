@@ -110,7 +110,6 @@ namespace IO.Astrodynamics.Tests.Mission
 
             scenario.AddSpacecraft(spacecraft);
             var summary = scenario.Simulate(Constants.OutputPath);
-            var summary2 = scenario.Simulate(Constants.OutputPath.CreateSubdirectory("2"));
 
             // Read maneuver results
             var maneuver = spacecraft.StandbyManeuver;

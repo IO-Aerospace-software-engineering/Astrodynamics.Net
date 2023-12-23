@@ -181,7 +181,8 @@ public class API
     }
 
     /// <summary>
-    ///  Execute the scenario
+    ///  Execute the scenario.
+    ///  Kernels stay loaded after this execution
     /// </summary>
     /// <param name="scenario"></param>
     /// <param name="siteDirectoryInfo"></param>
@@ -476,6 +477,9 @@ public class API
                 {
                     throw new InvalidOperationException($"Scenario can't be executed : {scenarioDto.Error}");
                 }
+                
+                API.Instance.LoadKernels(siteDirectoryInfo);
+                API.Instance.LoadKernels(spacecraftDirectoryInfo);
 
                 foreach (var maneuverResult in
                          scenarioDto.Spacecraft.CombinedManeuvers.Where(x => x.ManeuverOrder > -1))
