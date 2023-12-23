@@ -4,6 +4,7 @@ using System.Linq;
 using BenchmarkDotNet.Attributes;
 using IO.Astrodynamics.Body;
 using IO.Astrodynamics.Body.Spacecraft;
+using IO.Astrodynamics.Coordinates;
 using IO.Astrodynamics.Maneuver;
 using IO.Astrodynamics.Math;
 using IO.Astrodynamics.Mission;
@@ -109,6 +110,7 @@ namespace IO.Astrodynamics.Tests.Mission
 
             scenario.AddSpacecraft(spacecraft);
             var summary = scenario.Simulate(Constants.OutputPath);
+            var summary2 = scenario.Simulate(Constants.OutputPath.CreateSubdirectory("2"));
 
             // Read maneuver results
             var maneuver = spacecraft.StandbyManeuver;
@@ -162,6 +164,113 @@ namespace IO.Astrodynamics.Tests.Mission
             }
 
             Assert.Equal(2442.7800000000002, summary.SpacecraftSummaries.First().FuelConsumption, 3);
+        }
+
+        [Fact]
+        [Benchmark]
+        public void PropagateWithoutManeuver()
+        {
+            DateTime start = DateTimeExtension.CreateUTC(667915269.18539762).ToTDB();
+            DateTime startPropagator = DateTimeExtension.CreateUTC(668085555.829810).ToTDB();
+            DateTime end = DateTimeExtension.CreateUTC(668174400.000000).ToTDB();
+
+            Astrodynamics.Mission.Mission mission = new Astrodynamics.Mission.Mission("mission102");
+            Scenario scenario = new Scenario("scn100", mission, new Window(startPropagator, end));
+            scenario.AddAdditionalCelestialBody(TestHelpers.MoonAtJ2000);
+
+            //Define parking orbit
+            StateVector parkingOrbit = new StateVector(
+                new Vector3(5056554.1874925727, 4395595.4942363985, 0.0),
+                new Vector3(-3708.6305608890916, 4266.2914313011433, 6736.8538488755494), TestHelpers.EarthAtJ2000,
+                start, Frames.Frame.ICRF);
+
+            //Define target orbit
+            StateVector targetOrbit = new StateVector(
+                new Vector3(4390853.7278876612, 5110607.0005866792, 917659.86391987884),
+                new Vector3(-4979.4693432656513, 3033.2639866911495, 6933.1803797017265), TestHelpers.EarthAtJ2000,
+                start, Frames.Frame.ICRF);
+
+            //Create and configure spacecraft
+            Clock clock = new Clock("clk1", System.Math.Pow(2.0, 16.0));
+            Spacecraft spacecraft =
+                new Spacecraft(-1785, "DRAGONFLY32", 1000.0, 10000.0, clock, parkingOrbit);
+
+            FuelTank fuelTank = new FuelTank("ft1", "model1", "sn1", 9000.0, 9000.0);
+            Engine engine = new Engine("engine1", "model1", "sn1", 450.0, 50.0, fuelTank);
+            spacecraft.AddFuelTank(fuelTank);
+            spacecraft.AddEngine(engine);
+            spacecraft.AddPayload(new Payload("payload1", 50.0, "pay01"));
+            spacecraft.AddInstrument(
+                new Instrument(-1785601, "CAM601", "mod1", 80.0 * IO.Astrodynamics.Constants.Deg2Rad,
+                    InstrumentShape.Circular, Vector3.VectorZ, Vector3.VectorX, Vector3.VectorX));
+
+            scenario.AddSpacecraft(spacecraft);
+            var summary = scenario.Simulate(Constants.OutputPath);
+
+            Assert.Equal(scenario.Window, summary.Window);
+            Assert.Single(summary.SpacecraftSummaries);
+            var maneuverWindow = summary.SpacecraftSummaries.First().ManeuverWindow;
+            if (maneuverWindow != null)
+            {
+                Assert.Equal(new DateTime(2021, 3, 4, 0, 32, 53, 814, DateTimeKind.Unspecified), maneuverWindow.Value.StartDate, TimeSpan.FromMilliseconds(1));
+                Assert.Equal(new DateTime(2021, 3, 4, 5, 27, 13, 014, DateTimeKind.Unspecified), maneuverWindow.Value.EndDate, TimeSpan.FromMilliseconds(1));
+            }
+
+            Assert.Equal(0.0, summary.SpacecraftSummaries.First().FuelConsumption, 3);
+        }
+
+        [Fact]
+        [Benchmark]
+        public void PropagateWithSite()
+        {
+            DateTime start = DateTimeExtension.CreateUTC(667915269.18539762).ToTDB();
+            DateTime startPropagator = DateTimeExtension.CreateUTC(668085555.829810).ToTDB();
+            DateTime end = DateTimeExtension.CreateUTC(668174400.000000).ToTDB();
+
+            Astrodynamics.Mission.Mission mission = new Astrodynamics.Mission.Mission("mission102");
+            Scenario scenario = new Scenario("scn100", mission, new Window(startPropagator, end));
+            scenario.AddAdditionalCelestialBody(TestHelpers.MoonAtJ2000);
+            scenario.AddSite(new Site(132, "MySite", TestHelpers.EarthAtJ2000,new Planetodetic(0.5,0.3,0.0)));
+
+            //Define parking orbit
+            StateVector parkingOrbit = new StateVector(
+                new Vector3(5056554.1874925727, 4395595.4942363985, 0.0),
+                new Vector3(-3708.6305608890916, 4266.2914313011433, 6736.8538488755494), TestHelpers.EarthAtJ2000,
+                start, Frames.Frame.ICRF);
+
+            //Define target orbit
+            StateVector targetOrbit = new StateVector(
+                new Vector3(4390853.7278876612, 5110607.0005866792, 917659.86391987884),
+                new Vector3(-4979.4693432656513, 3033.2639866911495, 6933.1803797017265), TestHelpers.EarthAtJ2000,
+                start, Frames.Frame.ICRF);
+
+            //Create and configure spacecraft
+            Clock clock = new Clock("clk1", System.Math.Pow(2.0, 16.0));
+            Spacecraft spacecraft =
+                new Spacecraft(-1785, "DRAGONFLY32", 1000.0, 10000.0, clock, parkingOrbit);
+
+            FuelTank fuelTank = new FuelTank("ft1", "model1", "sn1", 9000.0, 9000.0);
+            Engine engine = new Engine("engine1", "model1", "sn1", 450.0, 50.0, fuelTank);
+            spacecraft.AddFuelTank(fuelTank);
+            spacecraft.AddEngine(engine);
+            spacecraft.AddPayload(new Payload("payload1", 50.0, "pay01"));
+            spacecraft.AddInstrument(
+                new Instrument(-1785601, "CAM601", "mod1", 80.0 * IO.Astrodynamics.Constants.Deg2Rad,
+                    InstrumentShape.Circular, Vector3.VectorZ, Vector3.VectorX, Vector3.VectorX));
+
+            scenario.AddSpacecraft(spacecraft);
+            var summary = scenario.Simulate(Constants.OutputPath);
+
+            Assert.Equal(scenario.Window, summary.Window);
+            Assert.Single(summary.SpacecraftSummaries);
+            var maneuverWindow = summary.SpacecraftSummaries.First().ManeuverWindow;
+            if (maneuverWindow != null)
+            {
+                Assert.Equal(new DateTime(2021, 3, 4, 0, 32, 53, 814, DateTimeKind.Unspecified), maneuverWindow.Value.StartDate, TimeSpan.FromMilliseconds(1));
+                Assert.Equal(new DateTime(2021, 3, 4, 5, 27, 13, 014, DateTimeKind.Unspecified), maneuverWindow.Value.EndDate, TimeSpan.FromMilliseconds(1));
+            }
+
+            Assert.Equal(0.0, summary.SpacecraftSummaries.First().FuelConsumption, 3);
         }
 
         [Fact]

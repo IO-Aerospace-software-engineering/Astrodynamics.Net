@@ -100,9 +100,12 @@ namespace IO.Astrodynamics.Tests.Body
                 Vector3.VectorZ, Vector3.VectorX, Vector3.VectorX));
             scenario.AddSpacecraft(spacecraft);
 
+            var root = Constants.OutputPath.CreateSubdirectory(scenario.Mission.Name).CreateSubdirectory(scenario.Name);
+
             //Execute scenario
-            API.Instance.PropagateScenario(scenario, Constants.OutputPath.CreateSubdirectory(scenario.Mission.Name).CreateSubdirectory(scenario.Name).CreateSubdirectory("Sites"),
-                Constants.OutputPath.CreateSubdirectory(scenario.Mission.Name).CreateSubdirectory(scenario.Name).CreateSubdirectory("Spacecrafts"));
+            API.Instance.PropagateScenario(scenario, root.CreateSubdirectory("Sites"), root.CreateSubdirectory("Spacecrafts"));
+            API.Instance.LoadKernels(root);
+
             var orientation = spacecraft.GetOrientation(Frames.Frame.ICRF, start);
             Vector3.VectorY.Rotate(orientation.Rotation);
         }
@@ -295,7 +298,7 @@ namespace IO.Astrodynamics.Tests.Body
             Assert.True((sv.Observer as CelestialBody)?.Satellites?.Count == 1);
 
             spc.SetInitialOrbitalParameters(sv2);
-            Assert.True((sv.Observer as CelestialBody)?.Satellites.Count==1);
+            Assert.True((sv.Observer as CelestialBody)?.Satellites.Count == 1);
             Assert.Equal(spc, (sv.Observer as CelestialBody)?.Satellites.First());
             Assert.Throws<ArgumentNullException>(() => spc.SetInitialOrbitalParameters(null));
         }

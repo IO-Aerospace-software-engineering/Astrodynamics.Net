@@ -439,10 +439,11 @@ public class APITest
             new Vector3(0.0, -System.Math.PI * 0.5, 0.0)));
         scenario.AddSpacecraft(spacecraft);
 
+        var root = Constants.OutputPath.CreateSubdirectory(scenario.Mission.Name).CreateSubdirectory(scenario.Name);
         //Execute scenario
-        API.Instance.PropagateScenario(scenario, Constants.OutputPath.CreateSubdirectory(scenario.Mission.Name).CreateSubdirectory(scenario.Name).CreateSubdirectory("Sites"),
-            Constants.OutputPath.CreateSubdirectory(scenario.Mission.Name).CreateSubdirectory(scenario.Name).CreateSubdirectory("Spacecrafts"));
+        API.Instance.PropagateScenario(scenario, root.CreateSubdirectory("Sites"), root.CreateSubdirectory("Spacecrafts"));
 
+        API.Instance.LoadKernels(root);
         //Find windows when the earth is in field of view of camera 600 
         var res = API.Instance.FindWindowsInFieldOfViewConstraint(
             new Window(DateTimeExtension.CreateTDB(676555200.0), DateTimeExtension.CreateTDB(676561647.0)), spacecraft,
@@ -570,8 +571,9 @@ public class APITest
         scenario.AddSpacecraft(spacecraft);
 
         //Execute scenario
-        API.Instance.PropagateScenario(scenario, Constants.OutputPath.CreateSubdirectory(scenario.Mission.Name).CreateSubdirectory(scenario.Name).CreateSubdirectory("Sites"),
-            Constants.OutputPath.CreateSubdirectory(scenario.Mission.Name).CreateSubdirectory(scenario.Name).CreateSubdirectory("Spacecrafts"));
+        var root = Constants.OutputPath.CreateSubdirectory(scenario.Mission.Name).CreateSubdirectory(scenario.Name);
+        API.Instance.PropagateScenario(scenario, root.CreateSubdirectory("Sites"), root.CreateSubdirectory("Spacecrafts"));
+        API.Instance.LoadKernels(root);
 
         //Read spacecraft orientation
         var res = API.Instance.ReadOrientation(window, spacecraft, TimeSpan.FromSeconds(10.0), Frames.Frame.ICRF,

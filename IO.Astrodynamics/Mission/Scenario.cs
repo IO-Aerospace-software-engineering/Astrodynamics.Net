@@ -22,7 +22,7 @@ namespace IO.Astrodynamics.Mission
         public DirectoryInfo SpacecraftDirectory { get; private set; }
         public DirectoryInfo SiteDirectory { get; private set; }
 
-        public bool IsSimulated => RootDirectory?.Exists == true && SpacecraftDirectory?.Exists == true && SiteDirectory?.Exists == true;
+        public bool IsSimulated => RootDirectory?.Exists == true && (SpacecraftDirectory?.Exists == true || SiteDirectory?.Exists == true);
 
         /// <summary>
         /// Constructor
@@ -93,21 +93,18 @@ namespace IO.Astrodynamics.Mission
                 throw new InvalidOperationException("There is nothing to simulate");
             }
 
-            var rootDirectory = outputDirectory.CreateSubdirectory(this.Mission.Name).CreateSubdirectory(this.Name);
-            var spacecraftDirectory = rootDirectory.CreateSubdirectory("Spacecrafts");
-            var siteDirectory = rootDirectory.CreateSubdirectory("Sites");
+            RootDirectory = outputDirectory.CreateSubdirectory(this.Mission.Name).CreateSubdirectory(this.Name);
+            SpacecraftDirectory = RootDirectory.CreateSubdirectory("Spacecrafts");
+            SiteDirectory = RootDirectory.CreateSubdirectory("Sites");
 
-            API.Instance.PropagateScenario(this, siteDirectory, spacecraftDirectory);
+            API.Instance.PropagateScenario(this, SiteDirectory, SpacecraftDirectory);
 
-            ScenarioSummary scenarioSummary = new ScenarioSummary(this.Window, siteDirectory, spacecraftDirectory);
+            ScenarioSummary scenarioSummary = new ScenarioSummary(this.Window, SiteDirectory, SpacecraftDirectory);
             foreach (var spacecraft in _spacecrafts)
             {
                 scenarioSummary.AddSpacecraftSummary(spacecraft.GetSummary());
             }
 
-            RootDirectory = outputDirectory.CreateSubdirectory(this.Mission.Name).CreateSubdirectory(this.Name);
-            SpacecraftDirectory = rootDirectory.CreateSubdirectory("Spacecrafts");
-            SiteDirectory = rootDirectory.CreateSubdirectory("Sites");
             return scenarioSummary;
         }
 

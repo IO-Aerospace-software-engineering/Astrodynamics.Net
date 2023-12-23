@@ -195,7 +195,7 @@ public class API
         {
             API.Instance.UnloadKernels(siteDirectoryInfo);
             API.Instance.UnloadKernels(spacecraftDirectoryInfo);
-            
+
             //Clean outputs
             siteDirectoryInfo.Delete(true);
             spacecraftDirectoryInfo.Delete(true);
@@ -469,14 +469,13 @@ public class API
                     order++;
                 }
 
+
                 PropagateSpacecraftProxy(ref scenarioDto);
+
                 if (scenarioDto.HasError())
                 {
                     throw new InvalidOperationException($"Scenario can't be executed : {scenarioDto.Error}");
                 }
-
-                LoadKernels(siteDirectoryInfo);
-                LoadKernels(spacecraftDirectoryInfo);
 
                 foreach (var maneuverResult in
                          scenarioDto.Spacecraft.CombinedManeuvers.Where(x => x.ManeuverOrder > -1))
@@ -596,9 +595,12 @@ public class API
         if (path == null) throw new ArgumentNullException(nameof(path));
         lock (lockObject)
         {
-            if (!LoadKernelsProxy(path.FullName))
+            if (path.Exists)
             {
-                throw new InvalidOperationException($"Kernel {path.FullName} can't be loaded. You can have more details on standard output");
+                if (!LoadKernelsProxy(path.FullName))
+                {
+                    throw new InvalidOperationException($"Kernel {path.FullName} can't be loaded. You can have more details on standard output");
+                }
             }
         }
     }
@@ -612,9 +614,12 @@ public class API
         if (path == null) throw new ArgumentNullException(nameof(path));
         lock (lockObject)
         {
-            if (!UnloadKernelsProxy(path.FullName))
+            if (path.Exists)
             {
-                throw new InvalidOperationException($"Kernel {path.FullName} can't be unloaded. You can have more details on standard output");
+                if (!UnloadKernelsProxy(path.FullName))
+                {
+                    throw new InvalidOperationException($"Kernel {path.FullName} can't be unloaded. You can have more details on standard output");
+                }
             }
         }
     }
@@ -881,12 +886,12 @@ public class API
             const int messageSize = 10000;
             List<OrbitalParameters.OrbitalParameters> orbitalParameters = new List<OrbitalParameters.OrbitalParameters>();
             int occurences = (int)(searchWindow.Length / stepSize / messageSize);
-           
+
 
             for (int i = 0; i <= occurences; i++)
             {
                 var start = searchWindow.StartDate + i * messageSize * stepSize;
-                var end = start + messageSize * stepSize > searchWindow.EndDate ? searchWindow.EndDate : (start + messageSize * stepSize)-stepSize;
+                var end = start + messageSize * stepSize > searchWindow.EndDate ? searchWindow.EndDate : (start + messageSize * stepSize) - stepSize;
                 var window = new Time.Window(start, end);
                 var stateVectors = new StateVector[messageSize];
                 ReadEphemerisProxy(_mapper.Map<Window>(window), observer.NaifId, target.NaifId, frame.Name,
