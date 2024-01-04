@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IO.Astrodynamics.Tests", "I
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IO.Astrodynamics.Performance", "IO.Astrodynamics.Performance\IO.Astrodynamics.Performance.csproj", "{7ADFCA3F-5B86-4149-B4C8-99195C4E677F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IO.Astrodynamics.CLI", "IO.Astrodynamics.CLI\IO.Astrodynamics.CLI.csproj", "{F969725C-62A0-4F3F-8068-44EE65F58CAF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{7ADFCA3F-5B86-4149-B4C8-99195C4E677F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7ADFCA3F-5B86-4149-B4C8-99195C4E677F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7ADFCA3F-5B86-4149-B4C8-99195C4E677F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F969725C-62A0-4F3F-8068-44EE65F58CAF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F969725C-62A0-4F3F-8068-44EE65F58CAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F969725C-62A0-4F3F-8068-44EE65F58CAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F969725C-62A0-4F3F-8068-44EE65F58CAF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
