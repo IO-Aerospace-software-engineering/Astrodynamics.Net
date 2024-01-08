@@ -8,6 +8,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IO.Astrodynamics.Performanc
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IO.Astrodynamics.CLI", "IO.Astrodynamics.CLI\IO.Astrodynamics.CLI.csproj", "{F969725C-62A0-4F3F-8068-44EE65F58CAF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IO.Astrodynamics.CLI.Tests", "IO.Astrodynamics.CLI.Tests\IO.Astrodynamics.CLI.Tests.csproj", "{A5090423-9F21-434C-BE5A-F11B1D11DD9E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,9 @@ Global
 		{F969725C-62A0-4F3F-8068-44EE65F58CAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F969725C-62A0-4F3F-8068-44EE65F58CAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F969725C-62A0-4F3F-8068-44EE65F58CAF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A5090423-9F21-434C-BE5A-F11B1D11DD9E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A5090423-9F21-434C-BE5A-F11B1D11DD9E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A5090423-9F21-434C-BE5A-F11B1D11DD9E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A5090423-9F21-434C-BE5A-F11B1D11DD9E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
