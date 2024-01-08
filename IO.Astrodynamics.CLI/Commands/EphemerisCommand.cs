@@ -14,23 +14,15 @@ public class EphemerisCommand
 
     [Command("ephemeris", Description = "Compute ephemeris of given object")]
     public Task Ephemeris(
-        [Argument(Description = "Object identifier")]
-        int objectId,
         [Argument("Kernels directory path")] string kernelsPath,
-        [Option(shortName: 'o', Description = "Observer identifier")]
-        int observerId,
-        [Option(shortName: 'b', Description = "Begin epoch")]
-        string begin,
-        [Option(shortName: 'e', Description = "End epoch")]
-        string end,
-        [Option(shortName: 's', Description = "Step size in seconds")]
-        double step,
-        [Option(shortName: 'f', Description = "Frame")]
-        string frame,
-        [Option(shortName: 'a', Description = "Aberration")]
-        string aberration,
-        [Option(Description = "Output format - sv (state vector) or ke (keplerian)")]
-        string outputFormat)
+        [Argument(Description = "Object identifier")] int objectId,
+        [Argument(Description = "Observer identifier")] int observerId,
+        [Option(shortName: 'b', Description = "Begin epoch")] string begin,
+        [Option(shortName: 'e', Description = "End epoch")] string end,
+        [Option(shortName: 's', Description = "Step size in seconds")] double step,
+        [Option(shortName: 'f', Description = "Frame")] string frame,
+        [Option(shortName: 'a', Description = "Aberration")] string aberration,
+        [Option(Description = "Output format - sv (state vector) or ke (keplerian)")] string outputFormat)
     {
         CelestialItem celestialItem;
         if (int.IsPositive(objectId))
@@ -56,11 +48,18 @@ public class EphemerisCommand
         DateTime endDate = DateTime.Parse(end);
         TimeSpan stepSize = TimeSpan.FromSeconds(step);
 
-        var res = celestialItem.GetEphemeris(new Window(startDate, endDate), observerItem, new Frame(frame), Enum.Parse<Aberration>(aberration, true), stepSize);
+        var ephemeris = celestialItem.GetEphemeris(new Window(startDate, endDate), observerItem, new Frame(frame), Enum.Parse<Aberration>(aberration, true), stepSize);
 
         if (outputFormat == "ke")
         {
-            res = res.Select(x => x.ToKeplerianElements());
+            ephemeris = ephemeris.Select(x => x.ToKeplerianElements());
         }
+
+        foreach (var eph in ephemeris)
+        {
+            Console.WriteLine(eph.ToString());
+        }
+
+        return Task.CompletedTask;
     }
 }

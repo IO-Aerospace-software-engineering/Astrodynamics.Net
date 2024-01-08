@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using IO.Astrodynamics.Body;
 using IO.Astrodynamics.Frames;
 using IO.Astrodynamics.Math;
@@ -287,6 +288,17 @@ namespace IO.Astrodynamics.OrbitalParameters
         public static bool operator !=(StateVector left, StateVector right)
         {
             return !Equals(left, right);
+        }
+
+        public override string ToString()
+        {
+            var epochUnit = Epoch.Kind switch
+            {
+                DateTimeKind.Utc => "UTC",
+                DateTimeKind.Local => string.Empty,
+                _ => "TDB"
+            };
+            return $"Epoch={Epoch.ToString(CultureInfo.InvariantCulture)} {epochUnit} Position : {Position} Velocity: {Velocity} Frame={Frame.Name}";
         }
     }
 }

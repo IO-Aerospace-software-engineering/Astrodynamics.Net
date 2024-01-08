@@ -9,7 +9,10 @@
 
     <ItemGroup>
       <PackageReference Include="Cocona" Version="2.2.0" />
-      <PackageReference Include="IO.Astrodynamics" Version="1.9.10" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\IO.Astrodynamics\IO.Astrodynamics.csproj" />
     </ItemGroup>
 
 </Project>

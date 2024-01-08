@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using IO.Astrodynamics.Body;
 using IO.Astrodynamics.Frames;
 
@@ -172,6 +173,17 @@ namespace IO.Astrodynamics.OrbitalParameters
         public static bool operator !=(KeplerianElements left, KeplerianElements right)
         {
             return !Equals(left, right);
+        }
+
+        public override string ToString()
+        {
+            var epochUnit = Epoch.Kind switch
+            {
+                DateTimeKind.Utc => "UTC",
+                DateTimeKind.Local => string.Empty,
+                _ => "TDB"
+            };
+            return $"Epoch={Epoch.ToString(CultureInfo.InvariantCulture)} {epochUnit} A={A} Ecc.={E} Inc.={I} AN={RAAN} AOP={AOP} M={M} Frame={Frame.Name}" ;
         }
     }
 }
