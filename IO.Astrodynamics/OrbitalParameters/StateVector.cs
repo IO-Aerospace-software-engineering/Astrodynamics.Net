@@ -3,6 +3,7 @@ using System.Globalization;
 using IO.Astrodynamics.Body;
 using IO.Astrodynamics.Frames;
 using IO.Astrodynamics.Math;
+using IO.Astrodynamics.Time;
 
 namespace IO.Astrodynamics.OrbitalParameters
 {
@@ -292,13 +293,7 @@ namespace IO.Astrodynamics.OrbitalParameters
 
         public override string ToString()
         {
-            var epochUnit = Epoch.Kind switch
-            {
-                DateTimeKind.Utc => "UTC",
-                DateTimeKind.Local => string.Empty,
-                _ => "TDB"
-            };
-            return $"Epoch={Epoch.ToString(CultureInfo.InvariantCulture)} {epochUnit} Position : {Position} Velocity: {Velocity} Frame={Frame.Name}";
+            return $"Epoch : {Epoch.ToFormattedString()} Position : {Position} Velocity : {Velocity} Frame : {Frame.Name}";
         }
     }
 }

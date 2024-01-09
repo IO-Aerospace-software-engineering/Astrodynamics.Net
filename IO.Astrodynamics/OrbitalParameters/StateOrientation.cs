@@ -1,6 +1,8 @@
 using System;
+using System.Globalization;
 using IO.Astrodynamics.Frames;
 using IO.Astrodynamics.Math;
+using IO.Astrodynamics.Time;
 
 namespace IO.Astrodynamics.OrbitalParameters
 {
@@ -25,6 +27,11 @@ namespace IO.Astrodynamics.OrbitalParameters
 
             return new StateOrientation(Rotation * ReferenceFrame.ToFrame(frame, Epoch).Rotation,
                 AngularVelocity - Frame.ICRF.ToFrame(frame, Epoch).AngularVelocity, Epoch, frame);
+        }
+
+        public override string ToString()
+        {
+            return $"Epoch : {Epoch.ToFormattedString()} Orientation : {Rotation} Angular velocity : {AngularVelocity} Frame : {ReferenceFrame.Name}";
         }
     }
 }

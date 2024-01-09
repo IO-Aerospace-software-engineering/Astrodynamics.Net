@@ -11,6 +11,7 @@ class Program
 
         var app = builder.Build();
         app.AddCommands<EphemerisCommand>();
+        app.AddCommands<OrientationCommand>();
         app.Run();
     }
 }

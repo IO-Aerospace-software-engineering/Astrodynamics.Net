@@ -13,7 +13,7 @@ using Vector3 = IO.Astrodynamics.Math.Vector3;
 
 namespace IO.Astrodynamics.Body;
 
-public class CelestialBody : CelestialItem
+public class CelestialBody : CelestialItem, IOrientable
 {
     public double PolarRadius { get; }
     public double EquatorialRadius { get; }
