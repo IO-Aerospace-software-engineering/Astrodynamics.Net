@@ -7,20 +7,16 @@ using IO.Astrodynamics.Time;
 
 namespace IO.Astrodynamics.CLI.Commands;
 
-public class OrientationCommand
+public class EpochConverterCommand
 {
-    public OrientationCommand()
+    public EpochConverterCommand()
     {
     }
 
-    [Command("orientation", Description = "Compute orientations of given object")]
+    [Command("epoch-converter", Description = "Convert a time system into another")]
     public Task Orientation(
         [Argument("Kernels directory path")] string kernelsPath,
-        [Argument(Description = "Object identifier")] int objectId,
-        [Option(shortName: 'b', Description = "Begin epoch")] DateTime begin,
-        [Option(shortName: 'e', Description = "End epoch")] DateTime end,
-        [Option(shortName: 's', Description = "Step size in seconds")] TimeSpan step,
-        [Option(shortName: 'f', Description = "Frame - ICRF by default")] string frame="ICRF")
+        [Argument(Description = "Epoch")] string epoch)
     {
         if (frame.Equals("icrf", StringComparison.InvariantCultureIgnoreCase))
         {
