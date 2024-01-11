@@ -15,7 +15,7 @@ public class EphemerisCommand
 
     [Command("ephemeris", Description = "Compute ephemeris of given object")]
     public Task Ephemeris(
-        [Argument("Kernels directory path")] string kernelsPath,
+        [Argument(Description = "Kernels directory path")] string kernelsPath,
         [Argument(Description = "Object identifier")]
         int objectId,
         [Argument(Description = "Observer identifier")]

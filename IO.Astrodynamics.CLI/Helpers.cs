@@ -1,6 +1,8 @@
-﻿using IO.Astrodynamics.Body;
+﻿using System.Globalization;
+using IO.Astrodynamics.Body;
 using IO.Astrodynamics.Body.Spacecraft;
 using IO.Astrodynamics.Surface;
+using IO.Astrodynamics.Time;
 
 namespace IO.Astrodynamics.CLI;
 
@@ -40,5 +42,44 @@ public class Helpers
         }
 
         return celestialItem;
+    }
+    
+    internal static DateTime ConvertDateTimeInput(string epoch)
+    {
+        var isutc = epoch.Contains("utc", StringComparison.InvariantCultureIgnoreCase) || epoch.Contains("z", StringComparison.InvariantCultureIgnoreCase);
+        var isjd = epoch.Contains("jd", StringComparison.InvariantCultureIgnoreCase);
+
+        //clean string
+        epoch = epoch.Replace("utc", "", StringComparison.InvariantCultureIgnoreCase).Replace("tdb", "", StringComparison.InvariantCultureIgnoreCase).Trim();
+
+        //Input
+        DateTime input;
+        if (isjd)
+        {
+            epoch = epoch.Replace("jd", "", StringComparison.InvariantCultureIgnoreCase).Trim();
+            double value = double.Parse(epoch, CultureInfo.InvariantCulture);
+            if (isutc)
+            {
+                input = DateTimeExtension.CreateUTCFromJD(value);
+            }
+            else
+            {
+                input = DateTimeExtension.CreateTDBFromJD(value);
+            }
+        }
+        else if (!DateTime.TryParse(epoch, out input))
+        {
+            double value = double.Parse(epoch, CultureInfo.InvariantCulture);
+            if (isutc)
+            {
+                input = DateTimeExtension.CreateUTC(value);
+            }
+            else
+            {
+                input = DateTimeExtension.CreateTDB(value);
+            }
+        }
+
+        return input;
     }
 }

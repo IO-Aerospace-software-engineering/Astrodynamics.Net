@@ -12,6 +12,7 @@ class Program
         var app = builder.Build();
         app.AddCommands<EphemerisCommand>();
         app.AddCommands<OrientationCommand>();
+        app.AddCommands<TimeConverterCommand>();
         app.Run();
     }
 }

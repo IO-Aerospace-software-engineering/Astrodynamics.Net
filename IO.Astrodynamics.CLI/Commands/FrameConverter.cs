@@ -1,0 +1,45 @@
+using System.Globalization;
+using Cocona;
+using IO.Astrodynamics.Body;
+using IO.Astrodynamics.Body.Spacecraft;
+using IO.Astrodynamics.Frames;
+using IO.Astrodynamics.OrbitalParameters;
+using IO.Astrodynamics.Time;
+
+namespace IO.Astrodynamics.CLI.Commands;
+
+public class FrameConverterCommand
+{
+    public FrameConverterCommand()
+    {
+    }
+
+    [Command("frame-converter", Description = "Convert a frame to another at given epoch")]
+    public Task Convert(
+        [Argument(Description = "Kernels directory path")]
+        string kernelsPath,
+        [Argument(Description = "Origin frame")]
+        string from,
+        [Argument(Description = "Target frame")]
+        string to,
+        [Argument(Description = "Epoch")] string epoch)
+    {
+        API.Instance.LoadKernels(new DirectoryInfo(kernelsPath));
+
+        if (from.Equals("ICRF", StringComparison.InvariantCultureIgnoreCase))
+        {
+            from = "J2000";
+        }
+        
+        if (to.Equals("ICRF", StringComparison.InvariantCultureIgnoreCase))
+        {
+            to = "J2000";
+        }
+        
+        var inputEpoch = Helpers.ConvertDateTimeInput(epoch);
+
+        var q = new Frame(from).ToFrame(new Frame(to), inputEpoch);
+        Console.WriteLine(q);
+        return Task.CompletedTask;
+    }
+}

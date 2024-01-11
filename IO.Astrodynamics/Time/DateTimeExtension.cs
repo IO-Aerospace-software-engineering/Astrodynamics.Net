@@ -127,6 +127,21 @@ public static class DateTimeExtension
 
         return (date - J2000).TotalSeconds;
     }
+    
+    /// <summary>
+    /// Seconds from J2000 relative to Local
+    /// </summary>
+    /// <param name="date"></param>
+    /// <returns></returns>
+    public static double SecondsFromJ2000Local(this DateTime date)
+    {
+        if (date.Kind != DateTimeKind.Local)
+        {
+            date = date.ToUTC().ToLocalTime();
+        }
+
+        return (date - J2000).TotalSeconds;
+    }
 
     /// <summary>
     /// Create TDB from seconds elapsed from J2000

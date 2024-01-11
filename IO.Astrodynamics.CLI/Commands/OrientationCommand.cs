@@ -15,7 +15,7 @@ public class OrientationCommand
 
     [Command("orientation", Description = "Compute orientations of given object")]
     public Task Orientation(
-        [Argument("Kernels directory path")] string kernelsPath,
+        [Argument(Description = "Kernels directory path")] string kernelsPath,
         [Argument(Description = "Object identifier")] int objectId,
         [Option(shortName: 'b', Description = "Begin epoch")] DateTime begin,
         [Option(shortName: 'e', Description = "End epoch")] DateTime end,

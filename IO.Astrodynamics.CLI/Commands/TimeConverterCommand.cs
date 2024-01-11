@@ -14,57 +14,37 @@ public class TimeConverterCommand
     {
     }
 
-    [Command("time-converter", Description = "Convert a time system into another")]
+    [Command("time-converter", Description = "Convert a time system to another")]
     public Task TimeConverter(
-        [Argument("Kernels directory path")] string kernelsPath,
-        [Argument(Description = "Epoch")] string epoch,
+        [Argument(Description = "<YYYY-MM-DDT00:00:00.000(Z) or decimal> <julian date specifier(JD)> <TDB or UTC>")]
+        string epoch,
         [Option('t', Description = "Convert to TDB")]
         bool toTDB,
         [Option('u', Description = "Convert to UTC")]
         bool toUTC,
+        [Option('l', Description = "Convert to Local")]
+        bool toLocal,
         [Option('j', Description = "Convert to Julian date")]
         bool toJulian,
         [Option('e', Description = "Convert to elapsed seconds from J2000 epoch")]
         bool toSecondsFromJ2000,
-        [Option('d', Description = "Convert to DateTime")]
+        [Option('d', Description = "Convert to DateTime (ISO 8601)")]
         bool toDateTime)
     {
-        var isutc = epoch.Contains("utc", StringComparison.InvariantCultureIgnoreCase) || epoch.Contains("z", StringComparison.InvariantCultureIgnoreCase);
-        var isjd = epoch.Contains("jd", StringComparison.InvariantCultureIgnoreCase);
-
-        //clean string
-        epoch = epoch.Replace("utc", "", StringComparison.InvariantCultureIgnoreCase).Replace("tdb", "", StringComparison.InvariantCultureIgnoreCase).Trim();
-
-        //Input
-        DateTime input;
-        if (isjd)
+        if (!(toUTC ^ toTDB ^ toLocal))
         {
-            epoch = epoch.Replace("jd", "", StringComparison.InvariantCultureIgnoreCase).Trim();
-            double value = double.Parse(epoch, CultureInfo.InvariantCulture);
-            if (isutc)
-            {
-                input = DateTimeExtension.CreateUTCFromJD(value);
-            }
-            else
-            {
-                input = DateTimeExtension.CreateTDB(value);
-            }
+            throw new ArgumentException("Target either UTC or TDB or Local. use --help for more information");
         }
 
-        if (!DateTime.TryParse(epoch, out input))
+        if (!(toJulian ^ toSecondsFromJ2000 ^ toDateTime))
         {
-            double value = double.Parse(epoch, CultureInfo.InvariantCulture);
-            if (isutc)
-            {
-                input = DateTimeExtension.CreateUTC(value);
-            }
-            else
-            {
-                input = DateTimeExtension.CreateTDB(value);
-            }
+            throw new ArgumentException("Target either Julian or SecondsFromJ2000 or DateTime . use --help for more information");
         }
+
+        var input = Helpers.ConvertDateTimeInput(epoch);
 
         //Output
+        string suffix = toLocal ? "" : toUTC ? "UTC" : "TDB";
         if (toTDB)
         {
             input = input.ToTDB();
@@ -72,6 +52,10 @@ public class TimeConverterCommand
         else if (toUTC)
         {
             input = input.ToUTC();
+        }
+        else
+        {
+            input = input.ToUTC().ToLocalTime();
         }
 
         string res = string.Empty;
@@ -85,17 +69,20 @@ public class TimeConverterCommand
             {
                 res = $"{input.SecondsFromJ2000UTC()}";
             }
-            else
+            else if (toTDB)
             {
                 res = $"{input.SecondsFromJ2000TDB()}";
+            }
+            else
+            {
+                res = $"{input.SecondsFromJ2000Local()}";
             }
         }
         else if (toDateTime)
         {
-            res = input.ToFormattedString();
+            res = input.ToString("O", CultureInfo.InvariantCulture);
         }
 
-        string suffix = toUTC ? "UTC" : "TDB";
         Console.WriteLine($"{res} {suffix}");
         return Task.CompletedTask;
     }
