@@ -112,6 +112,21 @@ public static class DateTimeExtension
 
         return (date - J2000).TotalSeconds;
     }
+    
+    /// <summary>
+    /// Seconds from J2000 relative to UTC
+    /// </summary>
+    /// <param name="date"></param>
+    /// <returns></returns>
+    public static double SecondsFromJ2000UTC(this DateTime date)
+    {
+        if (date.Kind != DateTimeKind.Utc)
+        {
+            date = date.ToUTC();
+        }
+
+        return (date - J2000).TotalSeconds;
+    }
 
     /// <summary>
     /// Create TDB from seconds elapsed from J2000
