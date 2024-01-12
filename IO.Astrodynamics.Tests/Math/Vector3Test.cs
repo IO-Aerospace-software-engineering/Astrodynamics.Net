@@ -166,6 +166,6 @@ public class VectorTests
     public void VectorToString()
     {
         Vector3 m1 = new Vector3(10, 20, 30);
-        Assert.Equal("Vector3 { X = 10, Y = 20, Z = 30 }", m1.ToString());
+        Assert.Equal("X : 10 Y : 20 Z: 30", m1.ToString());
     }
 }

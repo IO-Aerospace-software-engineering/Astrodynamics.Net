@@ -73,34 +73,13 @@ public class OrbitalParametersConverterCommand
         }
 
         //Initialize data
-        var inputFrame = new Frame(originalFrame);
+        
         var outputFrame = new Frame(targetFrame);
-        var inputEpoch = Helpers.ConvertDateTimeInput(epoch);
+        
         var outputEpoch = Helpers.ConvertDateTimeInput(targetEpoch);
-        var inputCenterOfMotion = new CelestialBody(centerofMotion);
+        
 
-        //Generate original orbital parameters
-        OrbitalParameters.OrbitalParameters orbitalParameters = null;
-        if (fromStateVector)
-        {
-            var arr = orbitalParametersInput.Split(' ').Select(double.Parse).ToArray();
-            orbitalParameters = new StateVector(new Vector3(arr[0], arr[1], arr[2]), new Vector3(arr[3], arr[4], arr[5]), inputCenterOfMotion, inputEpoch, inputFrame);
-        }
-        else if (fromKeplerian)
-        {
-            var arr = orbitalParametersInput.Split(' ').Select(double.Parse).ToArray();
-            orbitalParameters = new KeplerianElements(arr[0], arr[1], arr[2], arr[3], arr[4], arr[5], inputCenterOfMotion, inputEpoch, inputFrame);
-        }
-        else if (fromEquinoctial)
-        {
-            var arr = orbitalParametersInput.Split(' ').Select(double.Parse).ToArray();
-            orbitalParameters = new EquinoctialElements(arr[0], arr[1], arr[2], arr[3], arr[4], arr[5], inputCenterOfMotion, inputEpoch, inputFrame);
-        }
-        else if (fromTLE)
-        {
-            var arr = orbitalParametersInput.Split(',').ToArray();
-            orbitalParameters = TLE.Create("body", arr[0], arr[1]);
-        }
+        var orbitalParameters = Helpers.ConvertToOrbitalParameters(orbitalParametersInput, centerofMotion, epoch, originalFrame, fromStateVector, fromKeplerian, fromEquinoctial, fromTLE);
 
         //At given epoch and in given frame
         orbitalParameters = orbitalParameters!.AtEpoch(outputEpoch).ToFrame(outputFrame);
@@ -123,4 +102,6 @@ public class OrbitalParametersConverterCommand
 
         return Task.CompletedTask;
     }
+
+   
 }

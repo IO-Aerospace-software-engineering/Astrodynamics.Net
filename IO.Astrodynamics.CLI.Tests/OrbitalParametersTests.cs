@@ -18,7 +18,7 @@ public class OrbitalParametersTests
             command.Converter("Data", "-26499033.67742509 132757417.33833946 57556718.47053819 -29.79426007 -5.01805231 -2.17539380", 10, "0.0", "ICRF", true, false, false, false, true, false, false,"0.0","ECLIPJ2000");
             var res = sb.ToString();
 
-            Assert.Equal($"Epoch : 2000-01-01T12:00:00.0000000 (TDB) Position : Vector3 {{ X = -26499033.69125964, Y = 144697296.86606458, Z = -611.1493929959834 }} Velocity : Vector3 {{ X = -29.796555134442006, Y = -5.456766635259731, Z = 0.00018173387892583825 }} Frame : ECLIPJ2000{Environment.NewLine}", res);
+            Assert.Equal($"Epoch : 2000-01-01T12:00:00.0000000 (TDB) Position : X : -26499033.69125964 Y : 144697296.86606458 Z: -611.1493929959834 Velocity : X : -29.796555134442006 Y : -5.456766635259731 Z: 0.00018173387892583825 Frame : ECLIPJ2000{Environment.NewLine}", res);
         }
     }
     
@@ -50,7 +50,7 @@ public class OrbitalParametersTests
             command.Converter("Data", "13560000.0 0.5 0.17453292519943295 0.26179938779914941 0.52359877559829882 0.78539816339744828", 399, "0.0", "ICRF", false, true, false, false, false, false, true);
             var res = sb.ToString();
 
-            Assert.Equal($"Epoch : 2000-01-01T12:00:00.0000000 (TDB) P : 149621604980.8595 F : -0.003503875261904364 G : 0.01675932238970266 H : 0.2074449594584462 K 2.6872943434426975E-06 L0 : 8.035109879431142 Frame : j2000\r\n{Environment.NewLine}", res);
+            Assert.Equal($"Epoch : 2000-01-01T12:00:00.0000000 (TDB) P : 10170000 F : 0.3535533905932738 G : 0.3535533905932738 H : 0.08450755960720442 K 0.022643732351075387 L0 : 2.589226533382245 Frame : j2000{Environment.NewLine}", res);
         }
     }
     
@@ -66,7 +66,7 @@ public class OrbitalParametersTests
             command.Converter("Data", "6800803.5449581668 0.001353139738203394 0.90267066832323262 0.56855938608714662 1.8545420365902201 0.7925932793200029", 399, "0.0", "ICRF",false, true, false, false, true, false, false);
             var res = sb.ToString();
 
-            Assert.Equal($"Epoch : 2000-01-01T12:00:00.0000000 (TDB) Position : Vector3 {{ X = -6116559.468933809, Y = -1546174.6944518015, Z = 2521950.161516388 }} Velocity : Vector3 {{ X = -807.8383114627195, Y = -5477.646280596453, Z = -5297.633402454895 }} Frame : j2000{Environment.NewLine}", res);
+            Assert.Equal($"Epoch : 2000-01-01T12:00:00.0000000 (TDB) Position : X : -6116559.468933809 Y : -1546174.6944518015 Z: 2521950.161516388 Velocity : X : -807.8383114627195 Y : -5477.646280596453 Z: -5297.633402454895 Frame : j2000{Environment.NewLine}", res);
         }
     }
     

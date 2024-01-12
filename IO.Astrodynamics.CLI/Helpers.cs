@@ -1,6 +1,9 @@
 ﻿using System.Globalization;
 using IO.Astrodynamics.Body;
 using IO.Astrodynamics.Body.Spacecraft;
+using IO.Astrodynamics.Frames;
+using IO.Astrodynamics.Math;
+using IO.Astrodynamics.OrbitalParameters;
 using IO.Astrodynamics.Surface;
 using IO.Astrodynamics.Time;
 
@@ -81,5 +84,37 @@ public class Helpers
         }
 
         return input;
+    }
+    
+    internal static OrbitalParameters.OrbitalParameters? ConvertToOrbitalParameters(string orbitalParametersInput, int centerofMotion, string epoch, string originalFrame, bool fromStateVector,
+        bool fromKeplerian, bool fromEquinoctial, bool fromTLE)
+    {
+        var inputFrame = new Frame(originalFrame);
+        var inputEpoch = Helpers.ConvertDateTimeInput(epoch);
+        var inputCenterOfMotion = new CelestialBody(centerofMotion);
+        //Generate original orbital parameters
+        OrbitalParameters.OrbitalParameters orbitalParameters = null;
+        if (fromStateVector)
+        {
+            var arr = orbitalParametersInput.Split(' ').Select(double.Parse).ToArray();
+            orbitalParameters = new StateVector(new Vector3(arr[0], arr[1], arr[2]), new Vector3(arr[3], arr[4], arr[5]), inputCenterOfMotion, inputEpoch, inputFrame);
+        }
+        else if (fromKeplerian)
+        {
+            var arr = orbitalParametersInput.Split(' ').Select(double.Parse).ToArray();
+            orbitalParameters = new KeplerianElements(arr[0], arr[1], arr[2], arr[3], arr[4], arr[5], inputCenterOfMotion, inputEpoch, inputFrame);
+        }
+        else if (fromEquinoctial)
+        {
+            var arr = orbitalParametersInput.Split(' ').Select(double.Parse).ToArray();
+            orbitalParameters = new EquinoctialElements(arr[0], arr[1], arr[2], arr[3], arr[4], arr[5], inputCenterOfMotion, inputEpoch, inputFrame);
+        }
+        else if (fromTLE)
+        {
+            var arr = orbitalParametersInput.Split(',').ToArray();
+            orbitalParameters = TLE.Create("body", arr[0], arr[1]);
+        }
+
+        return orbitalParameters;
     }
 }
