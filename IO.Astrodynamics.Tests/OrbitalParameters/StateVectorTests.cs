@@ -271,11 +271,11 @@ namespace IO.Astrodynamics.Tests.OrbitalParameters
         [Fact]
         public void ToFrame()
         {
-            CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH);
+            CelestialBody sun = new CelestialBody(Stars.Sun);
 
             //J2000->Ecliptic
             //Earth from sun at 0 TDB
-            var sv = new StateVector(new Vector3(-26499033.67742509, 132757417.33833946, 57556718.47053819), new Vector3(-29.79426007, -5.01805231, -2.17539380), earth,
+            var sv = new StateVector(new Vector3(-26499033.67742509, 132757417.33833946, 57556718.47053819), new Vector3(-29.79426007, -5.01805231, -2.17539380), sun,
                 new DateTime(2000, 1, 1, 12, 0, 0), Frames.Frame.ICRF);
 
             double[] res = sv.ToFrame(Frames.Frame.ECLIPTIC_J2000).ToStateVector().ToArray();

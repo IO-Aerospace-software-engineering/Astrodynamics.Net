@@ -101,5 +101,10 @@ namespace IO.Astrodynamics.Math
             var p = new Quaternion(0.0, this);
             return (quaternion * p * quaternion.Conjugate()).VectorPart;
         }
+
+        public override string ToString()
+        {
+            return $"X : {X} Y : {Y} Z: {Z}";
+        }
     }
 }

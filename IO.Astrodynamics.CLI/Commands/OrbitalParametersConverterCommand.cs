@@ -83,17 +83,17 @@ public class OrbitalParametersConverterCommand
         OrbitalParameters.OrbitalParameters orbitalParameters = null;
         if (fromStateVector)
         {
-            var arr = orbitalParametersInput.Split('\n').Select(double.Parse).ToArray();
+            var arr = orbitalParametersInput.Split(' ').Select(double.Parse).ToArray();
             orbitalParameters = new StateVector(new Vector3(arr[0], arr[1], arr[2]), new Vector3(arr[3], arr[4], arr[5]), inputCenterOfMotion, inputEpoch, inputFrame);
         }
         else if (fromKeplerian)
         {
-            var arr = orbitalParametersInput.Split('\n').Select(double.Parse).ToArray();
+            var arr = orbitalParametersInput.Split(' ').Select(double.Parse).ToArray();
             orbitalParameters = new KeplerianElements(arr[0], arr[1], arr[2], arr[3], arr[4], arr[5], inputCenterOfMotion, inputEpoch, inputFrame);
         }
         else if (fromEquinoctial)
         {
-            var arr = orbitalParametersInput.Split('\n').Select(double.Parse).ToArray();
+            var arr = orbitalParametersInput.Split(' ').Select(double.Parse).ToArray();
             orbitalParameters = new EquinoctialElements(arr[0], arr[1], arr[2], arr[3], arr[4], arr[5], inputCenterOfMotion, inputEpoch, inputFrame);
         }
         else if (fromTLE)
