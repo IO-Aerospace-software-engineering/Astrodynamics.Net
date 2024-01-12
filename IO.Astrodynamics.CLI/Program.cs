@@ -13,6 +13,7 @@ class Program
         app.AddCommands<EphemerisCommand>();
         app.AddCommands<OrientationCommand>();
         app.AddCommands<TimeConverterCommand>();
+        app.AddCommands<OrbitalParametersConverterCommand>();
         app.Run();
     }
 }
