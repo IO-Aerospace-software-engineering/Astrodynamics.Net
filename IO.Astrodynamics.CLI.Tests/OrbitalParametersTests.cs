@@ -47,10 +47,22 @@ public class OrbitalParametersTests
             StringBuilder sb = new StringBuilder();
             StringWriter sw = new StringWriter(sb);
             Console.SetOut(sw);
-            command.Converter("Data", "13560000.0 0.5 0.17453292519943295 0.26179938779914941 0.52359877559829882 0.78539816339744828", 399, "0.0", "ICRF", false, true, false, false, false, false, true);
+            command.Converter("Data", "13560000.0 0.5 0.17453292519943295 0.26179938779914941 0.52359877559829882 0.78539816339744828", 399, "0.0", "ICRF", false, true, false,
+                false, false, false, true);
             var res = sb.ToString();
 
-            Assert.Equal($"Epoch : 2000-01-01T12:00:00.0000000 (TDB) P : 10170000 F : 0.3535533905932738 G : 0.3535533905932738 H : 0.08450755960720442 K 0.022643732351075387 L0 : 2.589226533382245 Frame : j2000{Environment.NewLine}", res);
+            if (OperatingSystem.IsWindows())
+            {
+                Assert.Equal(
+                    $"Epoch : 2000-01-01T12:00:00.0000000 (TDB) P : 10170000 F : 0.3535533905932738 G : 0.3535533905932738 H : 0.08450755960720442 K 0.022643732351075387 L0 : 2.589226533382245 Frame : j2000{Environment.NewLine}",
+                    res);
+            }
+            else
+            {
+                Assert.Equal(
+                    $"Epoch : 2000-01-01T12:00:00.0000000 (TDB) P : 10170000 F : 0.3535533905932738 G : 0.35355339059327373 H : 0.08450755960720442 K 0.022643732351075387 L0 : 2.589226533382245 Frame : j2000{Environment.NewLine}",
+                    res);
+            }
         }
     }
     
@@ -63,10 +75,22 @@ public class OrbitalParametersTests
             StringBuilder sb = new StringBuilder();
             StringWriter sw = new StringWriter(sb);
             Console.SetOut(sw);
-            command.Converter("Data", "6800803.5449581668 0.001353139738203394 0.90267066832323262 0.56855938608714662 1.8545420365902201 0.7925932793200029", 399, "0.0", "ICRF",false, true, false, false, true, false, false);
+            command.Converter("Data", "6800803.5449581668 0.001353139738203394 0.90267066832323262 0.56855938608714662 1.8545420365902201 0.7925932793200029", 399, "0.0", "ICRF",
+                false, true, false, false, true, false, false);
             var res = sb.ToString();
 
-            Assert.Equal($"Epoch : 2000-01-01T12:00:00.0000000 (TDB) Position : X : -6116559.468933809 Y : -1546174.6944518015 Z: 2521950.161516388 Velocity : X : -807.8383114627195 Y : -5477.646280596453 Z: -5297.633402454895 Frame : j2000{Environment.NewLine}", res);
+            if (OperatingSystem.IsWindows())
+            {
+                Assert.Equal(
+                    $"Epoch : 2000-01-01T12:00:00.0000000 (TDB) Position : X : -6116559.468933809 Y : -1546174.6944518015 Z: 2521950.161516388 Velocity : X : -807.8383114627195 Y : -5477.646280596453 Z: -5297.633402454895 Frame : j2000{Environment.NewLine}",
+                    res);
+            }
+            else
+            {
+                Assert.Equal(
+                    $"Epoch : 2000-01-01T12:00:00.0000000 (TDB) Position : X : -6116559.468933809 Y : -1546174.6944518015 Z: 2521950.161516389 Velocity : X : -807.8383114627195 Y : -5477.646280596454 Z: -5297.633402454895 Frame : j2000{Environment.NewLine}",
+                    res);
+            }
         }
     }
     

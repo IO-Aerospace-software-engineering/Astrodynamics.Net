@@ -784,6 +784,28 @@ public class API
             return _mapper.Map<Time.Window[]>(windows.Where(x => !double.IsNaN(x.Start)));
         }
     }
+    
+    public IEnumerable<Time.Window> FindWindowsOnCoordinateConstraint(Time.Window searchWindow, int observerId,
+        int targetId, Frame frame, CoordinateSystem coordinateSystem, Coordinate coordinate,
+        RelationnalOperator relationalOperator, double value, double adjustValue, Aberration aberration,
+        TimeSpan stepSize)
+    {
+        if (frame == null) throw new ArgumentNullException(nameof(frame));
+        lock (lockObject)
+        {
+            var windows = new Window[1000];
+            for (var i = 0; i < 1000; i++)
+            {
+                windows[i] = new Window(double.NaN, double.NaN);
+            }
+
+            FindWindowsOnCoordinateConstraintProxy(_mapper.Map<Window>(searchWindow), observerId, targetId,
+                frame.Name, coordinateSystem.GetDescription(),
+                coordinate.GetDescription(), relationalOperator.GetDescription(), value, adjustValue,
+                aberration.GetDescription(), stepSize.TotalSeconds, windows);
+            return _mapper.Map<Time.Window[]>(windows.Where(x => !double.IsNaN(x.Start)));
+        }
+    }
 
     /// <summary>
     ///     Find time windows based on illumination constraint
