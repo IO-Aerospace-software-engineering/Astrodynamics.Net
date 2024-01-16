@@ -249,4 +249,40 @@ public class CelestialBody : CelestialItem, IOrientable
         double a = System.Math.Cbrt(((t * t) * GM) / (4 * Constants.PI * Constants.PI));
         return HelioSynchronousOrbit(a, eccentricity, epochAtDescendingNode);
     }
+
+    public override string ToString()
+    {
+        string bodyType = string.Empty;
+        if (IsPlanet)
+        {
+            bodyType = "Planet";
+        }
+        else if (IsMoon)
+        {
+            bodyType = "Moon";
+        }
+        else if (IsAsteroid)
+        {
+            bodyType = "Asteroid";
+        }else if (IsBarycenter)
+        {
+            bodyType = "Barycenter";
+        }else if (IsStar || IsSun)
+        {
+            bodyType = "Star";
+        }else if (IsLagrangePoint)
+        {
+            bodyType = "Lagrange point";
+        }
+        return $"{"Type :",TITLE_WIDTH} {bodyType,-VALUE_WIDTH}{Environment.NewLine}"+
+               base.ToString() +
+               $"{"Fixed frame :",TITLE_WIDTH} {Frame.Name,-VALUE_WIDTH}{Environment.NewLine}" +
+               $"{"Equatorial radius (m) :",TITLE_WIDTH} {EquatorialRadius,-VALUE_WIDTH:E}{Environment.NewLine}" +
+               $"{"Polar radius (m) :",TITLE_WIDTH} {PolarRadius,-VALUE_WIDTH:E}{Environment.NewLine}" +
+               $"{"Flattening :",TITLE_WIDTH} {Flattening,-VALUE_WIDTH}{Environment.NewLine}" +
+               $"{"J2 :",TITLE_WIDTH} {J2,-VALUE_WIDTH}{Environment.NewLine}" +
+               $"{"J3 :",TITLE_WIDTH} {J3,-VALUE_WIDTH}{Environment.NewLine}" +
+               $"{"J4 :",TITLE_WIDTH} {J4,-VALUE_WIDTH}{Environment.NewLine}";
+        ;
+    }
 }

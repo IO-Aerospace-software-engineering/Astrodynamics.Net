@@ -14,6 +14,8 @@ class Program
         app.AddCommands<OrientationCommand>();
         app.AddCommands<TimeConverterCommand>();
         app.AddCommands<OrbitalParametersConverterCommand>();
+        app.AddCommands<GeometryFinderCommand>();
+        app.AddCommands<BodyInformationCommand>();
         app.Run();
     }
 }

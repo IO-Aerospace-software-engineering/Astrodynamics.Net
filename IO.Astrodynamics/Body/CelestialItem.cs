@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using IO.Astrodynamics.Coordinates;
 using IO.Astrodynamics.Frames;
 using IO.Astrodynamics.SolarSystemObjects;
+using IO.Astrodynamics.Time;
 using Window = IO.Astrodynamics.Time.Window;
 
 namespace IO.Astrodynamics.Body;
 
 public abstract class CelestialItem : ILocalizable, IEquatable<CelestialItem>
 {
+    protected const int TITLE_WIDTH = 32;
+    protected const int VALUE_WIDTH = 32;
     public int NaifId { get; }
     public string Name { get; }
     public double Mass { get; }
@@ -210,7 +213,10 @@ public abstract class CelestialItem : ILocalizable, IEquatable<CelestialItem>
 
     public override string ToString()
     {
-        return Name;
+        return $"{"Identifier :",TITLE_WIDTH} {NaifId,-VALUE_WIDTH}{Environment.NewLine}" +
+               $"{"Name :",TITLE_WIDTH} {Name,-VALUE_WIDTH}{Environment.NewLine}" +
+               $"{"Mass (kg) :",TITLE_WIDTH} {Mass,-VALUE_WIDTH:E}{Environment.NewLine}" +
+               $"{"GM (m^3.s^2):",TITLE_WIDTH} {GM,-VALUE_WIDTH:E}{Environment.NewLine}";
     }
 
     public bool Equals(CelestialItem other)

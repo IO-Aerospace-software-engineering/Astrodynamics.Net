@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Linq;
 using IO.Astrodynamics.Body;
 using IO.Astrodynamics.Body.Spacecraft;
+using IO.Astrodynamics.Coordinates;
 using IO.Astrodynamics.Frames;
 using IO.Astrodynamics.Math;
 using IO.Astrodynamics.OrbitalParameters;
@@ -33,7 +34,7 @@ public class Helpers
 
         return localizableObject;
     }
-    
+
     internal static IOrientable CreateOrientable(int objectId)
     {
         IOrientable celestialItem;
@@ -48,7 +49,7 @@ public class Helpers
 
         return celestialItem;
     }
-    
+
     internal static DateTime ConvertDateTimeInput(string epoch)
     {
         var isutc = epoch.Contains("utc", StringComparison.InvariantCultureIgnoreCase) || epoch.Contains("z", StringComparison.InvariantCultureIgnoreCase);
@@ -87,8 +88,9 @@ public class Helpers
 
         return input;
     }
-    
-    internal static OrbitalParameters.OrbitalParameters? ConvertToOrbitalParameters(string orbitalParametersInput, int centerofMotion, string epoch, string originalFrame, bool fromStateVector,
+
+    internal static OrbitalParameters.OrbitalParameters? ConvertToOrbitalParameters(string orbitalParametersInput, int centerofMotion, string epoch, string originalFrame,
+        bool fromStateVector,
         bool fromKeplerian, bool fromEquinoctial, bool fromTLE)
     {
         var inputFrame = new Frame(originalFrame);
@@ -120,7 +122,13 @@ public class Helpers
         return orbitalParameters;
     }
 
-    internal static Window ConvertWindowInput(string begin,string end)
+    internal static Planetodetic ConvertToPlanetodetic(string value)
+    {
+        double[] coordinates = value.Split(' ').Select(double.Parse).ToArray();
+        return new Planetodetic(coordinates[0], coordinates[1], coordinates[2]);
+    }
+
+    internal static Window ConvertWindowInput(string begin, string end)
     {
         return new Window(ConvertDateTimeInput(begin), ConvertDateTimeInput(end));
     }
