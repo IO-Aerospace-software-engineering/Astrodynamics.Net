@@ -1,7 +1,11 @@
+using System;
 using System.Globalization;
+using System.IO;
+using System.Threading.Tasks;
 using Cocona;
 using IO.Astrodynamics.Body;
 using IO.Astrodynamics.Body.Spacecraft;
+using IO.Astrodynamics.CLI.Commands.Parameters;
 using IO.Astrodynamics.Frames;
 using IO.Astrodynamics.Math;
 using IO.Astrodynamics.OrbitalParameters;
@@ -19,35 +23,21 @@ public class OrbitalParametersConverterCommand
     public Task Converter(
         [Argument(Description = "Directory kernels path")]
         string kernelsPath,
-        [Argument(Description = "Original orbital parameters. Elements must be separated by a coma")]
-        string orbitalParametersInput,
-        [Argument(Description = "Center of motion")]
-        int centerofMotion,
-        [Argument(Description = "Epoch")] string epoch,
-        [Argument(Description = "Original frame")]
-        string originalFrame,
-        [Option('s', Description = "From state vector")]
-        bool fromStateVector,
-        [Option('k', Description = "From keplerian elements")]
-        bool fromKeplerian,
-        [Option('e', Description = "From equinoctial elements")]
-        bool fromEquinoctial,
-        [Option('t', Description = "From two lines elements")]
-        bool fromTLE,
+        Parameters.OrbitalParameters orbitalParameters,
         [Option(Description = "Convert to state vector")]
         bool toStateVector,
         [Option(Description = "Convert to keplerian elements")]
         bool toKeplerian,
         [Option(Description = "Convert to Equinoctial")]
         bool toEquinoctial,
-        [Option(Description = "Target epoch. If undefined original epoch will be used")] string targetEpoch = "",
+        EpochParameters targetEpoch = null,
         [Option(Description = "Target frame")] string targetFrame = "ICRF")
     {
         //Load kernels
         API.Instance.LoadKernels(new DirectoryInfo(kernelsPath));
 
         //Check inputs
-        if (!(fromEquinoctial ^ fromKeplerian ^ fromStateVector ^ fromTLE))
+        if (!(orbitalParameters.IsEquinoctial ^ orbitalParameters.IsKeplerian ^ orbitalParameters.IsStateVector ^ orbitalParameters.IsTLE))
         {
             throw new ArgumentException("You must set the original orbital parameters type. use --help for more information");
         }
@@ -56,52 +46,53 @@ public class OrbitalParametersConverterCommand
         {
             throw new ArgumentException("You must set the target orbital parameters type. use --help for more information");
         }
-        
+
         //Clean inputs
-        if (originalFrame.Equals("icrf", StringComparison.InvariantCultureIgnoreCase))
+        if (orbitalParameters.Frame.Equals("icrf", StringComparison.InvariantCultureIgnoreCase))
         {
-            originalFrame = "j2000";
+            orbitalParameters.Frame = "j2000";
         }
+
         if (targetFrame.Equals("icrf", StringComparison.InvariantCultureIgnoreCase))
         {
             targetFrame = "j2000";
         }
 
-        if (string.IsNullOrEmpty(targetEpoch))
+        if (string.IsNullOrEmpty(targetEpoch?.Epoch))
         {
-            targetEpoch = epoch;
+            targetEpoch = orbitalParameters.EpochParameter;
         }
 
         //Initialize data
-        
-        var outputFrame = new Frame(targetFrame);
-        
-        var outputEpoch = Helpers.ConvertDateTimeInput(targetEpoch);
-        
 
-        var orbitalParameters = Helpers.ConvertToOrbitalParameters(orbitalParametersInput, centerofMotion, epoch, originalFrame, fromStateVector, fromKeplerian, fromEquinoctial, fromTLE);
+        var outputFrame = new Frame(targetFrame);
+
+        var outputEpoch = Helpers.ConvertDateTimeInput(targetEpoch.Epoch);
+
+
+        var inputOrbitalParameters = Helpers.ConvertToOrbitalParameters(orbitalParameters.OrbitalParametersValues, orbitalParameters.CenterOfMotionId,
+            orbitalParameters.EpochParameter.Epoch,
+            orbitalParameters.Frame, orbitalParameters.IsStateVector, orbitalParameters.IsKeplerian, orbitalParameters.IsEquinoctial, orbitalParameters.IsTLE);
 
         //At given epoch and in given frame
-        orbitalParameters = orbitalParameters!.AtEpoch(outputEpoch).ToFrame(outputFrame);
+        inputOrbitalParameters = inputOrbitalParameters!.AtEpoch(outputEpoch).ToFrame(outputFrame);
 
         //Generate required output
         if (toStateVector)
         {
-            orbitalParameters = orbitalParameters.ToStateVector();
+            inputOrbitalParameters = inputOrbitalParameters.ToStateVector();
         }
         else if (toKeplerian)
         {
-            orbitalParameters = orbitalParameters.ToKeplerianElements();
+            inputOrbitalParameters = inputOrbitalParameters.ToKeplerianElements();
         }
         else if (toEquinoctial)
         {
-            orbitalParameters = orbitalParameters.ToEquinoctial();
+            inputOrbitalParameters = inputOrbitalParameters.ToEquinoctial();
         }
 
-        Console.WriteLine(orbitalParameters.ToString());
+        Console.WriteLine(inputOrbitalParameters.ToString());
 
         return Task.CompletedTask;
     }
-
-   
 }

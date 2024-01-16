@@ -690,15 +690,24 @@ public class API
         if (target == null) throw new ArgumentNullException(nameof(target));
         lock (lockObject)
         {
+            return FindWindowsOnDistanceConstraint(searchWindow, observer.NaifId, target.NaifId, relationalOperator, value, aberration, stepSize);
+        }
+    }
+    
+    public IEnumerable<Time.Window> FindWindowsOnDistanceConstraint(Time.Window searchWindow, int observerId,
+        int targetId, RelationnalOperator relationalOperator, double value, Aberration aberration,
+        TimeSpan stepSize)
+    {
+        lock (lockObject)
+        {
             var windows = new Window[1000];
             for (var i = 0; i < 1000; i++)
             {
                 windows[i] = new Window(double.NaN, double.NaN);
             }
 
-            FindWindowsOnDistanceConstraintProxy(_mapper.Map<Window>(searchWindow), observer.NaifId, target.NaifId, relationalOperator.GetDescription(), value,
-                aberration.GetDescription(),
-                stepSize.TotalSeconds, windows);
+            FindWindowsOnDistanceConstraintProxy(_mapper.Map<Window>(searchWindow), observerId, targetId, relationalOperator.GetDescription(), value,
+                aberration.GetDescription(), stepSize.TotalSeconds, windows);
             return _mapper.Map<Time.Window[]>(windows.Where(x => !double.IsNaN(x.Start)));
         }
     }
@@ -785,6 +794,22 @@ public class API
         }
     }
     
+    /// <summary>
+    /// Find time windows based on coordinate constraint
+    /// </summary>
+    /// <param name="searchWindow"></param>
+    /// <param name="observerId"></param>
+    /// <param name="targetId"></param>
+    /// <param name="frame"></param>
+    /// <param name="coordinateSystem"></param>
+    /// <param name="coordinate"></param>
+    /// <param name="relationalOperator"></param>
+    /// <param name="value"></param>
+    /// <param name="adjustValue"></param>
+    /// <param name="aberration"></param>
+    /// <param name="stepSize"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentNullException"></exception>
     public IEnumerable<Time.Window> FindWindowsOnCoordinateConstraint(Time.Window searchWindow, int observerId,
         int targetId, Frame frame, CoordinateSystem coordinateSystem, Coordinate coordinate,
         RelationnalOperator relationalOperator, double value, double adjustValue, Aberration aberration,

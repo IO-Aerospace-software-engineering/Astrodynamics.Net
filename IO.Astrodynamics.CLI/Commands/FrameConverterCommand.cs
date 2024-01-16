@@ -1,7 +1,11 @@
+using System;
 using System.Globalization;
+using System.IO;
+using System.Threading.Tasks;
 using Cocona;
 using IO.Astrodynamics.Body;
 using IO.Astrodynamics.Body.Spacecraft;
+using IO.Astrodynamics.CLI.Commands.Parameters;
 using IO.Astrodynamics.Frames;
 using IO.Astrodynamics.OrbitalParameters;
 using IO.Astrodynamics.Time;
@@ -22,7 +26,7 @@ public class FrameConverterCommand
         string from,
         [Argument(Description = "Target frame")]
         string to,
-        [Argument(Description = "Epoch")] string epoch)
+        EpochParameters epoch)
     {
         API.Instance.LoadKernels(new DirectoryInfo(kernelsPath));
 
@@ -36,7 +40,7 @@ public class FrameConverterCommand
             to = "J2000";
         }
         
-        var inputEpoch = Helpers.ConvertDateTimeInput(epoch);
+        var inputEpoch = Helpers.ConvertDateTimeInput(epoch.Epoch);
 
         var q = new Frame(from).ToFrame(new Frame(to), inputEpoch);
         Console.WriteLine(q);

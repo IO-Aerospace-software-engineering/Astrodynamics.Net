@@ -1,6 +1,11 @@
+using System;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 using Cocona;
 using IO.Astrodynamics.Body;
 using IO.Astrodynamics.Body.Spacecraft;
+using IO.Astrodynamics.CLI.Commands.Parameters;
 using IO.Astrodynamics.Frames;
 using IO.Astrodynamics.Surface;
 using IO.Astrodynamics.Time;
@@ -15,16 +20,14 @@ public class EphemerisCommand
 
     [Command("ephemeris", Description = "Compute ephemeris of given object")]
     public Task Ephemeris(
-        [Argument(Description = "Kernels directory path")] string kernelsPath,
+        [Argument(Description = "Kernels directory path")]
+        string kernelsPath,
         [Argument(Description = "Object identifier")]
         int objectId,
         [Argument(Description = "Observer identifier")]
         int observerId,
-        [Option(shortName: 'b', Description = "Begin epoch")]
-        DateTime begin,
-        [Option(shortName: 'e', Description = "End epoch")]
-        DateTime end,
-        [Option(shortName: 's', Description = "Step size in seconds")]
+        WindowParameters windowParameters,
+        [Option(shortName: 's', Description = "Step size")]
         TimeSpan step,
         [Option(shortName: 'f', Description = "Frame - ICRF by default")]
         string frame = "ICRF",
@@ -44,7 +47,8 @@ public class EphemerisCommand
 
         var observerItem = Helpers.CreateLocalizable(observerId);
 
-        var ephemeris = localizableObject.GetEphemeris(new Window(begin, end), observerItem, new Frame(frame), Enum.Parse<Aberration>(aberration, true), step);
+        var ephemeris = localizableObject.GetEphemeris(Helpers.ConvertWindowInput(windowParameters.Begin.Epoch, windowParameters.End.Epoch), observerItem, new Frame(frame),
+            Enum.Parse<Aberration>(aberration, true), step);
 
         if (outputFormat == "ke")
         {
@@ -58,6 +62,4 @@ public class EphemerisCommand
 
         return Task.CompletedTask;
     }
-
-    
 }

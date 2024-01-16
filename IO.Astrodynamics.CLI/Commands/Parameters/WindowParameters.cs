@@ -6,9 +6,6 @@ namespace IO.Astrodynamics.CLI.Commands.Parameters;
 
 public class WindowParameters : ICommandParameterSet
 {
-    [Argument(Description = "Start of search window")]
-    public string Begin { get; set; }
-    
-    [Argument(Description = "End of search window")]
-    public string End { get; set; }
+    public EpochParameters Begin { get; set; }
+    public EpochParameters End { get; set; }
 }

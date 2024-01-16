@@ -1,7 +1,10 @@
+using System;
 using System.Globalization;
+using System.Threading.Tasks;
 using Cocona;
 using IO.Astrodynamics.Body;
 using IO.Astrodynamics.Body.Spacecraft;
+using IO.Astrodynamics.CLI.Commands.Parameters;
 using IO.Astrodynamics.Frames;
 using IO.Astrodynamics.OrbitalParameters;
 using IO.Astrodynamics.Time;
@@ -16,8 +19,7 @@ public class TimeConverterCommand
 
     [Command("time-converter", Description = "Convert a time system to another")]
     public Task TimeConverter(
-        [Argument(Description = "<YYYY-MM-DDT00:00:00.000(Z) or decimal> <julian date specifier(JD)> <TDB or UTC>")]
-        string epoch,
+        EpochParameters epochParameters,
         [Option('t', Description = "Convert to TDB")]
         bool toTDB,
         [Option('u', Description = "Convert to UTC")]
@@ -41,7 +43,7 @@ public class TimeConverterCommand
             throw new ArgumentException("Target either Julian or SecondsFromJ2000 or DateTime . use --help for more information");
         }
 
-        var input = Helpers.ConvertDateTimeInput(epoch);
+        var input = Helpers.ConvertDateTimeInput(epochParameters.Epoch);
 
         //Output
         string suffix = toLocal ? "" : toUTC ? "UTC" : "TDB";

@@ -1,4 +1,6 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
+using System.Linq;
 using IO.Astrodynamics.Body;
 using IO.Astrodynamics.Body.Spacecraft;
 using IO.Astrodynamics.Frames;
@@ -116,5 +118,10 @@ public class Helpers
         }
 
         return orbitalParameters;
+    }
+
+    internal static Window ConvertWindowInput(string begin,string end)
+    {
+        return new Window(ConvertDateTimeInput(begin), ConvertDateTimeInput(end));
     }
 }
