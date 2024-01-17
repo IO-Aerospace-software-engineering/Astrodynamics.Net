@@ -35,7 +35,7 @@ jobs:
       run: dotnet test --no-build --verbosity normal --configuration Release
     - name: where i am
       run: pwd
-    - name: Package
+    - name: Package Framework
       run: dotnet pack -p:NuspecFile=IO.Astrodynamics.nuspec --no-build --configuration Release 
     - name: Publish package
       run: dotnet nuget push "**/*.nupkg" --api-key ${{secrets.NUGET_TOKEN}} --source https://api.nuget.org/v3/index.json

@@ -35,11 +35,10 @@ public class GeometryFinderCommand
         WindowParameters window,
         [Argument(Description = "Initial step size")]
         TimeSpan step,
-        [Option(shortName: 'a', Description = "Aberration - None by default")]
-        string aberration = "None",
-        [Option(shortName: 'd', Description = "Adjust value - 0.0 by default")]
+        [Argument(Description = "Aberration")] string aberration = "None",
+        [Argument(Description = "Adjust value")]
         double adjustValue = 0.0,
-        [Option(shortName: 'f', Description = "Frame - ICRF by default")]
+        [Argument(Description = "Frame")]
         string frame = "ICRF")
     {
         API.Instance.LoadKernels(new DirectoryInfo(kernelsPath));
@@ -79,8 +78,7 @@ public class GeometryFinderCommand
         WindowParameters window,
         [Argument(Description = "Initial step size")]
         TimeSpan step,
-        [Option(shortName: 'a', Description = "Aberration - None by default")]
-        string aberration = "None"
+        [Argument(Description = "Aberration")] string aberration = "None"
     )
     {
         API.Instance.LoadKernels(new DirectoryInfo(kernelsPath));
@@ -118,8 +116,7 @@ public class GeometryFinderCommand
         WindowParameters window,
         [Argument(Description = "Initial step size")]
         TimeSpan step,
-        [Option(shortName: 'a', Description = "Aberration - None by default")]
-        string aberration = "None"
+        [Argument(Description = "Aberration")] string aberration = "None"
     )
     {
         API.Instance.LoadKernels(new DirectoryInfo(kernelsPath));
@@ -157,8 +154,7 @@ public class GeometryFinderCommand
         WindowParameters window,
         [Argument(Description = "Initial step size")]
         TimeSpan step,
-        [Option(shortName: 'a', Description = "Aberration - None by default")]
-        string aberration = "None"
+        [Argument(Description = "Aberration")] string aberration = "None"
     )
     {
         API.Instance.LoadKernels(new DirectoryInfo(kernelsPath));
@@ -200,7 +196,7 @@ public class GeometryFinderCommand
         WindowParameters window,
         [Argument(Description = "Initial step size")]
         TimeSpan step,
-        [Option(shortName: 'a', Description = "Aberration - None by default")]
+        [Argument(Description = "Aberration")]
         string aberration = "None"
     )
     {

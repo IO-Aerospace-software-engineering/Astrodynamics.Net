@@ -21,7 +21,7 @@ public class EphemerisTests
                 {
                     Begin = new EpochParameters { Epoch = new DateTime(2023, 01, 01, 1, 0, 0).ToString(CultureInfo.InvariantCulture) },
                     End = new EpochParameters { Epoch = new DateTime(2023, 01, 01, 1, 1, 0).ToString(CultureInfo.InvariantCulture) }
-                }, TimeSpan.FromMinutes(1), "ICRF", "LT", "ke");
+                }, TimeSpan.FromMinutes(1), "ICRF", "LT", toKeplerian: true);
             var res = sb.ToString();
 
             Assert.Equal(
@@ -41,8 +41,8 @@ public class EphemerisTests
             Console.SetOut(sw);
             command.Ephemeris("Data", 399, 10, new WindowParameters
             {
-                Begin =new EpochParameters{Epoch = new DateTime(2023, 01, 01, 1, 0, 0).ToString(CultureInfo.InvariantCulture)},
-                End = new EpochParameters{Epoch= new DateTime(2023, 01, 01, 1, 1, 0).ToString(CultureInfo.InvariantCulture)}
+                Begin = new EpochParameters { Epoch = new DateTime(2023, 01, 01, 1, 0, 0).ToString(CultureInfo.InvariantCulture) },
+                End = new EpochParameters { Epoch = new DateTime(2023, 01, 01, 1, 1, 0).ToString(CultureInfo.InvariantCulture) }
             }, TimeSpan.FromMinutes(1));
             var res = sb.ToString();
             Assert.Equal(
@@ -51,6 +51,90 @@ public class EphemerisTests
                 }Epoch : 2023-01-01T01:01:00.0000000 (TDB) Position : X : -25579051481.302353 Y : 132913028585.51353 Z: 57616880972.382614 Velocity : X : -29812.466803377927 Y : -4864.580889886812 Z: -2109.7507418164614 Frame : j2000{
                     Environment.NewLine}"
                 , res);
+        }
+    }
+
+    [Fact]
+    public void SubPoint()
+    {
+        lock (Configuration.objLock)
+        {
+            var command = new EphemerisCommand();
+            StringBuilder sb = new StringBuilder();
+            StringWriter sw = new StringWriter(sb);
+            Console.SetOut(sw);
+            command.SubPoint("Data", 301, 399, new EpochParameters { Epoch = "0.0" });
+
+            var res = sb.ToString();
+            Assert.Equal($"Planetocentric {{ Longitude = -1.0078683256327345, Latitude = -0.19020700391621248, Radius = 402448639.8873273 }}{Environment.NewLine}"
+                , res);
+        }
+    }
+
+    [Fact]
+    public void SubPointCartesian()
+    {
+        lock (Configuration.objLock)
+        {
+            var command = new EphemerisCommand();
+            StringBuilder sb = new StringBuilder();
+            StringWriter sw = new StringWriter(sb);
+            Console.SetOut(sw);
+            command.SubPoint("Data", 301, 399, new EpochParameters { Epoch = "0.0" }, cartesian: true);
+
+            var res = sb.ToString();
+            Assert.Equal($"X : 210899226.5446649 Y : -334211113.9658562 Z: -76087813.03023025{Environment.NewLine}"
+                , res);
+        }
+    }
+
+    [Fact]
+    public void SubPointPlanetodetic()
+    {
+        lock (Configuration.objLock)
+        {
+            var command = new EphemerisCommand();
+            StringBuilder sb = new StringBuilder();
+            StringWriter sw = new StringWriter(sb);
+            Console.SetOut(sw);
+            command.SubPoint("Data", 301, 399, new EpochParameters { Epoch = "0.0" }, planetodetic: true);
+
+            var res = sb.ToString();
+            Assert.Equal($"Planetodetic {{ Longitude = -1.0078683256327345, Latitude = -0.1914579069599901, Altitude = 396166994.9749323 }}{Environment.NewLine}"
+                , res);
+        }
+    }
+
+    [Fact]
+    public void SubPointPlanetodeticFromSpacecraft()
+    {
+        lock (Configuration.objLock)
+        {
+            var command = new EphemerisCommand();
+            StringBuilder sb = new StringBuilder();
+            StringWriter sw = new StringWriter(sb);
+            Console.SetOut(sw);
+            command.SubPoint("Data", -172, 399, new EpochParameters { Epoch = "676555200.0" }, planetodetic: true);
+
+            var res = sb.ToString();
+            Assert.Equal($"Planetodetic {{ Longitude = 1.7801173242050727, Latitude = 0.0020669681623675575, Altitude = 421863.5026230626 }}{Environment.NewLine}"
+                , res);
+        }
+    }
+
+    [Fact]
+    public void AngularSeparation()
+    {
+        lock (Configuration.objLock)
+        {
+            var command = new EphemerisCommand();
+            StringBuilder sb = new StringBuilder();
+            StringWriter sw = new StringWriter(sb);
+            Console.SetOut(sw);
+            command.AngularSeparation("Data", 399, 301, 10, new EpochParameters { Epoch = "0.0" });
+
+            var res = sb.ToString();
+            Assert.Equal($"0.9984998794278185{Environment.NewLine}", res);
         }
     }
 }

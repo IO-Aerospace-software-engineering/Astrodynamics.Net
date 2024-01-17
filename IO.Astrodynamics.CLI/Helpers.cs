@@ -17,15 +17,25 @@ public class Helpers
     internal static ILocalizable CreateLocalizable(int objectId)
     {
         ILocalizable localizableObject = null;
+
+        if (objectId is > 100_000 and < 999_999)
+        {
+            var id = int.Parse(objectId.ToString().Skip(3).ToString()!);
+            localizableObject = new Site(id, $"site{id}", new CelestialBody((int)double.Truncate(objectId * 1E-03)));
+        }
+        else
+        {
+            localizableObject = CreateCelestialItem(objectId);
+        }
+        return localizableObject;
+    }
+
+    internal static CelestialItem CreateCelestialItem(int objectId)
+    {
+        CelestialItem localizableObject = null;
         if (int.IsPositive(objectId))
         {
-            if (objectId is > 100_000 and < 999_999)
-            {
-                var id = int.Parse(objectId.ToString().Skip(3).ToString()!);
-                localizableObject = new Site(id, $"site{id}", new CelestialBody((int)double.Truncate(objectId * 1E-03)));
-            }
-
-            localizableObject ??= new CelestialBody(objectId);
+            localizableObject = new CelestialBody(objectId);
         }
         else
         {

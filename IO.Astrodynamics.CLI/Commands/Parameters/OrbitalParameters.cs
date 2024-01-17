@@ -17,16 +17,16 @@ public class OrbitalParameters : ICommandParameterSet
     [Argument(Description = "Frame")]
     public string Frame { get; set; }
     
-    [Option('s', Description = "Is state vector")]
-    public bool IsStateVector { get; set; }
+    [Option('s', Description = "Input represents a state vector")]
+    public bool FromStateVector { get; set; }
     
-    [Option('k', Description = "Is keplerian elements")]
-    public bool IsKeplerian { get; set; }
+    [Option('k', Description = "Input represents keplerian elements")]
+    public bool FromKeplerian { get; set; }
     
-    [Option('e', Description = "Is equinoctial elements")]
-    public bool IsEquinoctial { get; set; }
+    [Option('q', Description = "Input represents equinoctial elements")]
+    public bool FromEquinoctial { get; set; }
         
-    [Option('t', Description = "Is two lines elements")]
-    public bool IsTLE { get; set; }
+    [Option('t', Description = "Input represents two lines elements")]
+    public bool FromTLE { get; set; }
     
 }

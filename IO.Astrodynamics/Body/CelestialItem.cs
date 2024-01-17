@@ -63,7 +63,6 @@ public abstract class CelestialItem : ILocalizable, IEquatable<CelestialItem>
     /// <summary>
     /// Constructor
     /// </summary>
-    /// <param name="naifId"></param>
     /// <param name="name"></param>
     /// <param name="mass"></param>
     /// <param name="initialOrbitalParameters"></param>

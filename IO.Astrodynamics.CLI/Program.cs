@@ -1,6 +1,9 @@
-﻿using IO.Astrodynamics.CLI.Commands;
+﻿using System;
+using System.Reflection;
+using IO.Astrodynamics.CLI.Commands;
 
 namespace IO.Astrodynamics.CLI;
+
 using Cocona;
 
 class Program
@@ -12,10 +15,14 @@ class Program
         var app = builder.Build();
         app.AddCommands<EphemerisCommand>();
         app.AddCommands<OrientationCommand>();
-        app.AddCommands<TimeConverterCommand>();
-        app.AddCommands<OrbitalParametersConverterCommand>();
         app.AddCommands<GeometryFinderCommand>();
+        app.AddCommands<OrbitalParametersConverterCommand>();
+        app.AddCommands<FrameConverterCommand>();
+        app.AddCommands<TimeConverterCommand>();
         app.AddCommands<BodyInformationCommand>();
+        var assName = Assembly.GetExecutingAssembly().GetName();
+        app.AddSubCommand("--version", (a) => { Console.WriteLine($"{assName.Name} v{assName.Version} experimental"); });
+
         app.Run();
     }
 }

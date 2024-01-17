@@ -18,13 +18,12 @@ public class BodyInformationCommand
     {
     }
 
-    [Command("info", Description = "Convert a frame to another at given epoch")]
+    [Command("celestial-body-info", Description = "Get celestial body informations")]
     public Task GetInformations(
         [Argument(Description = "Kernels directory path")]
         string kernelsPath,
-        [Argument(Description = "Body identifier")]
-        int id
-        )
+        [Argument(Description = "Celestial body identifier")]
+        int id)
     {
         API.Instance.LoadKernels(new DirectoryInfo(kernelsPath));
         CelestialBody body = new CelestialBody(id);

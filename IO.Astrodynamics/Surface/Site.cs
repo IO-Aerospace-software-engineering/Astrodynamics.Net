@@ -30,6 +30,8 @@ namespace IO.Astrodynamics.Surface
             return celestialBodies;
         }
 
+        
+
         public Frame Frame { get; }
         public double GM { get; } = 0.0;
         public double Mass { get; } = 0.0;
@@ -162,6 +164,17 @@ namespace IO.Astrodynamics.Surface
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             return obj.GetType() == this.GetType() && Equals((Site)obj);
+        }
+        
+        public Planetocentric SubObserverPoint(CelestialBody target, DateTime epoch, Aberration aberration)
+        {
+            var position = GetEphemeris(epoch, target, target.Frame, aberration).ToStateVector().Position;
+
+            var lon = System.Math.Atan2(position.Y, position.X);
+
+            var lat = System.Math.Asin(position.Z / position.Magnitude());
+
+            return new Planetocentric(lon, lat, position.Magnitude());
         }
 
         public override int GetHashCode()

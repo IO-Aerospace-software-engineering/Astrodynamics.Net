@@ -7,6 +7,17 @@
         <Nullable>disable</Nullable>
         <AssemblyVersion>0.0.1</AssemblyVersion>
         <FileVersion>0.0.1</FileVersion>
+        <PackAsTool>true</PackAsTool>
+        <ToolCommandName>astro</ToolCommandName>
+        <Version>0.0.1</Version>
+        <Title>Astrodynamics command line interface</Title>
+        <Authors>Sylvain Guillet</Authors>
+        <Description>This CLI allows end user to exploit IO.Astrodynamics framework </Description>
+        <Copyright>Sylvain Guillet</Copyright>
+        <PackageProjectUrl>https://github.com/IO-Aerospace-software-engineering/Astrodynamics.Net</PackageProjectUrl>
+        <PackageIcon>dragonfly-dark-trans.png</PackageIcon>
+        <PackageTags>astrodynamics aerospace orbitalmechanics ephemeris physics</PackageTags>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     </PropertyGroup>
 
     <ItemGroup>
@@ -15,6 +26,13 @@
 
     <ItemGroup>
       <ProjectReference Include="..\IO.Astrodynamics\IO.Astrodynamics.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="dragonfly-dark-trans.png">
+        <Pack>True</Pack>
+        <PackagePath></PackagePath>
+      </None>
     </ItemGroup>
 
 </Project>

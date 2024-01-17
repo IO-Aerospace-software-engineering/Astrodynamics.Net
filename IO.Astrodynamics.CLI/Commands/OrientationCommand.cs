@@ -24,7 +24,7 @@ public class OrientationCommand
         [Argument(Description = "Object identifier")] int objectId,
         WindowParameters windowParameters,
         [Argument(Description = "Step size")] TimeSpan step,
-        [Argument(Description = "Frame - ICRF by default")] string frame="ICRF")
+        [Argument(Description = "Frame")] string frame="ICRF")
     {
         if (frame.Equals("icrf", StringComparison.InvariantCultureIgnoreCase))
         {

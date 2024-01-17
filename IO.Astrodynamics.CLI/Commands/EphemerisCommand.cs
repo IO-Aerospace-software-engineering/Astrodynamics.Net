@@ -27,14 +27,17 @@ public class EphemerisCommand
         [Argument(Description = "Observer identifier")]
         int observerId,
         WindowParameters windowParameters,
-        [Option(shortName: 's', Description = "Step size")]
-        TimeSpan step,
-        [Option(shortName: 'f', Description = "Frame - ICRF by default")]
+        [Argument(Description = "Step size")] TimeSpan step,
+        [Argument(Description = "Frame")]
         string frame = "ICRF",
-        [Option(shortName: 'a', Description = "Aberration - None by default")]
+        [Argument(Description = "Aberration")]
         string aberration = "None",
-        [Option(Description = "Output format - sv for state vector(default) or ke for keplerian")]
-        string outputFormat = "sv")
+        [Option('s', Description = "Display result as state vector")]
+        bool toStateVector = true,
+        [Option('k', Description = "Display result as Keplerian elements")]
+        bool toKeplerian = false,
+        [Option('q', Description = "Display result as equinoctial elements")]
+        bool toEquinoctial = false)
     {
         if (frame.Equals("icrf", StringComparison.InvariantCultureIgnoreCase))
         {
@@ -50,15 +53,95 @@ public class EphemerisCommand
         var ephemeris = localizableObject.GetEphemeris(Helpers.ConvertWindowInput(windowParameters.Begin.Epoch, windowParameters.End.Epoch), observerItem, new Frame(frame),
             Enum.Parse<Aberration>(aberration, true), step);
 
-        if (outputFormat == "ke")
+
+        if (toKeplerian)
         {
             ephemeris = ephemeris.Select(x => x.ToKeplerianElements());
+        }
+        else if (toEquinoctial)
+        {
+            ephemeris = ephemeris.Select(x => x.ToEquinoctial());
+        }
+        else
+        {
+            ephemeris = ephemeris.Select(x => x.ToStateVector());
         }
 
         foreach (var eph in ephemeris)
         {
             Console.WriteLine(eph.ToString());
         }
+
+        return Task.CompletedTask;
+    }
+
+    [Command("sub-point", Description = "Compute sub observer point of given object")]
+    public Task SubPoint(
+        [Argument(Description = "Kernels directory path")]
+        string kernelsPath,
+        [Argument(Description = "Object identifier")]
+        int objectId,
+        [Argument(Description = "Celestial body identifier")]
+        int celestialBodyId,
+        EpochParameters epochParameters,
+        [Argument(Description = "Aberration")]
+        string aberration = "None",
+        [Option(shortName: 'd', Description = "Display result as planetodetic coordinates")]
+        bool planetodetic = false,
+        [Option(shortName: 'c', Description = "Display result as cartesian coordinates")]
+        bool cartesian = false)
+    {
+        API.Instance.LoadKernels(new DirectoryInfo(kernelsPath));
+
+        var localizableObject = Helpers.CreateLocalizable(objectId);
+
+        var celestialBody = new CelestialBody(celestialBodyId);
+        var abe = Enum.Parse<Aberration>(aberration, true);
+
+        var planetocentric = localizableObject.SubObserverPoint(celestialBody, Helpers.ConvertDateTimeInput(epochParameters.Epoch), abe);
+
+        if (cartesian)
+        {
+            Console.WriteLine(planetocentric.ToCartesianCoordinates());
+            return Task.CompletedTask;
+        }
+
+        if (planetodetic)
+        {
+            Console.WriteLine(planetocentric.ToPlanetodetic(celestialBody.Flattening, celestialBody.EquatorialRadius));
+            return Task.CompletedTask;
+        }
+
+        Console.WriteLine(planetocentric);
+
+        return Task.CompletedTask;
+    }
+
+    [Command("angular-separation", Description = "Compute angular separation between given objects")]
+    public Task AngularSeparation(
+        [Argument(Description = "Kernels directory path")]
+        string kernelsPath,
+        [Argument(Description = "Observer identifier")]
+        int observerId,
+        [Argument(Description = "First object identifier")]
+        int firstObjectId,
+        [Argument(Description = "Second object identifier")]
+        int secondObjectId,
+        EpochParameters epochParameters,
+        [Argument(Description = "Aberration")]
+        string aberration = "None"
+    )
+    {
+        API.Instance.LoadKernels(new DirectoryInfo(kernelsPath));
+
+        var observer = Helpers.CreateLocalizable(observerId);
+        var firstObject = Helpers.CreateLocalizable(firstObjectId);
+        var secondObject = Helpers.CreateLocalizable(secondObjectId);
+        var abe = Enum.Parse<Aberration>(aberration, true);
+
+        var angle = observer.AngularSeparation(Helpers.ConvertDateTimeInput(epochParameters.Epoch), firstObject, secondObject, abe);
+
+        Console.WriteLine(angle);
 
         return Task.CompletedTask;
     }

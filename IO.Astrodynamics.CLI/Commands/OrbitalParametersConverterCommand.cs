@@ -24,20 +24,21 @@ public class OrbitalParametersConverterCommand
         [Argument(Description = "Directory kernels path")]
         string kernelsPath,
         Parameters.OrbitalParameters orbitalParameters,
-        [Option(Description = "Convert to state vector")]
+        [Option( Description = "Convert to state vector")]
         bool toStateVector,
         [Option(Description = "Convert to keplerian elements")]
         bool toKeplerian,
         [Option(Description = "Convert to Equinoctial")]
         bool toEquinoctial,
-        EpochParameters targetEpoch = null,
-        [Option(Description = "Target frame")] string targetFrame = "ICRF")
+        EpochParameters targetEpoch,
+        [Argument(Description = "Target frame")]
+        string targetFrame = "ICRF")
     {
         //Load kernels
         API.Instance.LoadKernels(new DirectoryInfo(kernelsPath));
 
         //Check inputs
-        if (!(orbitalParameters.IsEquinoctial ^ orbitalParameters.IsKeplerian ^ orbitalParameters.IsStateVector ^ orbitalParameters.IsTLE))
+        if (!(orbitalParameters.FromEquinoctial ^ orbitalParameters.FromKeplerian ^ orbitalParameters.FromStateVector ^ orbitalParameters.FromTLE))
         {
             throw new ArgumentException("You must set the original orbital parameters type. use --help for more information");
         }
@@ -72,7 +73,7 @@ public class OrbitalParametersConverterCommand
 
         var inputOrbitalParameters = Helpers.ConvertToOrbitalParameters(orbitalParameters.OrbitalParametersValues, orbitalParameters.CenterOfMotionId,
             orbitalParameters.EpochParameter.Epoch,
-            orbitalParameters.Frame, orbitalParameters.IsStateVector, orbitalParameters.IsKeplerian, orbitalParameters.IsEquinoctial, orbitalParameters.IsTLE);
+            orbitalParameters.Frame, orbitalParameters.FromStateVector, orbitalParameters.FromKeplerian, orbitalParameters.FromEquinoctial, orbitalParameters.FromTLE);
 
         //At given epoch and in given frame
         inputOrbitalParameters = inputOrbitalParameters!.AtEpoch(outputEpoch).ToFrame(outputFrame);
