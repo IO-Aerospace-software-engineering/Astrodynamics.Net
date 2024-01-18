@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Linq;
 using IO.Astrodynamics.Body;
 using IO.Astrodynamics.Math;
@@ -139,7 +140,9 @@ public class CelestialBodyTests
     {
         var earth = TestHelpers.EarthAtJ2000;
         var res = earth.ToString();
-        Assert.Equal($"                          Type : Planet                          {Environment.NewLine}                    Identifier : 399                             {Environment.NewLine}                          Name : EARTH                           {Environment.NewLine}                     Mass (kg) : 5.972168E+024                   {Environment.NewLine}                   GM (m^3.s^2): 3.986004E+014                   {Environment.NewLine}                   Fixed frame : ITRF93                          {Environment.NewLine}         Equatorial radius (m) : 6.378137E+006                   {Environment.NewLine}              Polar radius (m) : 6.356752E+006                   {Environment.NewLine}                    Flattening : 0.0033528131084554157           {Environment.NewLine}                            J2 : 0.001082616                     {Environment.NewLine}                            J3 : -2.5388099999999996E-06         {Environment.NewLine}                            J4 : -1.65597E-06                    {Environment.NewLine}", earth.ToString());
+        Assert.Equal(
+            $"                          Type : Planet                          {Environment.NewLine}                    Identifier : 399                             {Environment.NewLine}                          Name : EARTH                           {Environment.NewLine}                     Mass (kg) : 5.972168E+024                   {Environment.NewLine}                   GM (m^3.s^2): 3.986004E+014                   {Environment.NewLine}                   Fixed frame : ITRF93                          {Environment.NewLine}         Equatorial radius (m) : 6.378137E+006                   {Environment.NewLine}              Polar radius (m) : 6.356752E+006                   {Environment.NewLine}                    Flattening : 0.0033528131084554157           {Environment.NewLine}                            J2 : 0.001082616                     {Environment.NewLine}                            J3 : -2.5388099999999996E-06         {Environment.NewLine}                            J4 : -1.65597E-06                    {Environment.NewLine}",
+            earth.ToString());
     }
 
     [Fact]
@@ -308,5 +311,22 @@ public class CelestialBodyTests
         Assert.Equal(270.0, res.TrueAnomaly() * Astrodynamics.Constants.Rad2Deg, 3);
         Assert.Equal(270.01999999999998, res.MeanAnomaly() * Astrodynamics.Constants.Rad2Deg, 3);
         Assert.Equal(epoch, res.Epoch);
+    }
+
+    [Fact]
+    public void GeopotentialModelReader()
+    {
+        GeopotentialModelReader geopotentialModelReader =
+            new GeopotentialModelReader(new FileInfo(Path.Combine(Constants.SolarSystemKernelPath.ToString(), "EGM2008_to70_TideFree")));
+        Assert.Equal(new GeopotentialCoefficient(4, 1, -0.536157389388867E-06, -0.473567346518086E-06, 0.4568074333E-11, 0.4684043490E-11),
+            geopotentialModelReader.ReadCoefficient(4, 1));
+    }
+    
+    [Fact]
+    public void GeopotentialModelReaderException()
+    {
+        GeopotentialModelReader geopotentialModelReader =
+            new GeopotentialModelReader(new FileInfo(Path.Combine(Constants.SolarSystemKernelPath.ToString(), "EGM2008_to70_TideFree")));
+        Assert.Throws<ArgumentException>(()=> geopotentialModelReader.ReadCoefficient(4, 5));
     }
 }
