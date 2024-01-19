@@ -2,6 +2,7 @@
 
 using System.IO;
 using IO.Astrodynamics.Body;
+using IO.Astrodynamics.Coordinates;
 using IO.Astrodynamics.Math;
 using IO.Astrodynamics.OrbitalParameters;
 
@@ -24,20 +25,21 @@ public class Gravity : ForceBase
     public Vector3 ComputeGravitationalForce(StateVector stateVector, ushort maxDegree = 70)
     {
         CelestialBody centerOfMotion = stateVector.Observer as CelestialBody;
+
         double r = stateVector.Position.Magnitude();
         var position = stateVector.Position;
-        double u = position.Z / r;
+        double u = System.Math.Abs(System.Math.Asin(position.Z / r) - Constants.PI2);
 
         double forceX, forceY, forceZ;
-        double gmr = centerOfMotion.GM / r;
+        double gmr = -centerOfMotion.GM / (r * r);
         double eqr = centerOfMotion.EquatorialRadius / r;
         double omegaN = 0.0;
         double eqrn = 0.0;
 
-        for (ushort n = 0; n <= maxDegree; n++)
+        for (ushort n = 2; n <= maxDegree; n++)
         {
             eqrn += System.Math.Pow(eqr, n);
-            
+
             for (ushort m = 0; m <= n; m++)
             {
                 double Cnm = GetCoefficientC(n, m);
