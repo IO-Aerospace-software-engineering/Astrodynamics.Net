@@ -2,56 +2,86 @@
 
 using System;
 
-    
 
 namespace IO.Astrodynamics.Math;
 
 public class LegendreFunctions
 {
-    static double Factorial(int n)
+    public static double Factorial(int n)
     {
-        if (n == 0)
-            return 1;
-        else
-            return n * Factorial(n - 1);
-    }
-
-    static double PnmFull(int n, int m, double cosTheta)
-    {
-        double sinTheta = System.Math.Sqrt(1 - cosTheta * cosTheta);
-
-        double term1 = System.Math.Sqrt((2 * n + 1) * Factorial(n - m) / (4 * System.Math.PI * Factorial(n + m)));
-        double term2 = System.Math.Pow(sinTheta, m);
-
-        double result = term1 * term2 * AssociatedLegendre(n, m, cosTheta);
-
-        return result;
-    }
-
-    static double AssociatedLegendre(int n, int m, double cosTheta)
-    {
-        if (m == 0)
+        double f = 1.0;
+        for (int i = 2; i <= n; i++)
         {
-            return Legendre(n, cosTheta);
+            f *= i;
         }
-        else
-        {
-            double part1 = System.Math.Sqrt((2 * n + 1) * Factorial(n - m) / (2 * Factorial(n + m)));
-            double part2 = System.Math.Pow(cosTheta, m);
-            double part3 = Legendre(n, cosTheta);
-            double part4 = System.Math.Pow(1 - cosTheta * cosTheta, m / 2.0);
 
-            return part1 * part2 * part3 * part4;
-        }
+        return f;
     }
 
-    static double Legendre(int n, double x)
+    /// <summary>
+    /// Normalized associated Legendre polynomials without Condon-Shortley phase factor
+    /// </summary>
+    /// <param name="l"></param>
+    /// <param name="m"></param>
+    /// <param name="theta"></param>
+    /// <returns></returns>
+    public static double NormalizedAssociatedLegendre(int l, int m, double theta)
     {
-        if (n == 0)
-            return 1.0;
-        else if (n == 1)
-            return x;
-        else
-            return ((2 * n - 1) * x * Legendre(n - 1, x) - (n - 1) * Legendre(n - 2, x)) / n;
+        if (m < 0 || m > l || theta < 0 || theta > System.Math.PI)
+        {
+            return double.NaN;
+        }
+
+        double p = AssociatedLegendre(l, m, System.Math.Cos(theta));
+        double fact = System.Math.Sqrt((2 * l + 1) / (4 * System.Math.PI) * Factorial(l - m) / Factorial(l + m));
+        return fact * p;
+    }
+
+    /// <summary>
+    /// Associated Legendre polynomials without Condon-Shortley phase factor
+    /// </summary>
+    /// <param name="l"></param>
+    /// <param name="m"></param>
+    /// <param name="x"></param>
+    /// <returns></returns>
+    public static double AssociatedLegendre(int l, int m, double x)
+    {
+        if (m < 0 || m > l || System.Math.Abs(x) > 1)
+        {
+            return double.NaN;
+        }
+
+        double pmm = 1.0;
+        if (m > 0)
+        {
+            double somx2 = System.Math.Sqrt((1.0 + x) * (1.0 - x));
+            double fact = 1.0;
+            for (int i = 1; i <= m; i++)
+            {
+                pmm *= -fact * somx2;
+                fact += 2.0;
+            }
+        }
+
+        if (l == m)
+        {
+            return pmm;
+        }
+
+        double pmmp1 = x * (2 * m + 1) * pmm;
+        if (l == m + 1)
+        {
+            return pmmp1;
+        }
+
+        double pll = 0.0;
+        for (int ll = m + 2; ll <= l; ll++)
+        {
+            pll = (x * (2 * ll - 1) * pmmp1 - (ll + m - 1) * pmm) / (ll - m);
+            pmm = pmmp1;
+            pmmp1 = pll;
+        }
+
+        return pll;
     }
 }
