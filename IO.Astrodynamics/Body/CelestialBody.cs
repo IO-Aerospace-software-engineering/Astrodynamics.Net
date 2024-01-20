@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.Linq;
 using System.Numerics;
 using IO.Astrodynamics.Coordinates;
@@ -277,12 +278,12 @@ public class CelestialBody : CelestialItem, IOrientable
         return $"{"Type :",TITLE_WIDTH} {bodyType,-VALUE_WIDTH}{Environment.NewLine}"+
                base.ToString() +
                $"{"Fixed frame :",TITLE_WIDTH} {Frame.Name,-VALUE_WIDTH}{Environment.NewLine}" +
-               $"{"Equatorial radius (m) :",TITLE_WIDTH} {EquatorialRadius,-VALUE_WIDTH:E}{Environment.NewLine}" +
-               $"{"Polar radius (m) :",TITLE_WIDTH} {PolarRadius,-VALUE_WIDTH:E}{Environment.NewLine}" +
-               $"{"Flattening :",TITLE_WIDTH} {Flattening,-VALUE_WIDTH}{Environment.NewLine}" +
-               $"{"J2 :",TITLE_WIDTH} {J2,-VALUE_WIDTH}{Environment.NewLine}" +
-               $"{"J3 :",TITLE_WIDTH} {J3,-VALUE_WIDTH}{Environment.NewLine}" +
-               $"{"J4 :",TITLE_WIDTH} {J4,-VALUE_WIDTH}{Environment.NewLine}";
+               $"{"Equatorial radius (m) :",TITLE_WIDTH} {EquatorialRadius.ToString("E",CultureInfo.InvariantCulture),-VALUE_WIDTH:E}{Environment.NewLine}" +
+               $"{"Polar radius (m) :",TITLE_WIDTH} {PolarRadius.ToString("E",CultureInfo.InvariantCulture),-VALUE_WIDTH:E}{Environment.NewLine}" +
+               $"{"Flattening :",TITLE_WIDTH} {Flattening.ToString(CultureInfo.InvariantCulture),-VALUE_WIDTH}{Environment.NewLine}" +
+               $"{"J2 :",TITLE_WIDTH} {J2.ToString(CultureInfo.InvariantCulture),-VALUE_WIDTH}{Environment.NewLine}" +
+               $"{"J3 :",TITLE_WIDTH} {J3.ToString(CultureInfo.InvariantCulture),-VALUE_WIDTH}{Environment.NewLine}" +
+               $"{"J4 :",TITLE_WIDTH} {J4.ToString(CultureInfo.InvariantCulture),-VALUE_WIDTH}{Environment.NewLine}";
         ;
     }
 }

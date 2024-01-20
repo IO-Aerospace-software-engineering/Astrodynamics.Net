@@ -19,52 +19,46 @@ public class Gravity : ForceBase
 
     public override Vector3 Apply(CelestialItem body, StateVector stateVector)
     {
-        return ComputeGravitationalForce(stateVector);
+        return ComputeGravitationalAcceleration(stateVector);
     }
 
-    public Vector3 ComputeGravitationalForce(StateVector stateVector, ushort maxDegree = 70)
+    public Vector3 ComputeGravitationalAcceleration(StateVector stateVector, ushort maxDegree = 70)
     {
         CelestialBody centerOfMotion = stateVector.Observer as CelestialBody;
 
         double r = stateVector.Position.Magnitude();
         var position = stateVector.Position;
-        double u = System.Math.Abs(System.Math.Asin(position.Z / r) - Constants.PI2);
+        double theta = System.Math.Abs(System.Math.Asin(position.Z / r) - Constants.PI2);
 
-        double forceX, forceY, forceZ;
-        double gmr = -centerOfMotion.GM / (r * r);
+        double gmr = -centerOfMotion.GM / r;
         double eqr = centerOfMotion.EquatorialRadius / r;
         double omegaN = 0.0;
         double eqrn = 0.0;
 
         for (ushort n = 2; n <= maxDegree; n++)
         {
-            eqrn += System.Math.Pow(eqr, n);
+            eqrn = System.Math.Pow(eqr, n);
 
             for (ushort m = 0; m <= n; m++)
             {
                 double Cnm = GetCoefficientC(n, m);
                 double Snm = GetCoefficientS(n, m);
+                double longitude_m = m * System.Math.Atan2(position.Y, position.X);
 
-                omegaN += LegendreFunctions.NormalizedAssociatedLegendre(n, m, u) * (Cnm * System.Math.Cos(m * System.Math.Atan2(position.Y, position.X)) +
-                                                                                     Snm * System.Math.Sin(m * System.Math.Atan2(position.Y, position.X)));
-
-                // double term1 = System.Math.Pow(centerOfMotion.EquatorialRadius / r, n);
-                // double term2 = Cnm * System.Math.Cos(m * System.Math.Atan2(position.Y, position.X)) + Snm * System.Math.Sin(m * System.Math.Atan2(position.Y, position.X));
-                // double term3 = LegendreFunctions.NormalizedAssociatedLegendre(n, m, u);
-                // double term4 = term1 * term2 * term3 * (n + 1);
-                // double term5 = centerOfMotion.GM / r;
-                //
-                // forceX += term5 * term4 * position.X / r;
-                // forceY += term5 * term4 * position.Y / r;
-                // forceZ += term5 * term4 * position.Z / r;
+                omegaN += eqrn * LegendreFunctions.NormalizedAssociatedLegendre(n, m, theta) * (Cnm * System.Math.Cos(longitude_m));
+                if (m != 0)
+                {
+                    omegaN += eqrn * LegendreFunctions.NormalizedAssociatedLegendre(n, m, theta) * (Snm * System.Math.Sin(longitude_m));
+                }
             }
         }
 
-        var res = gmr * (1 + eqrn * omegaN);
-        forceX = res * position.X / r;
-        forceY = res * position.Y / r;
-        forceZ = res * position.Z / r;
-        return new Vector3(forceX, forceY, forceZ);
+        var res = gmr * (1 + omegaN) / r;
+        
+        var aX = res * position.X / r;
+        var aY = res * position.Y / r;
+        var aZ = res * position.Z / r;
+        return new Vector3(aX, aY, aZ);
     }
 
     double GetCoefficientC(ushort n, ushort m)

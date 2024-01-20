@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 
@@ -24,8 +25,8 @@ public class GeopotentialModelReader
             {
                 var tmp = line.Split(' ').ToList();
                 tmp.RemoveAll(string.IsNullOrEmpty);
-                var coeff = new GeopotentialCoefficient(ushort.Parse(tmp[0]), ushort.Parse(tmp[1]), double.Parse(tmp[2]), double.Parse(tmp[3]), double.Parse(tmp[4]),
-                    double.Parse(tmp[5]));
+                var coeff = new GeopotentialCoefficient(ushort.Parse(tmp[0],CultureInfo.InvariantCulture), ushort.Parse(tmp[1],CultureInfo.InvariantCulture), double.Parse(tmp[2],CultureInfo.InvariantCulture), double.Parse(tmp[3],CultureInfo.InvariantCulture), double.Parse(tmp[4],CultureInfo.InvariantCulture),
+                    double.Parse(tmp[5],CultureInfo.InvariantCulture));
                 _geopotentialCoefficients[(coeff.N, coeff.M)] = coeff;
             }
         }

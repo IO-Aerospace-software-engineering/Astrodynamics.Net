@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using IO.Astrodynamics.Coordinates;
 using IO.Astrodynamics.Frames;
 using IO.Astrodynamics.SolarSystemObjects;
@@ -214,8 +215,8 @@ public abstract class CelestialItem : ILocalizable, IEquatable<CelestialItem>
     {
         return $"{"Identifier :",TITLE_WIDTH} {NaifId,-VALUE_WIDTH}{Environment.NewLine}" +
                $"{"Name :",TITLE_WIDTH} {Name,-VALUE_WIDTH}{Environment.NewLine}" +
-               $"{"Mass (kg) :",TITLE_WIDTH} {Mass,-VALUE_WIDTH:E}{Environment.NewLine}" +
-               $"{"GM (m^3.s^2):",TITLE_WIDTH} {GM,-VALUE_WIDTH:E}{Environment.NewLine}";
+               $"{"Mass (kg) :",TITLE_WIDTH} {Mass.ToString("E", CultureInfo.InvariantCulture),-VALUE_WIDTH:E}{Environment.NewLine}" +
+               $"{"GM (m^3.s^2):",TITLE_WIDTH} {GM.ToString("E", CultureInfo.InvariantCulture),-VALUE_WIDTH:E}{Environment.NewLine}";
     }
 
     public bool Equals(CelestialItem other)
