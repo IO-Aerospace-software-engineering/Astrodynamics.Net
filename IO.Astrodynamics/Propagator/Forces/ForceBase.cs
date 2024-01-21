@@ -8,5 +8,5 @@ namespace IO.Astrodynamics.Propagator.Forces;
 
 public abstract class ForceBase
 {
-    public abstract Vector3 Apply(CelestialItem body, StateVector stateVector);
+    public abstract Vector3 Apply(StateVector stateVector);
 }

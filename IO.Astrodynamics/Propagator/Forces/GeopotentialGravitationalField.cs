@@ -8,16 +8,16 @@ using IO.Astrodynamics.OrbitalParameters;
 
 namespace IO.Astrodynamics.Propagator.Forces;
 
-public class Gravity : ForceBase
+public class GeopotentialGravitationalField : GravitationalField
 {
     private readonly GeopotentialModelReader _geopotentialModelReader;
 
-    public Gravity(FileInfo geopotentialModelFile)
+    public GeopotentialGravitationalField(FileInfo geopotentialModelFile)
     {
         _geopotentialModelReader = new GeopotentialModelReader(geopotentialModelFile);
     }
 
-    public override Vector3 Apply(CelestialItem body, StateVector stateVector)
+    public override Vector3 Apply(StateVector stateVector)
     {
         return ComputeGravitationalAcceleration(stateVector);
     }

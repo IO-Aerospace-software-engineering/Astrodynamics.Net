@@ -1,11 +1,13 @@
 using System;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Numerics;
 using IO.Astrodynamics.Coordinates;
 using IO.Astrodynamics.Frames;
 using IO.Astrodynamics.Math;
 using IO.Astrodynamics.OrbitalParameters;
+using IO.Astrodynamics.Propagator.Forces;
 using IO.Astrodynamics.SolarSystemObjects;
 using IO.Astrodynamics.Surface;
 using IO.Astrodynamics.Time;
@@ -27,11 +29,14 @@ public class CelestialBody : CelestialItem, IOrientable
     public double J3 { get; }
     public double J4 { get; }
 
+    public GravitationalField GravityField { get; }
+
     /// <summary>
     /// Instantiate celestial body from naif object with default parameters (Ecliptic J2000 at J2000 epoch)
     /// </summary>
     /// <param name="naifObject"></param>
-    public CelestialBody(NaifObject naifObject) : this(naifObject.NaifId)
+    /// <param name="geopotentialModelPath"></param>
+    public CelestialBody(NaifObject naifObject, string geopotentialModelPath = "") : this(naifObject.NaifId, geopotentialModelPath)
     {
     }
 
@@ -39,7 +44,7 @@ public class CelestialBody : CelestialItem, IOrientable
     /// Instantiate celestial body from naif id with default parameters (Ecliptic J2000 at J2000 epoch)
     /// </summary>
     /// <param name="naifId"></param>
-    public CelestialBody(int naifId) : this(naifId, Frame.ECLIPTIC_J2000, DateTimeExtension.J2000)
+    public CelestialBody(int naifId, string geopotentialModelPath = "") : this(naifId, Frame.ECLIPTIC_J2000, DateTimeExtension.J2000, geopotentialModelPath)
     {
     }
 
@@ -49,7 +54,7 @@ public class CelestialBody : CelestialItem, IOrientable
     /// <param name="naifObject"></param>
     /// <param name="frame"></param>
     /// <param name="epoch"></param>
-    public CelestialBody(NaifObject naifObject, Frame frame, DateTime epoch) : this(naifObject.NaifId, frame, epoch)
+    public CelestialBody(NaifObject naifObject, Frame frame, DateTime epoch, string geopotentialModelPath = "") : this(naifObject.NaifId, frame, epoch, geopotentialModelPath)
     {
     }
 
@@ -59,7 +64,8 @@ public class CelestialBody : CelestialItem, IOrientable
     /// <param name="naifId"></param>
     /// <param name="frame"></param>
     /// <param name="epoch"></param>
-    public CelestialBody(int naifId, Frame frame, DateTime epoch) : base(naifId, frame, epoch)
+    /// <param name="geopotentialModelPath"></param>
+    public CelestialBody(int naifId, Frame frame, DateTime epoch, string geopotentialModelPath = "") : base(naifId, frame, epoch)
     {
         PolarRadius = ExtendedInformation.Radii.Z;
         EquatorialRadius = ExtendedInformation.Radii.X;
@@ -78,6 +84,10 @@ public class CelestialBody : CelestialItem, IOrientable
             : new Frame(ExtendedInformation.FrameName);
 
         UpdateSphereOfInfluence();
+        if(string.IsNullOrEmpty(geopotentialModelPath) && Path.Exists(geopotentialModelPath))
+        {
+            GravityField=new GravitationalField()
+        }
     }
 
     /// <summary>
@@ -265,21 +275,25 @@ public class CelestialBody : CelestialItem, IOrientable
         else if (IsAsteroid)
         {
             bodyType = "Asteroid";
-        }else if (IsBarycenter)
+        }
+        else if (IsBarycenter)
         {
             bodyType = "Barycenter";
-        }else if (IsStar || IsSun)
+        }
+        else if (IsStar || IsSun)
         {
             bodyType = "Star";
-        }else if (IsLagrangePoint)
+        }
+        else if (IsLagrangePoint)
         {
             bodyType = "Lagrange point";
         }
-        return $"{"Type :",TITLE_WIDTH} {bodyType,-VALUE_WIDTH}{Environment.NewLine}"+
+
+        return $"{"Type :",TITLE_WIDTH} {bodyType,-VALUE_WIDTH}{Environment.NewLine}" +
                base.ToString() +
                $"{"Fixed frame :",TITLE_WIDTH} {Frame.Name,-VALUE_WIDTH}{Environment.NewLine}" +
-               $"{"Equatorial radius (m) :",TITLE_WIDTH} {EquatorialRadius.ToString("E",CultureInfo.InvariantCulture),-VALUE_WIDTH:E}{Environment.NewLine}" +
-               $"{"Polar radius (m) :",TITLE_WIDTH} {PolarRadius.ToString("E",CultureInfo.InvariantCulture),-VALUE_WIDTH:E}{Environment.NewLine}" +
+               $"{"Equatorial radius (m) :",TITLE_WIDTH} {EquatorialRadius.ToString("E", CultureInfo.InvariantCulture),-VALUE_WIDTH:E}{Environment.NewLine}" +
+               $"{"Polar radius (m) :",TITLE_WIDTH} {PolarRadius.ToString("E", CultureInfo.InvariantCulture),-VALUE_WIDTH:E}{Environment.NewLine}" +
                $"{"Flattening :",TITLE_WIDTH} {Flattening.ToString(CultureInfo.InvariantCulture),-VALUE_WIDTH}{Environment.NewLine}" +
                $"{"J2 :",TITLE_WIDTH} {J2.ToString(CultureInfo.InvariantCulture),-VALUE_WIDTH}{Environment.NewLine}" +
                $"{"J3 :",TITLE_WIDTH} {J3.ToString(CultureInfo.InvariantCulture),-VALUE_WIDTH}{Environment.NewLine}" +
