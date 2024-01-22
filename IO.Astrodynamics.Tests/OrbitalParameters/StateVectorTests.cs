@@ -349,7 +349,7 @@ namespace IO.Astrodynamics.Tests.OrbitalParameters
         public void ToKeplerian()
         {
             var earth = TestHelpers.EarthAtJ2000;
-            var ke = earth.GetEphemeris(DateTimeExtension.J2000,TestHelpers.Sun,Frames.Frame.ICRF, Aberration.None).ToKeplerianElements();
+            var ke = earth.GetEphemeris(DateTimeExtension.J2000, TestHelpers.Sun, Frames.Frame.ICRF, Aberration.None).ToKeplerianElements();
             Assert.Equal(
                 new KeplerianElements(149665479724.14615, 0.017121683029703794, 0.40908763696755318, 1.2954012328856077E-05,
                     1.7768848943741333, 6.259056257646451, TestHelpers.Sun, DateTimeExtension.J2000, Frames.Frame.ICRF), ke);
@@ -359,8 +359,17 @@ namespace IO.Astrodynamics.Tests.OrbitalParameters
         public void ToEquatorial()
         {
             var moon = TestHelpers.MoonAtJ2000;
-            var ra = moon.GetEphemeris(DateTimeExtension.J2000,TestHelpers.EarthAtJ2000,Frames.Frame.ICRF, Aberration.None).ToEquatorial();
+            var ra = moon.GetEphemeris(DateTimeExtension.J2000, TestHelpers.EarthAtJ2000, Frames.Frame.ICRF, Aberration.None).ToEquatorial();
             Assert.Equal(new Equatorial(-0.19024413568211912, 3.8824377884372114, 402448639.8873273), ra);
+        }
+
+        [Fact]
+        public void RelativeTo()
+        {
+            var originalSV = new StateVector(new Vector3(6800000.0, 0.0, 0.0), new Vector3(0.0, 8000.0, 0.0), TestHelpers.EarthAtJ2000, DateTimeExtension.J2000, Frames.Frame.ICRF);
+            var moonSv = originalSV.RelativeTo(TestHelpers.MoonAtJ2000, Aberration.None);
+            Assert.Equal(new StateVector(new Vector3(298408384.63343549, 266716833.39423338, 76102487.099902019), new Vector3(-643.53138771903275, 8666.0876840916299, 301.32570498227307), TestHelpers.MoonAtJ2000, DateTimeExtension.J2000, Frames.Frame.ICRF),
+                moonSv);
         }
     }
 }

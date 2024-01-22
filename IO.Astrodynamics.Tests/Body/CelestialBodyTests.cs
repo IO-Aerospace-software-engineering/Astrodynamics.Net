@@ -4,6 +4,7 @@ using System.Linq;
 using IO.Astrodynamics.Body;
 using IO.Astrodynamics.Math;
 using IO.Astrodynamics.OrbitalParameters;
+using IO.Astrodynamics.Physics;
 using IO.Astrodynamics.SolarSystemObjects;
 using IO.Astrodynamics.Time;
 using Xunit;

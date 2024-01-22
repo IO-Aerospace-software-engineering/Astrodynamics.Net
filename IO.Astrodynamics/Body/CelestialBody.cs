@@ -29,7 +29,7 @@ public class CelestialBody : CelestialItem, IOrientable
     public double J3 { get; }
     public double J4 { get; }
 
-    public GravitationalField GravityField { get; }
+    protected GravitationalField GravitationalField { get; }
 
     /// <summary>
     /// Instantiate celestial body from naif object with default parameters (Ecliptic J2000 at J2000 epoch)
@@ -84,10 +84,9 @@ public class CelestialBody : CelestialItem, IOrientable
             : new Frame(ExtendedInformation.FrameName);
 
         UpdateSphereOfInfluence();
-        if(string.IsNullOrEmpty(geopotentialModelPath) && Path.Exists(geopotentialModelPath))
-        {
-            GravityField=new GravitationalField()
-        }
+        GravitationalField = !string.IsNullOrEmpty(geopotentialModelPath) && Path.Exists(geopotentialModelPath)
+            ? new GeopotentialGravitationalField(new FileInfo(geopotentialModelPath))
+            : new GravitationalField();
     }
 
     /// <summary>
@@ -259,6 +258,13 @@ public class CelestialBody : CelestialItem, IOrientable
         double t = trueSolarDay.TotalSeconds / nbOrbitPerDay;
         double a = System.Math.Cbrt(((t * t) * GM) / (4 * Constants.PI * Constants.PI));
         return HelioSynchronousOrbit(a, eccentricity, epochAtDescendingNode);
+    }
+
+    public Vector3 EvaluateGravitationalAcceleration(OrbitalParameters.OrbitalParameters orbitalParameters)
+    {
+        var sv = orbitalParameters.Observer as CelestialBody != this ? orbitalParameters.RelativeTo(this, Aberration.LT).ToStateVector() : orbitalParameters.ToStateVector();
+
+        return GravitationalField.ComputeGravitationalAcceleration(sv);
     }
 
     public override string ToString()

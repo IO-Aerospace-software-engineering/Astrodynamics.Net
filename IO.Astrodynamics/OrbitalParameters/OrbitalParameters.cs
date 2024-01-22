@@ -401,6 +401,19 @@ public abstract class OrbitalParameters : IEquatable<OrbitalParameters>
         return _apogeeVelocity.Value;
     }
 
+    public OrbitalParameters RelativeTo(ILocalizable localizable, Aberration aberration)
+    {
+        if (localizable.NaifId == this.Observer.NaifId)
+        {
+            return this;
+        }
+
+        var eph = localizable.GetEphemeris(Epoch, Observer, Frame, aberration).ToStateVector();
+        var position = (eph.Position - ToStateVector().Position).Inverse();
+        var velocity = (eph.Velocity - ToStateVector().Velocity).Inverse();
+        return new StateVector(position, velocity, localizable, eph.Epoch, Frame);
+    }
+
     public override bool Equals(object obj)
     {
         return Equals(obj as OrbitalParameters);
