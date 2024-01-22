@@ -5,13 +5,13 @@ using IO.Astrodynamics.OrbitalParameters;
 namespace IO.Astrodynamics.Propagator.Forces;
 
 /// <summary>
-/// Gravity force from given celestial body
+/// GravitationalAcceleration force from given celestial body
 /// </summary>
-public class Gravity : ForceBase
+public class GravitationalAcceleration : ForceBase
 {
     public CelestialBody CelestialBody { get; }
 
-    public Gravity(CelestialBody celestialBody)
+    public GravitationalAcceleration(CelestialBody celestialBody)
     {
         CelestialBody = celestialBody;
     }

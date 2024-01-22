@@ -37,16 +37,32 @@ namespace IO.Astrodynamics.Body.Spacecraft
         public double DryOperatingMass => Mass;
 
         public double MaximumOperatingMass { get; }
+        public double Area { get; }
         public Frame Frame { get; }
 
-        public Spacecraft(int naifId, string name, double mass, double maximumOperatingMass, Clock clock, OrbitalParameters.OrbitalParameters initialOrbitalParameters) : base(
+        /// <summary>
+        /// Spacecraft constructor
+        /// </summary>
+        /// <param name="naifId"></param>
+        /// <param name="name"></param>
+        /// <param name="mass"></param>
+        /// <param name="maximumOperatingMass"></param>
+        /// <param name="clock"></param>
+        /// <param name="initialOrbitalParameters"></param>
+        /// <param name="area"></param>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        /// <exception cref="ArgumentNullException"></exception>
+        public Spacecraft(int naifId, string name, double mass, double maximumOperatingMass, Clock clock, OrbitalParameters.OrbitalParameters initialOrbitalParameters,
+            double area = 1.0) : base(
             naifId, name, mass, initialOrbitalParameters)
         {
             if (maximumOperatingMass < mass) throw new ArgumentOutOfRangeException(nameof(maximumOperatingMass));
             if (naifId >= 0) throw new ArgumentOutOfRangeException(nameof(naifId));
+            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(area);
             MaximumOperatingMass = maximumOperatingMass;
             Clock = clock ?? throw new ArgumentNullException(nameof(clock));
             Frame = new Frame($"{name}_SPACECRAFT");
+            Area = area;
         }
 
         /// <summary>

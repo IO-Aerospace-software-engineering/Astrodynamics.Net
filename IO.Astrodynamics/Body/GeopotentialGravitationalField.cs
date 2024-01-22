@@ -12,13 +12,15 @@ namespace IO.Astrodynamics.Body;
 public class GeopotentialGravitationalField : GravitationalField
 {
     private readonly GeopotentialModelReader _geopotentialModelReader;
+    public double MaxDegrees { get; }
 
-    public GeopotentialGravitationalField(FileInfo geopotentialModelFile)
+    public GeopotentialGravitationalField(FileInfo geopotentialModelFile, ushort maxDegrees = 70)
     {
+        MaxDegrees = maxDegrees;
         _geopotentialModelReader = new GeopotentialModelReader(geopotentialModelFile);
     }
 
-    public Vector3 ComputeGravitationalAcceleration(StateVector stateVector, ushort maxDegree = 70)
+    public override Vector3 ComputeGravitationalAcceleration(StateVector stateVector)
     {
         var observer = (CelestialBody)stateVector.Observer;
         var svFixedFrame = stateVector.ToFrame(observer.Frame).ToStateVector();
@@ -30,13 +32,13 @@ public class GeopotentialGravitationalField : GravitationalField
 
         //Get gravitational acceleration
         var gravitationalAcceleration = -base.ComputeGravitationalAcceleration(svFixedFrame).Magnitude();
-       
+
         //Compute spherical harmonics
         double eqr = observer.EquatorialRadius / r;
         double omegaN = 0.0;
         double eqrn;
 
-        for (ushort n = 2; n <= maxDegree; n++)
+        for (ushort n = 2; n <= MaxDegrees; n++)
         {
             eqrn = System.Math.Pow(eqr, n);
 

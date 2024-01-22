@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using IO.Astrodynamics.Coordinates;
 using IO.Astrodynamics.Frames;
+using IO.Astrodynamics.Math;
+using IO.Astrodynamics.OrbitalParameters;
 using IO.Astrodynamics.SolarSystemObjects;
 using IO.Astrodynamics.Time;
 using Window = IO.Astrodynamics.Time.Window;
@@ -153,6 +155,13 @@ public abstract class CelestialItem : ILocalizable, IEquatable<CelestialItem>
         var target2Position = target2.GetEphemeris(epoch, this, Frame.ICRF, aberration).ToStateVector().Position;
         return target1Position.Angle(target2Position);
     }
+    
+    public double AngularSeparation(DateTime epoch, ILocalizable target1, OrbitalParameters.OrbitalParameters fromPosition, Aberration aberration)
+    {
+        var target1Position = fromPosition.RelativeTo(target1, aberration).ToStateVector().Position.Inverse();
+        var target2Position = fromPosition.RelativeTo(this, aberration).ToStateVector().Position.Inverse();
+        return target1Position.Angle(target2Position);
+    }
 
     public IEnumerable<Window> FindWindowsOnDistanceConstraint(Window searchWindow, INaifObject observer,
         RelationnalOperator relationalOperator, double value,
@@ -209,6 +218,32 @@ public abstract class CelestialItem : ILocalizable, IEquatable<CelestialItem>
         var lat = System.Math.Asin(position.Z / position.Magnitude());
 
         return new Planetocentric(lon, lat, position.Magnitude());
+    }
+    public OccultationType? IsOcculted(CelestialItem by, OrbitalParameters.OrbitalParameters from)
+    {
+        double backSize = this.AngularSize(from.RelativeTo(this, Aberration.LT).ToStateVector().Position.Magnitude());
+        double bySize = by.AngularSize(from.RelativeTo(by, Aberration.LT).ToStateVector().Position.Magnitude());
+        var angularSeparation = this.AngularSeparation(from.Epoch, by, from, Aberration.LT);
+        return IsOcculted(angularSeparation, backSize, bySize);
+    }
+    
+    public static OccultationType IsOcculted(double angularSeparation, double backSize, double bySize)
+    {
+        OccultationType occul = OccultationType.None;
+        if (angularSeparation < (backSize + bySize) * 0.5)
+        {
+            occul = OccultationType.Partial;
+            if (angularSeparation <= System.Math.Abs(bySize - backSize) * 0.5)
+            {
+                occul = OccultationType.Full;
+                if (bySize < backSize)
+                {
+                    occul = OccultationType.Annular;
+                }
+            }
+        }
+
+        return occul;
     }
 
     public override string ToString()

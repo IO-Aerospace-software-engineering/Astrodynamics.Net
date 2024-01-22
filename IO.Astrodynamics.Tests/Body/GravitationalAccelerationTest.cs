@@ -6,11 +6,11 @@ using IO.Astrodynamics.Propagator.Forces;
 using IO.Astrodynamics.Time;
 using Xunit;
 
-namespace IO.Astrodynamics.Tests.Propagators.Integrators.Forces;
+namespace IO.Astrodynamics.Tests.Body;
 
-public class GravityTest
+public class GravitationalAccelerationTest
 {
-    public GravityTest()
+    public GravitationalAccelerationTest()
     {
         API.Instance.LoadKernels(Constants.SolarSystemKernelPath);
     }

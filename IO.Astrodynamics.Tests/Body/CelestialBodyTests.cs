@@ -182,6 +182,13 @@ public class CelestialBodyTests
         var res = TestHelpers.EarthAtJ2000.AngularSeparation(DateTimeExtension.J2000, TestHelpers.MoonAtJ2000, TestHelpers.Sun, Aberration.None);
         Assert.Equal(0.9984998794278185, res);
     }
+    
+    [Fact]
+    public void AngularSeparationFromOrbitalParameters()
+    {
+        var res = TestHelpers.Sun.AngularSeparation(DateTimeExtension.J2000, TestHelpers.MoonAtJ2000, TestHelpers.EarthAtJ2000.InitialOrbitalParameters, Aberration.None);
+        Assert.Equal(0.9984998794278185, res,12);
+    }
 
     [Fact]
     public void SubObserverPoint()
@@ -329,5 +336,31 @@ public class CelestialBodyTests
         GeopotentialModelReader geopotentialModelReader =
             new GeopotentialModelReader(new FileInfo(Path.Combine(Constants.SolarSystemKernelPath.ToString(), "EGM2008_to70_TideFree")));
         Assert.Throws<ArgumentException>(()=> geopotentialModelReader.ReadCoefficient(4, 5));
+    }
+    
+    [Fact]
+    public void IsOccultedNone()
+    {
+        Assert.Equal(OccultationType.None, CelestialItem.IsOcculted(3.0, 2.0, 4.0));
+        Assert.Equal(OccultationType.None, CelestialItem.IsOcculted(3.0, 4.0, 2.0));
+    }
+    
+    [Fact]
+    public void IsOccultedPartial()
+    {
+        Assert.Equal(OccultationType.Partial, CelestialItem.IsOcculted(2.0, 2.0, 4.0));
+        Assert.Equal(OccultationType.Partial, CelestialItem.IsOcculted(2.0, 4.0, 2.0));
+    }
+    
+    [Fact]
+    public void IsOccultedFull()
+    {
+        Assert.Equal(OccultationType.Full, CelestialItem.IsOcculted(1.0, 2.0, 4.0));
+    }
+    
+    [Fact]
+    public void IsOccultedAnnular()
+    {
+        Assert.Equal(OccultationType.Annular, CelestialItem.IsOcculted(1.0, 4.0, 2.0));
     }
 }
