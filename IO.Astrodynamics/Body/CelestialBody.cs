@@ -7,6 +7,7 @@ using IO.Astrodynamics.Coordinates;
 using IO.Astrodynamics.Frames;
 using IO.Astrodynamics.Math;
 using IO.Astrodynamics.OrbitalParameters;
+using IO.Astrodynamics.Physics;
 using IO.Astrodynamics.Propagator.Forces;
 using IO.Astrodynamics.SolarSystemObjects;
 using IO.Astrodynamics.Surface;
@@ -31,12 +32,15 @@ public class CelestialBody : CelestialItem, IOrientable
 
     protected GravitationalField GravitationalField { get; }
 
+    protected AtmosphericModel AtmosphericModel { get; }
+
     /// <summary>
     /// Instantiate celestial body from naif object with default parameters (Ecliptic J2000 at J2000 epoch)
     /// </summary>
     /// <param name="naifObject"></param>
     /// <param name="geopotentialModelPath"></param>
-    public CelestialBody(NaifObject naifObject, string geopotentialModelPath = "") : this(naifObject.NaifId, geopotentialModelPath)
+    public CelestialBody(NaifObject naifObject, string geopotentialModelPath = "", AtmosphericModel atmosphericModel = null) : this(naifObject.NaifId, geopotentialModelPath,
+        atmosphericModel)
     {
     }
 
@@ -44,7 +48,8 @@ public class CelestialBody : CelestialItem, IOrientable
     /// Instantiate celestial body from naif id with default parameters (Ecliptic J2000 at J2000 epoch)
     /// </summary>
     /// <param name="naifId"></param>
-    public CelestialBody(int naifId, string geopotentialModelPath = "") : this(naifId, Frame.ECLIPTIC_J2000, DateTimeExtension.J2000, geopotentialModelPath)
+    public CelestialBody(int naifId, string geopotentialModelPath = "", AtmosphericModel atmosphericModel = null) : this(naifId, Frame.ECLIPTIC_J2000, DateTimeExtension.J2000,
+        geopotentialModelPath, atmosphericModel)
     {
     }
 
@@ -54,7 +59,8 @@ public class CelestialBody : CelestialItem, IOrientable
     /// <param name="naifObject"></param>
     /// <param name="frame"></param>
     /// <param name="epoch"></param>
-    public CelestialBody(NaifObject naifObject, Frame frame, DateTime epoch, string geopotentialModelPath = "") : this(naifObject.NaifId, frame, epoch, geopotentialModelPath)
+    public CelestialBody(NaifObject naifObject, Frame frame, DateTime epoch, string geopotentialModelPath = "", AtmosphericModel atmosphericModel = null) : this(naifObject.NaifId,
+        frame, epoch, geopotentialModelPath, atmosphericModel)
     {
     }
 
@@ -65,7 +71,7 @@ public class CelestialBody : CelestialItem, IOrientable
     /// <param name="frame"></param>
     /// <param name="epoch"></param>
     /// <param name="geopotentialModelPath"></param>
-    public CelestialBody(int naifId, Frame frame, DateTime epoch, string geopotentialModelPath = "") : base(naifId, frame, epoch)
+    public CelestialBody(int naifId, Frame frame, DateTime epoch, string geopotentialModelPath = "", AtmosphericModel atmosphericModel = null) : base(naifId, frame, epoch)
     {
         PolarRadius = ExtendedInformation.Radii.Z;
         EquatorialRadius = ExtendedInformation.Radii.X;
@@ -87,6 +93,7 @@ public class CelestialBody : CelestialItem, IOrientable
         GravitationalField = !string.IsNullOrEmpty(geopotentialModelPath) && Path.Exists(geopotentialModelPath)
             ? new GeopotentialGravitationalField(new FileInfo(geopotentialModelPath))
             : new GravitationalField();
+        AtmosphericModel = atmosphericModel;
     }
 
     /// <summary>
@@ -260,11 +267,46 @@ public class CelestialBody : CelestialItem, IOrientable
         return HelioSynchronousOrbit(a, eccentricity, epochAtDescendingNode);
     }
 
+    /// <summary>
+    /// Evaluate gravitational acceleration at given position
+    /// </summary>
+    /// <param name="orbitalParameters"></param>
+    /// <returns></returns>
     public Vector3 EvaluateGravitationalAcceleration(OrbitalParameters.OrbitalParameters orbitalParameters)
     {
         var sv = orbitalParameters.Observer as CelestialBody != this ? orbitalParameters.RelativeTo(this, Aberration.LT).ToStateVector() : orbitalParameters.ToStateVector();
 
         return GravitationalField.ComputeGravitationalAcceleration(sv);
+    }
+
+    /// <summary>
+    /// Get temperature at given altitude
+    /// </summary>
+    /// <param name="altitude"></param>
+    /// <returns></returns>
+    public double GetAirTemperature(double altitude)
+    {
+        return AtmosphericModel?.GetTemperature(altitude) ?? double.NaN;
+    }
+
+    /// <summary>
+    /// Get air pressure at given altitude
+    /// </summary>
+    /// <param name="altitude"></param>
+    /// <returns></returns>
+    public double GetAirPressure(double altitude)
+    {
+        return AtmosphericModel?.GetPressure(altitude) ?? 0.0;
+    }
+
+    /// <summary>
+    /// Get air density at given altitude
+    /// </summary>
+    /// <param name="altitude"></param>
+    /// <returns></returns>
+    public double GetAirDensity(double altitude)
+    {
+        return AtmosphericModel?.GetDensity(altitude) ?? 0.0;
     }
 
     public override string ToString()
@@ -305,6 +347,4 @@ public class CelestialBody : CelestialItem, IOrientable
                $"{"J3 :",TITLE_WIDTH} {J3.ToString(CultureInfo.InvariantCulture),-VALUE_WIDTH}{Environment.NewLine}" +
                $"{"J4 :",TITLE_WIDTH} {J4.ToString(CultureInfo.InvariantCulture),-VALUE_WIDTH}{Environment.NewLine}";
     }
-
-    
 }

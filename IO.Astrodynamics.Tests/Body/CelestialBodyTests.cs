@@ -182,12 +182,12 @@ public class CelestialBodyTests
         var res = TestHelpers.EarthAtJ2000.AngularSeparation(DateTimeExtension.J2000, TestHelpers.MoonAtJ2000, TestHelpers.Sun, Aberration.None);
         Assert.Equal(0.9984998794278185, res);
     }
-    
+
     [Fact]
     public void AngularSeparationFromOrbitalParameters()
     {
         var res = TestHelpers.Sun.AngularSeparation(DateTimeExtension.J2000, TestHelpers.MoonAtJ2000, TestHelpers.EarthAtJ2000.InitialOrbitalParameters, Aberration.None);
-        Assert.Equal(0.9984998794278185, res,12);
+        Assert.Equal(0.9984998794278185, res, 12);
     }
 
     [Fact]
@@ -329,38 +329,86 @@ public class CelestialBodyTests
         Assert.Equal(new GeopotentialCoefficient(4, 1, -0.536157389388867E-06, -0.473567346518086E-06, 0.4568074333E-11, 0.4684043490E-11),
             geopotentialModelReader.ReadCoefficient(4, 1));
     }
-    
+
     [Fact]
     public void GeopotentialModelReaderException()
     {
         GeopotentialModelReader geopotentialModelReader =
             new GeopotentialModelReader(new FileInfo(Path.Combine(Constants.SolarSystemKernelPath.ToString(), "EGM2008_to70_TideFree")));
-        Assert.Throws<ArgumentException>(()=> geopotentialModelReader.ReadCoefficient(4, 5));
+        Assert.Throws<ArgumentException>(() => geopotentialModelReader.ReadCoefficient(4, 5));
     }
-    
+
     [Fact]
     public void IsOccultedNone()
     {
         Assert.Equal(OccultationType.None, CelestialItem.IsOcculted(3.0, 2.0, 4.0));
         Assert.Equal(OccultationType.None, CelestialItem.IsOcculted(3.0, 4.0, 2.0));
     }
-    
+
     [Fact]
     public void IsOccultedPartial()
     {
         Assert.Equal(OccultationType.Partial, CelestialItem.IsOcculted(2.0, 2.0, 4.0));
         Assert.Equal(OccultationType.Partial, CelestialItem.IsOcculted(2.0, 4.0, 2.0));
     }
-    
+
     [Fact]
     public void IsOccultedFull()
     {
         Assert.Equal(OccultationType.Full, CelestialItem.IsOcculted(1.0, 2.0, 4.0));
     }
-    
+
     [Fact]
     public void IsOccultedAnnular()
     {
         Assert.Equal(OccultationType.Annular, CelestialItem.IsOcculted(1.0, 4.0, 2.0));
+    }
+
+    [Fact]
+    public void EarthAirTemperature()
+    {
+        Assert.Equal(15.04, TestHelpers.EarthAtJ2000.GetAirTemperature(0.0),9);
+        Assert.Equal(-56.46, TestHelpers.EarthAtJ2000.GetAirTemperature(12000.0),9);
+        Assert.Equal(-41.51, TestHelpers.EarthAtJ2000.GetAirTemperature(30000.0),9);
+    }
+    
+    [Fact]
+    public void EarthAirPressure()
+    {
+        Assert.Equal(101.49344845410143, TestHelpers.EarthAtJ2000.GetAirPressure(0.0));
+        Assert.Equal(19.417211275909512, TestHelpers.EarthAtJ2000.GetAirPressure(12000.0));
+        Assert.Equal(1.1583293266743089, TestHelpers.EarthAtJ2000.GetAirPressure(30000.0));
+    }
+    
+    [Fact]
+    public void EarthAirDensity()
+    {
+        Assert.Equal(1.2275199342947976, TestHelpers.EarthAtJ2000.GetAirDensity(0.0));
+        Assert.Equal(0.3123326876175731, TestHelpers.EarthAtJ2000.GetAirDensity(12000.0));
+        Assert.Equal(0.017429621153374267, TestHelpers.EarthAtJ2000.GetAirDensity(30000.0));
+    }
+    
+    [Fact]
+    public void MarsAirTemperature()
+    {
+        MarsAtmosphericModel model = new MarsAtmosphericModel();
+        Assert.Equal(-31.00, model.GetTemperature(0.0),9);
+        Assert.Equal(-90.00, model.GetTemperature(30000.0),9);
+    }
+    
+    [Fact]
+    public void MarsAirPressure()
+    {
+        MarsAtmosphericModel model = new MarsAtmosphericModel();
+        Assert.Equal(0.699, model.GetPressure(0.0));
+        Assert.Equal(0.046976653405085077, model.GetPressure(30000.0));
+    }
+    
+    [Fact]
+    public void MarsAirDensity()
+    {
+        MarsAtmosphericModel model = new MarsAtmosphericModel();
+        Assert.Equal(0.015026759563140498, model.GetDensity(0.0));
+        Assert.Equal(0.0013352044980975983, model.GetDensity(30000.0));
     }
 }
