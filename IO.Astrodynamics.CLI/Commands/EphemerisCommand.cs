@@ -93,7 +93,7 @@ public class EphemerisCommand
     {
         API.Instance.LoadKernels(new DirectoryInfo(kernelsPath));
 
-        var localizableObject = Helpers.CreateLocalizable(objectId);
+        var localizableObject = Helpers.CreateLocalizable(objectId) as CelestialBody;
 
         var celestialBody = new CelestialBody(celestialBodyId);
         var abe = Enum.Parse<Aberration>(aberration, true);

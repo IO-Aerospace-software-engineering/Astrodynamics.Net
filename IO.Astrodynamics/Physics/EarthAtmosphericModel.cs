@@ -16,7 +16,7 @@ public class EarthAtmosphericModel : AtmosphericModel
             return -56.46;
         }
 
-        return -131.21 + 0.00299 * altitude;
+        return double.Min(-131.21 + 0.00299 * altitude, 2200.0);
     }
 
     public override double GetPressure(double altitude)

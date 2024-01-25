@@ -16,7 +16,7 @@ public class SolarRadiationPressure : ForceBase
     public SolarRadiationPressure(Spacecraft spacecraft)
     {
         _spacecraft = spacecraft ?? throw new ArgumentNullException(nameof(spacecraft));
-        _areaMassRatio = _spacecraft.Area / _spacecraft.Mass;
+        _areaMassRatio = _spacecraft.SectionalArea / _spacecraft.Mass;
         _term1 = Constants.SolarMeanRadiativeLuminosity / (4.0 * System.Math.PI * Constants.C);
     }
 

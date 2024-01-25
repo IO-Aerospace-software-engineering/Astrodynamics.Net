@@ -13,7 +13,6 @@ namespace IO.Astrodynamics.Body
         double AngularSeparation(DateTime epoch, ILocalizable target1, ILocalizable target2, Aberration aberration);
         OrbitalParameters.OrbitalParameters InitialOrbitalParameters { get; }
         IEnumerable<ILocalizable> GetCentersOfMotion();
-        Planetocentric SubObserverPoint(CelestialBody target, DateTime epoch, Aberration aberration);
         double GM { get; }
         double Mass { get; }
 

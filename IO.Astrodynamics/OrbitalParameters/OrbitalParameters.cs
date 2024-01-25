@@ -414,6 +414,12 @@ public abstract class OrbitalParameters : IEquatable<OrbitalParameters>
         return new StateVector(position, velocity, localizable, eph.Epoch, Frame);
     }
 
+    public Planetocentric ToPlanetocentric(Aberration aberration)
+    {
+        var body = Observer as CelestialBody;
+        return ((CelestialBody)Observer).SubObserverPoint(ToFrame(body!.Frame).ToStateVector().Position, Epoch, aberration);
+    }
+
     public override bool Equals(object obj)
     {
         return Equals(obj as OrbitalParameters);

@@ -209,9 +209,9 @@ public abstract class CelestialItem : ILocalizable, IEquatable<CelestialItem>
     /// <param name="epoch"></param>
     /// <param name="aberration"></param>
     /// <returns></returns>
-    public Planetocentric SubObserverPoint(CelestialBody target, DateTime epoch, Aberration aberration)
+    public Planetocentric SubObserverPoint(ILocalizable target, DateTime epoch, Aberration aberration)
     {
-        var position = GetEphemeris(epoch, target, target.Frame, aberration).ToStateVector().Position;
+        var position = GetEphemeris(epoch, target, ((CelestialBody)this).Frame, aberration).ToStateVector().Position;
 
         var lon = System.Math.Atan2(position.Y, position.X);
 
@@ -219,6 +219,16 @@ public abstract class CelestialItem : ILocalizable, IEquatable<CelestialItem>
 
         return new Planetocentric(lon, lat, position.Magnitude());
     }
+    
+    public Planetocentric SubObserverPoint(Vector3 position, DateTime epoch, Aberration aberration)
+    {
+        var lon = System.Math.Atan2(position.Y, position.X);
+
+        var lat = System.Math.Asin(position.Z / position.Magnitude());
+
+        return new Planetocentric(lon, lat, position.Magnitude());
+    }
+    
     public OccultationType? IsOcculted(CelestialItem by, OrbitalParameters.OrbitalParameters from)
     {
         double backSize = this.AngularSize(from.RelativeTo(this, Aberration.LT).ToStateVector().Position.Magnitude());
