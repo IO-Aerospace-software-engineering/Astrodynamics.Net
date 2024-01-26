@@ -9,10 +9,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\IO.Astrodynamics.Tests\IO.Astrodynamics.Tests.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
       <Content Update="Data\SolarSystem\de440s.bsp">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
@@ -113,6 +109,49 @@
       <None Update="Data\SolarSystem\EGM2008_to70_TideFree">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
+      <None Update="Data\SolarSystem\de440s.bsp">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Data\SolarSystem\earth_assoc_itrf93.tf">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Data\SolarSystem\earth_fixed.tf">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Data\SolarSystem\earth_latest_high_prec.bpc">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Data\SolarSystem\earth_topo_201023.tf">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Data\SolarSystem\earthstns_itrf93_201023.bsp">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Data\SolarSystem\geophysical.ker">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Data\SolarSystem\gm_de431.tpc">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Data\SolarSystem\latest_leapseconds.tls">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Data\SolarSystem\moon_080317.tf">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Data\SolarSystem\moon_assoc_me.tf">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Data\SolarSystem\moon_pa_de421_1900-2050.bpc">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="Data\SolarSystem\pck00011.tpc">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\IO.Astrodynamics\IO.Astrodynamics.csproj" />
     </ItemGroup>
 
 </Project>

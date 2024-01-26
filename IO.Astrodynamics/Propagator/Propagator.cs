@@ -2,12 +2,16 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Numerics;
 using IO.Astrodynamics.Body;
 using IO.Astrodynamics.Body.Spacecraft;
+using IO.Astrodynamics.Frames;
 using IO.Astrodynamics.OrbitalParameters;
 using IO.Astrodynamics.Propagator.Forces;
 using IO.Astrodynamics.Propagator.Integrators;
 using IO.Astrodynamics.Time;
+using Vector3 = IO.Astrodynamics.Math.Vector3;
 
 namespace IO.Astrodynamics.Propagator;
 
@@ -21,6 +25,10 @@ public class Propagator
     public Integrator Integrator { get; }
     public TimeSpan DeltaT { get; }
 
+    private uint _dataCacheSize;
+    private StateVector[] _dataCache;
+
+
     public Propagator(Window window, Spacecraft spacecraft, IEnumerable<CelestialBody> celestialBodies, bool includeAtmosphericDrag,
         bool includeSolarRadiationPressure, TimeSpan deltaT)
     {
@@ -33,7 +41,13 @@ public class Propagator
 
         var forces = InitializeForces(includeAtmosphericDrag, includeSolarRadiationPressure);
 
-        Integrator = new VVIntegrator(forces, DeltaT,Spacecraft.InitialOrbitalParameters.AtEpoch(Window.StartDate).ToStateVector());
+        Integrator = new VVIntegrator(forces, DeltaT, Spacecraft.InitialOrbitalParameters.AtEpoch(Window.StartDate).ToStateVector());
+        StateVector stateVector = Spacecraft.InitialOrbitalParameters.AtEpoch(Window.StartDate).ToStateVector();
+        // result.Add(stateVector);
+        _dataCacheSize = (uint)Window.Length.TotalSeconds / (uint)DeltaT.TotalSeconds;
+        _dataCache = new StateVector[_dataCacheSize];
+        Array.Fill(_dataCache, new StateVector(Vector3.Zero, Vector3.Zero, stateVector.Observer, stateVector.Epoch, stateVector.Frame), 0, (int)_dataCacheSize);
+        _dataCache[0] = stateVector;
     }
 
     private List<ForceBase> InitializeForces(bool includeAtmosphericDrag, bool includeSolarRadiationPressure)
@@ -59,15 +73,12 @@ public class Propagator
 
     public IEnumerable<StateVector> Propagate()
     {
-        List<StateVector> result = new List<StateVector>();
-        StateVector stateVector = Spacecraft.InitialOrbitalParameters.AtEpoch(Window.StartDate).ToStateVector();
-        result.Add(stateVector);
-        for (DateTime epoch = Window.StartDate; epoch < Window.EndDate; epoch += DeltaT)
+        for (int i = 1; i < _dataCacheSize; i++)
         {
-            stateVector = Integrator.Integrate(stateVector);
-            result.Add(stateVector);
+            Integrator.Integrate(_dataCache, i);
         }
 
-        return result;
+        // return results;
+        return _dataCache;
     }
 }

@@ -42,7 +42,7 @@ public abstract class OrbitalParameters : IEquatable<OrbitalParameters>
     /// <param name="observer"></param>
     /// <param name="epoch"></param>
     /// <param name="frame"></param>
-    protected OrbitalParameters(ILocalizable observer, DateTime epoch, Frame frame)
+    protected OrbitalParameters(ILocalizable observer, in DateTime epoch, Frame frame)
     {
         Observer = observer ?? throw new ArgumentNullException(nameof(observer));
         Epoch = epoch;

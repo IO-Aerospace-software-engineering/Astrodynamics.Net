@@ -1,6 +1,8 @@
-﻿using IO.Astrodynamics.Body;
+﻿using System.Numerics;
+using IO.Astrodynamics.Body;
 using IO.Astrodynamics.Math;
 using IO.Astrodynamics.OrbitalParameters;
+using Vector3 = IO.Astrodynamics.Math.Vector3;
 
 namespace IO.Astrodynamics.Propagator.Forces;
 

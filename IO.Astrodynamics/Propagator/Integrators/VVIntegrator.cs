@@ -2,19 +2,22 @@
 
 using System;
 using System.Collections.Generic;
-using IO.Astrodynamics.Math;
+using System.Linq;
+using System.Numerics;
 using IO.Astrodynamics.OrbitalParameters;
 using IO.Astrodynamics.Propagator.Forces;
+using Vector3 = IO.Astrodynamics.Math.Vector3;
 
 namespace IO.Astrodynamics.Propagator.Integrators;
 
-public class VVIntegrator : Integrator
+public sealed class VVIntegrator : Integrator
 {
     public TimeSpan DeltaT { get; }
     public double DeltaTs { get; }
-    public TimeSpan HalfDeltaT { get; }
     public double HalfDeltaTs { get; }
     private Vector3 _acceleration;
+    private Vector3 _position;
+    private Vector3 _velocity;
 
     public VVIntegrator(IEnumerable<ForceBase> forces, TimeSpan deltaT, StateVector initialState) : base(forces)
     {
@@ -27,22 +30,34 @@ public class VVIntegrator : Integrator
         }
     }
 
-    public override StateVector Integrate(StateVector stateVector)
+    public override void Integrate(StateVector [] result, int idx)
     {
         //Set initial parameters
-        var position = stateVector.Position;
-        var velocity = stateVector.Velocity;
-        var nextEpoch = stateVector.Epoch + DeltaT;
+        var element = result[idx - 1];
+        _position = element.Position;
+        _velocity = element.Velocity;
 
-        velocity = velocity + _acceleration * HalfDeltaTs;
+        _velocity += _acceleration * HalfDeltaTs;
 
-        position = position + velocity * DeltaTs;
+        _position += _velocity * DeltaTs;
 
-        _acceleration = ComputeAcceleration(stateVector);
+        _acceleration = ComputeAcceleration(element);
 
-        velocity = velocity + _acceleration * HalfDeltaTs;
+        _velocity += _acceleration * HalfDeltaTs;
 
-        //Create new state vector
-        return new StateVector(position, velocity, stateVector.Observer, nextEpoch, stateVector.Frame);
+        result[idx].Position = _position;
+        result[idx].Velocity = _velocity;
+    }
+
+    public struct SV
+    {
+        public Vector3 Position;
+        public Vector3 Velocity;
+
+        public SV(Vector3 position, Vector3 velocity)
+        {
+            Position = position;
+            Velocity = velocity;
+        }
     }
 }

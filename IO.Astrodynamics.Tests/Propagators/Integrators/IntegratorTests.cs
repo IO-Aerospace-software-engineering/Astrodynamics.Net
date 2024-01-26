@@ -2,13 +2,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.Numerics;
 using IO.Astrodynamics.Body.Spacecraft;
-using IO.Astrodynamics.Math;
 using IO.Astrodynamics.OrbitalParameters;
 using IO.Astrodynamics.Propagator.Forces;
 using IO.Astrodynamics.Propagator.Integrators;
 using IO.Astrodynamics.Time;
 using Xunit;
+using Vector3 = IO.Astrodynamics.Math.Vector3;
 
 namespace IO.Astrodynamics.Tests.Propagators.Integrators;
 
@@ -35,11 +36,12 @@ public class IntegratorTests
         forces.Add(new GravitationalAcceleration(earth));
         forces.Add(new AtmosphericDrag(spc));
         forces.Add(new SolarRadiationPressure(spc));
-        VVIntegrator vvIntegrator = new VVIntegrator(forces, TimeSpan.FromSeconds(1.0),spc.InitialOrbitalParameters.ToStateVector());
+        VVIntegrator vvIntegrator = new VVIntegrator(forces, TimeSpan.FromSeconds(1.0), spc.InitialOrbitalParameters.ToStateVector());
         TimeSpan deltaT = TimeSpan.FromSeconds(1.0);
-        var res = vvIntegrator.Integrate(spc.InitialOrbitalParameters.ToStateVector());
-        Assert.Equal(new StateVector(new Vector3(6799995.689837386, 7656.2176410373559, -0.001202574270660037),
-            new Vector3(-8.620325227957231, 7656.2148637779974, -0.002405148541320074), earth,
-            DateTimeExtension.J2000 + deltaT, Frames.Frame.ICRF), res);
+        StateVector[] data = new StateVector[2];
+        Array.Fill(data, spc.InitialOrbitalParameters.ToStateVector(), 0, 2);
+        vvIntegrator.Integrate(data, 1);
+        Assert.Equal(new Vector3(6799995.689837386, 7656.2176410373559, -0.001202574270660037), data[1].Position);
+        Assert.Equal(new Vector3(-8.620325227957231, 7656.2148637779974, -0.002405148541320074), data[1].Velocity);
     }
 }
