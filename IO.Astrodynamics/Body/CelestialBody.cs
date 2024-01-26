@@ -38,8 +38,10 @@ public class CelestialBody : CelestialItem, IOrientable
     /// Instantiate celestial body from naif object with default parameters (Ecliptic J2000 at J2000 epoch)
     /// </summary>
     /// <param name="naifObject"></param>
-    /// <param name="geopotentialModelPath"></param>
-    public CelestialBody(NaifObject naifObject, string geopotentialModelPath = "", AtmosphericModel atmosphericModel = null) : this(naifObject.NaifId, geopotentialModelPath,
+    /// <param name="geopotentialModelParameters"></param>
+    /// <param name="atmosphericModel"></param>
+    public CelestialBody(NaifObject naifObject, GeopotentialModelParameters geopotentialModelParameters = null, AtmosphericModel atmosphericModel = null) : this(naifObject.NaifId,
+        geopotentialModelParameters,
         atmosphericModel)
     {
     }
@@ -48,8 +50,11 @@ public class CelestialBody : CelestialItem, IOrientable
     /// Instantiate celestial body from naif id with default parameters (Ecliptic J2000 at J2000 epoch)
     /// </summary>
     /// <param name="naifId"></param>
-    public CelestialBody(int naifId, string geopotentialModelPath = "", AtmosphericModel atmosphericModel = null) : this(naifId, Frame.ECLIPTIC_J2000, DateTimeExtension.J2000,
-        geopotentialModelPath, atmosphericModel)
+    /// <param name="geopotentialModelParameters"></param>
+    /// <param name="atmosphericModel"></param>
+    public CelestialBody(int naifId, GeopotentialModelParameters geopotentialModelParameters = null, AtmosphericModel atmosphericModel = null) : this(naifId, Frame.ECLIPTIC_J2000,
+        DateTimeExtension.J2000,
+        geopotentialModelParameters, atmosphericModel)
     {
     }
 
@@ -59,8 +64,11 @@ public class CelestialBody : CelestialItem, IOrientable
     /// <param name="naifObject"></param>
     /// <param name="frame"></param>
     /// <param name="epoch"></param>
-    public CelestialBody(NaifObject naifObject, Frame frame, DateTime epoch, string geopotentialModelPath = "", AtmosphericModel atmosphericModel = null) : this(naifObject.NaifId,
-        frame, epoch, geopotentialModelPath, atmosphericModel)
+    /// <param name="geopotentialModelParameters"></param>
+    /// <param name="atmosphericModel"></param>
+    public CelestialBody(NaifObject naifObject, Frame frame, DateTime epoch, GeopotentialModelParameters geopotentialModelParameters = null,
+        AtmosphericModel atmosphericModel = null) : this(naifObject.NaifId,
+        frame, epoch, geopotentialModelParameters, atmosphericModel)
     {
     }
 
@@ -70,8 +78,10 @@ public class CelestialBody : CelestialItem, IOrientable
     /// <param name="naifId"></param>
     /// <param name="frame"></param>
     /// <param name="epoch"></param>
-    /// <param name="geopotentialModelPath"></param>
-    public CelestialBody(int naifId, Frame frame, DateTime epoch, string geopotentialModelPath = "", AtmosphericModel atmosphericModel = null) : base(naifId, frame, epoch)
+    /// <param name="geopotentialModelParameters"></param>
+    /// <param name="atmosphericModel"></param>
+    public CelestialBody(int naifId, Frame frame, DateTime epoch, GeopotentialModelParameters geopotentialModelParameters = null, AtmosphericModel atmosphericModel = null) :
+        base(naifId, frame, epoch)
     {
         PolarRadius = ExtendedInformation.Radii.Z;
         EquatorialRadius = ExtendedInformation.Radii.X;
@@ -90,8 +100,8 @@ public class CelestialBody : CelestialItem, IOrientable
             : new Frame(ExtendedInformation.FrameName);
 
         UpdateSphereOfInfluence();
-        GravitationalField = !string.IsNullOrEmpty(geopotentialModelPath) && Path.Exists(geopotentialModelPath)
-            ? new GeopotentialGravitationalField(new FileInfo(geopotentialModelPath))
+        GravitationalField = geopotentialModelParameters != null
+            ? new GeopotentialGravitationalField(new FileInfo(geopotentialModelParameters.GeopotentialModelPath),geopotentialModelParameters.GeopotentialDegree)
             : new GravitationalField();
         AtmosphericModel = atmosphericModel;
     }

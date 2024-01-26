@@ -209,9 +209,9 @@ public abstract class CelestialItem : ILocalizable, IEquatable<CelestialItem>
     /// <param name="epoch"></param>
     /// <param name="aberration"></param>
     /// <returns></returns>
-    public Planetocentric SubObserverPoint(ILocalizable target, DateTime epoch, Aberration aberration)
+    public Planetocentric SubObserverPoint(CelestialBody target, DateTime epoch, Aberration aberration)
     {
-        var position = GetEphemeris(epoch, target, ((CelestialBody)this).Frame, aberration).ToStateVector().Position;
+        var position = GetEphemeris(epoch, target, target.Frame, aberration).ToStateVector().Position;
 
         var lon = System.Math.Atan2(position.Y, position.X);
 

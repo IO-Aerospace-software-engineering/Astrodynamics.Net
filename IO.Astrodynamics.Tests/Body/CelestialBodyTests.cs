@@ -53,7 +53,7 @@ public class CelestialBodyTests
     [Fact]
     public void CreateFromNaifObject()
     {
-        CelestialBody moon = new CelestialBody(PlanetsAndMoons.MOON);
+        CelestialBody moon = new CelestialBody( PlanetsAndMoons.MOON);
         Assert.Equal("MOON", moon.Name);
         Assert.Equal(301, moon.NaifId);
         Assert.Equal(0.0, moon.Flattening);
@@ -149,9 +149,9 @@ public class CelestialBodyTests
     [Fact]
     public void Equality()
     {
-        var earth1 = new CelestialBody(PlanetsAndMoons.EARTH);
-        var earth2 = new CelestialBody(PlanetsAndMoons.EARTH);
-        var moon = new CelestialBody(PlanetsAndMoons.MOON);
+        var earth1 = new CelestialBody( PlanetsAndMoons.EARTH);
+        var earth2 = new CelestialBody( PlanetsAndMoons.EARTH);
+        var moon = new CelestialBody( PlanetsAndMoons.MOON);
         Assert.Equal(earth1, earth2);
         Assert.NotEqual(earth1, moon);
         Assert.False(earth1 == null);
@@ -167,7 +167,7 @@ public class CelestialBodyTests
     [Fact]
     public void GetEphemeris()
     {
-        var earth = new CelestialBody(PlanetsAndMoons.EARTH);
+        var earth = new CelestialBody( PlanetsAndMoons.EARTH);
         var res = earth.GetEphemeris(new Window(DateTimeExtension.J2000, TimeSpan.FromDays(1.0)), TestHelpers.Sun, Frames.Frame.ICRF, Aberration.None,
             TimeSpan.FromDays(1.0)).ToArray();
         Assert.Equal(2, res.Length);
@@ -367,25 +367,25 @@ public class CelestialBodyTests
     [Fact]
     public void EarthAirTemperature()
     {
-        Assert.Equal(15.04, TestHelpers.EarthAtJ2000.GetAirTemperature(0.0),9);
-        Assert.Equal(-56.46, TestHelpers.EarthAtJ2000.GetAirTemperature(12000.0),9);
-        Assert.Equal(-41.51, TestHelpers.EarthAtJ2000.GetAirTemperature(30000.0),9);
+        Assert.Equal(15.04, TestHelpers.EarthWithAtmAndGeoAtJ2000.GetAirTemperature(0.0),9);
+        Assert.Equal(-56.46, TestHelpers.EarthWithAtmAndGeoAtJ2000.GetAirTemperature(12000.0),9);
+        Assert.Equal(-41.51, TestHelpers.EarthWithAtmAndGeoAtJ2000.GetAirTemperature(30000.0),9);
     }
     
     [Fact]
     public void EarthAirPressure()
     {
-        Assert.Equal(101.49344845410143, TestHelpers.EarthAtJ2000.GetAirPressure(0.0));
-        Assert.Equal(19.417211275909512, TestHelpers.EarthAtJ2000.GetAirPressure(12000.0));
-        Assert.Equal(1.1583293266743089, TestHelpers.EarthAtJ2000.GetAirPressure(30000.0));
+        Assert.Equal(101.49344845410143, TestHelpers.EarthWithAtmAndGeoAtJ2000.GetAirPressure(0.0));
+        Assert.Equal(19.417211275909512, TestHelpers.EarthWithAtmAndGeoAtJ2000.GetAirPressure(12000.0));
+        Assert.Equal(1.1583293266743089, TestHelpers.EarthWithAtmAndGeoAtJ2000.GetAirPressure(30000.0));
     }
     
     [Fact]
     public void EarthAirDensity()
     {
-        Assert.Equal(1.2275199342947976, TestHelpers.EarthAtJ2000.GetAirDensity(0.0));
-        Assert.Equal(0.3123326876175731, TestHelpers.EarthAtJ2000.GetAirDensity(12000.0));
-        Assert.Equal(0.017429621153374267, TestHelpers.EarthAtJ2000.GetAirDensity(30000.0));
+        Assert.Equal(1.2275199342947976, TestHelpers.EarthWithAtmAndGeoAtJ2000.GetAirDensity(0.0));
+        Assert.Equal(0.3123326876175731, TestHelpers.EarthWithAtmAndGeoAtJ2000.GetAirDensity(12000.0));
+        Assert.Equal(0.017429621153374267, TestHelpers.EarthWithAtmAndGeoAtJ2000.GetAirDensity(30000.0));
     }
     
     [Fact]

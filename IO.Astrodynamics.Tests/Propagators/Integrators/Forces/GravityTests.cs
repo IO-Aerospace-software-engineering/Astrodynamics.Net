@@ -18,7 +18,7 @@ public class GravityTests
     [Fact]
     public void ComputeAcceleration()
     {
-        var earth = new CelestialBody(399, Path.Combine(Constants.SolarSystemKernelPath.ToString(), "EGM2008_to70_TideFree"));
+        var earth = new CelestialBody(399, new GeopotentialModelParameters(Path.Combine(Constants.SolarSystemKernelPath.ToString(), "EGM2008_to70_TideFree"),70));
         GravitationalAcceleration gravitationalAcceleration =
             new GravitationalAcceleration(earth);
         

@@ -53,8 +53,4 @@
       </Content>
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="Propagator\Integrators\" />
-    </ItemGroup>
-
 </Project>

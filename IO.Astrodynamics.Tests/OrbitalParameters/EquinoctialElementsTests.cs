@@ -16,7 +16,7 @@ public class EquinoctialElementsTests
     [Fact]
     public void Create()
     {
-        CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH);
+        CelestialBody earth = new CelestialBody( PlanetsAndMoons.EARTH);
         var epoch = DateTime.UtcNow;
         EquinoctialElements equ = new EquinoctialElements(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, earth, epoch, Frames.Frame.ICRF);
         Assert.Equal(1.0, equ.P);
@@ -33,7 +33,7 @@ public class EquinoctialElementsTests
     [Fact]
     public void ToEquinoctial()
     {
-        CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH);
+        CelestialBody earth = new CelestialBody( PlanetsAndMoons.EARTH);
         KeplerianElements ke = new KeplerianElements(6800.81178582, 0.00134, 51.71 * IO.Astrodynamics.Constants.Deg2Rad, 32.57 * IO.Astrodynamics.Constants.Deg2Rad,
             105.64 * IO.Astrodynamics.Constants.Deg2Rad, 46.029 * IO.Astrodynamics.Constants.Deg2Rad, earth, DateTime.UtcNow, Frames.Frame.ICRF);
         EquinoctialElements equ = ke.ToEquinoctial();
@@ -48,7 +48,7 @@ public class EquinoctialElementsTests
     [Fact]
     public void Equality()
     {
-        CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH);
+        CelestialBody earth = new CelestialBody( PlanetsAndMoons.EARTH);
         KeplerianElements ke = new KeplerianElements(6800.81178582, 0.00134, 51.71 * IO.Astrodynamics.Constants.Deg2Rad, 32.57 * IO.Astrodynamics.Constants.Deg2Rad,
             105.64 * IO.Astrodynamics.Constants.Deg2Rad, 46.029 * IO.Astrodynamics.Constants.Deg2Rad, earth, DateTime.UtcNow, Frames.Frame.ICRF);
         EquinoctialElements equ = ke.ToEquinoctial();

@@ -18,7 +18,7 @@ namespace IO.Astrodynamics.Tests.Maneuvers
         [Fact]
         public void Create()
         {
-            CelestialBody sun = new CelestialBody(Stars.Sun);
+            CelestialBody sun = new CelestialBody( Stars.Sun);
 
             var ke = new KeplerianElements(150000000.0, 0.0, 0.0, 0.0, 0.0, 0.0, sun, new DateTime(2021, 01, 01), Frames.Frame.ECLIPTIC_J2000);
             Clock clk1 = new Clock("My clock", 1.0 / 256.0);

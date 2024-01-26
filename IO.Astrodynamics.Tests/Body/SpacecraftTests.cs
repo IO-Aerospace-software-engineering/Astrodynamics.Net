@@ -52,7 +52,7 @@ namespace IO.Astrodynamics.Tests.Body
         [Fact]
         public void Create2()
         {
-            CelestialBody sun = new CelestialBody(Stars.Sun);
+            CelestialBody sun = new CelestialBody( Stars.Sun);
 
             var ke = new KeplerianElements(150000000.0, 0.0, 0.0, 0.0, 0.0, 0.0, sun, DateTime.UtcNow,
                 Frames.Frame.ECLIPTIC_J2000);
