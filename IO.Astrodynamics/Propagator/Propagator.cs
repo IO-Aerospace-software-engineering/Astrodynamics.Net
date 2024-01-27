@@ -46,8 +46,14 @@ public class Propagator
         // result.Add(stateVector);
         _dataCacheSize = (uint)Window.Length.TotalSeconds / (uint)DeltaT.TotalSeconds;
         _dataCache = new StateVector[_dataCacheSize];
-        Array.Fill(_dataCache, new StateVector(Vector3.Zero, Vector3.Zero, stateVector.Observer, stateVector.Epoch, stateVector.Frame), 0, (int)_dataCacheSize);
+        
+        Array.Fill(_dataCache, new StateVector(Vector3.Zero, Vector3.Zero, stateVector.Observer, stateVector.Epoch, stateVector.Frame));
         _dataCache[0] = stateVector;
+        for (int i = 1; i < _dataCacheSize; i++)
+        {
+                _dataCache[i] = new StateVector(Vector3.Zero, Vector3.Zero, stateVector.Observer, stateVector.Epoch, stateVector.Frame);
+        }
+        
     }
 
     private List<ForceBase> InitializeForces(bool includeAtmosphericDrag, bool includeSolarRadiationPressure)
@@ -77,8 +83,9 @@ public class Propagator
         {
             Integrator.Integrate(_dataCache, i);
         }
+        
+        
 
-        // return results;
         return _dataCache;
     }
 }
