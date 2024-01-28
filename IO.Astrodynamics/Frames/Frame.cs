@@ -6,6 +6,7 @@ namespace IO.Astrodynamics.Frames;
 public class Frame : IEquatable<Frame>
 {
     public string Name { get; }
+    public int? Id { get; }
 
     public static readonly Frame ICRF = new Frame("J2000");
     public static readonly Frame ECLIPTIC_B1950 = new Frame("ECLIPB1950");
@@ -14,13 +15,15 @@ public class Frame : IEquatable<Frame>
     public static readonly Frame B1950 = new Frame("B1950");
     public static readonly Frame FK4 = new Frame("FK4");
 
-    public Frame(string name)
+    public Frame(string name, int? id = null)
     {
         if (string.IsNullOrEmpty(name))
         {
             throw new ArgumentException("Frame must have a name");
         }
+
         Name = name;
+        Id = id;
     }
 
     public StateOrientation ToFrame(Frame frame, DateTime epoch)
@@ -32,7 +35,7 @@ public class Frame : IEquatable<Frame>
     {
         return Name;
     }
-    
+
     public bool Equals(Frame other)
     {
         if (ReferenceEquals(null, other)) return false;

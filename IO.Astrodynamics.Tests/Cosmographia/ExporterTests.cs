@@ -52,7 +52,8 @@ public class ExporterTests
         scenario.AddAdditionalCelestialBody(TestHelpers.Sun);
         scenario.AddAdditionalCelestialBody(TestHelpers.MoonAtJ2000);
         scenario.AddAdditionalCelestialBody(TestHelpers.EarthWithAtmAndGeoAtJ2000);
-        scenario.Simulate(Constants.OutputPath, true, true, true);
+        
+        await scenario.SimulateWithoutManeueverAsync(Constants.OutputPath, true, true);
 
         CosmographiaExporter exporter = new CosmographiaExporter();
         await exporter.ExportAsync(scenario, new DirectoryInfo("CosmographiaExport"));

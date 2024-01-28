@@ -1,5 +1,8 @@
 using System;
+using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Threading.Tasks;
 using IO.Astrodynamics.Body;
 using IO.Astrodynamics.Body.Spacecraft;
 using IO.Astrodynamics.Math;
@@ -52,7 +55,7 @@ namespace IO.Astrodynamics.Tests.Body
         [Fact]
         public void Create2()
         {
-            CelestialBody sun = new CelestialBody( Stars.Sun);
+            CelestialBody sun = new CelestialBody(Stars.Sun);
 
             var ke = new KeplerianElements(150000000.0, 0.0, 0.0, 0.0, 0.0, 0.0, sun, DateTime.UtcNow,
                 Frames.Frame.ECLIPTIC_J2000);
@@ -365,6 +368,25 @@ namespace IO.Astrodynamics.Tests.Body
             var spacecraft = new Spacecraft(-845, "moonlander", 1200, 5000, clk1, sv);
             var res = spacecraft.GetCentersOfMotion();
             Assert.Equal(3, res.Count());
+        }
+
+        [Fact]
+        public async Task CreateSpacecraftFrame()
+        {
+            var frame = new SpacecraftFrame("test", -350, "spc1");
+            Assert.Equal("test", frame.Name);
+            Assert.Equal(-350, frame.SpacecraftId);
+            Assert.Equal(-350000, frame.Id);
+        }
+
+        [Fact]
+        public async Task WriteSpacecraftFrame()
+        {
+            var frame = new SpacecraftFrame("test", -350, "spc1");
+            await frame.WriteAsync(new FileInfo("test.tf"));
+            TextReader tr = new StreamReader("test.tf");
+            var res = await tr.ReadToEndAsync();
+            Assert.Equal("KPL/FK\n\\begindata\nFRAME_test   = -350000\nFRAME_-350000_NAME      = 'test'\nFRAME_-350000_CLASS     =  3\nFRAME_-350000_CLASS_ID  = -350000\nFRAME_-350000_CENTER    = -350\nCK_-350000_SCLK         = -350\nCK_-350000_SPK          = -350\nOBJECT_-350_FRAME       = 'test'\nNAIF_BODY_NAME              += 'test'\nNAIF_BODY_CODE              += -350000\nNAIF_BODY_NAME              += 'spc1'\nNAIF_BODY_CODE              += -350\n\\begintext", res);
         }
     }
 }

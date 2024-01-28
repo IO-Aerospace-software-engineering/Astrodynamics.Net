@@ -42,18 +42,14 @@ public class Propagator
         var forces = InitializeForces(includeAtmosphericDrag, includeSolarRadiationPressure);
 
         Integrator = new VVIntegrator(forces, DeltaT, Spacecraft.InitialOrbitalParameters.AtEpoch(Window.StartDate).ToStateVector());
-        StateVector stateVector = Spacecraft.InitialOrbitalParameters.AtEpoch(Window.StartDate).ToStateVector();
-        // result.Add(stateVector);
         _dataCacheSize = (uint)Window.Length.TotalSeconds / (uint)DeltaT.TotalSeconds;
         _dataCache = new StateVector[_dataCacheSize];
-        
-        Array.Fill(_dataCache, new StateVector(Vector3.Zero, Vector3.Zero, stateVector.Observer, stateVector.Epoch, stateVector.Frame));
+        StateVector stateVector = Spacecraft.InitialOrbitalParameters.AtEpoch(Window.StartDate).ToStateVector();
         _dataCache[0] = stateVector;
         for (int i = 1; i < _dataCacheSize; i++)
         {
-                _dataCache[i] = new StateVector(Vector3.Zero, Vector3.Zero, stateVector.Observer, stateVector.Epoch, stateVector.Frame);
+            _dataCache[i] = new StateVector(Vector3.Zero, Vector3.Zero, stateVector.Observer, Window.StartDate + (i * DeltaT), stateVector.Frame);
         }
-        
     }
 
     private List<ForceBase> InitializeForces(bool includeAtmosphericDrag, bool includeSolarRadiationPressure)
@@ -83,8 +79,7 @@ public class Propagator
         {
             Integrator.Integrate(_dataCache, i);
         }
-        
-        
+
 
         return _dataCache;
     }

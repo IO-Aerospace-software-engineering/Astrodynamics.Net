@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using IO.Astrodynamics.Frames;
 using IO.Astrodynamics.Math;
 using IO.Astrodynamics.OrbitalParameters;
@@ -63,7 +65,7 @@ namespace IO.Astrodynamics.Body.Spacecraft
             ArgumentOutOfRangeException.ThrowIfNegativeOrZero(sectionalArea);
             MaximumOperatingMass = maximumOperatingMass;
             Clock = clock ?? throw new ArgumentNullException(nameof(clock));
-            Frame = new Frame($"{name}_SPACECRAFT");
+            Frame = new SpacecraftFrame($"{name}_SPACECRAFT", naifId, name);
             SectionalArea = sectionalArea;
             DragCoefficient = dragCoeff;
         }
@@ -259,6 +261,11 @@ namespace IO.Astrodynamics.Body.Spacecraft
             }
 
             return new SpacecraftSummary(this, maneuverWindow, fuel);
+        }
+
+        internal async Task WriteFrameAsync(FileInfo outputFile)
+        {
+            await (Frame as SpacecraftFrame)!.WriteAsync(outputFile);
         }
     }
 }

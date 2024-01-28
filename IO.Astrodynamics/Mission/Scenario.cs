@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using IO.Astrodynamics.Surface;
 using IO.Astrodynamics.Time;
 
@@ -82,11 +83,31 @@ namespace IO.Astrodynamics.Mission
         /// Propagate this scenario
         /// </summary>
         /// <param name="outputDirectory">Output folder used to write files</param>
-        /// <param name="withoutManeuver"></param>
-        /// <param name="withAtmosphericDrag"></param>
-        /// <param name="withSolarRadiationPressure"></param>
         /// <exception cref="InvalidOperationException"></exception>
-        public ScenarioSummary Simulate(DirectoryInfo outputDirectory, bool withoutManeuver = false, bool withAtmosphericDrag = false, bool withSolarRadiationPressure = false)
+        public ScenarioSummary Simulate(DirectoryInfo outputDirectory)
+        {
+            InitializeDirectories(outputDirectory);
+
+            try
+            {
+                API.Instance.PropagateScenario(this, SiteDirectory, SpacecraftDirectory);
+            }
+            finally
+            {
+                API.Instance.UnloadKernels(SiteDirectory);
+                API.Instance.UnloadKernels(SpacecraftDirectory);
+            }
+
+            ScenarioSummary scenarioSummary = new ScenarioSummary(this.Window, SiteDirectory, SpacecraftDirectory);
+            foreach (var spacecraft in _spacecrafts)
+            {
+                scenarioSummary.AddSpacecraftSummary(spacecraft.GetSummary());
+            }
+
+            return scenarioSummary;
+        }
+
+        private void InitializeDirectories(DirectoryInfo outputDirectory)
         {
             RootDirectory = null;
             SpacecraftDirectory = null;
@@ -100,21 +121,24 @@ namespace IO.Astrodynamics.Mission
             RootDirectory = outputDirectory.CreateSubdirectory(Mission.Name).CreateSubdirectory(this.Name);
             SpacecraftDirectory = RootDirectory.CreateSubdirectory("Spacecrafts");
             SiteDirectory = RootDirectory.CreateSubdirectory("Sites");
+        }
+
+        public async Task<ScenarioSummary> SimulateWithoutManeueverAsync(DirectoryInfo outputDirectory, bool withAtmosphericDrag = false, bool withSolarRadiationPressure = false)
+        {
+            InitializeDirectories(outputDirectory);
 
             try
             {
-                if (withoutManeuver)
-                {
-                    var spacecraft = _spacecrafts.First();
-                    Propagator.Propagator propagator = new Propagator.Propagator(Window, spacecraft, _additionalCelestialBodies, withAtmosphericDrag,
-                        withSolarRadiationPressure, TimeSpan.FromSeconds(1.0));
-                    var stateVectors = propagator.Propagate();
-                    API.Instance.WriteEphemeris(new FileInfo(Path.Combine(RootDirectory.FullName, spacecraft.Name)), spacecraft, stateVectors);
-                }
-                else
-                {
-                    API.Instance.PropagateScenario(this, SiteDirectory, SpacecraftDirectory);
-                }
+                var spacecraft = _spacecrafts.First();
+                Propagator.Propagator propagator = new Propagator.Propagator(Window, spacecraft, _additionalCelestialBodies, withAtmosphericDrag,
+                    withSolarRadiationPressure, TimeSpan.FromSeconds(1.0));
+                var stateVectors = propagator.Propagate();
+
+                //Write frame
+                await spacecraft.WriteFrameAsync(new FileInfo(SpacecraftDirectory.CreateSubdirectory("Frames") + "/" + spacecraft.Name + ".tf"));
+
+                //Write Ephemeris
+                API.Instance.WriteEphemeris(new FileInfo(SpacecraftDirectory + "/" + spacecraft.Name + ".spk"), spacecraft, stateVectors);
             }
             finally
             {

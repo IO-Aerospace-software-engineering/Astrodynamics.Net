@@ -53,4 +53,9 @@
       </Content>
     </ItemGroup>
 
+    <ItemGroup>
+      <None Remove="Templates\FrameTemplate.tf" />
+      <EmbeddedResource Include="Templates\FrameTemplate.tf" />
+    </ItemGroup>
+
 </Project>
