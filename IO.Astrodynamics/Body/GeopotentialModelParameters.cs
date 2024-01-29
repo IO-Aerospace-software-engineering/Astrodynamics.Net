@@ -1,15 +1,22 @@
 // Copyright 2024. Sylvain Guillet (sylvain.guillet@tutamail.com)
 
+using System.IO;
+
 namespace IO.Astrodynamics.Body;
 
 public class GeopotentialModelParameters
 {
-    public GeopotentialModelParameters(string geopotentialModelPath, ushort geopotentialDegree = 60)
+    public GeopotentialModelParameters(string geopotentialModelPath, ushort geopotentialDegree = 60) : this(new FileStream(geopotentialModelPath, FileMode.Open),
+        geopotentialDegree)
     {
-        GeopotentialModelPath = geopotentialModelPath;
+    }
+
+    public GeopotentialModelParameters(Stream geopotentialModelStream, ushort geopotentialDegree = 60)
+    {
+        GeopotentialModelPath = new StreamReader(geopotentialModelStream);
         GeopotentialDegree = geopotentialDegree;
     }
 
-    public string GeopotentialModelPath { get; }
+    public StreamReader GeopotentialModelPath { get; }
     public ushort GeopotentialDegree { get; }
 }

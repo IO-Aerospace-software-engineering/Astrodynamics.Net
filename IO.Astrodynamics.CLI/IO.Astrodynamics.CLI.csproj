@@ -35,4 +35,9 @@
       </None>
     </ItemGroup>
 
+    <ItemGroup>
+      <None Remove="Data\EGM2008_to100_TideFree.txt" />
+      <EmbeddedResource Include="Data\EGM2008_to100_TideFree.txt" />
+    </ItemGroup>
+
 </Project>

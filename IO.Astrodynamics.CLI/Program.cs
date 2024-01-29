@@ -20,6 +20,7 @@ class Program
         app.AddCommands<FrameConverterCommand>();
         app.AddCommands<TimeConverterCommand>();
         app.AddCommands<BodyInformationCommand>();
+        app.AddCommands<PropagateCommand>();
         var assName = Assembly.GetExecutingAssembly().GetName();
         app.AddSubCommand("--version", (a) => { Console.WriteLine($"{assName.Name} v{assName.Version} experimental"); });
 

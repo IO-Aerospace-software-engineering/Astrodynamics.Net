@@ -1,12 +1,17 @@
 ﻿using System;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using IO.Astrodynamics.Body;
 using IO.Astrodynamics.Body.Spacecraft;
+using IO.Astrodynamics.CLI.Commands;
+using IO.Astrodynamics.CLI.Commands.Parameters;
 using IO.Astrodynamics.Coordinates;
 using IO.Astrodynamics.Frames;
 using IO.Astrodynamics.Math;
 using IO.Astrodynamics.OrbitalParameters;
+using IO.Astrodynamics.Physics;
+using IO.Astrodynamics.SolarSystemObjects;
 using IO.Astrodynamics.Surface;
 using IO.Astrodynamics.Time;
 
@@ -27,6 +32,7 @@ public class Helpers
         {
             localizableObject = CreateCelestialItem(objectId);
         }
+
         return localizableObject;
     }
 
@@ -100,12 +106,29 @@ public class Helpers
     }
 
     internal static OrbitalParameters.OrbitalParameters? ConvertToOrbitalParameters(string orbitalParametersInput, int centerofMotion, string epoch, string originalFrame,
-        bool fromStateVector,
-        bool fromKeplerian, bool fromEquinoctial, bool fromTLE)
+        bool fromStateVector, bool fromKeplerian, bool fromEquinoctial, bool fromTLE, ushort geopotentialDegrees = 10)
     {
+        if (originalFrame.Equals("icrf", StringComparison.InvariantCultureIgnoreCase))
+        {
+            originalFrame = "j2000";
+        }
         var inputFrame = new Frame(originalFrame);
         var inputEpoch = Helpers.ConvertDateTimeInput(epoch);
-        var inputCenterOfMotion = new CelestialBody(centerofMotion);
+
+        GeopotentialModelParameters geopotentialModelParameters = null;
+        AtmosphericModel atmosphericModel = null;
+        if (centerofMotion == PlanetsAndMoons.EARTH.NaifId)
+        {
+            Stream sr = typeof(PropagateCommand).Assembly.GetManifestResourceStream("IO.Astrodynamics.CLI.Data.EGM2008_to100_TideFree.txt");
+            geopotentialModelParameters = new GeopotentialModelParameters(sr, geopotentialDegrees);
+            atmosphericModel = new EarthAtmosphericModel();
+        }
+        else if (centerofMotion == PlanetsAndMoons.MARS.NaifId)
+        {
+            atmosphericModel = new MarsAtmosphericModel();
+        }
+
+        var inputCenterOfMotion = new CelestialBody(centerofMotion, geopotentialModelParameters, atmosphericModel);
         //Generate original orbital parameters
         OrbitalParameters.OrbitalParameters orbitalParameters = null;
         if (fromStateVector)
@@ -132,6 +155,12 @@ public class Helpers
         return orbitalParameters;
     }
 
+    internal static OrbitalParameters.OrbitalParameters? ConvertToOrbitalParameters(Commands.Parameters.OrbitalParameters orbitalParameters)
+    {
+        return ConvertToOrbitalParameters(orbitalParameters.OrbitalParametersValues, orbitalParameters.CenterOfMotionId, orbitalParameters.EpochParameter.Epoch,
+            orbitalParameters.Frame, orbitalParameters.FromStateVector, orbitalParameters.FromKeplerian, orbitalParameters.FromEquinoctial, orbitalParameters.FromTLE);
+    }
+
     internal static Planetodetic ConvertToPlanetodetic(string value)
     {
         double[] coordinates = value.Split(' ').Select(double.Parse).ToArray();
@@ -141,5 +170,10 @@ public class Helpers
     internal static Window ConvertWindowInput(string begin, string end)
     {
         return new Window(ConvertDateTimeInput(begin), ConvertDateTimeInput(end));
+    }
+
+    internal static Window ConvertWindowInput(WindowParameters windowParameters)
+    {
+        return ConvertWindowInput(windowParameters.Begin.Epoch, windowParameters.End.Epoch);
     }
 }

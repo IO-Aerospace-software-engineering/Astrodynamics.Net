@@ -325,7 +325,7 @@ public class CelestialBodyTests
     public void GeopotentialModelReader()
     {
         GeopotentialModelReader geopotentialModelReader =
-            new GeopotentialModelReader(new FileInfo(Path.Combine(Constants.SolarSystemKernelPath.ToString(), "EGM2008_to70_TideFree")));
+            new GeopotentialModelReader(new StreamReader(Path.Combine(Constants.SolarSystemKernelPath.ToString(), "EGM2008_to70_TideFree")));
         Assert.Equal(new GeopotentialCoefficient(4, 1, -0.536157389388867E-06, -0.473567346518086E-06, 0.4568074333E-11, 0.4684043490E-11),
             geopotentialModelReader.ReadCoefficient(4, 1));
     }
@@ -334,7 +334,7 @@ public class CelestialBodyTests
     public void GeopotentialModelReaderException()
     {
         GeopotentialModelReader geopotentialModelReader =
-            new GeopotentialModelReader(new FileInfo(Path.Combine(Constants.SolarSystemKernelPath.ToString(), "EGM2008_to70_TideFree")));
+            new GeopotentialModelReader(new StreamReader(Path.Combine(Constants.SolarSystemKernelPath.ToString(), "EGM2008_to70_TideFree")));
         Assert.Throws<ArgumentException>(() => geopotentialModelReader.ReadCoefficient(4, 5));
     }
 

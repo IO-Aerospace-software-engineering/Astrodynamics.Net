@@ -101,7 +101,7 @@ public class CelestialBody : CelestialItem, IOrientable
 
         UpdateSphereOfInfluence();
         GravitationalField = geopotentialModelParameters != null
-            ? new GeopotentialGravitationalField(new FileInfo(geopotentialModelParameters.GeopotentialModelPath),geopotentialModelParameters.GeopotentialDegree)
+            ? new GeopotentialGravitationalField(geopotentialModelParameters.GeopotentialModelPath,geopotentialModelParameters.GeopotentialDegree)
             : new GravitationalField();
         AtmosphericModel = atmosphericModel;
     }

@@ -10,13 +10,13 @@ namespace IO.Astrodynamics.Physics;
 
 public class GeopotentialModelReader
 {
-    public FileInfo ModelFile { get; }
+    public StreamReader ModelFile { get; }
     private Dictionary<(ushort nidx, ushort midx), GeopotentialCoefficient> _geopotentialCoefficients = new();
 
-    public GeopotentialModelReader(FileInfo modelFile)
+    public GeopotentialModelReader(StreamReader modelFile)
     {
         ModelFile = modelFile;
-        using (var stream = ModelFile.OpenText())
+        using (var stream =  ModelFile)
         {
             var data = stream.ReadToEnd().Replace('D', 'E');
             var lines = data.Split(Environment.NewLine);

@@ -30,23 +30,19 @@ public sealed class VVIntegrator : Integrator
         }
     }
 
-    public override void Integrate(StateVector [] result, int idx)
+    public override void Integrate(StateVector[] result, int idx)
     {
         //Set initial parameters
-        var element = result[idx - 1];
-        _position = element.Position;
-        _velocity = element.Velocity;
+        var previousElement = result[idx - 1];
+        _position = previousElement.Position;
+        _velocity = previousElement.Velocity;
+        var prevAcc = _acceleration;
 
-        _velocity += _acceleration * HalfDeltaTs;
+        result[idx].Position = _position + _velocity + _acceleration * 0.5 * DeltaTs * DeltaTs;
 
-        _position += _velocity * DeltaTs;
+        _acceleration = ComputeAcceleration(previousElement);
 
-        _acceleration = ComputeAcceleration(element);
-
-        _velocity += _acceleration * HalfDeltaTs;
-
-        result[idx].Position = _position;
-        result[idx].Velocity = _velocity;
+        result[idx].Velocity = _velocity + (prevAcc + _acceleration) * 0.5 * DeltaTs;
     }
 
     public struct SV

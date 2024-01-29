@@ -19,7 +19,7 @@ public class GravitationalAccelerationTest
     public void ComputeGeopotentialGravityAcceleration()
     {
         GeopotentialGravitationalField gravity =
-            new GeopotentialGravitationalField(new FileInfo(Path.Combine(Constants.SolarSystemKernelPath.ToString(), "EGM2008_to70_TideFree")));
+            new GeopotentialGravitationalField(new StreamReader(Path.Combine(Constants.SolarSystemKernelPath.ToString(), "EGM2008_to70_TideFree")));
         StateVector parkingOrbit = new StateVector(new Vector3(6800000.0, 0.0, 0.0), new Vector3(0.0, 7656.2204182967143, 0.0), TestHelpers.EarthWithAtmAndGeoAtJ2000, DateTimeExtension.J2000,
             Frames.Frame.ICRF);
         var res = gravity.ComputeGravitationalAcceleration(parkingOrbit);

@@ -14,7 +14,7 @@ public class GeopotentialGravitationalField : GravitationalField
     private readonly GeopotentialModelReader _geopotentialModelReader;
     public double MaxDegrees { get; }
 
-    public GeopotentialGravitationalField(FileInfo geopotentialModelFile, ushort maxDegrees = 70)
+    public GeopotentialGravitationalField(StreamReader geopotentialModelFile, ushort maxDegrees = 70)
     {
         MaxDegrees = maxDegrees;
         _geopotentialModelReader = new GeopotentialModelReader(geopotentialModelFile);
