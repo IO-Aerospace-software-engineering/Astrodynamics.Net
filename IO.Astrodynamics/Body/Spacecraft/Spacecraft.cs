@@ -65,6 +65,7 @@ namespace IO.Astrodynamics.Body.Spacecraft
             ArgumentOutOfRangeException.ThrowIfNegativeOrZero(sectionalArea);
             MaximumOperatingMass = maximumOperatingMass;
             Clock = clock ?? throw new ArgumentNullException(nameof(clock));
+            Clock.AttachSpacecraft(this);
             Frame = new SpacecraftFrame($"{name}_SPACECRAFT", naifId, name);
             SectionalArea = sectionalArea;
             DragCoefficient = dragCoeff;

@@ -386,7 +386,7 @@ namespace IO.Astrodynamics.Tests.Body
             await frame.WriteAsync(new FileInfo("test.tf"));
             TextReader tr = new StreamReader("test.tf");
             var res = await tr.ReadToEndAsync();
-            Assert.Equal("KPL/FK\n\\begindata\nFRAME_test   = -350000\nFRAME_-350000_NAME      = 'test'\nFRAME_-350000_CLASS     =  3\nFRAME_-350000_CLASS_ID  = -350000\nFRAME_-350000_CENTER    = -350\nCK_-350000_SCLK         = -350\nCK_-350000_SPK          = -350\nOBJECT_-350_FRAME       = 'test'\nNAIF_BODY_NAME              += 'test'\nNAIF_BODY_CODE              += -350000\nNAIF_BODY_NAME              += 'spc1'\nNAIF_BODY_CODE              += -350\n\\begintext", res);
+            Assert.Equal("KPL/FK\n\\begindata\nFRAME_TEST   = -350000\nFRAME_-350000_NAME      = 'TEST'\nFRAME_-350000_CLASS     =  3\nFRAME_-350000_CLASS_ID  = -350000\nFRAME_-350000_CENTER    = -350\nCK_-350000_SCLK         = -350\nCK_-350000_SPK          = -350\nOBJECT_-350_FRAME       = 'TEST'\nNAIF_BODY_NAME              += 'TEST'\nNAIF_BODY_CODE              += -350000\nNAIF_BODY_NAME              += 'SPC1'\nNAIF_BODY_CODE              += -350\n\\begintext", res);
         }
     }
 }

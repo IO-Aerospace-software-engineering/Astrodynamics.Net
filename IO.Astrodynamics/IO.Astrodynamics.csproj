@@ -55,6 +55,7 @@
 
     <ItemGroup>
       <None Remove="Templates\FrameTemplate.tf" />
+      <EmbeddedResource Include="Templates\ClockTemplate.tsc" />
       <EmbeddedResource Include="Templates\FrameTemplate.tf" />
     </ItemGroup>
 

@@ -123,22 +123,28 @@ namespace IO.Astrodynamics.Mission
             SiteDirectory = RootDirectory.CreateSubdirectory("Sites");
         }
 
-        public async Task<ScenarioSummary> SimulateWithoutManeueverAsync(DirectoryInfo outputDirectory, bool withAtmosphericDrag = false, bool withSolarRadiationPressure = false)
+        public async Task<ScenarioSummary> SimulateWithoutManeuverAsync(DirectoryInfo outputDirectory, bool withAtmosphericDrag = false, bool withSolarRadiationPressure = false)
         {
             InitializeDirectories(outputDirectory);
 
             try
             {
                 var spacecraft = _spacecrafts.First();
+                var spacecraftDirectory = SpacecraftDirectory.CreateSubdirectory(spacecraft.Name);
                 Propagator.Propagator propagator = new Propagator.Propagator(Window, spacecraft, _additionalCelestialBodies, withAtmosphericDrag,
                     withSolarRadiationPressure, TimeSpan.FromSeconds(1.0));
                 var stateVectors = propagator.Propagate();
 
                 //Write frame
-                await spacecraft.WriteFrameAsync(new FileInfo(SpacecraftDirectory.CreateSubdirectory("Frames") + "/" + spacecraft.Name + ".tf"));
+                await spacecraft.WriteFrameAsync(new FileInfo(Path.Combine(spacecraftDirectory.CreateSubdirectory("Frames").FullName,
+                    spacecraft.Name + ".tf")));
 
+                //Write clock
+                await spacecraft.Clock.WriteAsync(
+                    new FileInfo(Path.Combine(spacecraftDirectory.CreateSubdirectory("Clocks").FullName,spacecraft.Name + ".tsc")));
+                
                 //Write Ephemeris
-                API.Instance.WriteEphemeris(new FileInfo(SpacecraftDirectory + "/" + spacecraft.Name + ".spk"), spacecraft, stateVectors);
+                API.Instance.WriteEphemeris(new FileInfo(Path.Combine(spacecraftDirectory.CreateSubdirectory("Ephemeris").FullName,  spacecraft.Name + ".spk")), spacecraft, stateVectors);
             }
             finally
             {

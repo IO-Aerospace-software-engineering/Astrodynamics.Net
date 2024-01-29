@@ -15,8 +15,9 @@ namespace IO.Astrodynamics.Tests
         internal static CelestialBody Moon => new(PlanetsAndMoons.MOON, Frames.Frame.ICRF, new DateTime(2021, 1, 1));
 
         internal static CelestialBody EarthAtJ2000 => new(PlanetsAndMoons.EARTH, Frames.Frame.ICRF, new DateTime(2000, 1, 1, 12, 0, 0));
+
         internal static CelestialBody EarthWithAtmAndGeoAtJ2000 => new(PlanetsAndMoons.EARTH, Frames.Frame.ICRF, new DateTime(2000, 1, 1, 12, 0, 0),
-            new GeopotentialModelParameters("Data/SolarSystem/EGM2008_to70_TideFree"), new EarthAtmosphericModel());
+            new GeopotentialModelParameters("Data/SolarSystem/EGM2008_to70_TideFree", 10), new EarthAtmosphericModel());
 
         internal static CelestialBody MoonAtJ2000 => new(PlanetsAndMoons.MOON, Frames.Frame.ICRF, new DateTime(2000, 1, 1, 12, 0, 0));
 

@@ -1,9 +1,12 @@
 using System;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace IO.Astrodynamics.Body.Spacecraft
 {
     public class Clock : IEquatable<Clock>
     {
+        public Spacecraft Spacecraft { get; private set; }
         public string Name { get; }
         public double Resolution { get; }
 
@@ -21,6 +24,21 @@ namespace IO.Astrodynamics.Body.Spacecraft
 
             Name = name;
             Resolution = resolution;
+        }
+
+        internal void AttachSpacecraft(Spacecraft spacecraft)
+        {
+            Spacecraft = spacecraft;
+        }
+
+        public async Task WriteAsync(FileInfo outputFile)
+        {
+            await using var stream = this.GetType().Assembly.GetManifestResourceStream("IO.Astrodynamics.Templates.ClockTemplate.tsc");
+            using StreamReader sr = new StreamReader(stream ?? throw new InvalidOperationException());
+            var templateData = await sr.ReadToEndAsync();
+            var data = templateData.Replace("{id}", Spacecraft.NaifId.ToString()).Replace("{resolution}", ((int)System.Math.Round(1.0 / Resolution)).ToString());
+            await using var sw = new StreamWriter(outputFile.FullName);
+            await sw.WriteAsync(data);
         }
 
         public bool Equals(Clock other)

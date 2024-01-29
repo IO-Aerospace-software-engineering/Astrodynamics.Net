@@ -25,8 +25,8 @@ public class SpacecraftFrame : Frame
         await using var stream = this.GetType().Assembly.GetManifestResourceStream("IO.Astrodynamics.Templates.FrameTemplate.tf");
         using StreamReader sr = new StreamReader(stream ?? throw new InvalidOperationException());
         var templateData = await sr.ReadToEndAsync();
-        var data = templateData.Replace("{framename}", Name).Replace("{frameid}", Id.ToString()).Replace("{spacecraftid}", SpacecraftId.ToString())
-            .Replace("{spacecraftname}", SpacecraftName);
+        var data = templateData.Replace("{framename}", Name.ToUpper()).Replace("{frameid}", Id.ToString()).Replace("{spacecraftid}", SpacecraftId.ToString())
+            .Replace("{spacecraftname}", SpacecraftName.ToUpper());
         await using var sw = new StreamWriter(outputFile.FullName);
         await sw.WriteAsync(data);
     }
