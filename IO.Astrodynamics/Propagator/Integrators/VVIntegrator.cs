@@ -36,24 +36,11 @@ public sealed class VVIntegrator : Integrator
         var previousElement = result[idx - 1];
         _position = previousElement.Position;
         _velocity = previousElement.Velocity;
-        var prevAcc = _acceleration;
 
-        result[idx].Position = _position + _velocity + _acceleration * 0.5 * DeltaTs * DeltaTs;
+        result[idx].Velocity = _velocity + _acceleration * HalfDeltaTs;
+        result[idx].Position = _position + result[idx].Velocity * DeltaTs;
+        _acceleration = ComputeAcceleration(result[idx]);
 
-        _acceleration = ComputeAcceleration(previousElement);
-
-        result[idx].Velocity = _velocity + (prevAcc + _acceleration) * 0.5 * DeltaTs;
-    }
-
-    public struct SV
-    {
-        public Vector3 Position;
-        public Vector3 Velocity;
-
-        public SV(Vector3 position, Vector3 velocity)
-        {
-            Position = position;
-            Velocity = velocity;
-        }
+        result[idx].Velocity += _acceleration * HalfDeltaTs;
     }
 }

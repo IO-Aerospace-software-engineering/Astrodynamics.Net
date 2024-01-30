@@ -27,7 +27,7 @@ public class PropagateTests
                 true, 20).Wait();
 
             var res = sb.ToString();
-            Assert.Equal($"Propagation completed. You can use generated kernels here /home/spacer/Sources/SDK.Net/IO.Astrodynamics.CLI.Tests/bin/Debug/net8.0/PropagatorExport or visualize this directory into Cosmographia\n", res);
+            Assert.Contains("Propagation completed", res);
         }
     }
 }

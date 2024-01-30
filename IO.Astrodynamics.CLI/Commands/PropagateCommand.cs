@@ -29,15 +29,15 @@ public class PropagateCommand
         [Argument(Description = "Body id")] int bodyId,
         Parameters.OrbitalParameters orbitalParameters,
         WindowParameters windowParameters,
-        [Argument(Description = "Celestial bodies involved into the simulation")]
+        [Argument(Description = "Additional celestial bodies involved into the simulation")]
         int[] celestialBodies,
         [Argument(Description = "Output directory")]
         string outputDirectory,
         [Option('r', Description = "Include solar radiation pressure perturbation")]
         bool useSolarRadiationPressure,
-        [Option('a', Description = "Include atmospheric drag")]
+        [Option('a', Description = "Include atmospheric drag perturbation (Earth and Mars only)")]
         bool useAtmosphericDrag,
-        [Option('g', Description = "Number of degrees used by earth geopotential model")]
+        [Option('n', Description = "Number of degrees used by earth geopotential model (Max. 100")]
         ushort earthGeopotentialDegree = 10
     )
     {
@@ -63,7 +63,8 @@ public class PropagateCommand
         CosmographiaExporter cosmographiaExporter = new CosmographiaExporter();
         
         await cosmographiaExporter.ExportAsync(scenario, qualifiedOutputDirectory);
+        scenario.RootDirectory.Parent?.Delete(true);
         
-        Console.WriteLine($"Propagation completed. You can use generated kernels here {qualifiedOutputDirectory.FullName} or visualize this directory into Cosmographia");
+        Console.WriteLine($"Propagation completed. Now you can use generated kernels or visualize simulation in cosmographia.{Environment.NewLine}Output location : {qualifiedOutputDirectory.FullName}");
     }
 }

@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 using IO.Astrodynamics.Body.Spacecraft;
 using IO.Astrodynamics.OrbitalParameters;
@@ -21,7 +22,7 @@ public class IntegratorTests
     }
 
     [Fact]
-    public void Integrate()
+    public void IntegrateWithPerturbations()
     {
         var sun = TestHelpers.Sun;
         var moon = TestHelpers.MoonAtJ2000;
@@ -42,6 +43,6 @@ public class IntegratorTests
         Array.Fill(data, spc.InitialOrbitalParameters.ToStateVector(), 0, 2);
         vvIntegrator.Integrate(data, 1);
         Assert.Equal(new Vector3(6799995.689837334, 7656.2176410373559, -0.001202574270660037), data[1].Position);
-        Assert.Equal(new Vector3(-8.620325331627528, 7656.2148637779974, -0.002405148541320074), data[1].Velocity);
+        Assert.Equal(new Vector3(-8.620322605388086, 7656.210010294659, -0.0024051475080610115), data[1].Velocity);
     }
 }

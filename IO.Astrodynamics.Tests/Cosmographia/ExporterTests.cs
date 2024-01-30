@@ -58,6 +58,22 @@ public class ExporterTests
         CosmographiaExporter exporter = new CosmographiaExporter();
         await exporter.ExportAsync(scenario, new DirectoryInfo("CosmographiaExport"));
     }
+    
+    [Fact]
+    public async Task ExportSimpleLongPropagationWithoutManeuver()
+    {
+        Astrodynamics.Mission.Mission mission = new Astrodynamics.Mission.Mission("CosmographiaLongExport");
+        Scenario scenario = new Scenario("LongExport", mission, new Window(DateTimeExtension.J2000.AddYears(21), DateTimeExtension.J2000.AddYears(21).AddHours(4.0)));
+        Spacecraft spacecraft = new Spacecraft(-337, "spcLongMission", 1000.0, 2000.0, new Clock("clockSpcLongMission", 1 / 65536.0),
+            new KeplerianElements(6800000.0, 0.0, 0.0, 0.0, 0.0, 0.0, TestHelpers.EarthAtJ2000, DateTimeExtension.J2000, Frames.Frame.ICRF));
+        scenario.AddSpacecraft(spacecraft);
+        scenario.AddAdditionalCelestialBody(TestHelpers.EarthAtJ2000);
+        
+        await scenario.SimulateWithoutManeuverAsync(Constants.OutputPath);
+
+        CosmographiaExporter exporter = new CosmographiaExporter();
+        await exporter.ExportAsync(scenario, new DirectoryInfo("CosmographiaExport"));
+    }
 
     [Fact]
     public async Task ExportWithObservationPropagation()

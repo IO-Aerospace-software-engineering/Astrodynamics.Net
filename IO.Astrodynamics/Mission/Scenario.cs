@@ -107,22 +107,13 @@ namespace IO.Astrodynamics.Mission
             return scenarioSummary;
         }
 
-        private void InitializeDirectories(DirectoryInfo outputDirectory)
-        {
-            RootDirectory = null;
-            SpacecraftDirectory = null;
-            SiteDirectory = null;
-
-            if (_spacecrafts.Count == 0 && _sites.Count == 0)
-            {
-                throw new InvalidOperationException("There is nothing to simulate");
-            }
-
-            RootDirectory = outputDirectory.CreateSubdirectory(Mission.Name).CreateSubdirectory(this.Name);
-            SpacecraftDirectory = RootDirectory.CreateSubdirectory("Spacecrafts");
-            SiteDirectory = RootDirectory.CreateSubdirectory("Sites");
-        }
-
+        /// <summary>
+        /// Simulate a scenario without maneuver
+        /// </summary>
+        /// <param name="outputDirectory"></param>
+        /// <param name="withAtmosphericDrag">Include atmospheric drag perturbation</param>
+        /// <param name="withSolarRadiationPressure">Include solar radiation pressure perturbation</param>
+        /// <returns></returns>
         public async Task<ScenarioSummary> SimulateWithoutManeuverAsync(DirectoryInfo outputDirectory, bool withAtmosphericDrag = false, bool withSolarRadiationPressure = false)
         {
             InitializeDirectories(outputDirectory);
@@ -159,6 +150,22 @@ namespace IO.Astrodynamics.Mission
             }
 
             return scenarioSummary;
+        }
+        
+        private void InitializeDirectories(DirectoryInfo outputDirectory)
+        {
+            RootDirectory = null;
+            SpacecraftDirectory = null;
+            SiteDirectory = null;
+
+            if (_spacecrafts.Count == 0 && _sites.Count == 0)
+            {
+                throw new InvalidOperationException("There is nothing to simulate");
+            }
+
+            RootDirectory = outputDirectory.CreateSubdirectory(Mission.Name).CreateSubdirectory(this.Name);
+            SpacecraftDirectory = RootDirectory.CreateSubdirectory("Spacecrafts");
+            SiteDirectory = RootDirectory.CreateSubdirectory("Sites");
         }
 
         public bool Equals(Scenario other)

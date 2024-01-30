@@ -29,6 +29,16 @@ public class Propagator
     private StateVector[] _dataCache;
 
 
+    /// <summary>
+    /// Instantiate propagator
+    /// </summary>
+    /// <param name="window">Time window</param>
+    /// <param name="spacecraft"></param>
+    /// <param name="celestialBodies">Additional celestial bodies</param>
+    /// <param name="includeAtmosphericDrag"></param>
+    /// <param name="includeSolarRadiationPressure"></param>
+    /// <param name="deltaT">Simulation step size</param>
+    /// <exception cref="ArgumentNullException"></exception>
     public Propagator(Window window, Spacecraft spacecraft, IEnumerable<CelestialBody> celestialBodies, bool includeAtmosphericDrag,
         bool includeSolarRadiationPressure, TimeSpan deltaT)
     {
@@ -79,7 +89,6 @@ public class Propagator
         {
             Integrator.Integrate(_dataCache, i);
         }
-
 
         return _dataCache;
     }
