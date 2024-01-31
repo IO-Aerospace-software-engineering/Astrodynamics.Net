@@ -6,7 +6,8 @@ namespace IO.Astrodynamics.Body;
 
 public class GeopotentialModelParameters
 {
-    public GeopotentialModelParameters(string geopotentialModelPath, ushort geopotentialDegree = 60) : this(new FileStream(geopotentialModelPath, FileMode.Open),
+    public GeopotentialModelParameters(string geopotentialModelPath, ushort geopotentialDegree = 60) : this(
+        new FileStream(geopotentialModelPath, FileMode.Open, FileAccess.Read, FileShare.Read),
         geopotentialDegree)
     {
     }

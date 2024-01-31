@@ -61,7 +61,7 @@ public class OrbitalParametersConverterCommand
 
         if (string.IsNullOrEmpty(targetEpoch?.Epoch))
         {
-            targetEpoch = orbitalParameters.EpochParameter;
+            targetEpoch.Epoch = orbitalParameters.OrbitalParametersEpoch;
         }
 
         //Initialize data
@@ -72,7 +72,7 @@ public class OrbitalParametersConverterCommand
 
 
         var inputOrbitalParameters = Helpers.ConvertToOrbitalParameters(orbitalParameters.OrbitalParametersValues, orbitalParameters.CenterOfMotionId,
-            orbitalParameters.EpochParameter.Epoch,
+            orbitalParameters.OrbitalParametersEpoch,
             orbitalParameters.Frame, orbitalParameters.FromStateVector, orbitalParameters.FromKeplerian, orbitalParameters.FromEquinoctial, orbitalParameters.FromTLE);
 
         //At given epoch and in given frame

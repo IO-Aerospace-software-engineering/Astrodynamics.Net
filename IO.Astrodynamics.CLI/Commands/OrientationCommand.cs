@@ -37,7 +37,7 @@ public class OrientationCommand
 
         List<StateOrientation> orientations = new List<StateOrientation>();
         Frame targetFrame = new Frame(frame);
-        Window windowInput = Helpers.ConvertWindowInput(windowParameters.Begin.Epoch, windowParameters.End.Epoch);
+        Window windowInput = Helpers.ConvertWindowInput(windowParameters.Begin, windowParameters.End);
         for (DateTime epoch = windowInput.StartDate; epoch <= windowInput.EndDate; epoch+=step)
         {
             orientations.Add(celestialItem.GetOrientation(targetFrame,epoch));

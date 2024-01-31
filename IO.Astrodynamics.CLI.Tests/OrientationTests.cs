@@ -19,8 +19,8 @@ public class OrientationsTests
             command.Orientation("Data", 399,
                 new WindowParameters
                 {
-                    Begin = new EpochParameters { Epoch = new DateTime(2023, 01, 01, 1, 0, 0).ToString(CultureInfo.InvariantCulture) },
-                    End = new EpochParameters { Epoch = new DateTime(2023, 01, 01, 1, 1, 0).ToString(CultureInfo.InvariantCulture) }
+                    Begin = new DateTime(2023, 01, 01, 1, 0, 0).ToString(CultureInfo.InvariantCulture),
+                    End = new DateTime(2023, 01, 01, 1, 1, 0).ToString(CultureInfo.InvariantCulture)
                 }, TimeSpan.FromMinutes(1), "ICRF");
             var res = sb.ToString();
 
@@ -42,8 +42,8 @@ public class OrientationsTests
             command.Orientation("Data", 399,
                 new WindowParameters
                 {
-                    Begin = new EpochParameters { Epoch = new DateTime(2023, 01, 01, 1, 0, 0).ToString(CultureInfo.InvariantCulture) },
-                    End = new EpochParameters { Epoch = new DateTime(2023, 01, 01, 1, 1, 0).ToString(CultureInfo.InvariantCulture) }
+                    Begin = new DateTime(2023, 01, 01, 1, 0, 0).ToString(CultureInfo.InvariantCulture),
+                    End = new DateTime(2023, 01, 01, 1, 1, 0).ToString(CultureInfo.InvariantCulture)
                 }, TimeSpan.FromMinutes(1));
             var res = sb.ToString();
             Assert.Equal(

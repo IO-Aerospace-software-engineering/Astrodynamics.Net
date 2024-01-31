@@ -47,7 +47,7 @@ public class GeometryFinderCommand
             frame = "j2000";
         }
 
-        var win = new Window(Helpers.ConvertDateTimeInput(window.Begin.Epoch), Helpers.ConvertDateTimeInput(window.End.Epoch));
+        var win = new Window(Helpers.ConvertDateTimeInput(window.Begin), Helpers.ConvertDateTimeInput(window.End));
         var abe = Enum.Parse<Aberration>(aberration, true);
         var coorSys = Enum.Parse<CoordinateSystem>(coordinateSystem, true);
         var coor = Enum.Parse<Coordinate>(coordinate, true);
@@ -83,7 +83,7 @@ public class GeometryFinderCommand
     {
         API.Instance.LoadKernels(new DirectoryInfo(kernelsPath));
 
-        var win = new Window(Helpers.ConvertDateTimeInput(window.Begin.Epoch), Helpers.ConvertDateTimeInput(window.End.Epoch));
+        var win = new Window(Helpers.ConvertDateTimeInput(window.Begin), Helpers.ConvertDateTimeInput(window.End));
         var abe = Enum.Parse<Aberration>(aberration, true);
         var op = Enumeration.GetValueFromDescription<RelationnalOperator>(relationalOperator);
 
@@ -121,7 +121,7 @@ public class GeometryFinderCommand
     {
         API.Instance.LoadKernels(new DirectoryInfo(kernelsPath));
 
-        var win = new Window(Helpers.ConvertDateTimeInput(window.Begin.Epoch), Helpers.ConvertDateTimeInput(window.End.Epoch));
+        var win = new Window(Helpers.ConvertDateTimeInput(window.Begin), Helpers.ConvertDateTimeInput(window.End));
         var abe = Enum.Parse<Aberration>(aberration, true);
         var targetShp = Enum.Parse<ShapeType>(targetShape, true);
         var frontShp = Enum.Parse<ShapeType>(frontBodyShape, true);
@@ -159,7 +159,7 @@ public class GeometryFinderCommand
     {
         API.Instance.LoadKernels(new DirectoryInfo(kernelsPath));
 
-        var win = new Window(Helpers.ConvertDateTimeInput(window.Begin.Epoch), Helpers.ConvertDateTimeInput(window.End.Epoch));
+        var win = new Window(Helpers.ConvertDateTimeInput(window.Begin), Helpers.ConvertDateTimeInput(window.End));
         var abe = Enum.Parse<Aberration>(aberration, true);
         var targetShp = Enum.Parse<ShapeType>(targetShape, true);
 
@@ -202,7 +202,7 @@ public class GeometryFinderCommand
     {
         API.Instance.LoadKernels(new DirectoryInfo(kernelsPath));
 
-        var win = new Window(Helpers.ConvertDateTimeInput(window.Begin.Epoch), Helpers.ConvertDateTimeInput(window.End.Epoch));
+        var win = new Window(Helpers.ConvertDateTimeInput(window.Begin), Helpers.ConvertDateTimeInput(window.End));
         var abe = Enum.Parse<Aberration>(aberration, true);
         var coordinates = Helpers.ConvertToPlanetodetic(planetodetic.Planetodetic);
         var illuminationAngle = Enum.Parse<IlluminationAngle>(illuminationType, true);

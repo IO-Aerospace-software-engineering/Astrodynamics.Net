@@ -16,7 +16,7 @@ public class GeometryFinderTests
             StringWriter sw = new StringWriter(sb);
             Console.SetOut(sw);
             command.CoordinateConstraint("Data", 10, 399, "Rectangular", "Z", "=", 0.0,
-                new WindowParameters { Begin = new EpochParameters { Epoch = "2024-03-01T00:00:00" }, End = new EpochParameters { Epoch = "2024-05-01T00:00:00" } },
+                new WindowParameters { Begin = "2024-03-01T00:00:00", End = "2024-05-01T00:00:00" },
                 TimeSpan.FromDays(20), frame: "ECLIPJ2000");
             var res = sb.ToString();
 
@@ -36,7 +36,7 @@ public class GeometryFinderTests
             StringWriter sw = new StringWriter(sb);
             Console.SetOut(sw);
             command.DistanceConstraint("Data", 399, 301, "=", 400000000.0,
-                new WindowParameters { Begin = new EpochParameters { Epoch = "2024-03-01T00:00:00" }, End = new EpochParameters { Epoch = "2024-03-21T00:00:00" } },
+                new WindowParameters { Begin = "2024-03-01T00:00:00" , End = "2024-03-21T00:00:00" },
                 TimeSpan.FromDays(10));
             var res = sb.ToString();
 
@@ -56,7 +56,7 @@ public class GeometryFinderTests
             StringWriter sw = new StringWriter(sb);
             Console.SetOut(sw);
             command.OccultationConstraint("Data", 399, 10, "Ellipsoid", 301, "Ellipsoid", "ANY",
-                new WindowParameters { Begin = new EpochParameters { Epoch = "61473664.183390938" }, End = new EpochParameters { Epoch = "61646464.183445148" } },
+                new WindowParameters { Begin = "61473664.183390938", End = "61646464.183445148" },
                 TimeSpan.FromHours(1.0), "LT");
             var res = sb.ToString();
 
@@ -76,7 +76,7 @@ public class GeometryFinderTests
             StringWriter sw = new StringWriter(sb);
             Console.SetOut(sw);
             command.InFieldOfViewConstraint("Data", -172, -172600, 399, "ITRF93", "Ellipsoid",
-                new WindowParameters { Begin = new EpochParameters { Epoch = "676555200.0" }, End = new EpochParameters { Epoch = "676561647.0" } }, TimeSpan.FromHours(1.0), "LT");
+                new WindowParameters { Begin = "676555200.0" , End = "676561647.0"  }, TimeSpan.FromHours(1.0), "LT");
             var res = sb.ToString();
 
             Assert.Equal(
@@ -97,7 +97,7 @@ public class GeometryFinderTests
             Console.SetOut(sw);
             command.IlluminationConstraint("Data", 10, 399, 10, "ITRF93", new PlanetodeticParameters { Planetodetic = "0.0349 0.8378 0.0" }, "Incidence", "<",
                 System.Math.PI * 0.5 - (-0.8 * IO.Astrodynamics.Constants.Deg2Rad), 0.0,
-                new WindowParameters { Begin = new EpochParameters { Epoch = "674524800.0" }, End = new EpochParameters { Epoch = "674611200.0" } }, TimeSpan.FromHours(4.5),
+                new WindowParameters { Begin = "674524800.0" , End = "674611200.0" }, TimeSpan.FromHours(4.5),
                 "CNS");
             var res = sb.ToString();
 

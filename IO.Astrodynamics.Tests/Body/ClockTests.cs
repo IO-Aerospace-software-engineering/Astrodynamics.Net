@@ -32,7 +32,7 @@ namespace IO.Astrodynamics.Tests.Body
             await clock.WriteAsync(new FileInfo("clock.tsc"));
             TextReader tr = new StreamReader("clock.tsc");
             var res = await tr.ReadToEndAsync();
-            Assert.Equal("KPL/SCLK\n\\begindata\nSCLK_KERNEL_ID           = ( @1957-01-01/00:00:00.0 )\nSCLK_DATA_TYPE_-1001        = ( 1 )\nSCLK01_TIME_SYSTEM_-1001    = ( 1 )\nSCLK01_N_FIELDS_-1001       = ( 2 )\nSCLK01_MODULI_-1001         = ( 4294967296 256 )\nSCLK01_OFFSETS_-1001        = ( 0 0 )\nSCLK01_OUTPUT_DELIM_-1001   = ( 2 )\nSCLK_PARTITION_START_-1001  = ( 0.0000000000000E+00 )\nSCLK_PARTITION_END_-1001    = ( 2.8147497671065E+14 )\nSCLK01_COEFFICIENTS_-1001   = ( 0.0000000000000E+00     -1.3569552000000E+09     1.0000000000000E+00 )\n\\begintext", res);
+            Assert.Equal($"KPL/SCLK{Environment.NewLine}\\begindata{Environment.NewLine}SCLK_KERNEL_ID           = ( @1957-01-01/00:00:00.0 ){Environment.NewLine}SCLK_DATA_TYPE_-1001        = ( 1 ){Environment.NewLine}SCLK01_TIME_SYSTEM_-1001    = ( 1 ){Environment.NewLine}SCLK01_N_FIELDS_-1001       = ( 2 ){Environment.NewLine}SCLK01_MODULI_-1001         = ( 4294967296 256 ){Environment.NewLine}SCLK01_OFFSETS_-1001        = ( 0 0 ){Environment.NewLine}SCLK01_OUTPUT_DELIM_-1001   = ( 2 ){Environment.NewLine}SCLK_PARTITION_START_-1001  = ( 0.0000000000000E+00 ){Environment.NewLine}SCLK_PARTITION_END_-1001    = ( 2.8147497671065E+14 ){Environment.NewLine}SCLK01_COEFFICIENTS_-1001   = ( 0.0000000000000E+00     -1.3569552000000E+09     1.0000000000000E+00 ){Environment.NewLine}\\begintext", res);
         }
 
         [Fact]

@@ -19,8 +19,8 @@ public class EphemerisTests
             command.Ephemeris("Data", 399, 10,
                 new WindowParameters
                 {
-                    Begin = new EpochParameters { Epoch = new DateTime(2023, 01, 01, 1, 0, 0).ToString(CultureInfo.InvariantCulture) },
-                    End = new EpochParameters { Epoch = new DateTime(2023, 01, 01, 1, 1, 0).ToString(CultureInfo.InvariantCulture) }
+                    Begin = new DateTime(2023, 01, 01, 1, 0, 0).ToString(CultureInfo.InvariantCulture) ,
+                    End = new DateTime(2023, 01, 01, 1, 1, 0).ToString(CultureInfo.InvariantCulture)
                 }, TimeSpan.FromMinutes(1), "ICRF", "LT", toKeplerian: true);
             var res = sb.ToString();
 
@@ -41,8 +41,8 @@ public class EphemerisTests
             Console.SetOut(sw);
             command.Ephemeris("Data", 399, 10, new WindowParameters
             {
-                Begin = new EpochParameters { Epoch = new DateTime(2023, 01, 01, 1, 0, 0).ToString(CultureInfo.InvariantCulture) },
-                End = new EpochParameters { Epoch = new DateTime(2023, 01, 01, 1, 1, 0).ToString(CultureInfo.InvariantCulture) }
+                Begin =new DateTime(2023, 01, 01, 1, 0, 0).ToString(CultureInfo.InvariantCulture) ,
+                End = new DateTime(2023, 01, 01, 1, 1, 0).ToString(CultureInfo.InvariantCulture)
             }, TimeSpan.FromMinutes(1));
             var res = sb.ToString();
             Assert.Equal(

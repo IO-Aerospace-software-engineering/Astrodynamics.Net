@@ -50,7 +50,7 @@ public class EphemerisCommand
 
         var observerItem = Helpers.CreateLocalizable(observerId);
 
-        var ephemeris = localizableObject.GetEphemeris(Helpers.ConvertWindowInput(windowParameters.Begin.Epoch, windowParameters.End.Epoch), observerItem, new Frame(frame),
+        var ephemeris = localizableObject.GetEphemeris(Helpers.ConvertWindowInput(windowParameters.Begin, windowParameters.End), observerItem, new Frame(frame),
             Enum.Parse<Aberration>(aberration, true), step);
 
 

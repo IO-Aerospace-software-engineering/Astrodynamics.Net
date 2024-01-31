@@ -18,13 +18,13 @@ public class PropagateTests
             StringBuilder sb = new StringBuilder();
             StringWriter sw = new StringWriter(sb);
             Console.SetOut(sw);
-            command.Propagate("Data", -180,
+            command.Propagate("Data", "MyBody",
                 new Commands.Parameters.OrbitalParameters
                 {
-                    CenterOfMotionId = 399, EpochParameter = new EpochParameters { Epoch = "0.0" }, Frame = "ICRF", OrbitalParametersValues = "6800000.0 0.0 0.0 0.0 8000.0 0.0",
+                    CenterOfMotionId = 399, OrbitalParametersEpoch = "0.0", Frame = "ICRF", OrbitalParametersValues = "6800000.0 0.0 0.0 0.0 8000.0 0.0",
                     FromStateVector = true
-                }, new WindowParameters { Begin = new EpochParameters { Epoch = "0.0" }, End = new EpochParameters { Epoch = "3600.0" } }, [10, 301], "PropagatorExport", true,
-                true, 20).Wait();
+                }, new WindowParameters { Begin = "0.0", End = "3600.0" }, "PropagatorExport", true,
+                true, 20,celestialBodies:[10, 301]).Wait();
 
             var res = sb.ToString();
             Assert.Contains("Propagation completed", res);

@@ -157,7 +157,7 @@ public class Helpers
 
     internal static OrbitalParameters.OrbitalParameters? ConvertToOrbitalParameters(Commands.Parameters.OrbitalParameters orbitalParameters)
     {
-        return ConvertToOrbitalParameters(orbitalParameters.OrbitalParametersValues, orbitalParameters.CenterOfMotionId, orbitalParameters.EpochParameter.Epoch,
+        return ConvertToOrbitalParameters(orbitalParameters.OrbitalParametersValues, orbitalParameters.CenterOfMotionId, orbitalParameters.OrbitalParametersEpoch,
             orbitalParameters.Frame, orbitalParameters.FromStateVector, orbitalParameters.FromKeplerian, orbitalParameters.FromEquinoctial, orbitalParameters.FromTLE);
     }
 
@@ -174,6 +174,6 @@ public class Helpers
 
     internal static Window ConvertWindowInput(WindowParameters windowParameters)
     {
-        return ConvertWindowInput(windowParameters.Begin.Epoch, windowParameters.End.Epoch);
+        return ConvertWindowInput(windowParameters.Begin, windowParameters.End);
     }
 }
