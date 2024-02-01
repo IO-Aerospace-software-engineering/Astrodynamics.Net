@@ -83,7 +83,7 @@ public class EphemerisTests
             command.SubPoint("Data", 301, 399, new EpochParameters{Epoch = "0.0"}, cartesian: true);
 
             var res = sb.ToString();
-            Assert.Equal($"X : 210899226.5446649 Y : -334211113.9658562 Z: -76087813.03023025{Environment.NewLine}"
+            Assert.Equal($"X : 3341996.8388491296 Y : -5296048.281834691 Z: -1205719.1237167474{Environment.NewLine}"
                 , res);
         }
     }

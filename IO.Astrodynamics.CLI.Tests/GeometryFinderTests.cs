@@ -96,7 +96,7 @@ public class GeometryFinderTests
             StringWriter sw = new StringWriter(sb);
             Console.SetOut(sw);
             command.IlluminationConstraint("Data", 10, 399, 10, "ITRF93", new PlanetodeticParameters { Planetodetic = "0.0349 0.8378 0.0" }, "Incidence", "<",
-                System.Math.PI * 0.5 - (-0.8 * IO.Astrodynamics.Constants.Deg2Rad), 0.0,
+                System.Math.PI * 0.5 - (-0.8 * IO.Astrodynamics.Constants.Deg2Rad),
                 new WindowParameters { Begin = "674524800.0" , End = "674611200.0" }, TimeSpan.FromHours(4.5),
                 "CNS");
             var res = sb.ToString();
