@@ -16,7 +16,7 @@ public class FrameTests
             StringBuilder sb = new StringBuilder();
             StringWriter sw = new StringWriter(sb);
             Console.SetOut(sw);
-            command.Convert("Data", "ICRF", "ITRF93", new EpochParameters { Epoch = "2000-01-01T12:00:00Z" });
+            command.Convert("Data", "ICRF", "ITRF93", new EpochParameters("2000-01-01T12:00:00Z"));
             var res = sb.ToString();
 
             Assert.Equal(

@@ -172,6 +172,11 @@ public class Helpers
         return new Window(ConvertDateTimeInput(begin), ConvertDateTimeInput(end));
     }
 
+    internal static Window ConvertWindowInput(EpochParameters begin,EpochParameters end)
+    {
+        return ConvertWindowInput(begin.Epoch, end.Epoch);
+    }
+    
     internal static Window ConvertWindowInput(WindowParameters windowParameters)
     {
         return ConvertWindowInput(windowParameters.Begin, windowParameters.End);

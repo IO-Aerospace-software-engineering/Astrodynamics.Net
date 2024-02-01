@@ -43,7 +43,7 @@ public class PropagateCommand
         double area = 1.0,
         [Argument(Description = "Drag coefficient")]
         double cd = 0.3,
-        [Argument(Description = "Celestial bodies involved into the simulation in addition to the center of motion")]
+        [Argument(Description = "Celestial bodies involved into the propagation in addition to the center of motion")]
         int[] celestialBodies = null
     )
     {

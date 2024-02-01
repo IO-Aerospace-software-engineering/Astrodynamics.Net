@@ -38,8 +38,7 @@ public class GeometryFinderCommand
         [Argument(Description = "Aberration")] string aberration = "None",
         [Argument(Description = "Adjust value")]
         double adjustValue = 0.0,
-        [Argument(Description = "Frame")]
-        string frame = "ICRF")
+        [Argument(Description = "Frame")] string frame = "ICRF")
     {
         API.Instance.LoadKernels(new DirectoryInfo(kernelsPath));
         if (frame.Equals("icrf", StringComparison.InvariantCultureIgnoreCase))
@@ -196,8 +195,7 @@ public class GeometryFinderCommand
         WindowParameters window,
         [Argument(Description = "Initial step size")]
         TimeSpan step,
-        [Argument(Description = "Aberration")]
-        string aberration = "None"
+        [Argument(Description = "Aberration")] string aberration = "None"
     )
     {
         API.Instance.LoadKernels(new DirectoryInfo(kernelsPath));
