@@ -21,9 +21,9 @@ public class OrientationCommand
     [Command("orientation", Description = "Compute orientations of given object")]
     public Task Orientation(
         [Argument(Description = "Kernels directory path")] string kernelsPath,
-        [Argument(Description = "Object identifier")] int objectId,
+        [Argument(Description = "Object identifier (Naif Identifier)")] int objectId,
         WindowParameters windowParameters,
-        [Argument(Description = "Step size")] TimeSpan step,
+        [Argument(Description = "Step size <d.hh:mm:ss.fff>")] TimeSpan step,
         [Argument(Description = "Frame")] string frame="ICRF")
     {
         if (frame.Equals("icrf", StringComparison.InvariantCultureIgnoreCase))

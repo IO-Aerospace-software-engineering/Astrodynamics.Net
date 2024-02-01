@@ -22,7 +22,7 @@ public class OrbitalParametersTests
                     OrbitalParametersValues = "-26499033.67742509 132757417.33833946 57556718.47053819 -29.79426007 -5.01805231 -2.17539380", CenterOfMotionId = 10,
                     OrbitalParametersEpoch = "0.0",
                     Frame = "ICRF", FromStateVector = true, FromEquinoctial = false, FromKeplerian = false, FromTLE = false
-                }, true, false, false, new EpochParameters("0.0"), "ECLIPJ2000");
+                }, true, false, false, new EpochParameters { Epoch = "0.0" }, "ECLIPJ2000");
             var res = sb.ToString();
 
             Assert.Equal(
@@ -47,7 +47,7 @@ public class OrbitalParametersTests
                     OrbitalParametersEpoch = "0.0",
                     Frame = "ICRF", FromStateVector = true, FromEquinoctial = false, FromKeplerian = false, FromTLE = false
                 },
-                false, true, false, new EpochParameters(""));
+                false, true, false, new EpochParameters());
             var res = sb.ToString();
 
             Assert.Equal(
@@ -70,7 +70,7 @@ public class OrbitalParametersTests
                 OrbitalParametersValues = "13560000.0 0.5 0.17453292519943295 0.26179938779914941 0.52359877559829882 0.78539816339744828", CenterOfMotionId = 399,
                 OrbitalParametersEpoch = "0.0",
                 Frame = "ICRF", FromStateVector = false, FromKeplerian = true, FromEquinoctial = false, FromTLE = false
-            }, false, false, true, new EpochParameters(""));
+            }, false, false, true, new EpochParameters());
             var res = sb.ToString();
             if (OperatingSystem.IsWindows())
             {
@@ -102,7 +102,7 @@ public class OrbitalParametersTests
                 OrbitalParametersValues = "6800803.5449581668 0.001353139738203394 0.90267066832323262 0.56855938608714662 1.8545420365902201 0.7925932793200029",
                 CenterOfMotionId = 399, OrbitalParametersEpoch = "0.0",
                 Frame = "ICRF", FromStateVector = false, FromKeplerian = true, FromEquinoctial = false, FromTLE = false
-            }, true, false, false, new EpochParameters(""));
+            }, true, false, false, new EpochParameters());
             var res = sb.ToString();
 
             if (OperatingSystem.IsWindows())
@@ -134,7 +134,7 @@ public class OrbitalParametersTests
                 OrbitalParametersValues = "6800803.5449581668 0.001353139738203394 0.90267066832323262 0.56855938608714662 1.8545420365902201 0.7925932793200029",
                 CenterOfMotionId = 399, OrbitalParametersEpoch = "0.0", Frame = "ICRF", FromStateVector = false, FromKeplerian = true, FromEquinoctial = false,
                 FromTLE = false
-            }, false, true, false, new EpochParameters("3600.0"));
+            }, false, true, false, new EpochParameters{Epoch = "3600.0"});
             var res = sb.ToString();
 
             Assert.Equal(
@@ -164,21 +164,21 @@ public class OrbitalParametersTests
                         FromEquinoctial = false,
                         FromTLE = false,
                         OrbitalParametersEpoch = "0.0"
-                    }, true, false, false, new EpochParameters("")));
+                    }, true, false, false, new EpochParameters()));
             Assert.ThrowsAsync<ArgumentException>(() =>
                 command.Converter("Data", new Commands.Parameters.OrbitalParameters
                 {
                     OrbitalParametersValues = "6800000.0 0.0 0.0 0.0 7000.0 0.0", CenterOfMotionId = 10, OrbitalParametersEpoch = "0.0", Frame = "ICRF",
                     FromStateVector = true,
                     FromKeplerian = true, FromEquinoctial = false, FromTLE = false
-                }, true, false, false, new EpochParameters("")));
+                }, true, false, false, new EpochParameters()));
             Assert.ThrowsAsync<ArgumentException>(() =>
                 command.Converter("Data", new Commands.Parameters.OrbitalParameters
                 {
                     OrbitalParametersValues = "6800000.0 0.0 0.0 0.0 7000.0 0.0", CenterOfMotionId = 10, OrbitalParametersEpoch = "0.0", Frame = "ICRF",
                     FromStateVector = false,
                     FromKeplerian = false, FromEquinoctial = false, FromTLE = false
-                }, true, false, false, new EpochParameters("")));
+                }, true, false, false, new EpochParameters()));
             Assert.ThrowsAsync<ArgumentException>(() =>
                 command.Converter("Data", new Commands.Parameters.OrbitalParameters
                 {
@@ -186,7 +186,7 @@ public class OrbitalParametersTests
                     Frame = "ICRF",
                     FromStateVector = true,
                     FromKeplerian = false, FromEquinoctial = false, FromTLE = false
-                }, false, false, false, new EpochParameters("")));
+                }, false, false, false, new EpochParameters()));
             Assert.ThrowsAsync<ArgumentException>(() =>
                 command.Converter("Data", new Commands.Parameters.OrbitalParameters
                 {
@@ -194,7 +194,7 @@ public class OrbitalParametersTests
                     Frame = "ICRF",
                     FromStateVector = true,
                     FromKeplerian = false, FromEquinoctial = false, FromTLE = false
-                }, true, true, false, new EpochParameters("")));
+                }, true, true, false, new EpochParameters()));
         }
     }
 }

@@ -6,7 +6,7 @@ namespace IO.Astrodynamics.CLI.Commands.Parameters;
 
 public class OrbitalParameters : ICommandParameterSet
 {
-    [Argument(Description = "Center of motion identifier. Refer to Naif Identifier")]
+    [Argument(Description = "Center of motion identifier (Naif Identifier)")]
     public int CenterOfMotionId { get; set; }
 
     [Argument(Description = "Orbital parameters values like state vector, keplerian, equinoctial or two lines. <X Y Z vX vY vZ> <A E I AN PA M> <P F G H K L0> <L1,L2>")]

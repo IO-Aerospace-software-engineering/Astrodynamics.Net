@@ -22,16 +22,15 @@ public class EphemerisCommand
     public Task Ephemeris(
         [Argument(Description = "Kernels directory path")]
         string kernelsPath,
-        [Argument(Description = "Object identifier")]
+        [Argument(Description = "Object identifier (Naif Identifier)")]
         int objectId,
-        [Argument(Description = "Observer identifier")]
+        [Argument(Description = "Observer identifier (Naif Identifier)")]
         int observerId,
         WindowParameters windowParameters,
-        [Argument(Description = "Step size")] TimeSpan step,
-        [Argument(Description = "Frame")]
-        string frame = "ICRF",
-        [Argument(Description = "Aberration")]
-        string aberration = "None",
+        [Argument(Description = "Step size <d.hh:mm:ss.fff>")]
+        TimeSpan step,
+        [Argument(Description = "Frame")] string frame = "ICRF",
+        [Argument(Description = "Aberration")] string aberration = "None",
         [Option('s', Description = "Display result as state vector")]
         bool toStateVector = true,
         [Option('k', Description = "Display result as Keplerian elements")]
@@ -75,20 +74,19 @@ public class EphemerisCommand
         return Task.CompletedTask;
     }
 
-    [Command("sub-point", Description = "Compute sub observer point of given object")]
+    [Command("sub-point", Description = "Compute sub observer point of given object in planetodetic, planetocentric or planetocentric cartesian coordinates")]
     public Task SubPoint(
         [Argument(Description = "Kernels directory path")]
         string kernelsPath,
-        [Argument(Description = "Object identifier")]
+        [Argument(Description = "Object identifier (Naif Identifier)")]
         int objectId,
-        [Argument(Description = "Celestial body identifier")]
+        [Argument(Description = "Identifier of the celestial body onto which the object is projected (Naif Identifier)")]
         int celestialBodyId,
         EpochParameters epochParameters,
-        [Argument(Description = "Aberration")]
-        string aberration = "None",
+        [Argument(Description = "Aberration")] string aberration = "None",
         [Option(shortName: 'd', Description = "Display result as planetodetic coordinates")]
         bool planetodetic = false,
-        [Option(shortName: 'c', Description = "Display result as cartesian coordinates")]
+        [Option(shortName: 'c', Description = "Display result as planetocentric cartesian coordinates")]
         bool cartesian = false)
     {
         API.Instance.LoadKernels(new DirectoryInfo(kernelsPath));
@@ -98,11 +96,12 @@ public class EphemerisCommand
         var celestialBody = new CelestialBody(celestialBodyId);
         var abe = Enum.Parse<Aberration>(aberration, true);
 
-        var planetocentric = localizableObject.SubObserverPoint(celestialBody, Helpers.ConvertDateTimeInput(epochParameters.Epoch), abe);
+        var planetocentric = localizableObject!.SubObserverPoint(celestialBody, Helpers.ConvertDateTimeInput(epochParameters.Epoch), abe);
 
         if (cartesian)
         {
-            Console.WriteLine(planetocentric.ToCartesianCoordinates());
+            Console.WriteLine(planetocentric.ToCartesianCoordinates().Normalize() *
+                              planetocentric.RadiusFromPlanetocentricLatitude(celestialBody.EquatorialRadius, celestialBody.Flattening));
             return Task.CompletedTask;
         }
 
@@ -113,7 +112,6 @@ public class EphemerisCommand
         }
 
         Console.WriteLine(planetocentric);
-
         return Task.CompletedTask;
     }
 
@@ -121,15 +119,14 @@ public class EphemerisCommand
     public Task AngularSeparation(
         [Argument(Description = "Kernels directory path")]
         string kernelsPath,
-        [Argument(Description = "Observer identifier")]
+        [Argument(Description = "Observer identifier (Naif Identifier)")]
         int observerId,
-        [Argument(Description = "First object identifier")]
+        [Argument(Description = "First object identifier (Naif Identifier)")]
         int firstObjectId,
-        [Argument(Description = "Second object identifier")]
+        [Argument(Description = "Second object identifier (Naif Identifier)")]
         int secondObjectId,
         EpochParameters epochParameters,
-        [Argument(Description = "Aberration")]
-        string aberration = "None"
+        [Argument(Description = "Aberration")] string aberration = "None"
     )
     {
         API.Instance.LoadKernels(new DirectoryInfo(kernelsPath));

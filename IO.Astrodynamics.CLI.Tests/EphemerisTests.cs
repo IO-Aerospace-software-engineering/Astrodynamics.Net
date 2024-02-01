@@ -63,7 +63,7 @@ public class EphemerisTests
             StringBuilder sb = new StringBuilder();
             StringWriter sw = new StringWriter(sb);
             Console.SetOut(sw);
-            command.SubPoint("Data", 301, 399, new EpochParameters("0.0"));
+            command.SubPoint("Data", 301, 399, new EpochParameters{Epoch = "0.0"});
 
             var res = sb.ToString();
             Assert.Equal($"Planetocentric {{ Longitude = -1.0078683256327345, Latitude = -0.19020700391621248, Radius = 402448639.8873273 }}{Environment.NewLine}"
@@ -80,7 +80,7 @@ public class EphemerisTests
             StringBuilder sb = new StringBuilder();
             StringWriter sw = new StringWriter(sb);
             Console.SetOut(sw);
-            command.SubPoint("Data", 301, 399, new EpochParameters("0.0"), cartesian: true);
+            command.SubPoint("Data", 301, 399, new EpochParameters{Epoch = "0.0"}, cartesian: true);
 
             var res = sb.ToString();
             Assert.Equal($"X : 210899226.5446649 Y : -334211113.9658562 Z: -76087813.03023025{Environment.NewLine}"
@@ -97,7 +97,7 @@ public class EphemerisTests
             StringBuilder sb = new StringBuilder();
             StringWriter sw = new StringWriter(sb);
             Console.SetOut(sw);
-            command.SubPoint("Data", 301, 399, new EpochParameters("0.0"), planetodetic: true);
+            command.SubPoint("Data", 301, 399, new EpochParameters{Epoch = "0.0"}, planetodetic: true);
 
             var res = sb.ToString();
             Assert.Equal($"Planetodetic {{ Longitude = -1.0078683256327345, Latitude = -0.1914579069599901, Altitude = 396166994.9749323 }}{Environment.NewLine}"
@@ -114,7 +114,7 @@ public class EphemerisTests
             StringBuilder sb = new StringBuilder();
             StringWriter sw = new StringWriter(sb);
             Console.SetOut(sw);
-            command.SubPoint("Data", -172, 399, new EpochParameters("676555200.0"), planetodetic: true);
+            command.SubPoint("Data", -172, 399, new EpochParameters{Epoch = "676555200.0"}, planetodetic: true);
 
             var res = sb.ToString();
             Assert.Equal($"Planetodetic {{ Longitude = 1.7801173242050727, Latitude = 0.0020669681623675575, Altitude = 421863.5026230626 }}{Environment.NewLine}"
@@ -131,7 +131,7 @@ public class EphemerisTests
             StringBuilder sb = new StringBuilder();
             StringWriter sw = new StringWriter(sb);
             Console.SetOut(sw);
-            command.AngularSeparation("Data", 399, 301, 10, new EpochParameters("0.0"));
+            command.AngularSeparation("Data", 399, 301, 10, new EpochParameters{Epoch = "0.0"});
 
             var res = sb.ToString();
             Assert.Equal($"0.9984998794278185{Environment.NewLine}", res);

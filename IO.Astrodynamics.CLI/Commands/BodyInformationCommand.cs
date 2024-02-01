@@ -22,7 +22,7 @@ public class BodyInformationCommand
     public Task GetInformations(
         [Argument(Description = "Kernels directory path")]
         string kernelsPath,
-        [Argument(Description = "Celestial body identifier")]
+        [Argument(Description = "Celestial body identifier (Naif Identifier)")]
         int id)
     {
         API.Instance.LoadKernels(new DirectoryInfo(kernelsPath));
