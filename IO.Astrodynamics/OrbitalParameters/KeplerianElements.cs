@@ -1,6 +1,8 @@
 using System;
+using System.Globalization;
 using IO.Astrodynamics.Body;
 using IO.Astrodynamics.Frames;
+using IO.Astrodynamics.Time;
 
 
 namespace IO.Astrodynamics.OrbitalParameters
@@ -172,6 +174,11 @@ namespace IO.Astrodynamics.OrbitalParameters
         public static bool operator !=(KeplerianElements left, KeplerianElements right)
         {
             return !Equals(left, right);
+        }
+
+        public override string ToString()
+        {
+            return $"Epoch : {Epoch.ToFormattedString()} A : {A} Ecc. : {E} Inc. : {I} AN : {RAAN} AOP : {AOP} M : {M} Frame : {Frame.Name}" ;
         }
     }
 }

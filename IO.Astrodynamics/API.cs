@@ -477,7 +477,7 @@ public class API
                 {
                     throw new InvalidOperationException($"Scenario can't be executed : {scenarioDto.Error}");
                 }
-                
+
                 API.Instance.LoadKernels(siteDirectoryInfo);
                 API.Instance.LoadKernels(spacecraftDirectoryInfo);
 
@@ -690,15 +690,24 @@ public class API
         if (target == null) throw new ArgumentNullException(nameof(target));
         lock (lockObject)
         {
+            return FindWindowsOnDistanceConstraint(searchWindow, observer.NaifId, target.NaifId, relationalOperator, value, aberration, stepSize);
+        }
+    }
+
+    public IEnumerable<Time.Window> FindWindowsOnDistanceConstraint(Time.Window searchWindow, int observerId,
+        int targetId, RelationnalOperator relationalOperator, double value, Aberration aberration,
+        TimeSpan stepSize)
+    {
+        lock (lockObject)
+        {
             var windows = new Window[1000];
             for (var i = 0; i < 1000; i++)
             {
                 windows[i] = new Window(double.NaN, double.NaN);
             }
 
-            FindWindowsOnDistanceConstraintProxy(_mapper.Map<Window>(searchWindow), observer.NaifId, target.NaifId, relationalOperator.GetDescription(), value,
-                aberration.GetDescription(),
-                stepSize.TotalSeconds, windows);
+            FindWindowsOnDistanceConstraintProxy(_mapper.Map<Window>(searchWindow), observerId, targetId, relationalOperator.GetDescription(), value,
+                aberration.GetDescription(), stepSize.TotalSeconds, windows);
             return _mapper.Map<Time.Window[]>(windows.Where(x => !double.IsNaN(x.Start)));
         }
     }
@@ -718,8 +727,7 @@ public class API
     /// <returns></returns>
     public IEnumerable<Time.Window> FindWindowsOnOccultationConstraint(Time.Window searchWindow, INaifObject observer,
         INaifObject target, ShapeType targetShape, INaifObject frontBody, ShapeType frontShape,
-        OccultationType occultationType,
-        Aberration aberration, TimeSpan stepSize)
+        OccultationType occultationType, Aberration aberration, TimeSpan stepSize)
     {
         if (observer == null) throw new ArgumentNullException(nameof(observer));
         if (target == null) throw new ArgumentNullException(nameof(target));
@@ -742,6 +750,45 @@ public class API
                 targetFrame, targetShape.GetDescription(),
                 frontBody.NaifId, frontFrame, frontShape.GetDescription(), occultationType.GetDescription(),
                 aberration.GetDescription(), stepSize.TotalSeconds, windows);
+            return _mapper.Map<Time.Window[]>(windows.Where(x => !double.IsNaN(x.Start)));
+        }
+    }
+
+    /// <summary>
+    /// Find time windows based on occultation constraint
+    /// </summary>
+    /// <param name="searchWindow"></param>
+    /// <param name="observerId"></param>
+    /// <param name="targetId"></param>
+    /// <param name="targetShape"></param>
+    /// <param name="frontBodyId"></param>
+    /// <param name="frontShape"></param>
+    /// <param name="occultationType"></param>
+    /// <param name="aberration"></param>
+    /// <param name="stepSize"></param>
+    /// <returns></returns>
+    public IEnumerable<Time.Window> FindWindowsOnOccultationConstraint(Time.Window searchWindow, int observerId,
+        int targetId, ShapeType targetShape, int frontBodyId, ShapeType frontShape,
+        OccultationType occultationType, Aberration aberration, TimeSpan stepSize)
+    {
+        lock (lockObject)
+        {
+            IO.Astrodynamics.Body.CelestialBody frontBody = new IO.Astrodynamics.Body.CelestialBody(frontBodyId);
+            IO.Astrodynamics.Body.CelestialBody targetBody = new IO.Astrodynamics.Body.CelestialBody(targetId);
+            string frontFrame = frontShape == ShapeType.Ellipsoid
+                ? frontBody.Frame.Name
+                : string.Empty;
+            string targetFrame = targetShape == ShapeType.Ellipsoid
+                ? targetBody.Frame.Name
+                : String.Empty;
+            var windows = new Window[1000];
+            for (var i = 0; i < 1000; i++)
+            {
+                windows[i] = new Window(double.NaN, double.NaN);
+            }
+
+            FindWindowsOnOccultationConstraintProxy(_mapper.Map<Window>(searchWindow), observerId, targetId, targetFrame, targetShape.GetDescription(),
+                frontBody.NaifId, frontFrame, frontShape.GetDescription(), occultationType.GetDescription(), aberration.GetDescription(), stepSize.TotalSeconds, windows);
             return _mapper.Map<Time.Window[]>(windows.Where(x => !double.IsNaN(x.Start)));
         }
     }
@@ -778,6 +825,44 @@ public class API
             }
 
             FindWindowsOnCoordinateConstraintProxy(_mapper.Map<Window>(searchWindow), observer.NaifId, target.NaifId,
+                frame.Name, coordinateSystem.GetDescription(),
+                coordinate.GetDescription(), relationalOperator.GetDescription(), value, adjustValue,
+                aberration.GetDescription(), stepSize.TotalSeconds, windows);
+            return _mapper.Map<Time.Window[]>(windows.Where(x => !double.IsNaN(x.Start)));
+        }
+    }
+
+    /// <summary>
+    /// Find time windows based on coordinate constraint
+    /// </summary>
+    /// <param name="searchWindow"></param>
+    /// <param name="observerId"></param>
+    /// <param name="targetId"></param>
+    /// <param name="frame"></param>
+    /// <param name="coordinateSystem"></param>
+    /// <param name="coordinate"></param>
+    /// <param name="relationalOperator"></param>
+    /// <param name="value"></param>
+    /// <param name="adjustValue"></param>
+    /// <param name="aberration"></param>
+    /// <param name="stepSize"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentNullException"></exception>
+    public IEnumerable<Time.Window> FindWindowsOnCoordinateConstraint(Time.Window searchWindow, int observerId,
+        int targetId, Frame frame, CoordinateSystem coordinateSystem, Coordinate coordinate,
+        RelationnalOperator relationalOperator, double value, double adjustValue, Aberration aberration,
+        TimeSpan stepSize)
+    {
+        if (frame == null) throw new ArgumentNullException(nameof(frame));
+        lock (lockObject)
+        {
+            var windows = new Window[1000];
+            for (var i = 0; i < 1000; i++)
+            {
+                windows[i] = new Window(double.NaN, double.NaN);
+            }
+
+            FindWindowsOnCoordinateConstraintProxy(_mapper.Map<Window>(searchWindow), observerId, targetId,
                 frame.Name, coordinateSystem.GetDescription(),
                 coordinate.GetDescription(), relationalOperator.GetDescription(), value, adjustValue,
                 aberration.GetDescription(), stepSize.TotalSeconds, windows);
@@ -830,6 +915,30 @@ public class API
         }
     }
 
+    public IEnumerable<Time.Window> FindWindowsOnIlluminationConstraint(Time.Window searchWindow, int observerId,
+        int targetBodyId, Frame fixedFrame, Coordinates.Planetodetic planetodetic, IlluminationAngle illuminationType, RelationnalOperator relationalOperator,
+        double value, double adjustValue, Aberration aberration, TimeSpan stepSize, int illuminationSourceId,
+        string method = "Ellipsoid")
+    {
+        if (fixedFrame == null) throw new ArgumentNullException(nameof(fixedFrame));
+        if (method == null) throw new ArgumentNullException(nameof(method));
+        lock (lockObject)
+        {
+            var windows = new Window[1000];
+            for (var i = 0; i < 1000; i++)
+            {
+                windows[i] = new Window(double.NaN, double.NaN);
+            }
+
+            FindWindowsOnIlluminationConstraintProxy(_mapper.Map<Window>(searchWindow), observerId,
+                illuminationSourceId.ToString(), targetBodyId, fixedFrame.Name,
+                _mapper.Map<Planetodetic>(planetodetic),
+                illuminationType.GetDescription(), relationalOperator.GetDescription(), value, adjustValue,
+                aberration.GetDescription(), stepSize.TotalSeconds, method, windows);
+            return _mapper.Map<Time.Window[]>(windows.Where(x => !double.IsNaN(x.Start)));
+        }
+    }
+
     /// <summary>
     ///     Find time window when a target is in instrument's field of view
     /// </summary>
@@ -852,6 +961,29 @@ public class API
         if (targetFrame == null) throw new ArgumentNullException(nameof(targetFrame));
         lock (lockObject)
         {
+            return FindWindowsInFieldOfViewConstraint(searchWindow, observer.NaifId, instrument.NaifId, target.NaifId, targetFrame, targetShape, aberration, stepSize);
+        }
+    }
+
+    /// <summary>
+    /// Find time window when a target is in instrument's field of view
+    /// </summary>
+    /// <param name="searchWindow"></param>
+    /// <param name="observerId"></param>
+    /// <param name="instrumentId"></param>
+    /// <param name="targetId"></param>
+    /// <param name="targetFrame"></param>
+    /// <param name="targetShape"></param>
+    /// <param name="aberration"></param>
+    /// <param name="stepSize"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentNullException"></exception>
+    public IEnumerable<Time.Window> FindWindowsInFieldOfViewConstraint(Time.Window searchWindow, int observerId,
+        int instrumentId, int targetId, Frame targetFrame, ShapeType targetShape, Aberration aberration, TimeSpan stepSize)
+    {
+        if (targetFrame == null) throw new ArgumentNullException(nameof(targetFrame));
+        lock (lockObject)
+        {
             var windows = new Window[1000];
             for (var i = 0; i < 1000; i++)
             {
@@ -860,9 +992,8 @@ public class API
 
             var searchWindowDto = _mapper.Map<Window>(searchWindow);
 
-            FindWindowsInFieldOfViewConstraintProxy(searchWindowDto, observer.NaifId, instrument.NaifId, target.NaifId,
-                targetFrame.Name,
-                targetShape.GetDescription(), aberration.GetDescription(), stepSize.TotalSeconds, windows);
+            FindWindowsInFieldOfViewConstraintProxy(searchWindowDto, observerId, instrumentId, targetId, targetFrame.Name, targetShape.GetDescription(),
+                aberration.GetDescription(), stepSize.TotalSeconds, windows);
 
             return _mapper.Map<IEnumerable<Time.Window>>(windows.Where(x => !double.IsNaN(x.Start)).ToArray());
         }

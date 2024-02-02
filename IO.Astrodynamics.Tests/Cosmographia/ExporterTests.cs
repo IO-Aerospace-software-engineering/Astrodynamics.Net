@@ -42,42 +42,76 @@ public class ExporterTests
     }
 
     [Fact]
+    public async Task ExportSimplePropagationWithoutManeuver()
+    {
+        Astrodynamics.Mission.Mission mission = new Astrodynamics.Mission.Mission("CosmographiaWM");
+        Scenario scenario = new Scenario("exportWM", mission, new Window(DateTimeExtension.J2000.AddYears(21), DateTimeExtension.J2000.AddYears(21).AddHours(2.0)));
+        Spacecraft spacecraft = new Spacecraft(-334, "spcWM", 1000.0, 2000.0, new Clock("clockspcWM", 1 / 256.0),
+            new KeplerianElements(6800000.0, 0.0, 0.0, 0.0, 0.0, 0.0, TestHelpers.EarthAtJ2000, DateTimeExtension.J2000, Frames.Frame.ICRF));
+        scenario.AddSpacecraft(spacecraft);
+        scenario.AddAdditionalCelestialBody(TestHelpers.Sun);
+        scenario.AddAdditionalCelestialBody(TestHelpers.MoonAtJ2000);
+        scenario.AddAdditionalCelestialBody(TestHelpers.EarthWithAtmAndGeoAtJ2000);
+        
+        await scenario.SimulateWithoutManeuverAsync(Constants.OutputPath, true, true);
+
+        CosmographiaExporter exporter = new CosmographiaExporter();
+        await exporter.ExportAsync(scenario, new DirectoryInfo("CosmographiaExport"));
+    }
+    
+    [Fact]
+    public async Task ExportSimpleLongPropagationWithoutManeuver()
+    {
+        Astrodynamics.Mission.Mission mission = new Astrodynamics.Mission.Mission("CosmographiaLongExport");
+        Scenario scenario = new Scenario("LongExport", mission, new Window(DateTimeExtension.J2000.AddYears(21), DateTimeExtension.J2000.AddYears(21).AddHours(4.0)));
+        Spacecraft spacecraft = new Spacecraft(-337, "spcLongMission", 1000.0, 2000.0, new Clock("clockSpcLongMission", 1 / 65536.0),
+            new KeplerianElements(6800000.0, 0.0, 0.0, 0.0, 0.0, 0.0, TestHelpers.EarthAtJ2000, DateTimeExtension.J2000, Frames.Frame.ICRF));
+        scenario.AddSpacecraft(spacecraft);
+        scenario.AddAdditionalCelestialBody(TestHelpers.EarthAtJ2000);
+        
+        await scenario.SimulateWithoutManeuverAsync(Constants.OutputPath);
+
+        CosmographiaExporter exporter = new CosmographiaExporter();
+        await exporter.ExportAsync(scenario, new DirectoryInfo("CosmographiaExport"));
+    }
+
+    [Fact]
     public async Task ExportWithObservationPropagation()
     {
         //Create mission
         Astrodynamics.Mission.Mission mission = new Astrodynamics.Mission.Mission("Cosmographia");
-        
+
         //Create a scenario for the mission
-        Scenario scenario = new Scenario("export2", mission, new Window(DateTimeExtension.J2000.AddYears(21), DateTimeExtension.J2000.AddYears(21).AddDays(1.0))); 
-        
+        Scenario scenario = new Scenario("export2", mission, new Window(DateTimeExtension.J2000.AddYears(21), DateTimeExtension.J2000.AddYears(21).AddDays(1.0)));
+
         //Configure a spacecraft
         Spacecraft spacecraft = new Spacecraft(-334, "Spacecraft", 1000.0, 2000.0, new Clock("clockspc1", 1 / 256.0),
             new KeplerianElements(6800000.0, 0.3, 1.0, 0.0, 0.0, 0.0, TestHelpers.MoonAtJ2000, DateTimeExtension.J2000, Frames.Frame.ICRF));
-        
+
         //Configure and attach an instrument to the spacecraft
         var instrument = new Instrument(-334100, "camera_hires", "camdeluxe", 0.03, InstrumentShape.Rectangular, Vector3.VectorZ, Vector3.VectorY, Vector3.Zero, 0.048);
         spacecraft.AddInstrument(instrument);
-        
+
         //Add a fuel tank
         spacecraft.AddFuelTank(new FuelTank("fuelTank1", "fuelTankModel", "456", 2000.0, 2000.0));
-        
+
         //Add an engine
         spacecraft.AddEngine(new Engine("engine1", "engineModel", "1234", 450, 50.0, spacecraft.FuelTanks.First()));
-        
+
         //Attach the spacecraft to the scenario
         scenario.AddSpacecraft(spacecraft);
-        
+
         //Configure the first maneuver
         var initialManeuver = new InstrumentPointingToAttitude(scenario.Window.StartDate.AddMinutes(10.0), TimeSpan.FromHours(1.0), instrument,
             spacecraft.InitialOrbitalParameters.Observer, spacecraft.Engines.First());
-        
+
         //Configure the second maneuver and link it to the first maneuver
         initialManeuver.SetNextManeuver(new InstrumentPointingToAttitude(scenario.Window.StartDate.AddHours(2.0), TimeSpan.FromHours(1.0), instrument,
             spacecraft.InitialOrbitalParameters.Observer, spacecraft.Engines.First()));
-        
+
         //Set the first maneuver in standby
         spacecraft.SetStandbyManeuver(initialManeuver);
-        
+
         //Run the simulation
         scenario.Simulate(Constants.OutputPath);
 

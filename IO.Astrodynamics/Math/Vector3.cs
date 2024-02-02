@@ -1,3 +1,5 @@
+using System.Numerics;
+
 namespace IO.Astrodynamics.Math
 {
     public readonly record struct Vector3
@@ -101,5 +103,15 @@ namespace IO.Astrodynamics.Math
             var p = new Quaternion(0.0, this);
             return (quaternion * p * quaternion.Conjugate()).VectorPart;
         }
+
+        public override string ToString()
+        {
+            return $"X : {X} Y : {Y} Z: {Z}";
+        }
+
+        // public Vector3 ToVector()
+        // {
+        //     return new Vector3(stackalloc double[] { X, Y, Z, 0.0 });
+        // }
     }
 }

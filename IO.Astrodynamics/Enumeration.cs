@@ -13,4 +13,24 @@ public static class Enumeration
 
         return Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute)) is not DescriptionAttribute attribute ? value.ToString() : attribute.Description;
     }
+
+    public static T GetValueFromDescription<T>(string description) where T : Enum
+    {
+        foreach (var field in typeof(T).GetFields())
+        {
+            if (Attribute.GetCustomAttribute(field,
+                    typeof(DescriptionAttribute)) is DescriptionAttribute attribute)
+            {
+                if (attribute.Description.Equals(description, StringComparison.InvariantCultureIgnoreCase))
+                    return (T)field.GetValue(null);
+            }
+            else
+            {
+                if (field.Name.Equals(description, StringComparison.InvariantCultureIgnoreCase))
+                    return (T)field.GetValue(null);
+            }
+        }
+
+        throw new ArgumentException("Not found.", nameof(description));
+    }
 }

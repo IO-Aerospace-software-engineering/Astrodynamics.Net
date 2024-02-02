@@ -1,6 +1,7 @@
 using System;
 using IO.Astrodynamics.Body;
 using IO.Astrodynamics.Frames;
+using IO.Astrodynamics.Time;
 
 namespace IO.Astrodynamics.OrbitalParameters
 {
@@ -136,6 +137,11 @@ namespace IO.Astrodynamics.OrbitalParameters
         public static bool operator !=(EquinoctialElements left, EquinoctialElements right)
         {
             return !Equals(left, right);
+        }
+
+        public override string ToString()
+        {
+            return $"Epoch : {Epoch.ToFormattedString()} P : {P} F : {F} G : {G} H : {H} K {K} L0 : {L0} Frame : {Frame.Name}" ;
         }
     }
 }

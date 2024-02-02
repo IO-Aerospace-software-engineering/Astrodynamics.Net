@@ -1,5 +1,8 @@
 using System;
+using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Threading.Tasks;
 using IO.Astrodynamics.Body;
 using IO.Astrodynamics.Body.Spacecraft;
 using IO.Astrodynamics.Math;
@@ -365,6 +368,25 @@ namespace IO.Astrodynamics.Tests.Body
             var spacecraft = new Spacecraft(-845, "moonlander", 1200, 5000, clk1, sv);
             var res = spacecraft.GetCentersOfMotion();
             Assert.Equal(3, res.Count());
+        }
+
+        [Fact]
+        public void CreateSpacecraftFrame()
+        {
+            var frame = new SpacecraftFrame("test", -350, "spc1");
+            Assert.Equal("test", frame.Name);
+            Assert.Equal(-350, frame.SpacecraftId);
+            Assert.Equal(-350000, frame.Id);
+        }
+
+        [Fact]
+        public async Task WriteSpacecraftFrame()
+        {
+            var frame = new SpacecraftFrame("test", -350, "spc1");
+            await frame.WriteAsync(new FileInfo("test.tf"));
+            TextReader tr = new StreamReader("test.tf");
+            var res = await tr.ReadToEndAsync();
+            Assert.Equal($"KPL/FK{Environment.NewLine}\\begindata{Environment.NewLine}FRAME_TEST   = -350000{Environment.NewLine}FRAME_-350000_NAME      = 'TEST'{Environment.NewLine}FRAME_-350000_CLASS     =  3{Environment.NewLine}FRAME_-350000_CLASS_ID  = -350000{Environment.NewLine}FRAME_-350000_CENTER    = -350{Environment.NewLine}CK_-350000_SCLK         = -350{Environment.NewLine}CK_-350000_SPK          = -350{Environment.NewLine}OBJECT_-350_FRAME       = 'TEST'{Environment.NewLine}NAIF_BODY_NAME              += 'TEST'{Environment.NewLine}NAIF_BODY_CODE              += -350000{Environment.NewLine}NAIF_BODY_NAME              += 'SPC1'{Environment.NewLine}NAIF_BODY_CODE              += -350{Environment.NewLine}\\begintext", res);
         }
     }
 }

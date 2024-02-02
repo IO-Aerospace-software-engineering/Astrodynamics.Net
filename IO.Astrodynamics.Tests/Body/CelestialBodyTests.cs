@@ -1,8 +1,10 @@
 using System;
+using System.IO;
 using System.Linq;
 using IO.Astrodynamics.Body;
 using IO.Astrodynamics.Math;
 using IO.Astrodynamics.OrbitalParameters;
+using IO.Astrodynamics.Physics;
 using IO.Astrodynamics.SolarSystemObjects;
 using IO.Astrodynamics.Time;
 using Xunit;
@@ -51,7 +53,7 @@ public class CelestialBodyTests
     [Fact]
     public void CreateFromNaifObject()
     {
-        CelestialBody moon = new CelestialBody(PlanetsAndMoons.MOON);
+        CelestialBody moon = new CelestialBody( PlanetsAndMoons.MOON);
         Assert.Equal("MOON", moon.Name);
         Assert.Equal(301, moon.NaifId);
         Assert.Equal(0.0, moon.Flattening);
@@ -138,15 +140,18 @@ public class CelestialBodyTests
     public void CelestialBodyToString()
     {
         var earth = TestHelpers.EarthAtJ2000;
-        Assert.Equal("EARTH", earth.ToString());
+        var res = earth.ToString();
+        Assert.Equal(
+            $"                          Type : Planet                          {Environment.NewLine}                    Identifier : 399                             {Environment.NewLine}                          Name : EARTH                           {Environment.NewLine}                     Mass (kg) : 5.972168E+024                   {Environment.NewLine}                   GM (m^3.s^2): 3.986004E+014                   {Environment.NewLine}                   Fixed frame : ITRF93                          {Environment.NewLine}         Equatorial radius (m) : 6.378137E+006                   {Environment.NewLine}              Polar radius (m) : 6.356752E+006                   {Environment.NewLine}                    Flattening : 0.0033528131084554157           {Environment.NewLine}                            J2 : 0.001082616                     {Environment.NewLine}                            J3 : -2.5388099999999996E-06         {Environment.NewLine}                            J4 : -1.65597E-06                    {Environment.NewLine}",
+            earth.ToString());
     }
 
     [Fact]
     public void Equality()
     {
-        var earth1 = new CelestialBody(PlanetsAndMoons.EARTH);
-        var earth2 = new CelestialBody(PlanetsAndMoons.EARTH);
-        var moon = new CelestialBody(PlanetsAndMoons.MOON);
+        var earth1 = new CelestialBody( PlanetsAndMoons.EARTH);
+        var earth2 = new CelestialBody( PlanetsAndMoons.EARTH);
+        var moon = new CelestialBody( PlanetsAndMoons.MOON);
         Assert.Equal(earth1, earth2);
         Assert.NotEqual(earth1, moon);
         Assert.False(earth1 == null);
@@ -162,7 +167,7 @@ public class CelestialBodyTests
     [Fact]
     public void GetEphemeris()
     {
-        var earth = new CelestialBody(PlanetsAndMoons.EARTH);
+        var earth = new CelestialBody( PlanetsAndMoons.EARTH);
         var res = earth.GetEphemeris(new Window(DateTimeExtension.J2000, TimeSpan.FromDays(1.0)), TestHelpers.Sun, Frames.Frame.ICRF, Aberration.None,
             TimeSpan.FromDays(1.0)).ToArray();
         Assert.Equal(2, res.Length);
@@ -176,6 +181,13 @@ public class CelestialBodyTests
     {
         var res = TestHelpers.EarthAtJ2000.AngularSeparation(DateTimeExtension.J2000, TestHelpers.MoonAtJ2000, TestHelpers.Sun, Aberration.None);
         Assert.Equal(0.9984998794278185, res);
+    }
+
+    [Fact]
+    public void AngularSeparationFromOrbitalParameters()
+    {
+        var res = TestHelpers.Sun.AngularSeparation(DateTimeExtension.J2000, TestHelpers.MoonAtJ2000, TestHelpers.EarthAtJ2000.InitialOrbitalParameters, Aberration.None);
+        Assert.Equal(0.9984998794278185, res, 12);
     }
 
     [Fact]
@@ -307,5 +319,96 @@ public class CelestialBodyTests
         Assert.Equal(270.0, res.TrueAnomaly() * Astrodynamics.Constants.Rad2Deg, 3);
         Assert.Equal(270.01999999999998, res.MeanAnomaly() * Astrodynamics.Constants.Rad2Deg, 3);
         Assert.Equal(epoch, res.Epoch);
+    }
+
+    [Fact]
+    public void GeopotentialModelReader()
+    {
+        GeopotentialModelReader geopotentialModelReader =
+            new GeopotentialModelReader(new StreamReader(Path.Combine(Constants.SolarSystemKernelPath.ToString(), "EGM2008_to70_TideFree")));
+        Assert.Equal(new GeopotentialCoefficient(4, 1, -0.536157389388867E-06, -0.473567346518086E-06, 0.4568074333E-11, 0.4684043490E-11),
+            geopotentialModelReader.ReadCoefficient(4, 1));
+    }
+
+    [Fact]
+    public void GeopotentialModelReaderException()
+    {
+        GeopotentialModelReader geopotentialModelReader =
+            new GeopotentialModelReader(new StreamReader(Path.Combine(Constants.SolarSystemKernelPath.ToString(), "EGM2008_to70_TideFree")));
+        Assert.Throws<ArgumentException>(() => geopotentialModelReader.ReadCoefficient(4, 5));
+    }
+
+    [Fact]
+    public void IsOccultedNone()
+    {
+        Assert.Equal(OccultationType.None, CelestialItem.IsOcculted(3.0, 2.0, 4.0));
+        Assert.Equal(OccultationType.None, CelestialItem.IsOcculted(3.0, 4.0, 2.0));
+    }
+
+    [Fact]
+    public void IsOccultedPartial()
+    {
+        Assert.Equal(OccultationType.Partial, CelestialItem.IsOcculted(2.0, 2.0, 4.0));
+        Assert.Equal(OccultationType.Partial, CelestialItem.IsOcculted(2.0, 4.0, 2.0));
+    }
+
+    [Fact]
+    public void IsOccultedFull()
+    {
+        Assert.Equal(OccultationType.Full, CelestialItem.IsOcculted(1.0, 2.0, 4.0));
+    }
+
+    [Fact]
+    public void IsOccultedAnnular()
+    {
+        Assert.Equal(OccultationType.Annular, CelestialItem.IsOcculted(1.0, 4.0, 2.0));
+    }
+
+    [Fact]
+    public void EarthAirTemperature()
+    {
+        Assert.Equal(15.04, TestHelpers.EarthWithAtmAndGeoAtJ2000.GetAirTemperature(0.0),9);
+        Assert.Equal(-56.46, TestHelpers.EarthWithAtmAndGeoAtJ2000.GetAirTemperature(12000.0),9);
+        Assert.Equal(-41.51, TestHelpers.EarthWithAtmAndGeoAtJ2000.GetAirTemperature(30000.0),9);
+    }
+    
+    [Fact]
+    public void EarthAirPressure()
+    {
+        Assert.Equal(101.49344845410143, TestHelpers.EarthWithAtmAndGeoAtJ2000.GetAirPressure(0.0));
+        Assert.Equal(19.417211275909512, TestHelpers.EarthWithAtmAndGeoAtJ2000.GetAirPressure(12000.0));
+        Assert.Equal(1.1583293266743089, TestHelpers.EarthWithAtmAndGeoAtJ2000.GetAirPressure(30000.0));
+    }
+    
+    [Fact]
+    public void EarthAirDensity()
+    {
+        Assert.Equal(1.2275199342947976, TestHelpers.EarthWithAtmAndGeoAtJ2000.GetAirDensity(0.0));
+        Assert.Equal(0.3123326876175731, TestHelpers.EarthWithAtmAndGeoAtJ2000.GetAirDensity(12000.0));
+        Assert.Equal(0.017429621153374267, TestHelpers.EarthWithAtmAndGeoAtJ2000.GetAirDensity(30000.0));
+    }
+    
+    [Fact]
+    public void MarsAirTemperature()
+    {
+        MarsAtmosphericModel model = new MarsAtmosphericModel();
+        Assert.Equal(-31.00, model.GetTemperature(0.0),9);
+        Assert.Equal(-90.00, model.GetTemperature(30000.0),9);
+    }
+    
+    [Fact]
+    public void MarsAirPressure()
+    {
+        MarsAtmosphericModel model = new MarsAtmosphericModel();
+        Assert.Equal(0.699, model.GetPressure(0.0));
+        Assert.Equal(0.046976653405085077, model.GetPressure(30000.0));
+    }
+    
+    [Fact]
+    public void MarsAirDensity()
+    {
+        MarsAtmosphericModel model = new MarsAtmosphericModel();
+        Assert.Equal(0.015026759563140498, model.GetDensity(0.0));
+        Assert.Equal(0.0013352044980975983, model.GetDensity(30000.0));
     }
 }

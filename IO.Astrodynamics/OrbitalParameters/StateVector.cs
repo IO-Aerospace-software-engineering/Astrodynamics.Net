@@ -1,7 +1,9 @@
 using System;
+using System.Globalization;
 using IO.Astrodynamics.Body;
 using IO.Astrodynamics.Frames;
 using IO.Astrodynamics.Math;
+using IO.Astrodynamics.Time;
 
 namespace IO.Astrodynamics.OrbitalParameters
 {
@@ -27,7 +29,7 @@ namespace IO.Astrodynamics.OrbitalParameters
         /// <param name="observer"></param>
         /// <param name="epoch"></param>
         /// <param name="frame"></param>
-        public StateVector(Vector3 position, Vector3 velocity, ILocalizable observer, DateTime epoch, Frame frame) : base(observer, epoch, frame)
+        public StateVector(in Vector3 position, in Vector3 velocity, ILocalizable observer, in DateTime epoch, Frame frame) : base(observer, epoch, frame)
         {
             Position = position;
             Velocity = velocity;
@@ -287,6 +289,11 @@ namespace IO.Astrodynamics.OrbitalParameters
         public static bool operator !=(StateVector left, StateVector right)
         {
             return !Equals(left, right);
+        }
+
+        public override string ToString()
+        {
+            return $"Epoch : {Epoch.ToFormattedString()} Position : {Position} Velocity : {Velocity} Frame : {Frame.Name}";
         }
     }
 }

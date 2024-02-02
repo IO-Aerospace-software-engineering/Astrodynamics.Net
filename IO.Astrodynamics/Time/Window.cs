@@ -89,6 +89,6 @@ public readonly record struct Window
 
     public override string ToString()
     {
-        return $"From {StartDate.ToString(CultureInfo.InvariantCulture)} to {EndDate.ToString(CultureInfo.InvariantCulture)} - Length {Length.ToString()}";
+        return $"From {StartDate.ToFormattedString()} to {EndDate.ToFormattedString()} - Length {Length.ToString()}";
     }
 }

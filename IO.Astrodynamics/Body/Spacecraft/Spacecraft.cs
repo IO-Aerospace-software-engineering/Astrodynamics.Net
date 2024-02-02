@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using IO.Astrodynamics.Frames;
 using IO.Astrodynamics.Math;
 using IO.Astrodynamics.OrbitalParameters;
@@ -9,7 +11,7 @@ using IO.Astrodynamics.Time;
 
 namespace IO.Astrodynamics.Body.Spacecraft
 {
-    public class Spacecraft : CelestialItem
+    public class Spacecraft : CelestialItem, IOrientable
     {
         public static readonly Vector3 Front = Vector3.VectorY;
         public static readonly Vector3 Back = Front.Inverse();
@@ -35,18 +37,38 @@ namespace IO.Astrodynamics.Body.Spacecraft
         private readonly HashSet<Payload> _payloads = new();
         public IReadOnlyCollection<Payload> Payloads => _payloads;
         public double DryOperatingMass => Mass;
-
         public double MaximumOperatingMass { get; }
         public Frame Frame { get; }
+        public double SectionalArea { get; }
+        public double DragCoefficient { get; }
 
-        public Spacecraft(int naifId, string name, double mass, double maximumOperatingMass, Clock clock, OrbitalParameters.OrbitalParameters initialOrbitalParameters) : base(
+        /// <summary>
+        /// Spacecraft constructor
+        /// </summary>
+        /// <param name="naifId"></param>
+        /// <param name="name"></param>
+        /// <param name="mass"></param>
+        /// <param name="maximumOperatingMass"></param>
+        /// <param name="clock"></param>
+        /// <param name="initialOrbitalParameters"></param>
+        /// <param name="sectionalArea">Mean sectional area</param>
+        /// <param name="dragCoeff">Drag coefficient</param>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        /// <exception cref="ArgumentNullException"></exception>
+        public Spacecraft(int naifId, string name, double mass, double maximumOperatingMass, Clock clock, OrbitalParameters.OrbitalParameters initialOrbitalParameters,
+            double sectionalArea = 1.0, double dragCoeff = 0.3) : base(
             naifId, name, mass, initialOrbitalParameters)
         {
             if (maximumOperatingMass < mass) throw new ArgumentOutOfRangeException(nameof(maximumOperatingMass));
             if (naifId >= 0) throw new ArgumentOutOfRangeException(nameof(naifId));
+            ArgumentOutOfRangeException.ThrowIfNegative(dragCoeff);
+            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(sectionalArea);
             MaximumOperatingMass = maximumOperatingMass;
             Clock = clock ?? throw new ArgumentNullException(nameof(clock));
-            Frame = new Frame($"{name}_SPACECRAFT");
+            Clock.AttachSpacecraft(this);
+            Frame = new SpacecraftFrame($"{name}_SPACECRAFT", naifId, name);
+            SectionalArea = sectionalArea;
+            DragCoefficient = dragCoeff;
         }
 
         /// <summary>
@@ -240,6 +262,11 @@ namespace IO.Astrodynamics.Body.Spacecraft
             }
 
             return new SpacecraftSummary(this, maneuverWindow, fuel);
+        }
+
+        internal async Task WriteFrameAsync(FileInfo outputFile)
+        {
+            await (Frame as SpacecraftFrame)!.WriteAsync(outputFile);
         }
     }
 }

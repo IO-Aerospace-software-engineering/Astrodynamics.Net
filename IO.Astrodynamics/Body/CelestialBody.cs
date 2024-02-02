@@ -1,10 +1,14 @@
 using System;
+using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Numerics;
 using IO.Astrodynamics.Coordinates;
 using IO.Astrodynamics.Frames;
 using IO.Astrodynamics.Math;
 using IO.Astrodynamics.OrbitalParameters;
+using IO.Astrodynamics.Physics;
+using IO.Astrodynamics.Propagator.Forces;
 using IO.Astrodynamics.SolarSystemObjects;
 using IO.Astrodynamics.Surface;
 using IO.Astrodynamics.Time;
@@ -13,7 +17,7 @@ using Vector3 = IO.Astrodynamics.Math.Vector3;
 
 namespace IO.Astrodynamics.Body;
 
-public class CelestialBody : CelestialItem
+public class CelestialBody : CelestialItem, IOrientable
 {
     public double PolarRadius { get; }
     public double EquatorialRadius { get; }
@@ -26,11 +30,19 @@ public class CelestialBody : CelestialItem
     public double J3 { get; }
     public double J4 { get; }
 
+    protected GravitationalField GravitationalField { get; }
+
+    protected AtmosphericModel AtmosphericModel { get; }
+
     /// <summary>
     /// Instantiate celestial body from naif object with default parameters (Ecliptic J2000 at J2000 epoch)
     /// </summary>
     /// <param name="naifObject"></param>
-    public CelestialBody(NaifObject naifObject) : this(naifObject.NaifId)
+    /// <param name="geopotentialModelParameters"></param>
+    /// <param name="atmosphericModel"></param>
+    public CelestialBody(NaifObject naifObject, GeopotentialModelParameters geopotentialModelParameters = null, AtmosphericModel atmosphericModel = null) : this(naifObject.NaifId,
+        geopotentialModelParameters,
+        atmosphericModel)
     {
     }
 
@@ -38,7 +50,11 @@ public class CelestialBody : CelestialItem
     /// Instantiate celestial body from naif id with default parameters (Ecliptic J2000 at J2000 epoch)
     /// </summary>
     /// <param name="naifId"></param>
-    public CelestialBody(int naifId) : this(naifId, Frame.ECLIPTIC_J2000, DateTimeExtension.J2000)
+    /// <param name="geopotentialModelParameters"></param>
+    /// <param name="atmosphericModel"></param>
+    public CelestialBody(int naifId, GeopotentialModelParameters geopotentialModelParameters = null, AtmosphericModel atmosphericModel = null) : this(naifId, Frame.ECLIPTIC_J2000,
+        DateTimeExtension.J2000,
+        geopotentialModelParameters, atmosphericModel)
     {
     }
 
@@ -48,7 +64,11 @@ public class CelestialBody : CelestialItem
     /// <param name="naifObject"></param>
     /// <param name="frame"></param>
     /// <param name="epoch"></param>
-    public CelestialBody(NaifObject naifObject, Frame frame, DateTime epoch) : this(naifObject.NaifId, frame, epoch)
+    /// <param name="geopotentialModelParameters"></param>
+    /// <param name="atmosphericModel"></param>
+    public CelestialBody(NaifObject naifObject, Frame frame, DateTime epoch, GeopotentialModelParameters geopotentialModelParameters = null,
+        AtmosphericModel atmosphericModel = null) : this(naifObject.NaifId,
+        frame, epoch, geopotentialModelParameters, atmosphericModel)
     {
     }
 
@@ -58,7 +78,10 @@ public class CelestialBody : CelestialItem
     /// <param name="naifId"></param>
     /// <param name="frame"></param>
     /// <param name="epoch"></param>
-    public CelestialBody(int naifId, Frame frame, DateTime epoch) : base(naifId, frame, epoch)
+    /// <param name="geopotentialModelParameters"></param>
+    /// <param name="atmosphericModel"></param>
+    public CelestialBody(int naifId, Frame frame, DateTime epoch, GeopotentialModelParameters geopotentialModelParameters = null, AtmosphericModel atmosphericModel = null) :
+        base(naifId, frame, epoch)
     {
         PolarRadius = ExtendedInformation.Radii.Z;
         EquatorialRadius = ExtendedInformation.Radii.X;
@@ -77,6 +100,10 @@ public class CelestialBody : CelestialItem
             : new Frame(ExtendedInformation.FrameName);
 
         UpdateSphereOfInfluence();
+        GravitationalField = geopotentialModelParameters != null
+            ? new GeopotentialGravitationalField(geopotentialModelParameters.GeopotentialModelPath,geopotentialModelParameters.GeopotentialDegree)
+            : new GravitationalField();
+        AtmosphericModel = atmosphericModel;
     }
 
     /// <summary>
@@ -248,5 +275,86 @@ public class CelestialBody : CelestialItem
         double t = trueSolarDay.TotalSeconds / nbOrbitPerDay;
         double a = System.Math.Cbrt(((t * t) * GM) / (4 * Constants.PI * Constants.PI));
         return HelioSynchronousOrbit(a, eccentricity, epochAtDescendingNode);
+    }
+
+    /// <summary>
+    /// Evaluate gravitational acceleration at given position
+    /// </summary>
+    /// <param name="orbitalParameters"></param>
+    /// <returns></returns>
+    public Vector3 EvaluateGravitationalAcceleration(OrbitalParameters.OrbitalParameters orbitalParameters)
+    {
+        var sv = orbitalParameters.Observer as CelestialBody != this ? orbitalParameters.RelativeTo(this, Aberration.LT).ToStateVector() : orbitalParameters.ToStateVector();
+
+        return GravitationalField.ComputeGravitationalAcceleration(sv);
+    }
+
+    /// <summary>
+    /// Get temperature at given altitude
+    /// </summary>
+    /// <param name="altitude"></param>
+    /// <returns></returns>
+    public double GetAirTemperature(double altitude)
+    {
+        return AtmosphericModel?.GetTemperature(altitude) ?? double.NaN;
+    }
+
+    /// <summary>
+    /// Get air pressure at given altitude
+    /// </summary>
+    /// <param name="altitude"></param>
+    /// <returns></returns>
+    public double GetAirPressure(double altitude)
+    {
+        return AtmosphericModel?.GetPressure(altitude) ?? 0.0;
+    }
+
+    /// <summary>
+    /// Get air density at given altitude
+    /// </summary>
+    /// <param name="altitude"></param>
+    /// <returns></returns>
+    public double GetAirDensity(double altitude)
+    {
+        return AtmosphericModel?.GetDensity(altitude) ?? 0.0;
+    }
+
+    public override string ToString()
+    {
+        string bodyType = string.Empty;
+        if (IsPlanet)
+        {
+            bodyType = "Planet";
+        }
+        else if (IsMoon)
+        {
+            bodyType = "Moon";
+        }
+        else if (IsAsteroid)
+        {
+            bodyType = "Asteroid";
+        }
+        else if (IsBarycenter)
+        {
+            bodyType = "Barycenter";
+        }
+        else if (IsStar || IsSun)
+        {
+            bodyType = "Star";
+        }
+        else if (IsLagrangePoint)
+        {
+            bodyType = "Lagrange point";
+        }
+
+        return $"{"Type :",TITLE_WIDTH} {bodyType,-VALUE_WIDTH}{Environment.NewLine}" +
+               base.ToString() +
+               $"{"Fixed frame :",TITLE_WIDTH} {Frame.Name,-VALUE_WIDTH}{Environment.NewLine}" +
+               $"{"Equatorial radius (m) :",TITLE_WIDTH} {EquatorialRadius.ToString("E", CultureInfo.InvariantCulture),-VALUE_WIDTH:E}{Environment.NewLine}" +
+               $"{"Polar radius (m) :",TITLE_WIDTH} {PolarRadius.ToString("E", CultureInfo.InvariantCulture),-VALUE_WIDTH:E}{Environment.NewLine}" +
+               $"{"Flattening :",TITLE_WIDTH} {Flattening.ToString(CultureInfo.InvariantCulture),-VALUE_WIDTH}{Environment.NewLine}" +
+               $"{"J2 :",TITLE_WIDTH} {J2.ToString(CultureInfo.InvariantCulture),-VALUE_WIDTH}{Environment.NewLine}" +
+               $"{"J3 :",TITLE_WIDTH} {J3.ToString(CultureInfo.InvariantCulture),-VALUE_WIDTH}{Environment.NewLine}" +
+               $"{"J4 :",TITLE_WIDTH} {J4.ToString(CultureInfo.InvariantCulture),-VALUE_WIDTH}{Environment.NewLine}";
     }
 }

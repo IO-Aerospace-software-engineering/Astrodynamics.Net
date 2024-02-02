@@ -1,14 +1,20 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using IO.Astrodynamics.Coordinates;
 using IO.Astrodynamics.Frames;
+using IO.Astrodynamics.Math;
+using IO.Astrodynamics.OrbitalParameters;
 using IO.Astrodynamics.SolarSystemObjects;
+using IO.Astrodynamics.Time;
 using Window = IO.Astrodynamics.Time.Window;
 
 namespace IO.Astrodynamics.Body;
 
 public abstract class CelestialItem : ILocalizable, IEquatable<CelestialItem>
 {
+    protected const int TITLE_WIDTH = 32;
+    protected const int VALUE_WIDTH = 32;
     public int NaifId { get; }
     public string Name { get; }
     public double Mass { get; }
@@ -60,7 +66,6 @@ public abstract class CelestialItem : ILocalizable, IEquatable<CelestialItem>
     /// <summary>
     /// Constructor
     /// </summary>
-    /// <param name="naifId"></param>
     /// <param name="name"></param>
     /// <param name="mass"></param>
     /// <param name="initialOrbitalParameters"></param>
@@ -150,6 +155,13 @@ public abstract class CelestialItem : ILocalizable, IEquatable<CelestialItem>
         var target2Position = target2.GetEphemeris(epoch, this, Frame.ICRF, aberration).ToStateVector().Position;
         return target1Position.Angle(target2Position);
     }
+    
+    public double AngularSeparation(DateTime epoch, ILocalizable target1, OrbitalParameters.OrbitalParameters fromPosition, Aberration aberration)
+    {
+        var target1Position = fromPosition.RelativeTo(target1, aberration).ToStateVector().Position.Inverse();
+        var target2Position = fromPosition.RelativeTo(this, aberration).ToStateVector().Position.Inverse();
+        return target1Position.Angle(target2Position);
+    }
 
     public IEnumerable<Window> FindWindowsOnDistanceConstraint(Window searchWindow, INaifObject observer,
         RelationnalOperator relationalOperator, double value,
@@ -207,10 +219,49 @@ public abstract class CelestialItem : ILocalizable, IEquatable<CelestialItem>
 
         return new Planetocentric(lon, lat, position.Magnitude());
     }
+    
+    public Planetocentric SubObserverPoint(Vector3 position, DateTime epoch, Aberration aberration)
+    {
+        var lon = System.Math.Atan2(position.Y, position.X);
+
+        var lat = System.Math.Asin(position.Z / position.Magnitude());
+
+        return new Planetocentric(lon, lat, position.Magnitude());
+    }
+    
+    public OccultationType? IsOcculted(CelestialItem by, OrbitalParameters.OrbitalParameters from)
+    {
+        double backSize = this.AngularSize(from.RelativeTo(this, Aberration.LT).ToStateVector().Position.Magnitude());
+        double bySize = by.AngularSize(from.RelativeTo(by, Aberration.LT).ToStateVector().Position.Magnitude());
+        var angularSeparation = this.AngularSeparation(from.Epoch, by, from, Aberration.LT);
+        return IsOcculted(angularSeparation, backSize, bySize);
+    }
+    
+    public static OccultationType IsOcculted(double angularSeparation, double backSize, double bySize)
+    {
+        OccultationType occul = OccultationType.None;
+        if (angularSeparation < (backSize + bySize) * 0.5)
+        {
+            occul = OccultationType.Partial;
+            if (angularSeparation <= System.Math.Abs(bySize - backSize) * 0.5)
+            {
+                occul = OccultationType.Full;
+                if (bySize < backSize)
+                {
+                    occul = OccultationType.Annular;
+                }
+            }
+        }
+
+        return occul;
+    }
 
     public override string ToString()
     {
-        return Name;
+        return $"{"Identifier :",TITLE_WIDTH} {NaifId,-VALUE_WIDTH}{Environment.NewLine}" +
+               $"{"Name :",TITLE_WIDTH} {Name,-VALUE_WIDTH}{Environment.NewLine}" +
+               $"{"Mass (kg) :",TITLE_WIDTH} {Mass.ToString("E", CultureInfo.InvariantCulture),-VALUE_WIDTH:E}{Environment.NewLine}" +
+               $"{"GM (m^3.s^2):",TITLE_WIDTH} {GM.ToString("E", CultureInfo.InvariantCulture),-VALUE_WIDTH:E}{Environment.NewLine}";
     }
 
     public bool Equals(CelestialItem other)

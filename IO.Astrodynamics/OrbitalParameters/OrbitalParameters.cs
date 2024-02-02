@@ -42,7 +42,7 @@ public abstract class OrbitalParameters : IEquatable<OrbitalParameters>
     /// <param name="observer"></param>
     /// <param name="epoch"></param>
     /// <param name="frame"></param>
-    protected OrbitalParameters(ILocalizable observer, DateTime epoch, Frame frame)
+    protected OrbitalParameters(ILocalizable observer, in DateTime epoch, Frame frame)
     {
         Observer = observer ?? throw new ArgumentNullException(nameof(observer));
         Epoch = epoch;
@@ -399,6 +399,25 @@ public abstract class OrbitalParameters : IEquatable<OrbitalParameters>
     {
         _apogeeVelocity ??= System.Math.Sqrt(Observer.GM * (2 / ApogeeVector().Magnitude() - 1.0 / SemiMajorAxis()));
         return _apogeeVelocity.Value;
+    }
+
+    public OrbitalParameters RelativeTo(ILocalizable localizable, Aberration aberration)
+    {
+        if (localizable.NaifId == this.Observer.NaifId)
+        {
+            return this;
+        }
+
+        var eph = localizable.GetEphemeris(Epoch, Observer, Frame, aberration).ToStateVector();
+        var position = (eph.Position - ToStateVector().Position).Inverse();
+        var velocity = (eph.Velocity - ToStateVector().Velocity).Inverse();
+        return new StateVector(position, velocity, localizable, eph.Epoch, Frame);
+    }
+
+    public Planetocentric ToPlanetocentric(Aberration aberration)
+    {
+        var body = Observer as CelestialBody;
+        return ((CelestialBody)Observer).SubObserverPoint(ToFrame(body!.Frame).ToStateVector().Position, Epoch, aberration);
     }
 
     public override bool Equals(object obj)

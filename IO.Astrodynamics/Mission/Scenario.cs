@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
 using IO.Astrodynamics.Surface;
 using IO.Astrodynamics.Time;
 
@@ -84,18 +86,7 @@ namespace IO.Astrodynamics.Mission
         /// <exception cref="InvalidOperationException"></exception>
         public ScenarioSummary Simulate(DirectoryInfo outputDirectory)
         {
-            RootDirectory = null;
-            SpacecraftDirectory = null;
-            SiteDirectory = null;
-
-            if (_spacecrafts.Count == 0 && _sites.Count == 0)
-            {
-                throw new InvalidOperationException("There is nothing to simulate");
-            }
-
-            RootDirectory = outputDirectory.CreateSubdirectory(this.Mission.Name).CreateSubdirectory(this.Name);
-            SpacecraftDirectory = RootDirectory.CreateSubdirectory("Spacecrafts");
-            SiteDirectory = RootDirectory.CreateSubdirectory("Sites");
+            InitializeDirectories(outputDirectory);
 
             try
             {
@@ -114,6 +105,67 @@ namespace IO.Astrodynamics.Mission
             }
 
             return scenarioSummary;
+        }
+
+        /// <summary>
+        /// Simulate a scenario without maneuver
+        /// </summary>
+        /// <param name="outputDirectory"></param>
+        /// <param name="withAtmosphericDrag">Include atmospheric drag perturbation</param>
+        /// <param name="withSolarRadiationPressure">Include solar radiation pressure perturbation</param>
+        /// <returns></returns>
+        public async Task<ScenarioSummary> SimulateWithoutManeuverAsync(DirectoryInfo outputDirectory, bool withAtmosphericDrag = false, bool withSolarRadiationPressure = false)
+        {
+            InitializeDirectories(outputDirectory);
+
+            try
+            {
+                var spacecraft = _spacecrafts.First();
+                var spacecraftDirectory = SpacecraftDirectory.CreateSubdirectory(spacecraft.Name);
+                Propagator.Propagator propagator = new Propagator.Propagator(Window, spacecraft, _additionalCelestialBodies, withAtmosphericDrag,
+                    withSolarRadiationPressure, TimeSpan.FromSeconds(1.0));
+                var stateVectors = propagator.Propagate();
+
+                //Write frame
+                await spacecraft.WriteFrameAsync(new FileInfo(Path.Combine(spacecraftDirectory.CreateSubdirectory("Frames").FullName,
+                    spacecraft.Name + ".tf")));
+
+                //Write clock
+                await spacecraft.Clock.WriteAsync(
+                    new FileInfo(Path.Combine(spacecraftDirectory.CreateSubdirectory("Clocks").FullName,spacecraft.Name + ".tsc")));
+                
+                //Write Ephemeris
+                API.Instance.WriteEphemeris(new FileInfo(Path.Combine(spacecraftDirectory.CreateSubdirectory("Ephemeris").FullName,  spacecraft.Name + ".spk")), spacecraft, stateVectors);
+            }
+            finally
+            {
+                API.Instance.UnloadKernels(SiteDirectory);
+                API.Instance.UnloadKernels(SpacecraftDirectory);
+            }
+
+            ScenarioSummary scenarioSummary = new ScenarioSummary(this.Window, SiteDirectory, SpacecraftDirectory);
+            foreach (var spacecraft in _spacecrafts)
+            {
+                scenarioSummary.AddSpacecraftSummary(spacecraft.GetSummary());
+            }
+
+            return scenarioSummary;
+        }
+        
+        private void InitializeDirectories(DirectoryInfo outputDirectory)
+        {
+            RootDirectory = null;
+            SpacecraftDirectory = null;
+            SiteDirectory = null;
+
+            if (_spacecrafts.Count == 0 && _sites.Count == 0)
+            {
+                throw new InvalidOperationException("There is nothing to simulate");
+            }
+
+            RootDirectory = outputDirectory.CreateSubdirectory(Mission.Name).CreateSubdirectory(this.Name);
+            SpacecraftDirectory = RootDirectory.CreateSubdirectory("Spacecrafts");
+            SiteDirectory = RootDirectory.CreateSubdirectory("Sites");
         }
 
         public bool Equals(Scenario other)

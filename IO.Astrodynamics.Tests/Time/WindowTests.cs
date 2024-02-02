@@ -95,6 +95,6 @@ public class WindowTests
     void String()
     {
         Window w1 = new Window(new DateTime(2021, 01, 02), new DateTime(2021, 01, 10));
-        Assert.Equal("From 01/02/2021 00:00:00 to 01/10/2021 00:00:00 - Length 8.00:00:00",w1.ToString());
+        Assert.Equal("From 2021-01-02T00:00:00.0000000 (TDB) to 2021-01-10T00:00:00.0000000 (TDB) - Length 8.00:00:00",w1.ToString());
     }
 }
