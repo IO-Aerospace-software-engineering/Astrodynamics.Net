@@ -156,7 +156,7 @@ public class Helpers
         return orbitalParameters;
     }
 
-    internal static OrbitalParameters.OrbitalParameters? ConvertToOrbitalParameters(Commands.Parameters.OrbitalParameters orbitalParameters)
+    internal static OrbitalParameters.OrbitalParameters ConvertToOrbitalParameters(Commands.Parameters.OrbitalParameters orbitalParameters)
     {
         return ConvertToOrbitalParameters(orbitalParameters.OrbitalParametersValues, orbitalParameters.CenterOfMotionId, orbitalParameters.OrbitalParametersEpoch,
             orbitalParameters.Frame, orbitalParameters.FromStateVector, orbitalParameters.FromKeplerian, orbitalParameters.FromEquinoctial, orbitalParameters.FromTLE);

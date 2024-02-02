@@ -72,7 +72,7 @@ public class TimeTests
     }
 
     // [Fact]
-    public void J2000ToLocal()
+    internal void J2000ToLocal()
     {
         lock (Configuration.objLock)
         {

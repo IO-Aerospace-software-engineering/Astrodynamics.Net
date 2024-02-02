@@ -371,7 +371,7 @@ namespace IO.Astrodynamics.Tests.Body
         }
 
         [Fact]
-        public async Task CreateSpacecraftFrame()
+        public void CreateSpacecraftFrame()
         {
             var frame = new SpacecraftFrame("test", -350, "spc1");
             Assert.Equal("test", frame.Name);

@@ -144,7 +144,7 @@ public class OrbitalParametersTests
     }
 
     [Fact]
-    public async Task Exceptions()
+    public void Exceptions()
     {
         lock (Configuration.objLock)
         {
