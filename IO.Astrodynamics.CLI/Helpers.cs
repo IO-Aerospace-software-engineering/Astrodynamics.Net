@@ -68,6 +68,7 @@ public class Helpers
 
     internal static DateTime ConvertDateTimeInput(string epoch)
     {
+        if (string.IsNullOrEmpty(epoch)) throw new ArgumentException("Value cannot be null or empty.", nameof(epoch));
         var isutc = epoch.Contains("utc", StringComparison.InvariantCultureIgnoreCase) || epoch.Contains("z", StringComparison.InvariantCultureIgnoreCase);
         var isjd = epoch.Contains("jd", StringComparison.InvariantCultureIgnoreCase);
 
@@ -105,7 +106,7 @@ public class Helpers
         return input;
     }
 
-    internal static OrbitalParameters.OrbitalParameters? ConvertToOrbitalParameters(string orbitalParametersInput, int centerofMotion, string epoch, string originalFrame,
+    internal static OrbitalParameters.OrbitalParameters ConvertToOrbitalParameters(string orbitalParametersInput, int centerofMotion, string epoch, string originalFrame,
         bool fromStateVector, bool fromKeplerian, bool fromEquinoctial, bool fromTLE, ushort geopotentialDegrees = 10)
     {
         if (originalFrame.Equals("icrf", StringComparison.InvariantCultureIgnoreCase))

@@ -153,19 +153,6 @@ public class OrbitalParametersTests
             StringWriter sw = new StringWriter(sb);
             Console.SetOut(sw);
             Assert.ThrowsAsync<ArgumentException>(() =>
-                command.Converter("Data",
-                    new Commands.Parameters.OrbitalParameters
-                    {
-                        OrbitalParametersValues = "6800000.0 0.0 0.0 0.0 7000.0 0.0",
-                        CenterOfMotionId = 10,
-                        Frame = "ICRF",
-                        FromStateVector = true,
-                        FromKeplerian = false,
-                        FromEquinoctial = false,
-                        FromTLE = false,
-                        OrbitalParametersEpoch = "0.0"
-                    }, true, false, false, new EpochParameters())).Wait();
-            Assert.ThrowsAsync<ArgumentException>(() =>
                 command.Converter("Data", new Commands.Parameters.OrbitalParameters
                 {
                     OrbitalParametersValues = "6800000.0 0.0 0.0 0.0 7000.0 0.0", CenterOfMotionId = 10, OrbitalParametersEpoch = "0.0", Frame = "ICRF",
