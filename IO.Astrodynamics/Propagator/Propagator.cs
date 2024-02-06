@@ -87,6 +87,10 @@ public class Propagator
     {
         for (int i = 1; i < _dataCacheSize; i++)
         {
+            if(Spacecraft.StandbyManeuver.CanExecute(_dataCache[i-1]))
+            {
+                Spacecraft.StandbyManeuver.Execute(_dataCache[i-1]);
+            }
             Integrator.Integrate(_dataCache, i);
         }
 

@@ -107,6 +107,9 @@ namespace IO.Astrodynamics.Maneuver
             return maneuver;
         }
 
+        internal abstract bool CanExecute(StateVector vector);
+        internal abstract bool Execute(StateVector vector);
+
         public static double ComputeDeltaV(double isp, double initialMass, double finalMass)
         {
             return isp * Constants.g0 * System.Math.Log(initialMass / finalMass) * 1E-03;
