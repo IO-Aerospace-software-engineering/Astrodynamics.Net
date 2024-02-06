@@ -107,8 +107,18 @@ namespace IO.Astrodynamics.Maneuver
             return maneuver;
         }
 
-        internal abstract bool CanExecute(StateVector vector);
-        internal abstract bool Execute(StateVector vector);
+        internal bool CanExecute(StateVector stateVector)
+        {
+            return stateVector.Epoch > MinimumEpoch && OnCanExecute(stateVector);
+        }
+
+        internal void TryExecute(StateVector stateVector)
+        {
+            Execute(stateVector);
+        }
+
+        protected abstract bool OnCanExecute(StateVector stateVector);
+        protected abstract void Execute(StateVector vector);
 
         public static double ComputeDeltaV(double isp, double initialMass, double finalMass)
         {

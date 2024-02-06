@@ -12,4 +12,14 @@ public class ZenithAttitude : Maneuver
     public ZenithAttitude(DateTime minimumEpoch, TimeSpan maneuverHoldDuration, params Engine[] engines) : base(minimumEpoch, maneuverHoldDuration, engines)
     {
     }
+
+    protected override bool OnCanExecute(StateVector stateVector)
+    {
+        throw new NotImplementedException();
+    }
+
+    protected override void Execute(StateVector vector)
+    {
+        throw new NotImplementedException();
+    }
 }

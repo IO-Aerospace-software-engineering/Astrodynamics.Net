@@ -19,4 +19,14 @@ public class InstrumentPointingToAttitude : Maneuver
         Instrument = instrument ?? throw new ArgumentNullException(nameof(instrument));
         Target = target ?? throw new ArgumentNullException(nameof(target));
     }
+
+    protected override bool OnCanExecute(StateVector stateVector)
+    {
+        throw new NotImplementedException();
+    }
+
+    protected override void Execute(StateVector vector)
+    {
+        throw new NotImplementedException();
+    }
 }
