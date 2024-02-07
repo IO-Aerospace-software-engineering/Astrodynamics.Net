@@ -13,7 +13,7 @@ public class RetrogradeAttitude : Maneuver
     {
     }
 
-    protected override bool OnCanExecute(StateVector stateVector)
+    protected override Vector3 ComputeManeuverPoint(StateVector stateVector)
     {
         throw new NotImplementedException();
     }

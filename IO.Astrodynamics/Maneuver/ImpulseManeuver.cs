@@ -17,15 +17,5 @@ namespace IO.Astrodynamics.Maneuver
         protected ImpulseManeuver(DateTime minimumEpoch, TimeSpan maneuverHoldDuration, OrbitalParameters.OrbitalParameters targetOrbit, params Engine[] engines) : base(minimumEpoch, maneuverHoldDuration, targetOrbit, engines)
         {
         }
-
-        protected override bool OnCanExecute(StateVector stateVector)
-        {
-            throw new NotImplementedException();
-        }
-
-        protected override void Execute(StateVector vector)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

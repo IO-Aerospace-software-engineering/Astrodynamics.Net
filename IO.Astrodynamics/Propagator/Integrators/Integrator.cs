@@ -29,7 +29,6 @@ public abstract class Integrator
         {
             res += force.Apply(stateVector);
         }
-
         return res;
     }
 }

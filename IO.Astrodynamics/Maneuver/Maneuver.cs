@@ -76,6 +76,9 @@ namespace IO.Astrodynamics.Maneuver
         /// </summary>
         public double FuelBurned { get; internal set; }
 
+        protected bool IsInbound { get; set; }
+        protected Vector3 ManeuverPoint { get; set; }
+
 
         protected Maneuver(DateTime minimumEpoch, TimeSpan maneuverHoldDuration, OrbitalParameters.OrbitalParameters targetOrbit,
             params Engine[] engines)
@@ -109,7 +112,25 @@ namespace IO.Astrodynamics.Maneuver
 
         internal bool CanExecute(StateVector stateVector)
         {
-            return stateVector.Epoch > MinimumEpoch && OnCanExecute(stateVector);
+            //Evaluate Epoch constraint
+            if (stateVector.Epoch < MinimumEpoch)
+            {
+                return false;
+            }
+
+            //Compute the target point
+            var maneuverPoint = ComputeManeuverPoint(stateVector);
+            
+            //Check if target point is reached
+            var isInbound = stateVector.Position.Angle(maneuverPoint, stateVector.SpecificAngularMomentum()) > 0.0;
+            if (isInbound == IsInbound)
+            {
+                return false;
+            }
+
+            IsInbound = isInbound;
+
+            return isInbound == false;
         }
 
         internal void TryExecute(StateVector stateVector)
@@ -117,7 +138,7 @@ namespace IO.Astrodynamics.Maneuver
             Execute(stateVector);
         }
 
-        protected abstract bool OnCanExecute(StateVector stateVector);
+        protected abstract Vector3 ComputeManeuverPoint(StateVector stateVector);
         protected abstract void Execute(StateVector vector);
 
         public static double ComputeDeltaV(double isp, double initialMass, double finalMass)

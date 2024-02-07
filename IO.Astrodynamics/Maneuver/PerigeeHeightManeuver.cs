@@ -18,5 +18,15 @@ namespace IO.Astrodynamics.Maneuver
         {
             TargetPerigeeHeight = perigeeRadius;
         }
+
+        protected override Vector3 ComputeManeuverPoint(StateVector stateVector)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void Execute(StateVector vector)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

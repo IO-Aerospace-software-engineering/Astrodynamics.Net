@@ -19,7 +19,7 @@ namespace IO.Astrodynamics.Performance;
 [SkewnessColumn]
 [KurtosisColumn]
 [StatisticalTestColumn]
-[ShortRunJob]
+// [ShortRunJob]
 public class Scenario
 {
     private readonly GeopotentialGravitationalField _geopotential;
@@ -96,13 +96,13 @@ public class Scenario
         // var res = _integrator.Integrate(sv);
     }
 
-    // [Benchmark(Description = "Propagator per orbit (GeoPotentials // Moon and sun perturbation // Atmospheric drag // Solar radiation) ")]
+    [Benchmark(Description = "Propagator per orbit (GeoPotentials // Moon and sun perturbation // Atmospheric drag // Solar radiation) ")]
     public void Propagator()
     {
         var res = _propagator.Propagate();
     }
 
-    [Benchmark(Description = "IO Vector", Baseline = true)]
+    // [Benchmark(Description = "IO Vector", Baseline = true)]
     public void Vector()
     {
         Vector3 vectorA = new Vector3(1.0, 2.0, 3.0);
@@ -169,7 +169,7 @@ public class Scenario
         mag = tot.Magnitude();
     }
 
-    [Benchmark(Description = "Numerics Vector")]
+    // [Benchmark(Description = "Numerics Vector")]
     public void VectorNumerics()
     {
         var vectorA = new Vector<double>([0.0, 1.0, 2.0, 3.0]);

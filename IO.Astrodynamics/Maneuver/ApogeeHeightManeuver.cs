@@ -22,5 +22,15 @@ namespace IO.Astrodynamics.Maneuver
         {
             TargetApogee = apogeeRadius;
         }
+
+        protected override Vector3 ComputeManeuverPoint(StateVector stateVector)
+        {
+            return stateVector.PerigeeVector();
+        }
+
+        protected override void Execute(StateVector vector)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
