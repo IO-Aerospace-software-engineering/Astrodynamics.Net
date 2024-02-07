@@ -9,7 +9,7 @@ namespace IO.Astrodynamics.Maneuver;
 
 public class RetrogradeAttitude : Maneuver
 {
-    public RetrogradeAttitude(DateTime minimumEpoch, TimeSpan maneuverHoldDuration, params Engine[] engines) : base(minimumEpoch, maneuverHoldDuration, engines)
+    public RetrogradeAttitude(DateTime minimumEpoch, TimeSpan maneuverHoldDuration, Engine engine) : base(minimumEpoch, maneuverHoldDuration, engine)
     {
     }
 
@@ -18,7 +18,7 @@ public class RetrogradeAttitude : Maneuver
         throw new NotImplementedException();
     }
 
-    protected override void Execute(StateVector vector)
+    protected override Vector3 Execute(StateVector vector)
     {
         throw new NotImplementedException();
     }

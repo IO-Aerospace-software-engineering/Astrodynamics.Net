@@ -21,7 +21,7 @@ namespace IO.Astrodynamics.Tests.Maneuvers
 
             PerigeeHeightManeuver perigeeHeightManeuver = new PerigeeHeightManeuver(new DateTime(2021, 01, 01), TimeSpan.FromDays(1.0), 151000000.0, eng);
 
-            Assert.Single(perigeeHeightManeuver.Engines);
+            Assert.Single(perigeeHeightManeuver.Engine);
             Assert.Equal(TimeSpan.FromDays(1.0), perigeeHeightManeuver.ManeuverHoldDuration);
             Assert.Equal(new DateTime(2021, 01, 01), perigeeHeightManeuver.MinimumEpoch);
             Assert.Equal(151000000.0, perigeeHeightManeuver.TargetPerigeeHeight);
@@ -36,7 +36,7 @@ namespace IO.Astrodynamics.Tests.Maneuvers
             PerigeeHeightManeuver perigeeHeightManeuver = new PerigeeHeightManeuver(new DateTime(2021, 01, 01), TimeSpan.FromDays(1.0),
                 new KeplerianElements(151000000, 0.0, 0.0, 0.0, 0.0, 0.0, TestHelpers.Earth, DateTimeExtension.J2000, Frames.Frame.ICRF), eng);
 
-            Assert.Single(perigeeHeightManeuver.Engines);
+            Assert.Single(perigeeHeightManeuver.Engine);
             Assert.Equal(TimeSpan.FromDays(1.0), perigeeHeightManeuver.ManeuverHoldDuration);
             Assert.Equal(new DateTime(2021, 01, 01), perigeeHeightManeuver.MinimumEpoch);
             Assert.Equal(151000000.0, perigeeHeightManeuver.TargetPerigeeHeight);

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using IO.Astrodynamics.Body.Spacecraft;
 using IO.Astrodynamics.Math;
@@ -54,11 +55,8 @@ namespace IO.Astrodynamics.Maneuver
         /// <returns>The maneuver hold duration as a TimeSpan.</returns>
         public TimeSpan ManeuverHoldDuration { get; }
 
-        /// <summary>
-        /// Represents a collection of engine objects.
-        /// </summary>
-        /// <returns>A read-only collection of <see cref="Engine"/> objects.</returns>
-        public IReadOnlyCollection<Engine> Engines { get; }
+
+        public Engine Engine { get; }
 
         /// <summary>
         /// Gets or sets the next maneuver.
@@ -80,28 +78,25 @@ namespace IO.Astrodynamics.Maneuver
         protected Vector3 ManeuverPoint { get; set; }
 
 
-        protected Maneuver(DateTime minimumEpoch, TimeSpan maneuverHoldDuration, OrbitalParameters.OrbitalParameters targetOrbit,
-            params Engine[] engines)
+        protected Maneuver(DateTime minimumEpoch, TimeSpan maneuverHoldDuration, OrbitalParameters.OrbitalParameters targetOrbit, Engine engine)
         {
-            if (engines == null) throw new ArgumentNullException(nameof(engines));
+            if (engine == null) throw new ArgumentNullException(nameof(engine));
             if (targetOrbit == null)
             {
                 throw new ArgumentException("Target orbit must be define");
             }
 
-            if (engines.Length == 0) throw new ArgumentException("Value cannot be an empty collection.", nameof(engines));
-
             MinimumEpoch = minimumEpoch;
             ManeuverHoldDuration = maneuverHoldDuration;
-            Engines = engines;
+            Engine = engine;
             TargetOrbit = targetOrbit;
         }
 
-        protected Maneuver(DateTime minimumEpoch, TimeSpan maneuverHoldDuration, params Engine[] engines)
+        protected Maneuver(DateTime minimumEpoch, TimeSpan maneuverHoldDuration, Engine engine)
         {
             MinimumEpoch = minimumEpoch;
             ManeuverHoldDuration = maneuverHoldDuration;
-            Engines = engines;
+            Engine = engine;
         }
 
         public Maneuver SetNextManeuver(Maneuver maneuver)
@@ -120,7 +115,7 @@ namespace IO.Astrodynamics.Maneuver
 
             //Compute the target point
             var maneuverPoint = ComputeManeuverPoint(stateVector);
-            
+
             //Check if target point is reached
             var isInbound = stateVector.Position.Angle(maneuverPoint, stateVector.SpecificAngularMomentum()) > 0.0;
             if (isInbound == IsInbound)
@@ -135,11 +130,13 @@ namespace IO.Astrodynamics.Maneuver
 
         internal void TryExecute(StateVector stateVector)
         {
-            Execute(stateVector);
+            var deltaV = Execute(stateVector);
+            Engine.Ignite(deltaV);
+            stateVector.Velocity += deltaV;
         }
 
         protected abstract Vector3 ComputeManeuverPoint(StateVector stateVector);
-        protected abstract void Execute(StateVector vector);
+        protected abstract Vector3 Execute(StateVector vector);
 
         public static double ComputeDeltaV(double isp, double initialMass, double finalMass)
         {

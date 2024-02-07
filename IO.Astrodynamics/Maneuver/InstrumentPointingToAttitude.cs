@@ -13,8 +13,8 @@ public class InstrumentPointingToAttitude : Maneuver
     public Instrument Instrument { get; }
     public INaifObject Target { get; }
 
-    public InstrumentPointingToAttitude(DateTime minimumEpoch, TimeSpan maneuverHoldDuration,
-        Instrument instrument, INaifObject target, params Engine[] engines) : base(minimumEpoch, maneuverHoldDuration, engines)
+    public InstrumentPointingToAttitude(DateTime minimumEpoch, TimeSpan maneuverHoldDuration, Instrument instrument, INaifObject target, Engine engine) : base(minimumEpoch,
+        maneuverHoldDuration, engine)
     {
         Instrument = instrument ?? throw new ArgumentNullException(nameof(instrument));
         Target = target ?? throw new ArgumentNullException(nameof(target));
@@ -25,7 +25,7 @@ public class InstrumentPointingToAttitude : Maneuver
         throw new NotImplementedException();
     }
 
-    protected override void Execute(StateVector vector)
+    protected override Vector3 Execute(StateVector vector)
     {
         throw new NotImplementedException();
     }

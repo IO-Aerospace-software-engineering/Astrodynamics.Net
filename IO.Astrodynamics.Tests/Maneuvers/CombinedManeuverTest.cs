@@ -22,7 +22,7 @@ namespace IO.Astrodynamics.Tests.Maneuvers
 
             CombinedManeuver maneuver = new CombinedManeuver(new DateTime(2021, 01, 01), TimeSpan.FromDays(1.0), 151000000.0, 1.0, eng);
 
-            Assert.Single(maneuver.Engines);
+            Assert.Single(maneuver.Engine);
             Assert.Equal(TimeSpan.FromDays(1.0), maneuver.ManeuverHoldDuration);
             Assert.Equal(new DateTime(2021, 01, 01), maneuver.MinimumEpoch);
             Assert.Equal(151000000.0, maneuver.TargetPerigeeHeight);
@@ -38,7 +38,7 @@ namespace IO.Astrodynamics.Tests.Maneuvers
             CombinedManeuver maneuver = new CombinedManeuver(new DateTime(2021, 01, 01), TimeSpan.FromDays(1.0),
                 new KeplerianElements(151000000.0, 0.0, 1.0, 0.0, 0.0, 0.0, TestHelpers.Earth, DateTimeExtension.J2000, Frames.Frame.ICRF), eng);
 
-            Assert.Single(maneuver.Engines);
+            Assert.Single(maneuver.Engine);
             Assert.Equal(TimeSpan.FromDays(1.0), maneuver.ManeuverHoldDuration);
             Assert.Equal(new DateTime(2021, 01, 01), maneuver.MinimumEpoch);
             Assert.Equal(151000000.0, maneuver.TargetPerigeeHeight);

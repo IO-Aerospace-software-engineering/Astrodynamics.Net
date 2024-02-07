@@ -1,4 +1,5 @@
 using System;
+using IO.Astrodynamics.Math;
 
 namespace IO.Astrodynamics.Body.Spacecraft
 {
@@ -45,6 +46,11 @@ namespace IO.Astrodynamics.Body.Spacecraft
             FuelTank = fuelTank ?? throw new ArgumentNullException(nameof(fuelTank));
             SerialNumber = serialNumber;
             Thrust = isp * fuelFlow * Constants.g0;
+        }
+
+        public void Ignite(in Vector3 deltaV)
+        {
+            FuelTank.Burn(Maneuver.Maneuver.ComputeDeltaM(ISP,FuelTank.Spacecraft.GetTotalMass(),deltaV.Magnitude()));
         }
         
         public bool Equals(Engine other)

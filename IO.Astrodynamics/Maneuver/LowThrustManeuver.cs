@@ -7,7 +7,8 @@ namespace IO.Astrodynamics.Maneuver
 {
     public abstract class LowThrustManeuver : Maneuver
     {
-        protected LowThrustManeuver(DateTime minimumEpoch, TimeSpan maneuverHoldDuration, OrbitalParameters.OrbitalParameters targetOrbit,params Engine[] engines) : base(minimumEpoch, maneuverHoldDuration, targetOrbit, engines)
+        protected LowThrustManeuver(DateTime minimumEpoch, TimeSpan maneuverHoldDuration, OrbitalParameters.OrbitalParameters targetOrbit, Engine engine) : base(minimumEpoch,
+            maneuverHoldDuration, targetOrbit, engine)
         {
         }
 
@@ -16,7 +17,7 @@ namespace IO.Astrodynamics.Maneuver
             throw new NotImplementedException();
         }
 
-        protected override void Execute(StateVector vector)
+        protected override Vector3 Execute(StateVector vector)
         {
             throw new NotImplementedException();
         }

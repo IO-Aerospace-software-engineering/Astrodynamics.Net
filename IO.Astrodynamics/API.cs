@@ -281,11 +281,7 @@ public class API
                                 maneuver.MinimumEpoch.SecondsFromJ2000TDB(), target);
 
                             //Add engines
-                            for (int k = 0; k < maneuver.Engines.Count; k++)
-                            {
-                                scenarioDto.Spacecraft.OrbitalPlaneChangingManeuvers[idx].Engines[k] =
-                                    maneuver.Engines.ElementAt(k).SerialNumber;
-                            }
+                            scenarioDto.Spacecraft.OrbitalPlaneChangingManeuvers[idx].Engines[0] = maneuver.Engine.SerialNumber;
 
                             break;
                         }
@@ -299,11 +295,7 @@ public class API
                                     heightManeuver.TargetApogee);
 
                             //Add engines
-                            for (int k = 0; k < heightManeuver.Engines.Count; k++)
-                            {
-                                scenarioDto.Spacecraft.ApogeeHeightChangingManeuvers[idx].Engines[k] =
-                                    heightManeuver.Engines.ElementAt(k).SerialNumber;
-                            }
+                            scenarioDto.Spacecraft.ApogeeHeightChangingManeuvers[idx].Engines[0] = heightManeuver.Engine.SerialNumber;
 
                             break;
                         }
@@ -316,12 +308,7 @@ public class API
                                 new DTO.ApsidalAlignmentManeuver(order, maneuver.ManeuverHoldDuration.TotalSeconds,
                                     maneuver.MinimumEpoch.SecondsFromJ2000TDB(), target);
 
-                            //Add engines
-                            for (int k = 0; k < maneuver.Engines.Count; k++)
-                            {
-                                scenarioDto.Spacecraft.ApsidalAlignmentManeuvers[idx].Engines[k] =
-                                    maneuver.Engines.ElementAt(k).SerialNumber;
-                            }
+                            scenarioDto.Spacecraft.ApsidalAlignmentManeuvers[idx].Engines[0] = maneuver.Engine.SerialNumber;
 
                             break;
                         }
@@ -336,11 +323,7 @@ public class API
                                     combinedManeuver.TargetInclination);
 
                             //Add engines
-                            for (int k = 0; k < combinedManeuver.Engines.Count; k++)
-                            {
-                                scenarioDto.Spacecraft.CombinedManeuvers[idx].Engines[k] =
-                                    combinedManeuver.Engines.ElementAt(k).SerialNumber;
-                            }
+                            scenarioDto.Spacecraft.CombinedManeuvers[idx].Engines[0] = combinedManeuver.Engine.SerialNumber;
 
                             break;
                         }
@@ -355,11 +338,7 @@ public class API
                                     perigeeHeightManeuver.MinimumEpoch.SecondsFromJ2000TDB(),
                                     perigeeHeightManeuver.TargetPerigeeHeight);
                             //Add engines
-                            for (int k = 0; k < perigeeHeightManeuver.Engines.Count; k++)
-                            {
-                                scenarioDto.Spacecraft.PerigeeHeightChangingManeuvers[idx].Engines[k] =
-                                    perigeeHeightManeuver.Engines.ElementAt(k).SerialNumber;
-                            }
+                            scenarioDto.Spacecraft.PerigeeHeightChangingManeuvers[idx].Engines[0] = perigeeHeightManeuver.Engine.SerialNumber;
 
                             break;
                         }
@@ -374,11 +353,7 @@ public class API
                                     phasingManeuver.ManeuverHoldDuration.TotalSeconds, phasingManeuver.MinimumEpoch.SecondsFromJ2000TDB(),
                                     (int)phasingManeuver.RevolutionNumber, target);
                             //Add engines
-                            for (int k = 0; k < phasingManeuver.Engines.Count; k++)
-                            {
-                                scenarioDto.Spacecraft.PhasingManeuver[idx].Engines[k] =
-                                    phasingManeuver.Engines.ElementAt(k).SerialNumber;
-                            }
+                            scenarioDto.Spacecraft.PhasingManeuver[idx].Engines[0] = phasingManeuver.Engine.SerialNumber;
 
                             break;
                         }
@@ -391,12 +366,9 @@ public class API
                                     instManeuver.Target.NaifId,
                                     instManeuver.ManeuverHoldDuration.TotalSeconds,
                                     instManeuver.MinimumEpoch.SecondsFromJ2000TDB());
+
                             //Add engines
-                            for (int k = 0; k < instManeuver.Engines.Count; k++)
-                            {
-                                scenarioDto.Spacecraft.PointingToAttitudes[idx].Engines[k] =
-                                    instManeuver.Engines.ElementAt(k).SerialNumber;
-                            }
+                            scenarioDto.Spacecraft.PointingToAttitudes[idx].Engines[0] = instManeuver.Engine.SerialNumber;
 
                             break;
                         }
@@ -407,12 +379,9 @@ public class API
                                     scenarioDto.Spacecraft.ProgradeAttitudes.Count(x => x.ManeuverOrder > -1)] =
                                 new DTO.ProgradeAttitude(order, maneuver.ManeuverHoldDuration.TotalSeconds,
                                     maneuver.MinimumEpoch.SecondsFromJ2000TDB());
-                            //Add engines
-                            for (int k = 0; k < maneuver.Engines.Count; k++)
-                            {
-                                scenarioDto.Spacecraft.ProgradeAttitudes[idx].Engines[k] =
-                                    maneuver.Engines.ElementAt(k).SerialNumber;
-                            }
+
+
+                            scenarioDto.Spacecraft.ProgradeAttitudes[idx].Engines[0] = maneuver.Engine.SerialNumber;
 
                             break;
                         }
@@ -423,12 +392,10 @@ public class API
                                     scenarioDto.Spacecraft.RetrogradeAttitudes.Count(x => x.ManeuverOrder > -1)] =
                                 new DTO.RetrogradeAttitude(order, maneuver.ManeuverHoldDuration.TotalSeconds,
                                     maneuver.MinimumEpoch.SecondsFromJ2000TDB());
-                            //Add engines
-                            for (int k = 0; k < maneuver.Engines.Count; k++)
-                            {
-                                scenarioDto.Spacecraft.RetrogradeAttitudes[idx].Engines[k] =
-                                    maneuver.Engines.ElementAt(k).SerialNumber;
-                            }
+
+                            scenarioDto.Spacecraft.RetrogradeAttitudes[idx].Engines[0] =
+                                maneuver.Engine.SerialNumber;
+
 
                             break;
                         }
@@ -439,12 +406,10 @@ public class API
                                     scenarioDto.Spacecraft.NadirAttitudes.Count(x => x.ManeuverOrder > -1)] =
                                 new DTO.NadirAttitude(order, maneuver.ManeuverHoldDuration.TotalSeconds,
                                     maneuver.MinimumEpoch.SecondsFromJ2000TDB());
-                            //Add engines
-                            for (int k = 0; k < maneuver.Engines.Count; k++)
-                            {
-                                scenarioDto.Spacecraft.NadirAttitudes[idx].Engines[k] =
-                                    maneuver.Engines.ElementAt(k).SerialNumber;
-                            }
+
+                            scenarioDto.Spacecraft.NadirAttitudes[idx].Engines[0] =
+                                maneuver.Engine.SerialNumber;
+
 
                             break;
                         }
@@ -456,11 +421,7 @@ public class API
                                 new DTO.ZenithAttitude(order, maneuver.ManeuverHoldDuration.TotalSeconds,
                                     maneuver.MinimumEpoch.SecondsFromJ2000TDB());
                             //Add engines
-                            for (int k = 0; k < maneuver.Engines.Count; k++)
-                            {
-                                scenarioDto.Spacecraft.ZenithAttitudes[idx].Engines[k] =
-                                    maneuver.Engines.ElementAt(k).SerialNumber;
-                            }
+                            scenarioDto.Spacecraft.ZenithAttitudes[idx].Engines[0] = maneuver.Engine.SerialNumber;
 
                             break;
                         }

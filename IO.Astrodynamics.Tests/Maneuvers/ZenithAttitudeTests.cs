@@ -20,7 +20,7 @@ public class ZenithAttitudeTests
         ZenithAttitude zenithAttitude = new ZenithAttitude(DateTime.MinValue, TimeSpan.FromHours(1.0), eng);
         Assert.Equal(DateTime.MinValue,zenithAttitude.MinimumEpoch);
         Assert.Equal(TimeSpan.FromHours(1.0),zenithAttitude.ManeuverHoldDuration);
-        Assert.Single(zenithAttitude.Engines);
-        Assert.Equal(eng,zenithAttitude.Engines.First());
+        Assert.Single(zenithAttitude.Engine);
+        Assert.Equal(eng,zenithAttitude.Engine.First());
     }
 }

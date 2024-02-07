@@ -24,8 +24,8 @@ public class InstrumentPointingAttitudeTests
             new InstrumentPointingToAttitude(DateTime.MinValue, TimeSpan.FromHours(1.0), instrument, TestHelpers.EarthAtJ2000, eng);
         Assert.Equal(DateTime.MinValue, attitude.MinimumEpoch);
         Assert.Equal(TimeSpan.FromHours(1.0), attitude.ManeuverHoldDuration);
-        Assert.Single(attitude.Engines);
-        Assert.Equal(eng, attitude.Engines.First());
+        Assert.Single(attitude.Engine);
+        Assert.Equal(eng, attitude.Engine.First());
         Assert.Equal(instrument, attitude.Instrument);
         Assert.Equal(TestHelpers.EarthAtJ2000, attitude.Target);
     }

@@ -10,12 +10,12 @@ namespace IO.Astrodynamics.Maneuver
         public double TargetTrueLongitude { get; } = double.NaN;
         public uint RevolutionNumber { get; }
 
-        public PhasingManeuver(DateTime minimumEpoch, TimeSpan maneuverHoldDuration, OrbitalParameters.OrbitalParameters targetOrbit, uint revolutionNumber, params Engine[] engines) : base( minimumEpoch, maneuverHoldDuration, targetOrbit, engines)
+        public PhasingManeuver(DateTime minimumEpoch, TimeSpan maneuverHoldDuration, OrbitalParameters.OrbitalParameters targetOrbit, uint revolutionNumber, Engine engine) : base( minimumEpoch, maneuverHoldDuration, targetOrbit, engine)
         {
             RevolutionNumber = revolutionNumber;
         }
 
-        public PhasingManeuver(DateTime minimumEpoch, TimeSpan maneuverHoldDuration, double trueLongitude, uint revolutionNumber, params Engine[] engines) : base(minimumEpoch, maneuverHoldDuration, engines)
+        public PhasingManeuver(DateTime minimumEpoch, TimeSpan maneuverHoldDuration, double trueLongitude, uint revolutionNumber, Engine engine) : base(minimumEpoch, maneuverHoldDuration, engine)
         {
             TargetTrueLongitude = trueLongitude;
             RevolutionNumber = revolutionNumber;
@@ -26,7 +26,7 @@ namespace IO.Astrodynamics.Maneuver
             throw new NotImplementedException();
         }
 
-        protected override void Execute(StateVector vector)
+        protected override Vector3 Execute(StateVector vector)
         {
             throw new NotImplementedException();
         }
