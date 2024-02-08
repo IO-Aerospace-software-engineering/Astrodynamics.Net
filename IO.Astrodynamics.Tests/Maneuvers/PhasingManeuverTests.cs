@@ -19,7 +19,7 @@ namespace IO.Astrodynamics.Tests.Maneuvers
 
             PhasingManeuver maneuver = new PhasingManeuver(new DateTime(2021, 01, 01), TimeSpan.FromDays(1.0), 3.0, 2, eng);
 
-            Assert.Single(maneuver.Engine);
+            Assert.NotNull(maneuver.Engine);
             Assert.Equal(TimeSpan.FromDays(1.0), maneuver.ManeuverHoldDuration);
             Assert.Equal(new DateTime(2021, 01, 01), maneuver.MinimumEpoch);
             Assert.Equal(3.0, maneuver.TargetTrueLongitude);

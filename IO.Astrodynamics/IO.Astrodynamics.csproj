@@ -58,4 +58,8 @@
       <EmbeddedResource Include="Templates\FrameTemplate.tf" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Remove="Math\VectorExtension.cs" />
+    </ItemGroup>
+
 </Project>

@@ -117,6 +117,7 @@ namespace IO.Astrodynamics.Body.Spacecraft
             {
                 throw new ArgumentException("Fuel tank already added to spacecraft");
             }
+            fuelTank.SetSpacecraft(this);
         }
 
         /// <summary>

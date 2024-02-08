@@ -24,11 +24,11 @@ namespace IO.Astrodynamics.Tests.Maneuvers
 
             PlaneAlignmentManeuver planeAlignmentManeuver = new PlaneAlignmentManeuver(new DateTime(2021, 01, 01), TimeSpan.FromDays(1.0), targetOrbit, eng);
 
-            Assert.Single(planeAlignmentManeuver.Engine);
+            Assert.NotNull(planeAlignmentManeuver.Engine);
             Assert.Equal(TimeSpan.FromDays(1.0), planeAlignmentManeuver.ManeuverHoldDuration);
             Assert.Equal(new DateTime(2021, 01, 01), planeAlignmentManeuver.MinimumEpoch);
             Assert.Equal(targetOrbit, planeAlignmentManeuver.TargetOrbit.AtEpoch(new DateTime(2021, 01, 01)));
-            Assert.Equal(eng, planeAlignmentManeuver.Engine.First());
+            Assert.Equal(eng, planeAlignmentManeuver.Engine);
         }
     }
 }

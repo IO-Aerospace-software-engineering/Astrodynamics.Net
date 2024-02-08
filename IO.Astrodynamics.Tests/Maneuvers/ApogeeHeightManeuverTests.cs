@@ -22,7 +22,7 @@ namespace IO.Astrodynamics.Tests.Maneuvers
 
             ApogeeHeightManeuver apogeeHeightManeuver = new ApogeeHeightManeuver(new DateTime(2021, 01, 01), TimeSpan.FromDays(1.0), 151000000.0, eng);
 
-            Assert.Single(apogeeHeightManeuver.Engine);
+            Assert.NotNull(apogeeHeightManeuver.Engine);
             Assert.Equal(TimeSpan.FromDays(1.0), apogeeHeightManeuver.ManeuverHoldDuration);
             Assert.Equal(new DateTime(2021, 01, 01), apogeeHeightManeuver.MinimumEpoch);
             Assert.Equal(151000000.0, apogeeHeightManeuver.TargetApogee);
@@ -37,7 +37,7 @@ namespace IO.Astrodynamics.Tests.Maneuvers
             ApogeeHeightManeuver apogeeHeightManeuver = new ApogeeHeightManeuver(new DateTime(2021, 01, 01), TimeSpan.FromDays(1.0),
                 new KeplerianElements(151000000, 0.0, 0.0, 0.0, 0.0, 0.0, TestHelpers.Earth, DateTimeExtension.J2000, Frames.Frame.ICRF), eng);
 
-            Assert.Single(apogeeHeightManeuver.Engine);
+            Assert.NotNull(apogeeHeightManeuver.Engine);
             Assert.Equal(TimeSpan.FromDays(1.0), apogeeHeightManeuver.ManeuverHoldDuration);
             Assert.Equal(new DateTime(2021, 01, 01), apogeeHeightManeuver.MinimumEpoch);
             Assert.Equal(151000000.0, apogeeHeightManeuver.TargetApogee);

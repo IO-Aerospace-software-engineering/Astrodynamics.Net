@@ -35,11 +35,11 @@ namespace IO.Astrodynamics.Tests.Maneuvers
 
             var targetOrbit = new KeplerianElements(150000000.0, 1.0, 0.0, 0.0, 0.0, 0.0, sun, new DateTime(2021, 01, 01), Frames.Frame.ECLIPTIC_J2000);
 
-            ApsidalAlignmentManeuver maneuver = new ApsidalAlignmentManeuver(new DateTime(2021, 1, 1), TimeSpan.FromDays(1.0), targetOrbit, spc1.Engines.ToArray());
-            Assert.Single(maneuver.Engine);
+            ApsidalAlignmentManeuver maneuver = new ApsidalAlignmentManeuver(new DateTime(2021, 1, 1), TimeSpan.FromDays(1.0), targetOrbit, spc1.Engines.First());
+            Assert.NotNull(maneuver.Engine);
             Assert.Equal(TimeSpan.FromDays(1.0), maneuver.ManeuverHoldDuration);
             Assert.Equal(new DateTime(2021, 01, 01), maneuver.MinimumEpoch);
-            Assert.Equal(eng, maneuver.Engine.First());
+            Assert.Equal(eng, maneuver.Engine);
             Assert.Equal(targetOrbit, maneuver.TargetOrbit);
         }
     }

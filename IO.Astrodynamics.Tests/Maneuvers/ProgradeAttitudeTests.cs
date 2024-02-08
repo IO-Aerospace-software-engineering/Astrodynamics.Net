@@ -20,7 +20,7 @@ public class ProgradeAttitudeTests
         ProgradeAttitude attitude = new ProgradeAttitude(DateTime.MinValue, TimeSpan.FromHours(1.0), eng);
         Assert.Equal(DateTime.MinValue,attitude.MinimumEpoch);
         Assert.Equal(TimeSpan.FromHours(1.0),attitude.ManeuverHoldDuration);
-        Assert.Single(attitude.Engine);
-        Assert.Equal(eng,attitude.Engine.First());
+        Assert.NotNull(attitude.Engine);
+        Assert.Equal(eng,attitude.Engine);
     }
 }
