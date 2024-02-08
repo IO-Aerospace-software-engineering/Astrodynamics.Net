@@ -5,7 +5,7 @@ using IO.Astrodynamics.OrbitalParameters;
 
 namespace IO.Astrodynamics.Maneuver
 {
-    public abstract class LowThrustManeuver : Maneuver
+    public abstract class LowThrustManeuver : ImpulseManeuver
     {
         protected LowThrustManeuver(DateTime minimumEpoch, TimeSpan maneuverHoldDuration, OrbitalParameters.OrbitalParameters targetOrbit, Engine engine) : base(minimumEpoch,
             maneuverHoldDuration, targetOrbit, engine)

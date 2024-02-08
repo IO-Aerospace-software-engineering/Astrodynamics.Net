@@ -11,6 +11,7 @@ using IO.Astrodynamics.OrbitalParameters;
 using IO.Astrodynamics.Propagator.Forces;
 using IO.Astrodynamics.Propagator.Integrators;
 using IO.Astrodynamics.Time;
+using Quaternion = IO.Astrodynamics.Math.Quaternion;
 using Vector3 = IO.Astrodynamics.Math.Vector3;
 
 namespace IO.Astrodynamics.Propagator;
@@ -25,8 +26,9 @@ public class Propagator
     public Integrator Integrator { get; }
     public TimeSpan DeltaT { get; }
 
-    private uint _dataCacheSize;
-    private StateVector[] _dataCache;
+    private uint _svCacheSize;
+    private StateVector[] _svCache;
+    private List<StateOrientation> _stateOrientation = new List<StateOrientation>();
 
 
     /// <summary>
@@ -52,13 +54,13 @@ public class Propagator
         var forces = InitializeForces(includeAtmosphericDrag, includeSolarRadiationPressure);
 
         Integrator = new VVIntegrator(forces, DeltaT, Spacecraft.InitialOrbitalParameters.AtEpoch(Window.StartDate).ToStateVector());
-        _dataCacheSize = (uint)Window.Length.TotalSeconds / (uint)DeltaT.TotalSeconds;
-        _dataCache = new StateVector[_dataCacheSize];
+        _svCacheSize = (uint)Window.Length.TotalSeconds / (uint)DeltaT.TotalSeconds;
+        _svCache = new StateVector[_svCacheSize];
         StateVector stateVector = Spacecraft.InitialOrbitalParameters.AtEpoch(Window.StartDate).ToStateVector();
-        _dataCache[0] = stateVector;
-        for (int i = 1; i < _dataCacheSize; i++)
+        _svCache[0] = stateVector;
+        for (int i = 1; i < _svCacheSize; i++)
         {
-            _dataCache[i] = new StateVector(Vector3.Zero, Vector3.Zero, stateVector.Observer, Window.StartDate + (i * DeltaT), stateVector.Frame);
+            _svCache[i] = new StateVector(Vector3.Zero, Vector3.Zero, stateVector.Observer, Window.StartDate + (i * DeltaT), stateVector.Frame);
         }
     }
 
@@ -85,16 +87,21 @@ public class Propagator
 
     public IEnumerable<StateVector> Propagate()
     {
-        for (int i = 1; i < _dataCacheSize; i++)
+        _stateOrientation.Add(new StateOrientation(Quaternion.Zero, Vector3.Zero, Window.StartDate, Spacecraft.InitialOrbitalParameters.Frame));
+        for (int i = 1; i < _svCacheSize; i++)
         {
-            if (Spacecraft.StandbyManeuver?.CanExecute(_dataCache[i - 1]) == true)
+            var prvSv = _svCache[i - 1];
+            if (Spacecraft.StandbyManeuver?.CanExecute(prvSv) == true)
             {
-                Spacecraft.StandbyManeuver.TryExecute(_dataCache[i - 1]);
+                var res = Spacecraft.StandbyManeuver.TryExecute(prvSv);
+                _stateOrientation.Add(res.so);
             }
 
-            Integrator.Integrate(_dataCache, i);
+            Integrator.Integrate(_svCache, i);
         }
 
-        return _dataCache;
+        _stateOrientation.Add(new StateOrientation(_stateOrientation.Last().Rotation, Vector3.Zero, Window.EndDate, Spacecraft.InitialOrbitalParameters.Frame));
+
+        return _svCache;
     }
 }

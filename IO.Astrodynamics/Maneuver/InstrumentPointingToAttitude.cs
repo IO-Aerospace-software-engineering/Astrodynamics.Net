@@ -8,7 +8,7 @@ using IO.Astrodynamics.OrbitalParameters;
 
 namespace IO.Astrodynamics.Maneuver;
 
-public class InstrumentPointingToAttitude : Maneuver
+public class InstrumentPointingToAttitude : Attitude
 {
     public Instrument Instrument { get; }
     public INaifObject Target { get; }
@@ -20,12 +20,7 @@ public class InstrumentPointingToAttitude : Maneuver
         Target = target ?? throw new ArgumentNullException(nameof(target));
     }
 
-    protected override Vector3 ComputeManeuverPoint(StateVector stateVector)
-    {
-        throw new NotImplementedException();
-    }
-
-    protected override Vector3 Execute(StateVector vector)
+    protected override Quaternion ComputeOrientation(StateVector stateVector)
     {
         throw new NotImplementedException();
     }

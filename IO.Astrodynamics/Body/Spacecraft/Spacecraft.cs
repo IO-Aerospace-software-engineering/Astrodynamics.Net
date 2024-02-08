@@ -117,6 +117,7 @@ namespace IO.Astrodynamics.Body.Spacecraft
             {
                 throw new ArgumentException("Fuel tank already added to spacecraft");
             }
+
             fuelTank.SetSpacecraft(this);
         }
 
@@ -202,8 +203,14 @@ namespace IO.Astrodynamics.Body.Spacecraft
         /// Put a maneuver in standby
         /// </summary>
         /// <param name="maneuver"></param>
-        public void SetStandbyManeuver(Maneuver.Maneuver maneuver)
+        /// <param name="minimumEpoch"></param>
+        public void SetStandbyManeuver(Maneuver.Maneuver maneuver, DateTime? minimumEpoch = null)
         {
+            if (minimumEpoch > maneuver?.MinimumEpoch)
+            {
+                maneuver.MinimumEpoch = minimumEpoch.Value;
+            }
+
             StandbyManeuver = maneuver;
         }
 

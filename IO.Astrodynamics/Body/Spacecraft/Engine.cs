@@ -48,9 +48,11 @@ namespace IO.Astrodynamics.Body.Spacecraft
             Thrust = isp * fuelFlow * Constants.g0;
         }
 
-        public void Ignite(in Vector3 deltaV)
+        public double Ignite(in Vector3 deltaV)
         {
-            FuelTank.Burn(Maneuver.Maneuver.ComputeDeltaM(ISP,FuelTank.Spacecraft.GetTotalMass(),deltaV.Magnitude()));
+            var fuelBurned = Maneuver.Maneuver.ComputeDeltaM(ISP, FuelTank.Spacecraft.GetTotalMass(), deltaV.Magnitude());
+            FuelTank.Burn(fuelBurned);
+            return fuelBurned;
         }
         
         public bool Equals(Engine other)

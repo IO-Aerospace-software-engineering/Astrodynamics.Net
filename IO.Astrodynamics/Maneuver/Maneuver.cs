@@ -20,14 +20,6 @@ namespace IO.Astrodynamics.Maneuver
         public Window ThrustWindow { get; internal set; }
 
         /// <summary>
-        /// The AttitudeWindow property represents the window object used to display attitude-related information.
-        /// </summary>
-        /// <value>
-        /// Gets or sets the AttitudeWindow property.
-        /// </value>
-        public Window AttitudeWindow { get; internal set; }
-
-        /// <summary>
         /// Gets or sets the ManeuverWindow object that represents the window for controlling maneuvering tasks.
         /// </summary>
         /// <value>
@@ -44,7 +36,7 @@ namespace IO.Astrodynamics.Maneuver
         /// <value>
         /// The minimum epoch value.
         /// </value>
-        public DateTime MinimumEpoch { get; }
+        public DateTime MinimumEpoch { get; internal set; }
 
         /// <summary>
         /// Gets the duration for which a maneuver should be held.
@@ -55,7 +47,6 @@ namespace IO.Astrodynamics.Maneuver
         /// <returns>The maneuver hold duration as a TimeSpan.</returns>
         public TimeSpan ManeuverHoldDuration { get; }
 
-
         public Engine Engine { get; }
 
         /// <summary>
@@ -63,11 +54,7 @@ namespace IO.Astrodynamics.Maneuver
         /// </summary>
         public Maneuver NextManeuver { get; protected set; }
 
-        /// <summary>
-        /// Gets the target orbital parameters.
-        /// </summary>
-        /// <returns>The target orbital parameters.</returns>
-        public OrbitalParameters.OrbitalParameters TargetOrbit { get; }
+        
 
         /// <summary>
         /// Gets or sets the amount of fuel burned.
@@ -76,21 +63,7 @@ namespace IO.Astrodynamics.Maneuver
 
         protected bool IsInbound { get; set; }
         protected Vector3 ManeuverPoint { get; set; }
-
-
-        protected Maneuver(DateTime minimumEpoch, TimeSpan maneuverHoldDuration, OrbitalParameters.OrbitalParameters targetOrbit, Engine engine)
-        {
-            if (engine == null) throw new ArgumentNullException(nameof(engine));
-            if (targetOrbit == null)
-            {
-                throw new ArgumentException("Target orbit must be define");
-            }
-
-            MinimumEpoch = minimumEpoch;
-            ManeuverHoldDuration = maneuverHoldDuration;
-            Engine = engine;
-            TargetOrbit = targetOrbit;
-        }
+        
 
         protected Maneuver(DateTime minimumEpoch, TimeSpan maneuverHoldDuration, Engine engine)
         {
@@ -128,15 +101,9 @@ namespace IO.Astrodynamics.Maneuver
             return isInbound == false;
         }
 
-        internal void TryExecute(StateVector stateVector)
-        {
-            var deltaV = Execute(stateVector);
-            Engine.Ignite(deltaV);
-            stateVector.Velocity += deltaV;
-        }
-
         protected abstract Vector3 ComputeManeuverPoint(StateVector stateVector);
         protected abstract Vector3 Execute(StateVector vector);
+        internal abstract (StateVector sv, StateOrientation so) TryExecute(StateVector stateVector);
 
         public static double ComputeDeltaV(double isp, double initialMass, double finalMass)
         {
