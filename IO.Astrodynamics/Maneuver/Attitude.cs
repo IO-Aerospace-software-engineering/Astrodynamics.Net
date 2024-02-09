@@ -26,7 +26,7 @@ public abstract class Attitude : Maneuver
 
     protected abstract Quaternion ComputeOrientation(StateVector stateVector);
 
-    internal override (StateVector sv, StateOrientation so) TryExecute(StateVector stateVector)
+    public override (StateVector sv, StateOrientation so) TryExecute(StateVector stateVector)
     {
         //Compute maneuver window
         ManeuverWindow = new Window(stateVector.Epoch, ManeuverHoldDuration);

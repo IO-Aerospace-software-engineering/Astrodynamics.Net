@@ -76,7 +76,7 @@ namespace IO.Astrodynamics.Tests.Body
                 start, Frames.Frame.ICRF);
 
             //Configure spacecraft
-            Clock clock = new Clock("clk1", System.Math.Pow(2.0, 16.0));
+            Clock clock = new Clock("clk1", 65536);
             Spacecraft spacecraft =
                 new Spacecraft(-172, "DRAGONFLY2", 1000.0, 10000.0, clock, parkingOrbit);
 

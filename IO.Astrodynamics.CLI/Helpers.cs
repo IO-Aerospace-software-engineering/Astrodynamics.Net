@@ -45,7 +45,7 @@ public class Helpers
         }
         else
         {
-            localizableObject = new Spacecraft(objectId, $"spc{objectId}", 1.0, 1.0, new Clock($"clk{objectId}", 1 / 65536.0), null);
+            localizableObject = new Spacecraft(objectId, $"spc{objectId}", 1.0, 1.0, new Clock($"clk{objectId}", 65536), null);
         }
 
         return localizableObject;
@@ -60,7 +60,7 @@ public class Helpers
         }
         else
         {
-            celestialItem = new Spacecraft(objectId, "spc", 1.0, 1.0, new Clock("clk", 1 / 65536.0), null);
+            celestialItem = new Spacecraft(objectId, "spc", 1.0, 1.0, new Clock("clk", 65536), null);
         }
 
         return celestialItem;

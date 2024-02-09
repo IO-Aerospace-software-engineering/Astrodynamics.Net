@@ -17,15 +17,15 @@ namespace IO.Astrodynamics.Tests.Body
         [Fact]
         public void CreateClock()
         {
-            Clock clock = new Clock("clk", 1.0 / 256.0);
+            Clock clock = new Clock("clk", 256);
             Assert.Equal("clk", clock.Name);
-            Assert.Equal(1.0 / 256.0, clock.Resolution);
+            Assert.Equal((uint)256, clock.Resolution);
         }
 
         [Fact]
         public async Task WriteClock()
         {
-            Clock clock = new Clock("clk", 1.0 / 256.0);
+            Clock clock = new Clock("clk", 256);
             Spacecraft spc = new Spacecraft(-1001, "MySpacecraft", 1000.0, 10000.0, clock,
                 new StateVector(new Vector3(1.0, 2.0, 3.0), new Vector3(1.0, 2.0, 3.0), TestHelpers.EarthAtJ2000,
                     DateTime.MinValue, Frames.Frame.ICRF));
@@ -38,15 +38,15 @@ namespace IO.Astrodynamics.Tests.Body
         [Fact]
         public void CreateInvalidClock()
         {
-            Assert.Throws<ArgumentException>(() => new Clock("", 1.0 / 256.0));
-            Assert.Throws<ArgumentException>(() => new Clock("clk", 0.0));
+            Assert.Throws<ArgumentException>(() => new Clock("", 256));
+            Assert.Throws<ArgumentException>(() => new Clock("clk", 0));
         }
 
         [Fact]
         public void Equality()
         {
-            Clock clock = new Clock("clk", 1.0 / 256.0);
-            Clock clock2 = new Clock("clk", 1.0 / 128.0);
+            Clock clock = new Clock("clk", 256);
+            Clock clock2 = new Clock("clk", 128);
             Assert.True(clock != clock2);
             Assert.False(clock == clock2);
             Assert.False(clock.Equals(clock2));

@@ -39,7 +39,7 @@ public class Scenario
         _moon = new CelestialBody(301);
         _sun = new CelestialBody(10);
         _geopotential = new GeopotentialGravitationalField(new StreamReader("Data/SolarSystem/EGM2008_to70_TideFree"));
-        Clock clk = new Clock("My clock", 1.0 / 256.0);
+        Clock clk = new Clock("My clock", 256);
         Spacecraft spc = new Spacecraft(-1001, "MySpacecraft", 100.0, 10000.0, clk,
             new StateVector(new Vector3(6800000.0, 0.0, 0.0), new Vector3(0.0, 7656.2204182967143, 0.0), _earth, DateTimeExtension.J2000, Frames.Frame.ICRF));
         _srp = new SolarRadiationPressure(spc);

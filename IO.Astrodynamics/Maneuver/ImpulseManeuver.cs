@@ -14,7 +14,7 @@ namespace IO.Astrodynamics.Maneuver
         /// Gets the target orbital parameters.
         /// </summary>
         /// <returns>The target orbital parameters.</returns>
-        public OrbitalParameters.OrbitalParameters TargetOrbit { get; }
+        public OrbitalParameters.OrbitalParameters TargetOrbit { get; protected set; }
         public Vector3 DeltaV { get; internal set; }
         protected ImpulseManeuver(DateTime minimumEpoch, TimeSpan maneuverHoldDuration, Engine engine) : base(minimumEpoch, maneuverHoldDuration, engine)
         {
@@ -31,19 +31,19 @@ namespace IO.Astrodynamics.Maneuver
             TargetOrbit = targetOrbit;
         }
 
-        internal override (StateVector sv, StateOrientation so) TryExecute(StateVector stateVector)
+        public override (StateVector sv, StateOrientation so) TryExecute(StateVector stateVector)
         {
             //Compute the deltaV
             DeltaV = Execute(stateVector);
             
             //Burn required fuel, if not enought fuel an exception will be thrown
-            var fuelBurned = Engine.Ignite(DeltaV);
+            FuelBurned = Engine.Ignite(DeltaV);
             
             //Update DeltaV
             stateVector.Velocity += DeltaV;
             
             //Compute thrust windows and maneuver windows
-            var thrustDuration = ComputeDeltaT(Engine.ISP, Engine.FuelTank.Spacecraft.GetTotalMass() + fuelBurned, Engine.FuelFlow, DeltaV.Magnitude());
+            var thrustDuration = ComputeDeltaT(Engine.ISP, Engine.FuelTank.Spacecraft.GetTotalMass() + FuelBurned, Engine.FuelFlow, DeltaV.Magnitude());
             ThrustWindow = new Window(stateVector.Epoch - thrustDuration * 0.666, thrustDuration);
             ManeuverWindow = new Window(ThrustWindow.StartDate, ManeuverHoldDuration).Merge(ThrustWindow);
             

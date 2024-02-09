@@ -115,7 +115,7 @@ public class APITest
             start, Frames.Frame.ICRF);
 
         //Create and configure spacecraft
-        Clock clock = new Clock("clk1", System.Math.Pow(2.0, 16.0));
+        Clock clock = new Clock("clk1", 65536);
         Spacecraft spacecraft =
             new Spacecraft(-1783, "DRAGONFLY3", 1000.0, 10000.0, clock, parkingOrbit);
 
@@ -215,7 +215,7 @@ public class APITest
         KeplerianElements parkingOrbit = new KeplerianElements(10000000.0, 0.5, 1.0, 0.0, 0.0, 0.0, earth, DateTimeExtension.J2000, Frames.Frame.ICRF);
 
         //Create and configure spacecraft
-        Clock clock = new Clock("clk1", System.Math.Pow(2.0, 16.0));
+        Clock clock = new Clock("clk1", 65536);
         Spacecraft spacecraft =
             new Spacecraft(-1783, "DRAGONFLY3", 1000.0, 10000.0, clock, parkingOrbit);
 
@@ -425,7 +425,7 @@ public class APITest
             start, Frames.Frame.ICRF);
 
         //Configure spacecraft
-        Clock clock = new Clock("clk1", System.Math.Pow(2.0, 16.0));
+        Clock clock = new Clock("clk1", 65536);
         Spacecraft spacecraft =
             new Spacecraft(-172, "DRAGONFLY2", 1000.0, 10000.0, clock, parkingOrbit);
 
@@ -552,7 +552,7 @@ public class APITest
             start, Frames.Frame.ICRF);
 
         //Configure spacecraft
-        Clock clock = new Clock("clk1", System.Math.Pow(2.0, 16.0));
+        Clock clock = new Clock("clk1", 65536);
         Spacecraft spacecraft =
             new Spacecraft(-1794, "DRAGONFLY4", 1000.0, 10000.0, clock, parkingOrbit);
 
@@ -602,7 +602,7 @@ public class APITest
     {
         //Load solar system kernels
         const int size = 10;
-        Clock clock = new Clock("clk1", System.Math.Pow(2.0, 16.0));
+        Clock clock = new Clock("clk1", 65536);
         var spacecraft = new Spacecraft(-135, "Spc1", 3000.0, 10000.0, clock, new StateVector(new Vector3(6800, 0, 0),
             new Vector3(0, 8.0, 0),
             TestHelpers.EarthAtJ2000,

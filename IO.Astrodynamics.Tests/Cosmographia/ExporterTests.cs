@@ -32,7 +32,7 @@ public class ExporterTests
     {
         Astrodynamics.Mission.Mission mission = new Astrodynamics.Mission.Mission("Cosmographia");
         Scenario scenario = new Scenario("export1", mission, new Window(DateTimeExtension.J2000.AddYears(21), DateTimeExtension.J2000.AddYears(21).AddDays(1.0)));
-        Spacecraft spacecraft = new Spacecraft(-333, "spc1", 1000.0, 2000.0, new Clock("clockspc1", 1 / 256.0),
+        Spacecraft spacecraft = new Spacecraft(-333, "spc1", 1000.0, 2000.0, new Clock("clockspc1", 256),
             new KeplerianElements(6800000.0, 0.0, 0.0, 0.0, 0.0, 0.0, TestHelpers.EarthAtJ2000, DateTimeExtension.J2000, Frames.Frame.ICRF));
         scenario.AddSpacecraft(spacecraft);
         scenario.Simulate(Constants.OutputPath);
@@ -46,7 +46,7 @@ public class ExporterTests
     {
         Astrodynamics.Mission.Mission mission = new Astrodynamics.Mission.Mission("CosmographiaWM");
         Scenario scenario = new Scenario("exportWM", mission, new Window(DateTimeExtension.J2000.AddYears(21), DateTimeExtension.J2000.AddYears(21).AddHours(2.0)));
-        Spacecraft spacecraft = new Spacecraft(-334, "spcWM", 1000.0, 2000.0, new Clock("clockspcWM", 1 / 256.0),
+        Spacecraft spacecraft = new Spacecraft(-334, "spcWM", 1000.0, 2000.0, new Clock("clockspcWM", 256),
             new KeplerianElements(6800000.0, 0.0, 0.0, 0.0, 0.0, 0.0, TestHelpers.EarthAtJ2000, DateTimeExtension.J2000, Frames.Frame.ICRF));
         scenario.AddSpacecraft(spacecraft);
         scenario.AddAdditionalCelestialBody(TestHelpers.Sun);
@@ -64,7 +64,7 @@ public class ExporterTests
     {
         Astrodynamics.Mission.Mission mission = new Astrodynamics.Mission.Mission("CosmographiaLongExport");
         Scenario scenario = new Scenario("LongExport", mission, new Window(DateTimeExtension.J2000.AddYears(21), DateTimeExtension.J2000.AddYears(21).AddHours(4.0)));
-        Spacecraft spacecraft = new Spacecraft(-337, "spcLongMission", 1000.0, 2000.0, new Clock("clockSpcLongMission", 1 / 65536.0),
+        Spacecraft spacecraft = new Spacecraft(-337, "spcLongMission", 1000.0, 2000.0, new Clock("clockSpcLongMission", 65536),
             new KeplerianElements(6800000.0, 0.0, 0.0, 0.0, 0.0, 0.0, TestHelpers.EarthAtJ2000, DateTimeExtension.J2000, Frames.Frame.ICRF));
         scenario.AddSpacecraft(spacecraft);
         scenario.AddAdditionalCelestialBody(TestHelpers.EarthAtJ2000);
@@ -85,7 +85,7 @@ public class ExporterTests
         Scenario scenario = new Scenario("export2", mission, new Window(DateTimeExtension.J2000.AddYears(21), DateTimeExtension.J2000.AddYears(21).AddDays(1.0)));
 
         //Configure a spacecraft
-        Spacecraft spacecraft = new Spacecraft(-334, "Spacecraft", 1000.0, 2000.0, new Clock("clockspc1", 1 / 256.0),
+        Spacecraft spacecraft = new Spacecraft(-334, "Spacecraft", 1000.0, 2000.0, new Clock("clockspc1", 256),
             new KeplerianElements(6800000.0, 0.3, 1.0, 0.0, 0.0, 0.0, TestHelpers.MoonAtJ2000, DateTimeExtension.J2000, Frames.Frame.ICRF));
 
         //Configure and attach an instrument to the spacecraft
@@ -132,7 +132,7 @@ public class ExporterTests
         scenario.AddSite(site);
         scenario.AddSite(site2);
         scenario.AddSite(site3);
-        Spacecraft spacecraft = new Spacecraft(-334, "Spacecraft", 1000.0, 2000.0, new Clock("clockspc1", 1 / 256.0),
+        Spacecraft spacecraft = new Spacecraft(-334, "Spacecraft", 1000.0, 2000.0, new Clock("clockspc1", 256),
             new KeplerianElements(11800000.0, 0.3, 1.0, 0.0, 0.0, 0.0, TestHelpers.EarthAtJ2000, DateTimeExtension.J2000, Frames.Frame.ICRF));
         var instrument = new Instrument(-334100, "Antenna", "antdeluxe", 0.2, InstrumentShape.Circular, Vector3.VectorZ, Vector3.VectorY, Vector3.Zero);
         spacecraft.AddInstrument(instrument);
@@ -171,7 +171,7 @@ public class ExporterTests
             start, Frames.Frame.ICRF);
 
         //Create and configure spacecraft1
-        Clock clock1 = new Clock("clk1", System.Math.Pow(2.0, 16.0));
+        Clock clock1 = new Clock("clk1", 65536);
         Spacecraft spacecraft1 =
             new Spacecraft(-1790, "Target", 1000.0, 10000.0, clock1, targetOrbit);
 
@@ -186,7 +186,7 @@ public class ExporterTests
         scenario.AddSpacecraft(spacecraft1);
 
         //Create and configure spacecraft2
-        Clock clock2 = new Clock("clk2", System.Math.Pow(2.0, 16.0));
+        Clock clock2 = new Clock("clk2", 65536);
         Spacecraft spacecraft2 =
             new Spacecraft(-1791, "Chaser", 1000.0, 10000.0, clock2, parkingOrbit);
 

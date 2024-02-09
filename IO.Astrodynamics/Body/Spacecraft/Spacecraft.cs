@@ -167,7 +167,7 @@ namespace IO.Astrodynamics.Body.Spacecraft
         /// <returns></returns>
         public double GetTotalMass()
         {
-            return DryOperatingMass + FuelTanks.Sum(x => x.InitialQuantity) + Payloads.Sum(x => x.Mass) +
+            return DryOperatingMass + FuelTanks.Sum(x => x.Quantity) + Payloads.Sum(x => x.Mass) +
                    (Child != null ? Child.GetTotalMass() : 0.0);
         }
 

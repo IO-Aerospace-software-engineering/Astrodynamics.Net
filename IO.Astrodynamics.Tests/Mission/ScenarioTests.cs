@@ -82,7 +82,7 @@ namespace IO.Astrodynamics.Tests.Mission
                 start, Frames.Frame.ICRF);
 
             //Create and configure spacecraft
-            Clock clock = new Clock("clk1", System.Math.Pow(2.0, 16.0));
+            Clock clock = new Clock("clk1", 65536);
             Spacecraft spacecraft =
                 new Spacecraft(-1783, "DRAGONFLY3", 1000.0, 10000.0, clock, parkingOrbit);
 
@@ -190,7 +190,7 @@ namespace IO.Astrodynamics.Tests.Mission
                 start, Frames.Frame.ICRF);
 
             //Create and configure spacecraft
-            Clock clock = new Clock("clk1", System.Math.Pow(2.0, 16.0));
+            Clock clock = new Clock("clk1", 65536);
             Spacecraft spacecraft =
                 new Spacecraft(-1785, "DRAGONFLY32", 1000.0, 10000.0, clock, parkingOrbit);
 
@@ -244,7 +244,7 @@ namespace IO.Astrodynamics.Tests.Mission
                 start, Frames.Frame.ICRF);
 
             //Create and configure spacecraft
-            Clock clock = new Clock("clk1", System.Math.Pow(2.0, 16.0));
+            Clock clock = new Clock("clk1", 65536);
             Spacecraft spacecraft =
                 new Spacecraft(-1785, "DRAGONFLY32", 1000.0, 10000.0, clock, parkingOrbit);
 

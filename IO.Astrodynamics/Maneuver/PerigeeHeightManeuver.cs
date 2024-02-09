@@ -9,10 +9,9 @@ namespace IO.Astrodynamics.Maneuver
     {
         public double TargetPerigeeHeight { get; } = double.NaN;
 
-        public PerigeeHeightManeuver(DateTime minimumEpoch, TimeSpan maneuverHoldDuration, OrbitalParameters.OrbitalParameters targetOrbit, Engine engine) : base(minimumEpoch,
-            maneuverHoldDuration, targetOrbit, engine)
+        public PerigeeHeightManeuver(DateTime minimumEpoch, TimeSpan maneuverHoldDuration, OrbitalParameters.OrbitalParameters targetOrbit, Engine engine) : this(minimumEpoch,
+            maneuverHoldDuration, targetOrbit.PerigeeVector().Magnitude(), engine)
         {
-            TargetPerigeeHeight = targetOrbit.PerigeeVector().Magnitude();
         }
 
         public PerigeeHeightManeuver(DateTime minimumEpoch, TimeSpan maneuverHoldDuration, double perigeeRadius, Engine engine) : base(minimumEpoch, maneuverHoldDuration,
@@ -23,12 +22,15 @@ namespace IO.Astrodynamics.Maneuver
 
         protected override Vector3 ComputeManeuverPoint(StateVector stateVector)
         {
-            throw new NotImplementedException();
+            return stateVector.ApogeeVector();
         }
 
-        protected override Vector3 Execute(StateVector vector)
+        protected override Vector3 Execute(StateVector stateVector)
         {
-            throw new NotImplementedException();
+            var apogee = stateVector.ApogeeVector().Magnitude();
+            double vInit = stateVector.Velocity.Magnitude();
+            double vFinal = System.Math.Sqrt(stateVector.Observer.GM * ((2.0 / apogee) - (1.0 / ((apogee + TargetPerigeeHeight) / 2.0))));
+            return stateVector.Velocity.Normalize() * (vFinal - vInit);
         }
     }
 }

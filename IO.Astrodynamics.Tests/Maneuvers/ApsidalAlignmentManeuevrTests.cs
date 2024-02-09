@@ -21,7 +21,7 @@ namespace IO.Astrodynamics.Tests.Maneuvers
             CelestialBody sun = new CelestialBody( Stars.Sun);
 
             var ke = new KeplerianElements(150000000.0, 0.0, 0.0, 0.0, 0.0, 0.0, sun, new DateTime(2021, 01, 01), Frames.Frame.ECLIPTIC_J2000);
-            Clock clk1 = new Clock("My clock", 1.0 / 256.0);
+            Clock clk1 = new Clock("My clock", 256);
             Payload pl1 = new Payload("pl1", 300,"sn");
             Spacecraft spc1 = new Spacecraft(-1001, "MySpacecraft", 1000.0,10000.0,clk1,ke);
             FuelTank fuelTank10 = new FuelTank("My fuel tank10", "ft2021","sn0", 4000.0,3000.0);

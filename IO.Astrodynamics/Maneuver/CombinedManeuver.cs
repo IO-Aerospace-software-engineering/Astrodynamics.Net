@@ -10,13 +10,8 @@ namespace IO.Astrodynamics.Maneuver
         public double TargetPerigeeHeight { get; } = double.NaN;
         public double TargetInclination { get; } = double.NaN;
 
-        public CombinedManeuver(DateTime minimumEpoch, TimeSpan maneuverHoldDuration, OrbitalParameters.OrbitalParameters targetOrbit, Engine engine) : base(minimumEpoch, maneuverHoldDuration, targetOrbit, engine)
-        {
-            TargetPerigeeHeight = targetOrbit.PerigeeVector().Magnitude();
-            TargetInclination = targetOrbit.Inclination();
-        }
-
-        public CombinedManeuver(DateTime minimumEpoch, TimeSpan maneuverHoldDuration, double perigeeRadius, double inclination, Engine engine) : base(minimumEpoch, maneuverHoldDuration, engine)
+        public CombinedManeuver(DateTime minimumEpoch, TimeSpan maneuverHoldDuration, double perigeeRadius, double inclination, Engine engine) : base(minimumEpoch,
+            maneuverHoldDuration, engine)
         {
             TargetPerigeeHeight = perigeeRadius;
             TargetInclination = inclination;
@@ -24,12 +19,33 @@ namespace IO.Astrodynamics.Maneuver
 
         protected override Vector3 ComputeManeuverPoint(StateVector stateVector)
         {
-            throw new NotImplementedException();
+            return stateVector.ApogeeVector();
         }
 
-        protected override Vector3 Execute(StateVector vector)
+        protected override Vector3 Execute(StateVector stateVector)
         {
-            throw new NotImplementedException();
+            double e;
+            double meanAnomaly = stateVector.MeanAnomaly();
+            double periapsisArgument = stateVector.ArgumentOfPeriapsis();
+            double apogee = stateVector.ApogeeVector().Magnitude();
+
+            //If target perigee is higher than current apogee
+            if (TargetPerigeeHeight > apogee)
+            {
+                e = 1.0 - (2.0 / ((TargetPerigeeHeight / apogee) + 1.0));
+
+                //Periapse argument will turn by 180°
+                meanAnomaly = meanAnomaly += Constants.PI % Constants._2PI;
+                periapsisArgument += Constants.PI;
+            }
+            else
+            {
+                e = 1.0 - (2.0 / ((apogee / TargetPerigeeHeight) + 1.0));
+            }
+
+            var targetOrbit = new KeplerianElements(TargetPerigeeHeight + apogee, e, TargetInclination, stateVector.AscendingNode(), periapsisArgument, meanAnomaly,stateVector.Observer, stateVector.Epoch, stateVector.Frame);
+
+            return targetOrbit.ToStateVector().Velocity - stateVector.Velocity;
         }
     }
 }

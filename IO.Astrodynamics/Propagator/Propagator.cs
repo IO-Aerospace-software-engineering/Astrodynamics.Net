@@ -85,6 +85,7 @@ public class Propagator
         return forces;
     }
 
+    //Todo optimize by unrolling loop
     public IEnumerable<StateVector> Propagate()
     {
         _stateOrientation.Add(new StateOrientation(Quaternion.Zero, Vector3.Zero, Window.StartDate, Spacecraft.InitialOrbitalParameters.Frame));

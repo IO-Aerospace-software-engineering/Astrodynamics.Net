@@ -28,21 +28,5 @@ namespace IO.Astrodynamics.Tests.Maneuvers
             Assert.Equal(151000000.0, maneuver.TargetPerigeeHeight);
             Assert.Equal(1.0, maneuver.TargetInclination);
         }
-
-        [Fact]
-        public void Create2()
-        {
-            FuelTank fuelTank10 = new FuelTank("My fuel tank10", "ft2021", "sn0", 4000.0, 3000.0);
-            Engine eng = new Engine("My engine", "model 1", "sn1", 350.0, 50.0, fuelTank10);
-
-            CombinedManeuver maneuver = new CombinedManeuver(new DateTime(2021, 01, 01), TimeSpan.FromDays(1.0),
-                new KeplerianElements(151000000.0, 0.0, 1.0, 0.0, 0.0, 0.0, TestHelpers.Earth, DateTimeExtension.J2000, Frames.Frame.ICRF), eng);
-
-            Assert.NotNull(maneuver.Engine);
-            Assert.Equal(TimeSpan.FromDays(1.0), maneuver.ManeuverHoldDuration);
-            Assert.Equal(new DateTime(2021, 01, 01), maneuver.MinimumEpoch);
-            Assert.Equal(151000000.0, maneuver.TargetPerigeeHeight);
-            Assert.Equal(1.0, maneuver.TargetInclination);
-        }
     }
 }

@@ -78,7 +78,7 @@ namespace IO.Astrodynamics.Maneuver
             return maneuver;
         }
 
-        internal bool CanExecute(StateVector stateVector)
+        public virtual bool CanExecute(StateVector stateVector)
         {
             //Evaluate Epoch constraint
             if (stateVector.Epoch < MinimumEpoch)
@@ -103,21 +103,21 @@ namespace IO.Astrodynamics.Maneuver
 
         protected abstract Vector3 ComputeManeuverPoint(StateVector stateVector);
         protected abstract Vector3 Execute(StateVector vector);
-        internal abstract (StateVector sv, StateOrientation so) TryExecute(StateVector stateVector);
+        public abstract (StateVector sv, StateOrientation so) TryExecute(StateVector stateVector);
 
         public static double ComputeDeltaV(double isp, double initialMass, double finalMass)
         {
-            return isp * Constants.g0 * System.Math.Log(initialMass / finalMass) * 1E-03;
+            return isp * Constants.g0 * System.Math.Log(initialMass / finalMass);
         }
 
         public static TimeSpan ComputeDeltaT(double isp, double initialMass, double fuelFlow, double deltaV)
         {
-            return TimeSpan.FromSeconds(initialMass / fuelFlow * (1 - System.Math.Exp(-deltaV * 1E03 / (isp * Constants.g0))));
+            return TimeSpan.FromSeconds(initialMass / fuelFlow * (1 - System.Math.Exp(-deltaV / (isp * Constants.g0))));
         }
 
         public static double ComputeDeltaM(double isp, double initialMass, double deltaV)
         {
-            return initialMass * (1 - System.Math.Exp(-deltaV * 1E03 / (isp * Constants.g0)));
+            return initialMass * (1 - System.Math.Exp(-deltaV / (isp * Constants.g0)));
         }
     }
 }
