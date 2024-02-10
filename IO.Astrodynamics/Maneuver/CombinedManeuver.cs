@@ -17,6 +17,11 @@ namespace IO.Astrodynamics.Maneuver
             TargetInclination = inclination;
         }
 
+        public override bool CanExecute(StateVector stateVector)
+        {
+            return System.Math.Abs(stateVector.ApogeeVector().Normalize() * stateVector.AscendingNodeVector().Normalize()) > 0.9 && base.CanExecute(stateVector);
+        }
+
         protected override Vector3 ComputeManeuverPoint(StateVector stateVector)
         {
             return stateVector.ApogeeVector();
@@ -35,7 +40,7 @@ namespace IO.Astrodynamics.Maneuver
                 e = 1.0 - (2.0 / ((TargetPerigeeHeight / apogee) + 1.0));
 
                 //Periapse argument will turn by 180°
-                meanAnomaly = meanAnomaly += Constants.PI % Constants._2PI;
+                meanAnomaly = (meanAnomaly + Constants.PI) % Constants._2PI;
                 periapsisArgument += Constants.PI;
             }
             else
@@ -43,7 +48,8 @@ namespace IO.Astrodynamics.Maneuver
                 e = 1.0 - (2.0 / ((apogee / TargetPerigeeHeight) + 1.0));
             }
 
-            var targetOrbit = new KeplerianElements(TargetPerigeeHeight + apogee, e, TargetInclination, stateVector.AscendingNode(), periapsisArgument, meanAnomaly,stateVector.Observer, stateVector.Epoch, stateVector.Frame);
+            var targetOrbit = new KeplerianElements((TargetPerigeeHeight + apogee) * 0.5, e, TargetInclination, stateVector.AscendingNode(), periapsisArgument, meanAnomaly,
+                stateVector.Observer, stateVector.Epoch, stateVector.Frame);
 
             return targetOrbit.ToStateVector().Velocity - stateVector.Velocity;
         }
