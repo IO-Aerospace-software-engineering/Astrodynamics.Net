@@ -18,8 +18,17 @@ namespace IO.Astrodynamics.OrbitalParameters
         private double? _eccentricAnomaly;
         private double? _meanAnomaly;
         private StateVector _inverse;
-        public Vector3 Position { get; internal set; }
-        public Vector3 Velocity { get; internal set; }
+
+        protected override void ResetCache()
+        {
+            base.ResetCache();
+            _eccentricity = _inclination = _semiMajorAxis = _ascendingNode = _argumentOfPeriapsis = _trueAnomaly = _eccentricAnomaly = _meanAnomaly = null;
+            _inverse = null;
+        }
+
+        public Vector3 Position { get; private set; }
+
+        public Vector3 Velocity { get; private set; }
 
         /// <summary>
         /// Constructor
@@ -241,6 +250,18 @@ namespace IO.Astrodynamics.OrbitalParameters
             }
 
             return new StateVector(sv1.Position - sv2.Position, sv1.Velocity - sv2.Velocity, sv2.Observer, sv1.Epoch, sv2.Frame);
+        }
+
+        internal void UpdatePosition(in Vector3 position)
+        {
+            ResetCache();
+            Position = position;
+        }
+
+        internal void UpdateVelocity(in Vector3 velocity)
+        {
+            ResetCache();
+            Velocity = velocity;
         }
 
 

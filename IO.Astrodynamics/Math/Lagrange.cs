@@ -21,9 +21,11 @@ namespace IO.Astrodynamics.Math
                     if (j != i)
                         term = term * (idx - data[j].x) / (data[i].x - data[j].x);
                 }
+
                 // Add current term to result
                 result += term;
             }
+
             return result;
         }
 
@@ -46,10 +48,12 @@ namespace IO.Astrodynamics.Math
                     posTerm *= t;
                     velTerm *= t;
                 }
+
                 // Add current term to result
-                result.Position += posTerm;
-                result.Velocity += velTerm;
+                result.UpdatePosition(result.Position + posTerm);
+                result.UpdateVelocity(result.Velocity + velTerm);
             }
+
             return result;
         }
     }

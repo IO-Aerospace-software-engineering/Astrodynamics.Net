@@ -67,31 +67,37 @@ namespace IO.Astrodynamics.Tests.Maneuvers
 
             var maneuverPoint = orbitalParams.ToStateVector(orbitalParams.Epoch + orbitalParams.Period() * 0.5);
             var res = maneuver.TryExecute(maneuverPoint);
-            Assert.Equal(new StateOrientation(new Quaternion(0.922185039036664, -0.38674895446134844, 0.0, -2.0646211198456895E-16), Vector3.Zero, maneuverPoint.Epoch, maneuverPoint.Frame), res.so);
+            Assert.Equal(
+                new StateOrientation(new Quaternion(0.922185039036664, -0.38674895446134844, 0.0, -2.0646211198456895E-16), Vector3.Zero, maneuverPoint.Epoch, maneuverPoint.Frame),
+                res.so);
             Assert.Equal(new Vector3(-4.095562777273702E-13, -1661.6798910584291, 767.1890047118214), maneuver.DeltaV);
-            Assert.Equal(new Window( DateTime.Parse("2000-01-01T17:15:44.8323357").ToTDB(), DateTime.Parse("2000-01-01T17:16:52.7296435").ToTDB()), maneuver.ThrustWindow);
-            Assert.Equal(new Window( DateTime.Parse("2000-01-01T17:15:44.8323357").ToTDB(), DateTime.Parse("2000-01-01T17:16:52.7296435").ToTDB()), maneuver.ThrustWindow);
+            Assert.Equal(new Window(DateTime.Parse("2000-01-01T17:15:44.8323357").ToTDB(), DateTime.Parse("2000-01-01T17:16:52.7296435").ToTDB()), maneuver.ThrustWindow);
+            Assert.Equal(new Window(DateTime.Parse("2000-01-01T17:15:44.8323357").ToTDB(), DateTime.Parse("2000-01-01T17:16:52.7296435").ToTDB()), maneuver.ThrustWindow);
             Assert.Equal(3394.8653913932048, maneuver.FuelBurned);
         }
 
         [Fact]
         public void TryExecuteDecreasePerigee()
         {
-            throw new NotImplementedException();
             var orbitalParams = new KeplerianElements(24420999.959422689, 0.726546824, 28.5 * Astrodynamics.Constants.Deg2Rad, 0.0, 0.0, 0.0, TestHelpers.EarthAtJ2000,
                 DateTimeExtension.J2000, Frames.Frame.ICRF);
             var spc = new Spacecraft(-666, "GenericSpacecraft", 1000.0, 10000.0, new Clock("GenericClk", 65536), orbitalParams);
             spc.AddFuelTank(new FuelTank("ft", "ftA", "123456", 9000.0, 9000.0));
             spc.AddEngine(new Engine("eng", "engmk1", "12345", 450, 50, spc.FuelTanks.First()));
 
-            var maneuver = new CombinedManeuver(DateTime.MinValue, TimeSpan.Zero, 42164000.0, 0.0, spc.Engines.First());
+            var maneuver = new CombinedManeuver(DateTime.MinValue, TimeSpan.Zero, 7000000.0, 0.0, spc.Engines.First());
 
             var maneuverPoint = orbitalParams.ToStateVector(orbitalParams.Epoch + orbitalParams.Period() * 0.5);
             var res = maneuver.TryExecute(maneuverPoint);
-            Assert.Equal(new StateOrientation(new Quaternion(0.922185039036664, -0.38674895446134844, 0.0, -2.0646211198456895E-16), Vector3.Zero, maneuverPoint.Epoch, maneuverPoint.Frame), res.so);
+            Assert.Equal(
+                new KeplerianElements(24581999.959422685, 0.7152387921424277, 0, 0, 6.283185307179586, 3.141592653589793, maneuverPoint.Observer, maneuverPoint.Epoch,
+                    maneuverPoint.Frame), res.sv.ToKeplerianElements());
+            Assert.Equal(
+                new StateOrientation(new Quaternion(0.922185039036664, -0.38674895446134844, 0.0, -2.0646211198456895E-16), Vector3.Zero, maneuverPoint.Epoch, maneuverPoint.Frame),
+                res.so);
             Assert.Equal(new Vector3(-4.095562777273702E-13, -1661.6798910584291, 767.1890047118214), maneuver.DeltaV);
-            Assert.Equal(new Window( DateTime.Parse("2000-01-01T17:15:44.8323357").ToTDB(), DateTime.Parse("2000-01-01T17:16:52.7296435").ToTDB()), maneuver.ThrustWindow);
-            Assert.Equal(new Window( DateTime.Parse("2000-01-01T17:15:44.8323357").ToTDB(), DateTime.Parse("2000-01-01T17:16:52.7296435").ToTDB()), maneuver.ThrustWindow);
+            Assert.Equal(new Window(DateTime.Parse("2000-01-01T17:15:44.8323357").ToTDB(), DateTime.Parse("2000-01-01T17:16:52.7296435").ToTDB()), maneuver.ThrustWindow);
+            Assert.Equal(new Window(DateTime.Parse("2000-01-01T17:15:44.8323357").ToTDB(), DateTime.Parse("2000-01-01T17:16:52.7296435").ToTDB()), maneuver.ThrustWindow);
             Assert.Equal(3394.8653913932048, maneuver.FuelBurned);
         }
     }

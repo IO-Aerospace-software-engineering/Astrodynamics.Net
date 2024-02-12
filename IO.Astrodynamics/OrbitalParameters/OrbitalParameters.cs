@@ -49,6 +49,30 @@ public abstract class OrbitalParameters : IEquatable<OrbitalParameters>
         Frame = frame ?? throw new ArgumentNullException(nameof(frame));
     }
 
+    protected virtual void ResetCache()
+    {
+        _eccentricVector = null;
+        _specificAngularMomentum = null;
+        _specificOrbitalEnergy = null;
+        _ascendingNodeVector = null;
+        _decendingNodeVector = null;
+        _period = null;
+        _meanMotion = null;
+        _stateVector = null;
+        _equinoctial = null;
+        _perigeevector = null;
+        _apogeeVector = null;
+        _trueLongitude = null;
+        _meanLongitude = null;
+        _isCircular = null;
+        _isParabolic = null;
+        _isHyperbolic = null;
+        _keplerianElements = null;
+        _equatorial = null;
+        _perigeeVelocity = null;
+        _apogeeVelocity = null;
+    }
+
     /// <summary>
     /// Get eccentric vector
     /// </summary>
