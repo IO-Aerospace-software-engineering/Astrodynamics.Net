@@ -102,7 +102,7 @@ namespace IO.Astrodynamics.Tests.Maneuvers
             var maneuverPoint = orbitalParams.ToStateVector(orbitalParams.Epoch + orbitalParams.Period() * 0.5);
             var res = maneuver.TryExecute(maneuverPoint);
             Assert.Equal(new StateVector(maneuverPoint.Position, maneuverPoint.Velocity, maneuverPoint.Observer, maneuverPoint.Epoch, maneuverPoint.Frame), res.sv);
-            Assert.Equal(new StateOrientation(new Quaternion(1.0, 0.0, 0.0, 1.2240780300615401E-16), Vector3.Zero, maneuverPoint.Epoch, maneuverPoint.Frame), res.so);
+            Assert.Equal(new StateOrientation(new Quaternion(1.0, 0.0, 0.0, 0.0), Vector3.Zero, maneuverPoint.Epoch, maneuverPoint.Frame), res.so);
             Assert.Equal(new Vector3(1.7963196145957083E-13, 1466.4878320505425, 0.0), maneuver.DeltaV);
             Assert.Equal(new Window(new DateTime(2000, 01, 01, 23, 58, 08, 663, 673).AddTicks(6), TimeSpan.FromSeconds(10.7439712)), maneuver.ThrustWindow);
             Assert.Equal(new Window(new DateTime(2000, 01, 01, 23, 58, 08, 663, 673).AddTicks(6), TimeSpan.FromSeconds(10.7439712)), maneuver.ManeuverWindow);

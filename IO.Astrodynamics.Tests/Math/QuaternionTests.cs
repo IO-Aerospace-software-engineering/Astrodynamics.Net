@@ -193,11 +193,5 @@ namespace IO.Astrodynamics.Tests.Math
         {
             Assert.Equal(new Quaternion(1.0, 0.0, 0.0, 0.0), Quaternion.Zero);
         }
-
-        [Fact]
-        public void To()
-        {
-            
-        }
     }
 }

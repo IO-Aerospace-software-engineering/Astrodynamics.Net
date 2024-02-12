@@ -44,7 +44,7 @@ namespace IO.Astrodynamics.Math
         {
             return Angle(vector, plane.Normal);
         }
-        
+
         public double Angle(in Vector3 vector, in Vector3 plane)
         {
             return double.Atan2(Cross(vector) * plane.Normalize(), this * vector);
@@ -82,9 +82,16 @@ namespace IO.Astrodynamics.Math
 
         public Quaternion To(in Vector3 vector)
         {
-            var dot = this.Normalize() * vector.Normalize();
-
-            if (System.Math.Abs(dot - (-1.0)) < double.Epsilon) //Manage 180° case
+            var dot = this * vector;
+            var angle = System.Math.Abs(this.Angle(vector));
+            if (angle <= double.Epsilon)
+            {
+                return Quaternion.Zero;
+            }
+            
+            var mag1 = Magnitude();
+            var mag2 = vector.Magnitude();
+            if (System.Math.Abs(angle-Constants.PI) < double.Epsilon) //Manage 180° case
             {
                 double x = System.Math.Abs(vector.X);
                 double y = System.Math.Abs(vector.Y);
@@ -95,9 +102,7 @@ namespace IO.Astrodynamics.Math
                 return new Quaternion(0.0, vec.X, vec.Y, vec.Z).Normalize();
             }
 
-            var mag1 = Magnitude();
-            var mag2 = vector.Magnitude();
-            var v = vector.Cross(this);
+            var v = this.Cross(vector);
             var w = dot + System.Math.Sqrt(mag1 * mag1 * mag2 * mag2);
 
             return new Quaternion(w, v.X, v.Y, v.Z).Normalize();
