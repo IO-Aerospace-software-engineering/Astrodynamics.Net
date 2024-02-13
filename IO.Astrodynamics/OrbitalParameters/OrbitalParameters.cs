@@ -270,6 +270,22 @@ public abstract class OrbitalParameters : IEquatable<OrbitalParameters>
         return AtEpoch(epoch).ToStateVector();
     }
 
+    public virtual StateVector ToStateVector(double trueAnomaly)
+    {
+        return ToStateVector(EpochAtMeanAnomaly(TrueAnomalyToMeanAnomaly(trueAnomaly, Eccentricity())));
+    }
+
+    public DateTime EpochAtMeanAnomaly(double meanAnomaly)
+    {
+        var res = meanAnomaly - MeanAnomaly();
+        if (res < 0.0)
+        {
+            res += Constants._2PI;
+        }
+
+        return Epoch + TimeSpan.FromSeconds(res / MeanMotion());
+    }
+
     /// <summary>
     /// Convert to equinoctial
     /// </summary>
