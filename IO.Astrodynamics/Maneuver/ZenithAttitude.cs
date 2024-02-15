@@ -15,6 +15,6 @@ public class ZenithAttitude : Attitude
 
     protected override Quaternion ComputeOrientation(StateVector stateVector)
     {
-        throw new NotImplementedException();
+        return Spacecraft.Front.To(stateVector.Position);
     }
 }

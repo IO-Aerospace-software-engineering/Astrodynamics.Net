@@ -10,6 +10,7 @@ namespace IO.Astrodynamics.Maneuver;
 
 public abstract class Attitude : Maneuver
 {
+    public StateOrientation StateOrientation { get; private set; }
     public Attitude(DateTime minimumEpoch, TimeSpan maneuverHoldDuration, Engine engine) : base(minimumEpoch, maneuverHoldDuration, engine)
     {
     }
@@ -29,6 +30,7 @@ public abstract class Attitude : Maneuver
     public override (StateVector sv, StateOrientation so) TryExecute(StateVector stateVector)
     {
         //Compute maneuver window
+        ThrustWindow = new Window(stateVector.Epoch, TimeSpan.Zero);
         ManeuverWindow = new Window(stateVector.Epoch, ManeuverHoldDuration);
         
         //If state vector is outside maneuver windows the next maneuver can be set
@@ -36,8 +38,10 @@ public abstract class Attitude : Maneuver
         {
             Engine.FuelTank.Spacecraft.SetStandbyManeuver(this.NextManeuver, ManeuverWindow.EndDate);
         }
-        
+
+        StateOrientation = new StateOrientation(ComputeOrientation(stateVector), Vector3.Zero, stateVector.Epoch, stateVector.Frame);
+
         //Return state vector and computed state orientation
-        return (stateVector, new StateOrientation(ComputeOrientation(stateVector), Vector3.Zero, stateVector.Epoch, stateVector.Frame));
+        return (stateVector, StateOrientation);
     }
 }

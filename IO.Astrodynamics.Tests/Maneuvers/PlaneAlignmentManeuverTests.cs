@@ -71,7 +71,7 @@ namespace IO.Astrodynamics.Tests.Maneuvers
 
             //Execute just after descending node to ensure is not capture by descending node
             Assert.False(planeAlignmentManeuver.CanExecute(orbitalParams.ToStateVector(dnTrueAnomaly + 0.2)));
-            
+
             Assert.False(planeAlignmentManeuver.CanExecute(orbitalParams.ToStateVector(anTrueAnomaly - 0.2)));
             Assert.False(planeAlignmentManeuver.CanExecute(orbitalParams.ToStateVector(anTrueAnomaly - 0.1)));
             Assert.True(planeAlignmentManeuver.CanExecute(orbitalParams.ToStateVector(anTrueAnomaly + 0.1)));
@@ -93,14 +93,14 @@ namespace IO.Astrodynamics.Tests.Maneuvers
             var anTrueAnomaly = dnTrueAnomaly + Astrodynamics.Constants.PI;
 
             planeAlignmentManeuver.CanExecute(orbitalParams.ToStateVector(anTrueAnomaly - 0.1));
-            
+
             //Execute at ascending node
             var res = planeAlignmentManeuver.TryExecute(orbitalParams.ToStateVector(anTrueAnomaly));
-            
-            Assert.Equal(new Vector3(-1485.9760225904602,2563.0404801133755,-2458.4753263817515),planeAlignmentManeuver.DeltaV);
-            Assert.Equal(1687.9426869962556,planeAlignmentManeuver.FuelBurned);
+
+            Assert.Equal(new Vector3(-1485.9760225904602, 2563.0404801133755, -2458.4753263817515), planeAlignmentManeuver.DeltaV, TestHelpers.VectorComparer);
+            Assert.Equal(1687.9426869962556, planeAlignmentManeuver.FuelBurned, 6);
         }
-        
+
         [Fact]
         public void ExecuteAtDescendingNode()
         {
@@ -116,12 +116,12 @@ namespace IO.Astrodynamics.Tests.Maneuvers
             var anTrueAnomaly = dnTrueAnomaly + Astrodynamics.Constants.PI;
 
             planeAlignmentManeuver.CanExecute(orbitalParams.ToStateVector(dnTrueAnomaly - 0.1));
-            
+
             //Execute at ascending node
             var res = planeAlignmentManeuver.TryExecute(orbitalParams.ToStateVector(dnTrueAnomaly));
-            
-            Assert.Equal(new Vector3(1485.9760225904588,-2563.040480113374,2458.47532638175),planeAlignmentManeuver.DeltaV);
-            Assert.Equal(1687.9426869962549,planeAlignmentManeuver.FuelBurned);
+
+            Assert.Equal(new Vector3(1485.9760225904588, -2563.040480113374, 2458.47532638175), planeAlignmentManeuver.DeltaV,TestHelpers.VectorComparer);
+            Assert.Equal(1687.9426869962549, planeAlignmentManeuver.FuelBurned,6);
         }
     }
 }

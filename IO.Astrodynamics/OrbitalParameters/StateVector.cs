@@ -58,7 +58,7 @@ namespace IO.Astrodynamics.OrbitalParameters
 
         public override Vector3 EccentricityVector()
         {
-            _eccentricVector ??= (Velocity.Cross(SpecificAngularMomentum()) / Observer.GM) - (Position / Position.Magnitude());
+            _eccentricVector ??= (Velocity.Cross(SpecificAngularMomentum()) / Observer.GM) - Position.Normalize();
             return _eccentricVector.Value;
         }
 
@@ -129,6 +129,11 @@ namespace IO.Astrodynamics.OrbitalParameters
 
             var n = AscendingNodeVector();
             var e = EccentricityVector();
+
+            if (e == Vector3.Zero)
+            {
+                return 0.0;
+            }
             _argumentOfPeriapsis = System.Math.Acos((n * e) / (n.Magnitude() * e.Magnitude()));
             if (e.Z < 0.0)
             {

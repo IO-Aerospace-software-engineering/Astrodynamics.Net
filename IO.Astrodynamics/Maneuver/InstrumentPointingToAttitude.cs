@@ -11,9 +11,9 @@ namespace IO.Astrodynamics.Maneuver;
 public class InstrumentPointingToAttitude : Attitude
 {
     public Instrument Instrument { get; }
-    public INaifObject Target { get; }
+    public ILocalizable Target { get; }
 
-    public InstrumentPointingToAttitude(DateTime minimumEpoch, TimeSpan maneuverHoldDuration, Instrument instrument, INaifObject target, Engine engine) : base(minimumEpoch,
+    public InstrumentPointingToAttitude(DateTime minimumEpoch, TimeSpan maneuverHoldDuration, Instrument instrument, ILocalizable target, Engine engine) : base(minimumEpoch,
         maneuverHoldDuration, engine)
     {
         Instrument = instrument ?? throw new ArgumentNullException(nameof(instrument));
@@ -22,6 +22,8 @@ public class InstrumentPointingToAttitude : Attitude
 
     protected override Quaternion ComputeOrientation(StateVector stateVector)
     {
-        throw new NotImplementedException();
+        var ephemeris = Target.GetEphemeris(stateVector.Epoch, stateVector.Observer, stateVector.Frame, Aberration.LT);
+        var targetVector = ephemeris.ToStateVector().Position - stateVector.Position;
+        return Instrument.GetBoresightInSpacecraftFrame().To(targetVector);
     }
 }

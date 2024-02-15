@@ -116,6 +116,12 @@ namespace IO.Astrodynamics.Body.Spacecraft
             if (targetFrame == null) throw new ArgumentNullException(nameof(targetFrame));
             return API.Instance.FindWindowsInFieldOfViewConstraint(searchWindow, observer, this, target, targetFrame, targetShape, aberration, stepSize);
         }
+
+        public Vector3 GetBoresightInSpacecraftFrame()
+        {
+            Quaternion q = new Quaternion(Orientation.Normalize(), Orientation.Magnitude());
+            return Boresight.Rotate(q);
+        }
         
         public bool Equals(Instrument other)
         {

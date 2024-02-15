@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using IO.Astrodynamics.Body.Spacecraft;
 using IO.Astrodynamics.Maneuver;
+using IO.Astrodynamics.Math;
 using IO.Astrodynamics.OrbitalParameters;
 using IO.Astrodynamics.Time;
 using Xunit;
@@ -41,11 +42,28 @@ namespace IO.Astrodynamics.Tests.Maneuvers
             spc.AddEngine(new Engine("eng", "engmk1", "12345", 450, 50, spc.FuelTanks.First()));
             PhasingManeuver maneuver = new PhasingManeuver(DateTime.MinValue, TimeSpan.Zero, targtOrbitalParams, 3, spc.Engines.First());
 
-            //Execute at descending node
             Assert.False(maneuver.CanExecute(orbitalParams.ToStateVector(DateTimeExtension.J2000.AddSeconds(-10))));
             Assert.False(maneuver.CanExecute(orbitalParams.ToStateVector(DateTimeExtension.J2000.AddSeconds(-1))));
             Assert.True(maneuver.CanExecute(orbitalParams.ToStateVector(DateTimeExtension.J2000.AddSeconds(1))));
             Assert.False(maneuver.CanExecute(orbitalParams.ToStateVector(DateTimeExtension.J2000.AddSeconds(2))));
+        }
+
+        [Fact]
+        public void Execute()
+        {
+            var orbitalParams = new KeplerianElements(42164000.0, 0.0, 0.0, 0.0, 0.0, 0.0, TestHelpers.EarthAtJ2000, DateTimeExtension.J2000, Frames.Frame.ICRF);
+            var targtOrbitalParams = new KeplerianElements(42164000.0, 0.0, 0.0, 0.0, 0.0, 345.0 * Astrodynamics.Constants.Deg2Rad, TestHelpers.EarthAtJ2000,
+                DateTimeExtension.J2000, Frames.Frame.ICRF);
+            var spc = new Spacecraft(-666, "GenericSpacecraft", 1000.0, 3000.0, new Clock("GenericClk", 65536), orbitalParams);
+            spc.AddFuelTank(new FuelTank("ft", "ftA", "123456", 1000.0, 900.0));
+            spc.AddEngine(new Engine("eng", "engmk1", "12345", 450, 50, spc.FuelTanks.First()));
+            PhasingManeuver maneuver = new PhasingManeuver(DateTime.MinValue, TimeSpan.Zero, targtOrbitalParams, 3, spc.Engines.First());
+            maneuver.TryExecute(orbitalParams.ToStateVector());
+
+            Assert.Equal(new Vector3(0.0, 14.039767793719875, 0.0), maneuver.DeltaV);
+            Assert.Equal(6.0351723087570868, maneuver.FuelBurned);
+            Assert.Equal(new Window(DateTime.Parse("2000-01-01T11:59:59.9196115"), TimeSpan.Parse("2.17:31:12.7762651")), maneuver.ManeuverWindow);
+            Assert.Equal(new Window(DateTime.Parse("2000-01-01T11:59:59.9196115"), TimeSpan.FromSeconds(0.1207034)), maneuver.ThrustWindow);
         }
     }
 }

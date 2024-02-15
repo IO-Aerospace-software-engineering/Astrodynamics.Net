@@ -6,12 +6,13 @@ using IO.Astrodynamics.Math;
 using IO.Astrodynamics.OrbitalParameters;
 using IO.Astrodynamics.Time;
 using Xunit;
+using ZenithAttitude = IO.Astrodynamics.Maneuver.ZenithAttitude;
 
 namespace IO.Astrodynamics.Tests.Maneuvers;
 
-public class ProgradeAttitudeTests
+public class NadirAttitudeTests
 {
-    public ProgradeAttitudeTests()
+    public NadirAttitudeTests()
     {
         API.Instance.LoadKernels(Constants.SolarSystemKernelPath);
     }
@@ -21,11 +22,11 @@ public class ProgradeAttitudeTests
     {
         FuelTank fuelTank10 = new FuelTank("My fuel tank10", "ft2021", "sn0", 4000.0, 3000.0);
         Engine eng = new Engine("My engine", "model 1", "sn1", 350.0, 50.0, fuelTank10);
-        ProgradeAttitude attitude = new ProgradeAttitude(DateTime.MinValue, TimeSpan.FromHours(1.0), eng);
-        Assert.Equal(DateTime.MinValue, attitude.MinimumEpoch);
-        Assert.Equal(TimeSpan.FromHours(1.0), attitude.ManeuverHoldDuration);
-        Assert.NotNull(attitude.Engine);
-        Assert.Equal(eng, attitude.Engine);
+        NadirAttitude zenithAttitude = new NadirAttitude(DateTime.MinValue, TimeSpan.FromHours(1.0), eng);
+        Assert.Equal(DateTime.MinValue, zenithAttitude.MinimumEpoch);
+        Assert.Equal(TimeSpan.FromHours(1.0), zenithAttitude.ManeuverHoldDuration);
+        Assert.NotNull(zenithAttitude.Engine);
+        Assert.Equal(eng, zenithAttitude.Engine);
     }
 
     [Fact]
@@ -35,10 +36,11 @@ public class ProgradeAttitudeTests
         var spc = new Spacecraft(-666, "GenericSpacecraft", 1000.0, 3000.0, new Clock("GenericClk", 65536), orbitalParams);
         spc.AddFuelTank(new FuelTank("ft", "ftA", "123456", 1000.0, 900.0));
         spc.AddEngine(new Engine("eng", "engmk1", "12345", 450, 50, spc.FuelTanks.First()));
-        ProgradeAttitude maneuver = new ProgradeAttitude(DateTime.MinValue, TimeSpan.Zero, spc.Engines.First());
+        NadirAttitude maneuver = new NadirAttitude(DateTime.MinValue, TimeSpan.Zero, spc.Engines.First());
         maneuver.TryExecute(orbitalParams.ToStateVector());
 
-        Assert.Equal(new StateOrientation(new Quaternion(1.0, 0.0, 0.0, 0.0), Vector3.Zero, DateTimeExtension.J2000, Frames.Frame.ICRF), maneuver.StateOrientation);
+        Assert.Equal(new StateOrientation(new Quaternion(0.7071067811865476, 0.0, 0.0, 0.7071067811865476), Vector3.Zero, DateTimeExtension.J2000, Frames.Frame.ICRF),
+            maneuver.StateOrientation);
         Assert.Equal(0.0, maneuver.FuelBurned);
         Assert.Equal(new Window(DateTimeExtension.J2000, TimeSpan.Zero), maneuver.ManeuverWindow);
         Assert.Equal(new Window(DateTimeExtension.J2000, TimeSpan.Zero), maneuver.ThrustWindow);
