@@ -7,7 +7,7 @@ namespace IO.Astrodynamics.Maneuver
 {
     public class PlaneAlignmentManeuver : ImpulseManeuver
     {
-        public bool IsAscendingNode { get; private set; }
+        public bool? IsAscendingNode { get; private set; }
         public double RelativeInclination { get; private set; }
 
         public PlaneAlignmentManeuver(DateTime minimumEpoch, TimeSpan maneuverHoldDuration, OrbitalParameters.OrbitalParameters targetOrbit,
@@ -18,19 +18,33 @@ namespace IO.Astrodynamics.Maneuver
         protected override Vector3 ComputeManeuverPoint(StateVector stateVector)
         {
             var an = TargetOrbit.SpecificAngularMomentum().Cross(stateVector.SpecificAngularMomentum()).Normalize();
-            
-            
-            if (stateVector.Position.Angle(an,stateVector.SpecificAngularMomentum()) > 0.0)
+            if (IsAscendingNode == true)
+            {
+                return an;
+            }
+
+            if (IsAscendingNode == false)
+            {
+                return an.Inverse();
+            }
+
+            if (stateVector.Position.Angle(an, stateVector.SpecificAngularMomentum()) > 0.0)
             {
                 IsAscendingNode = true;
                 return an;
             }
 
+            IsAscendingNode = false;
             return an.Inverse();
         }
 
         protected override Vector3 Execute(StateVector stateVector)
         {
+            if (IsAscendingNode is null)
+            {
+                throw new InvalidOperationException("Maneuver point undefined");
+            }
+            
             var vel = stateVector.Velocity;
             var pos = stateVector.Position;
 
@@ -38,13 +52,13 @@ namespace IO.Astrodynamics.Maneuver
             var projectedVector = vel - (pos * ((vel * pos) / (pos * pos)));
 
             //Compute relative inclination
-            RelativeInclination = System.Math.Acos(System.Math.Cos(stateVector.Inclination()) * System.Math.Acos(TargetOrbit.Inclination()) +
+            RelativeInclination = System.Math.Acos(System.Math.Cos(stateVector.Inclination()) * System.Math.Cos(TargetOrbit.Inclination()) +
                                                    (System.Math.Sin(stateVector.Inclination()) * System.Math.Sin(TargetOrbit.Inclination())) *
                                                    System.Math.Cos(TargetOrbit.AscendingNode() - stateVector.AscendingNode()));
 
             double rotationAngle = Constants.PI2 + RelativeInclination * 0.5;
 
-            if (IsAscendingNode)
+            if (IsAscendingNode == true)
             {
                 rotationAngle = -rotationAngle;
             }

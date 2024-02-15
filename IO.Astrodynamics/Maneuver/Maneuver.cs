@@ -45,7 +45,7 @@ namespace IO.Astrodynamics.Maneuver
         /// This property represents the duration as a TimeSpan object.
         /// </remarks>
         /// <returns>The maneuver hold duration as a TimeSpan.</returns>
-        public TimeSpan ManeuverHoldDuration { get; }
+        public TimeSpan ManeuverHoldDuration { get; protected set; }
 
         public Engine Engine { get; }
 

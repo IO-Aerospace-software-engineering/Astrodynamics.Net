@@ -166,6 +166,16 @@ public abstract class OrbitalParameters : IEquatable<OrbitalParameters>
     public abstract double TrueAnomaly();
 
     /// <summary>
+    /// Return true anomaly at given epoch
+    /// </summary>
+    /// <param name="epoch"></param>
+    /// <returns></returns>
+    public double TrueAnomaly(DateTime epoch)
+    {
+        return AtEpoch(epoch).TrueAnomaly();
+    }
+
+    /// <summary>
     /// Get the eccentric anomaly
     /// </summary>
     /// <returns></returns>
@@ -360,6 +370,17 @@ public abstract class OrbitalParameters : IEquatable<OrbitalParameters>
     public double TrueLongitude()
     {
         _trueLongitude ??= (AscendingNode() + ArgumentOfPeriapsis() + TrueAnomaly()) % Constants._2PI;
+        return _trueLongitude.Value;
+    }
+    
+    /// <summary>
+    /// Get the true longitude at given epoch
+    /// </summary>
+    /// <param name="epoch"></param>
+    /// <returns></returns>
+    public double TrueLongitude(DateTime epoch)
+    {
+        _trueLongitude ??= (AscendingNode() + ArgumentOfPeriapsis() + TrueAnomaly(epoch)) % Constants._2PI;
         return _trueLongitude.Value;
     }
 
