@@ -35,7 +35,7 @@ public class ExporterTests
         Spacecraft spacecraft = new Spacecraft(-333, "spc1", 1000.0, 2000.0, new Clock("clockspc1", 256),
             new KeplerianElements(6800000.0, 0.0, 0.0, 0.0, 0.0, 0.0, TestHelpers.EarthAtJ2000, DateTimeExtension.J2000, Frames.Frame.ICRF));
         scenario.AddSpacecraft(spacecraft);
-        scenario.Simulate(Constants.OutputPath);
+        await scenario.SimulateAsync(Constants.OutputPath, false, false, TimeSpan.FromSeconds(1.0));
 
         CosmographiaExporter exporter = new CosmographiaExporter();
         await exporter.ExportAsync(scenario, new DirectoryInfo("CosmographiaExport"));
@@ -53,7 +53,7 @@ public class ExporterTests
         scenario.AddAdditionalCelestialBody(TestHelpers.MoonAtJ2000);
         scenario.AddAdditionalCelestialBody(TestHelpers.EarthWithAtmAndGeoAtJ2000);
         
-        await scenario.SimulateWithoutManeuverAsync(Constants.OutputPath, true, true);
+        await scenario.SimulateAsync(Constants.OutputPath, false, false, TimeSpan.FromSeconds(1.0));
 
         CosmographiaExporter exporter = new CosmographiaExporter();
         await exporter.ExportAsync(scenario, new DirectoryInfo("CosmographiaExport"));
@@ -69,7 +69,7 @@ public class ExporterTests
         scenario.AddSpacecraft(spacecraft);
         scenario.AddAdditionalCelestialBody(TestHelpers.EarthAtJ2000);
         
-        await scenario.SimulateWithoutManeuverAsync(Constants.OutputPath);
+        await scenario.SimulateAsync(Constants.OutputPath,false, false, TimeSpan.FromSeconds(1.0));
 
         CosmographiaExporter exporter = new CosmographiaExporter();
         await exporter.ExportAsync(scenario, new DirectoryInfo("CosmographiaExport"));
@@ -113,7 +113,7 @@ public class ExporterTests
         spacecraft.SetStandbyManeuver(initialManeuver);
 
         //Run the simulation
-        scenario.Simulate(Constants.OutputPath);
+        await scenario.SimulateAsync(Constants.OutputPath, false, false, TimeSpan.FromSeconds(1.0));
 
         //Export scenario to Cosmographia
         CosmographiaExporter exporter = new CosmographiaExporter();
@@ -141,7 +141,7 @@ public class ExporterTests
         scenario.AddSpacecraft(spacecraft);
         var initialManeuver = new InstrumentPointingToAttitude(scenario.Window.StartDate.AddHours(7.25), TimeSpan.FromHours(0.5), instrument, site, spacecraft.Engines.First());
         spacecraft.SetStandbyManeuver(initialManeuver);
-        scenario.Simulate(Constants.OutputPath);
+        await scenario.SimulateAsync(Constants.OutputPath, false, false, TimeSpan.FromSeconds(1.0));
 
         CosmographiaExporter exporter = new CosmographiaExporter();
         await exporter.ExportAsync(scenario, new DirectoryInfo("CosmographiaExport"));
@@ -210,7 +210,7 @@ public class ExporterTests
 
         spacecraft2.SetStandbyManeuver(planeAlignmentManeuver);
         scenario.AddSpacecraft(spacecraft2);
-        var summary = scenario.Simulate(Constants.OutputPath);
+        var summary = await scenario.SimulateAsync(Constants.OutputPath, false, false, TimeSpan.FromSeconds(1.0));
         CosmographiaExporter cosmographiaExporter = new CosmographiaExporter();
         await cosmographiaExporter.ExportAsync(scenario, new DirectoryInfo("CosmographiaExport"));
     }

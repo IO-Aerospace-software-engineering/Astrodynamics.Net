@@ -16,7 +16,7 @@ using Vector3 = IO.Astrodynamics.Math.Vector3;
 
 namespace IO.Astrodynamics.Propagator;
 
-public class Propagator
+public class SpacecraftPropagator
 {
     public Window Window { get; }
     public IEnumerable<CelestialBody> CelestialBodies { get; }
@@ -41,7 +41,7 @@ public class Propagator
     /// <param name="includeSolarRadiationPressure"></param>
     /// <param name="deltaT">Simulation step size</param>
     /// <exception cref="ArgumentNullException"></exception>
-    public Propagator(Window window, Spacecraft spacecraft, IEnumerable<CelestialBody> celestialBodies, bool includeAtmosphericDrag,
+    public SpacecraftPropagator(Window window, Spacecraft spacecraft, IEnumerable<CelestialBody> celestialBodies, bool includeAtmosphericDrag,
         bool includeSolarRadiationPressure, TimeSpan deltaT)
     {
         Window = window;
@@ -86,7 +86,7 @@ public class Propagator
     }
 
     //Todo optimize by unrolling loop
-    public IEnumerable<StateVector> Propagate()
+    public (IEnumerable<StateVector>stateVectors,IEnumerable<StateOrientation>stateOrientations) Propagate()
     {
         _stateOrientation.Add(new StateOrientation(Quaternion.Zero, Vector3.Zero, Window.StartDate, Spacecraft.InitialOrbitalParameters.Frame));
         for (int i = 1; i < _svCacheSize; i++)
@@ -103,6 +103,6 @@ public class Propagator
 
         _stateOrientation.Add(new StateOrientation(_stateOrientation.Last().Rotation, Vector3.Zero, Window.EndDate, Spacecraft.InitialOrbitalParameters.Frame));
 
-        return _svCache;
+        return (_svCache,_stateOrientation);
     }
 }

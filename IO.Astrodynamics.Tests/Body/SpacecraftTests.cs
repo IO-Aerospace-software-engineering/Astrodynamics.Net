@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Net.Sockets;
 using System.Reflection;
 using System.Threading.Tasks;
 using IO.Astrodynamics.Body;
@@ -73,7 +74,7 @@ namespace IO.Astrodynamics.Tests.Body
         }
 
         [Fact]
-        public void GetOrientation()
+        public async Task GetOrientation()
         {
             DateTime start = DateTimeExtension.CreateUTC(676555130.80).ToTDB();
             DateTime end = start.AddSeconds(6448.0);
@@ -106,7 +107,7 @@ namespace IO.Astrodynamics.Tests.Body
             var root = Constants.OutputPath.CreateSubdirectory(scenario.Mission.Name).CreateSubdirectory(scenario.Name);
 
             //Execute scenario
-            API.Instance.PropagateScenario(scenario, root.CreateSubdirectory("Sites"), root.CreateSubdirectory("Spacecrafts"));
+            await scenario.SimulateAsync(root, false, false, TimeSpan.FromSeconds(1.0));
 
             var orientation = spacecraft.GetOrientation(Frames.Frame.ICRF, start);
             Vector3.VectorY.Rotate(orientation.Rotation);

@@ -64,7 +64,7 @@ public class PropagateCommand
         //Simulate
         var qualifiedOutputDirectory = new DirectoryInfo(outputDirectory);
         Console.WriteLine("Orbit propagation in progress. This operation could take a long time. Duration expected for one orbit 7000km x 7000km on mid range computer with geopotential N=30 = 600ms");
-        await scenario.SimulateWithoutManeuverAsync(qualifiedOutputDirectory, useAtmosphericDrag, useSolarRadiationPressure);
+        await scenario.SimulateAsync(qualifiedOutputDirectory, useAtmosphericDrag, useSolarRadiationPressure,TimeSpan.FromSeconds(1.0));
 
         //Export to cosmographia
         CosmographiaExporter cosmographiaExporter = new CosmographiaExporter();

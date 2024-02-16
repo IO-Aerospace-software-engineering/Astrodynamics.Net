@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using IO.Astrodynamics.Body.Spacecraft;
 using IO.Astrodynamics.Math;
 using IO.Astrodynamics.Mission;
@@ -60,7 +61,7 @@ namespace IO.Astrodynamics.Tests.Body
         }
 
         [Fact]
-        public void FindWindowInFieldOfView()
+        public async Task FindWindowInFieldOfView()
         {
             DateTime start = DateTimeExtension.CreateUTC(676555130.80).ToTDB();
             DateTime end = start.AddSeconds(6448.0);
@@ -91,8 +92,9 @@ namespace IO.Astrodynamics.Tests.Body
             scenario.AddSpacecraft(spacecraft);
 
             var root = Constants.OutputPath.CreateSubdirectory(scenario.Mission.Name).CreateSubdirectory(scenario.Name);
+
             //Execute scenario
-            API.Instance.PropagateScenario(scenario, root.CreateSubdirectory("Sites"), root.CreateSubdirectory("Spacecrafts"));
+            await scenario.SimulateAsync(root, false, false, TimeSpan.FromSeconds(1.0));
 
             //Find windows when the earth is in field of view of camera 600 
             var res = spacecraft.Intruments.First().FindWindowsInFieldOfViewConstraint(
