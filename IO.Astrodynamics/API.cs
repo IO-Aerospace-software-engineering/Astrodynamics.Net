@@ -108,7 +108,7 @@ public class API
     [DllImport(@"IO.Astrodynamics", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     private static extern bool
         WriteEphemerisProxy(string filePath, int objectId, StateVector[] stateVectors, uint size);
-    
+
     [DllImport(@"IO.Astrodynamics", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     private static extern bool
         WriteOrientationProxy(string filePath, int objectId, StateOrientation[] stateOrientations, uint size);
@@ -1037,7 +1037,7 @@ public class API
             ReadOrientationProxy(_mapper.Map<Window>(searchWindow), spacecraft.NaifId, tolerance.TotalSeconds,
                 referenceFrame.Name, stepSize.TotalSeconds,
                 stateOrientations);
-            return stateOrientations.Select(x => new OrbitalParameters.StateOrientation(
+            return stateOrientations.Where(x => x.Frame != null).Select(x => new OrbitalParameters.StateOrientation(
                 _mapper.Map<Quaternion>(x.Rotation), _mapper.Map<Vector3>(x.AngularVelocity),
                 DateTimeExtension.CreateTDB(x.Epoch), referenceFrame));
         }
@@ -1073,7 +1073,7 @@ public class API
             return true;
         }
     }
-    
+
     public bool WriteOrientation(FileInfo filePath, INaifObject naifObject, IEnumerable<OrbitalParameters.StateOrientation> stateOrientations)
     {
         if (naifObject == null) throw new ArgumentNullException(nameof(naifObject));
@@ -1088,7 +1088,7 @@ public class API
             if (res == false)
             {
                 throw new InvalidOperationException(
-                    "An error occurred while writing ephemeris. You can have more details on standard output.");
+                    "An error occurred while writing orientation. You can have more details on standard output.");
             }
 
             return true;

@@ -134,7 +134,8 @@ namespace IO.Astrodynamics.OrbitalParameters
             {
                 return 0.0;
             }
-            _argumentOfPeriapsis = System.Math.Acos((n * e) / (n.Magnitude() * e.Magnitude()));
+            
+            _argumentOfPeriapsis = System.Math.Acos(System.Math.Clamp((n * e) / (n.Magnitude() * e.Magnitude()),-1.0,1.0));
             if (e.Z < 0.0)
             {
                 _argumentOfPeriapsis = System.Math.PI * 2.0 - _argumentOfPeriapsis;

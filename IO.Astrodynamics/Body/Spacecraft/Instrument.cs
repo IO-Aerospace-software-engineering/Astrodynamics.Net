@@ -7,7 +7,7 @@ namespace IO.Astrodynamics.Body.Spacecraft
 {
     public class Instrument : INaifObject, IEquatable<Instrument>
     {
-        
+        //Todo write instrument kernel writer
 
         /// <summary>
         /// Naif identifier

@@ -91,14 +91,15 @@ namespace IO.Astrodynamics.Tests.Body
                 new Vector3(0.0, -System.Math.PI * 0.5, 0.0)));
             scenario.AddSpacecraft(spacecraft);
 
-            var root = Constants.OutputPath.CreateSubdirectory(scenario.Mission.Name).CreateSubdirectory(scenario.Name);
+            var root = Constants.OutputPath;
 
             //Execute scenario
             await scenario.SimulateAsync(root, false, false, TimeSpan.FromSeconds(1.0));
-
+            API.Instance.LoadKernels(scenario.SpacecraftDirectory);
+            API.Instance.LoadKernels(scenario.SiteDirectory);
             //Find windows when the earth is in field of view of camera 600 
             var res = spacecraft.Intruments.First().FindWindowsInFieldOfViewConstraint(
-                new Astrodynamics.Time.Window(DateTimeExtension.CreateTDB(676555200.0), DateTimeExtension.CreateTDB(676561647.0)), spacecraft,
+                new Window(DateTimeExtension.CreateTDB(676555200.0), DateTimeExtension.CreateTDB(676561647.0)), spacecraft,
                 TestHelpers.EarthAtJ2000, TestHelpers.EarthAtJ2000.Frame,
                 ShapeType.Ellipsoid, Aberration.LT,
                 TimeSpan.FromHours(1.0)).ToArray();

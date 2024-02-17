@@ -104,12 +104,17 @@ namespace IO.Astrodynamics.Mission
                         spacecraft.Name + ".tf")));
 
                     //Write clock
-                    await spacecraft.Clock.WriteAsync(
-                        new FileInfo(Path.Combine(spacecraftDirectory.CreateSubdirectory("Clocks").FullName, spacecraft.Name + ".tsc")));
-
+                    var clockFile = new FileInfo(Path.Combine(spacecraftDirectory.CreateSubdirectory("Clocks").FullName, spacecraft.Name + ".tsc"));
+                    await spacecraft.Clock.WriteAsync(clockFile);
+                    
                     //Write Ephemeris
                     API.Instance.WriteEphemeris(new FileInfo(Path.Combine(spacecraftDirectory.CreateSubdirectory("Ephemeris").FullName, spacecraft.Name + ".spk")), spacecraft,
                         res.stateVectors);
+                    
+                    API.Instance.LoadKernels(clockFile);
+                    //Write Orientation
+                    API.Instance.WriteOrientation(new FileInfo(Path.Combine(spacecraftDirectory.CreateSubdirectory("Orientation").FullName, spacecraft.Name + ".ck")), spacecraft,
+                        res.stateOrientations);
                 }
             }
             finally

@@ -110,8 +110,11 @@ namespace IO.Astrodynamics.Tests.Mission
             spacecraft.SetStandbyManeuver(planeAlignmentManeuver);
 
             scenario.AddSpacecraft(spacecraft);
+            
+            //Todo check why planeAlignement is always false
             var summary = await scenario.SimulateAsync(Constants.OutputPath, false, false, TimeSpan.FromSeconds(1.0));
-
+            API.Instance.LoadKernels(scenario.SpacecraftDirectory);
+            API.Instance.LoadKernels(scenario.SiteDirectory);
             // Read maneuver results
             var maneuver = spacecraft.StandbyManeuver;
             Assert.Equal("2021-03-04T00:32:53.8146003 (TDB)", maneuver.ManeuverWindow.StartDate.ToFormattedString());

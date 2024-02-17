@@ -24,10 +24,12 @@ using Payload = IO.Astrodynamics.Body.Spacecraft.Payload;
 using PhasingManeuver = IO.Astrodynamics.Maneuver.PhasingManeuver;
 using Planetodetic = IO.Astrodynamics.Coordinates.Planetodetic;
 using ProgradeAttitude = IO.Astrodynamics.Maneuver.ProgradeAttitude;
+using Quaternion = IO.Astrodynamics.Math.Quaternion;
 using RetrogradeAttitude = IO.Astrodynamics.Maneuver.RetrogradeAttitude;
 using Scenario = IO.Astrodynamics.Mission.Scenario;
 using Site = IO.Astrodynamics.Surface.Site;
 using Spacecraft = IO.Astrodynamics.Body.Spacecraft.Spacecraft;
+using StateOrientation = IO.Astrodynamics.OrbitalParameters.StateOrientation;
 using StateVector = IO.Astrodynamics.OrbitalParameters.StateVector;
 using Window = IO.Astrodynamics.Time.Window;
 using ZenithAttitude = IO.Astrodynamics.Maneuver.ZenithAttitude;
@@ -334,6 +336,8 @@ public class APITest
         var root = Constants.OutputPath.CreateSubdirectory(scenario.Mission.Name).CreateSubdirectory(scenario.Name);
         await scenario.SimulateAsync(root, false, false, TimeSpan.FromSeconds(1.0));
 
+        API.Instance.LoadKernels(scenario.SpacecraftDirectory);
+        API.Instance.LoadKernels(scenario.SiteDirectory);
         //Read spacecraft orientation
         var res = API.Instance.ReadOrientation(window, spacecraft, TimeSpan.FromSeconds(10.0), Frames.Frame.ICRF,
             TimeSpan.FromSeconds(10.0)).ToArray();
@@ -342,7 +346,7 @@ public class APITest
         Assert.Equal(0.7071067811865476, res.ElementAt(0).Rotation.W);
         Assert.Equal(0.0, res.ElementAt(0).Rotation.VectorPart.X);
         Assert.Equal(0.0, res.ElementAt(0).Rotation.VectorPart.Y);
-        Assert.Equal(-0.7071067811865475, res.ElementAt(0).Rotation.VectorPart.Z);
+        Assert.Equal(0.70710678118654757, res.ElementAt(0).Rotation.VectorPart.Z);
         Assert.Equal(0.0, res.ElementAt(0).AngularVelocity.X);
         Assert.Equal(0.0, res.ElementAt(0).AngularVelocity.Y);
         Assert.Equal(0.0, res.ElementAt(0).AngularVelocity.Z);
@@ -404,6 +408,60 @@ public class APITest
             Assert.Equal(PlanetsAndMoons.EARTH.NaifId, stateVectors[i].Observer.NaifId);
             Assert.Equal(Frames.Frame.ICRF, stateVectors[i].Frame);
         }
+    }
+
+    [Fact]
+    public async Task WriteOrientation()
+    {
+        //Load solar system kernels
+        const int size = 10;
+        Clock clock = new Clock("clk1", 65536);
+        var spacecraft = new Spacecraft(-175, "Spc1", 3000.0, 10000.0, clock, new StateVector(new Vector3(6800, 0, 0),
+            new Vector3(0, 8.0, 0),
+            TestHelpers.EarthAtJ2000,
+            DateTimeExtension.CreateTDB(0.0), Frames.Frame.ICRF));
+
+        var so = new StateOrientation[size];
+        for (int i = 0; i < size; ++i)
+        {
+            so[i] = new StateOrientation(new Quaternion(i, 1 + i * 0.1, 1 + i * 0.2, 1 + i * 0.3), Vector3.Zero, DateTimeExtension.CreateTDB(i), Frames.Frame.ICRF);
+        }
+
+        var clockFile = new FileInfo("OrientationClockTest.tsc");
+        await clock.WriteAsync(clockFile);
+        API.Instance.LoadKernels(clockFile);
+        //Write ephemeris file
+        FileInfo file = new FileInfo("OrientationTestFile.ck");
+
+        Assert.Throws<ArgumentNullException>(() => API.Instance.WriteOrientation(null, spacecraft, so));
+        Assert.Throws<ArgumentNullException>(() => API.Instance.WriteOrientation(file, null, so));
+        Assert.Throws<ArgumentNullException>(() => API.Instance.WriteOrientation(file, spacecraft, null));
+        API.Instance.WriteOrientation(file, spacecraft, so);
+
+        //Load ephemeris file
+        API.Instance.LoadKernels(file);
+
+        var window = new Window(DateTimeExtension.J2000, DateTimeExtension.J2000.AddSeconds(9.0));
+        var stateOrientation = API.Instance.ReadOrientation(window, spacecraft, TimeSpan.Zero, Frames.Frame.ICRF, TimeSpan.FromSeconds(1.0))
+            .Select(x => x).ToArray();
+
+        Assert.Equal(0.0, stateOrientation[0].Rotation.W, 9);
+        Assert.Equal(new Vector3(-0.57735026918962573, -0.57735026918962573, -0.57735026918962573), stateOrientation[0].Rotation.VectorPart);
+        Assert.Equal(Vector3.Zero, stateOrientation[0].AngularVelocity);
+        Assert.Equal(0.0, stateOrientation[0].Epoch.SecondsFromJ2000TDB());
+        Assert.Equal(Frames.Frame.ICRF, stateOrientation[0].ReferenceFrame);
+        
+        Assert.Equal(0.78386180166962049, stateOrientation[4].Rotation.W, 9);
+        Assert.Equal(new Vector3(0.27435163058436718, 0.35273781075132921, 0.43112399091829129), stateOrientation[4].Rotation.VectorPart);
+        Assert.Equal(Vector3.Zero, stateOrientation[4].AngularVelocity);
+        Assert.Equal(4.0, stateOrientation[4].Epoch.SecondsFromJ2000TDB());
+        Assert.Equal(Frames.Frame.ICRF, stateOrientation[4].ReferenceFrame);
+        
+        Assert.Equal(0.87358057364767872, stateOrientation[9].Rotation.W, 9);
+        Assert.Equal(new Vector3(0.18442256554784328, 0.27178062291261118, 0.359138680277379), stateOrientation[9].Rotation.VectorPart);
+        Assert.Equal(Vector3.Zero, stateOrientation[9].AngularVelocity);
+        Assert.Equal(9.0, stateOrientation[9].Epoch.SecondsFromJ2000TDB());
+        Assert.Equal(Frames.Frame.ICRF, stateOrientation[9].ReferenceFrame);
     }
 
     [Fact]

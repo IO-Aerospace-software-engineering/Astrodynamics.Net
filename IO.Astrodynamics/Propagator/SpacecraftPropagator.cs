@@ -28,7 +28,7 @@ public class SpacecraftPropagator
 
     private uint _svCacheSize;
     private StateVector[] _svCache;
-    private List<StateOrientation> _stateOrientation = new List<StateOrientation>();
+    private Dictionary<DateTime, StateOrientation> _stateOrientation = new Dictionary<DateTime, StateOrientation>();
 
 
     /// <summary>
@@ -86,23 +86,23 @@ public class SpacecraftPropagator
     }
 
     //Todo optimize by unrolling loop
-    public (IEnumerable<StateVector>stateVectors,IEnumerable<StateOrientation>stateOrientations) Propagate()
+    public (IEnumerable<StateVector>stateVectors, IEnumerable<StateOrientation>stateOrientations) Propagate()
     {
-        _stateOrientation.Add(new StateOrientation(Quaternion.Zero, Vector3.Zero, Window.StartDate, Spacecraft.InitialOrbitalParameters.Frame));
+        _stateOrientation[Window.StartDate] = new StateOrientation(Quaternion.Zero, Vector3.Zero, Window.StartDate, Spacecraft.InitialOrbitalParameters.Frame);
         for (int i = 1; i < _svCacheSize; i++)
         {
             var prvSv = _svCache[i - 1];
             if (Spacecraft.StandbyManeuver?.CanExecute(prvSv) == true)
             {
                 var res = Spacecraft.StandbyManeuver.TryExecute(prvSv);
-                _stateOrientation.Add(res.so);
+                _stateOrientation[res.so.Epoch] = res.so;
             }
 
             Integrator.Integrate(_svCache, i);
         }
 
-        _stateOrientation.Add(new StateOrientation(_stateOrientation.Last().Rotation, Vector3.Zero, Window.EndDate, Spacecraft.InitialOrbitalParameters.Frame));
+        _stateOrientation[Window.EndDate] = new StateOrientation(_stateOrientation.Last().Value.Rotation, Vector3.Zero, Window.EndDate, Spacecraft.InitialOrbitalParameters.Frame);
 
-        return (_svCache,_stateOrientation);
+        return (_svCache, _stateOrientation.Values);
     }
 }

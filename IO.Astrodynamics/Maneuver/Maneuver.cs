@@ -54,7 +54,6 @@ namespace IO.Astrodynamics.Maneuver
         /// </summary>
         public Maneuver NextManeuver { get; protected set; }
 
-        
 
         /// <summary>
         /// Gets or sets the amount of fuel burned.
@@ -63,7 +62,7 @@ namespace IO.Astrodynamics.Maneuver
 
         protected bool IsInbound { get; set; }
         protected Vector3 ManeuverPoint { get; set; }
-        
+
 
         protected Maneuver(DateTime minimumEpoch, TimeSpan maneuverHoldDuration, Engine engine)
         {
@@ -86,8 +85,13 @@ namespace IO.Astrodynamics.Maneuver
                 return false;
             }
 
+            
             //Compute the target point
             var maneuverPoint = ComputeManeuverPoint(stateVector);
+            if (stateVector.Position == maneuverPoint)
+            {
+                return true;
+            }
 
             //Check if target point is reached
             var isInbound = stateVector.Position.Angle(maneuverPoint, stateVector.SpecificAngularMomentum()) > 0.0;

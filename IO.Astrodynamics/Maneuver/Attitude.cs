@@ -40,6 +40,9 @@ public abstract class Attitude : Maneuver
         }
 
         StateOrientation = new StateOrientation(ComputeOrientation(stateVector), Vector3.Zero, stateVector.Epoch, stateVector.Frame);
+        
+        //Set next maneuver
+        Engine.FuelTank.Spacecraft.SetStandbyManeuver(this.NextManeuver, ManeuverWindow.EndDate);
 
         //Return state vector and computed state orientation
         return (stateVector, StateOrientation);
