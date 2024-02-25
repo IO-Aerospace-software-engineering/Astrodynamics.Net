@@ -25,6 +25,10 @@
     </ItemGroup>
 
     <ItemGroup>
+      <EmbeddedResource Include="Templates\InstrumentFrameTemplate.tf" />
+      <None Include="Templates\InstrumentKernelCircularTemplate.ti" />
+      <None Include="Templates\InstrumentKernelEllipticalTemplate.ti" />
+      <None Include="Templates\InstrumentKernelRectangularTemplate.ti" />
       <None Remove="PDS\V4\Schemas\PDS4_MSN_1K00_1300.xsd" />
       <EmbeddedResource Include="PDS\V4\Schemas\PDS4_MSN_1K00_1300.xsd" />
       <None Remove="PDS\V4\Schemas\PDS4_PDS_1K00.xsd" />

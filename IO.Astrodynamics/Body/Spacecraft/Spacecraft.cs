@@ -72,13 +72,61 @@ namespace IO.Astrodynamics.Body.Spacecraft
         }
 
         /// <summary>
-        /// Add instrument to spacecraft
+        /// Add circular instrument to spacecraft
         /// </summary>
-        /// <param name="instrument"></param>
-        public void AddInstrument(Instrument instrument)
+        /// <param name="naifId"></param>
+        /// <param name="name"></param>
+        /// <param name="model"></param>
+        /// <param name="fieldOfView"></param>
+        /// <param name="boresight"></param>
+        /// <param name="refVector"></param>
+        /// <param name="orientation"></param>
+        /// <exception cref="ArgumentException"></exception>
+        public void AddCircularInstrument(int naifId, string name, string model, double fieldOfView, in Vector3 boresight, in Vector3 refVector, in Vector3 orientation)
         {
-            if (instrument == null) throw new ArgumentNullException(nameof(instrument));
-            if (!_instruments.Add(instrument))
+            if (!_instruments.Add(new CircularInstrument(this, naifId, name, model, fieldOfView, boresight, refVector, orientation)))
+            {
+                throw new ArgumentException("Instrument already added to spacecraft");
+            }
+        }
+
+        /// <summary>
+        /// Add rectangular instrument
+        /// </summary>
+        /// <param name="naifId"></param>
+        /// <param name="name"></param>
+        /// <param name="model"></param>
+        /// <param name="fieldOfView"></param>
+        /// <param name="crossAngle"></param>
+        /// <param name="boresight"></param>
+        /// <param name="refVector"></param>
+        /// <param name="orientation"></param>
+        /// <exception cref="ArgumentException"></exception>
+        public void AddRectangularInstrument(int naifId, string name, string model, double fieldOfView, double crossAngle, in Vector3 boresight, in Vector3 refVector,
+            in Vector3 orientation)
+        {
+            if (!_instruments.Add(new RectangularInstrument(this, naifId, name, model, fieldOfView, crossAngle, boresight, refVector, orientation)))
+            {
+                throw new ArgumentException("Instrument already added to spacecraft");
+            }
+        }
+        
+        /// <summary>
+        /// Add elliptical instrument
+        /// </summary>
+        /// <param name="naifId"></param>
+        /// <param name="name"></param>
+        /// <param name="model"></param>
+        /// <param name="fieldOfView"></param>
+        /// <param name="crossAngle"></param>
+        /// <param name="boresight"></param>
+        /// <param name="refVector"></param>
+        /// <param name="orientation"></param>
+        /// <exception cref="ArgumentException"></exception>
+        public void AddEllipticalInstrument(int naifId, string name, string model, double fieldOfView, double crossAngle, in Vector3 boresight, in Vector3 refVector,
+            in Vector3 orientation)
+        {
+            if (!_instruments.Add(new EllipticalInstrument(this, naifId, name, model, fieldOfView, crossAngle, boresight, refVector, orientation)))
             {
                 throw new ArgumentException("Instrument already added to spacecraft");
             }
