@@ -10,7 +10,7 @@ namespace IO.Astrodynamics.Body.Spacecraft;
 
 public class CircularInstrument : Instrument
 {
-    public CircularInstrument(Spacecraft spacecraft, int naifId, string name, string model, double fieldOfView, Vector3 boresight, Vector3 refVector, Vector3 orientation) : base(spacecraft, naifId, name, model, fieldOfView, InstrumentShape.Circular, boresight, refVector, orientation)
+    internal CircularInstrument(Spacecraft spacecraft, int naifId, string name, string model, double fieldOfView, Vector3 boresight, Vector3 refVector, Vector3 orientation) : base(spacecraft, naifId, name, model, fieldOfView, InstrumentShape.Circular, boresight, refVector, orientation)
     {
     }
 

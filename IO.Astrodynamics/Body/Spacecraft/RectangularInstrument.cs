@@ -12,7 +12,7 @@ public class RectangularInstrument : Instrument
 {
     public double CrossAngle { get; }
 
-    public RectangularInstrument(Spacecraft spacecraft, int naifId, string name, string model, double fieldOfView, double crossAngle, Vector3 boresight, Vector3 refVector,
+    internal RectangularInstrument(Spacecraft spacecraft, int naifId, string name, string model, double fieldOfView, double crossAngle, Vector3 boresight, Vector3 refVector,
         Vector3 orientation) : base(spacecraft, naifId, name, model, fieldOfView, InstrumentShape.Rectangular, boresight, refVector, orientation)
     {
         ArgumentOutOfRangeException.ThrowIfNegative(crossAngle);

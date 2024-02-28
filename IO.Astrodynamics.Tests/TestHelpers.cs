@@ -27,7 +27,7 @@ namespace IO.Astrodynamics.Tests
         internal static CelestialBody MoonAt20011214 => new(PlanetsAndMoons.MOON, Frames.Frame.ICRF, new DateTime(2001, 12, 14, 0, 0, 0));
         private static object LockObj = new object();
 
-        internal static Spacecraft Spacecraft => new Spacecraft(-666, "GenericSpacecraft", 100.0, 1000.0, new Clock("GenericClk", 1 / 65536),
+        internal static Spacecraft Spacecraft => new Spacecraft(-666, "GenericSpacecraft", 100.0, 1000.0, new Clock("GenericClk", 65536),
             new StateVector(new Vector3(6800000.0, 0.0, 0.0), new Vector3(0.0, 8000.0, 0.0), Earth, DateTimeExtension.J2000, Frames.Frame.ICRF));
 
         internal static bool VectorComparer(Vector3 v1, Vector3 v2)

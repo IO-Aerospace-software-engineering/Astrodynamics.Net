@@ -92,9 +92,7 @@ namespace IO.Astrodynamics.Tests.Mission
             spacecraft.AddFuelTank(fuelTank);
             spacecraft.AddEngine(engine);
             spacecraft.AddPayload(new Payload("payload1", 50.0, "pay01"));
-            spacecraft.AddInstrument(
-                new Instrument(-1783601, "CAM601", "mod1", 80.0 * IO.Astrodynamics.Constants.Deg2Rad,
-                    InstrumentShape.Circular, Vector3.VectorZ, Vector3.VectorX, Vector3.VectorX));
+            spacecraft.AddCircularInstrument(-1783601, "CAM601", "mod1", 80.0 * IO.Astrodynamics.Constants.Deg2Rad, Vector3.VectorZ, Vector3.VectorX, Vector3.VectorX);
 
             var planeAlignmentManeuver = new PlaneAlignmentManeuver(DateTime.MinValue, TimeSpan.Zero,
                 targetOrbit, spacecraft.Engines.First());
@@ -110,7 +108,7 @@ namespace IO.Astrodynamics.Tests.Mission
             spacecraft.SetStandbyManeuver(planeAlignmentManeuver);
 
             scenario.AddSpacecraft(spacecraft);
-            
+
             //Todo check why planeAlignement is always false
             var summary = await scenario.SimulateAsync(Constants.OutputPath, false, false, TimeSpan.FromSeconds(1.0));
             API.Instance.LoadKernels(scenario.SpacecraftDirectory);
@@ -123,7 +121,6 @@ namespace IO.Astrodynamics.Tests.Mission
             Assert.Equal("2021-03-04T00:33:02.2130194 (TDB)", maneuver.ThrustWindow.EndDate.ToFormattedString());
             Assert.Equal(8.3984190999999999, maneuver.ThrustWindow.Length.TotalSeconds, 3);
             Assert.Equal(new Vector3(-97.1412202651915, 107.90256552680627, -119.98761196522472), ((ImpulseManeuver)maneuver).DeltaV);
-
 
             Assert.Equal(419.92095543527711, maneuver.FuelBurned);
 
@@ -197,9 +194,7 @@ namespace IO.Astrodynamics.Tests.Mission
             spacecraft.AddFuelTank(fuelTank);
             spacecraft.AddEngine(engine);
             spacecraft.AddPayload(new Payload("payload1", 50.0, "pay01"));
-            spacecraft.AddInstrument(
-                new Instrument(-1785601, "CAM601", "mod1", 80.0 * IO.Astrodynamics.Constants.Deg2Rad,
-                    InstrumentShape.Circular, Vector3.VectorZ, Vector3.VectorX, Vector3.VectorX));
+            spacecraft.AddCircularInstrument(-1785601, "CAM601", "mod1", 80.0 * IO.Astrodynamics.Constants.Deg2Rad, Vector3.VectorZ, Vector3.VectorX, Vector3.VectorX);
 
             scenario.AddSpacecraft(spacecraft);
             var summary = await scenario.SimulateAsync(Constants.OutputPath, false, false, TimeSpan.FromSeconds(1.0));
@@ -245,9 +240,7 @@ namespace IO.Astrodynamics.Tests.Mission
             spacecraft.AddFuelTank(fuelTank);
             spacecraft.AddEngine(engine);
             spacecraft.AddPayload(new Payload("payload1", 50.0, "pay01"));
-            spacecraft.AddInstrument(
-                new Instrument(-1785601, "CAM601", "mod1", 80.0 * IO.Astrodynamics.Constants.Deg2Rad,
-                    InstrumentShape.Circular, Vector3.VectorZ, Vector3.VectorX, Vector3.VectorX));
+            spacecraft.AddCircularInstrument(-1785601, "CAM601", "mod1", 80.0 * IO.Astrodynamics.Constants.Deg2Rad, Vector3.VectorZ, Vector3.VectorX, Vector3.VectorX);
 
             scenario.AddSpacecraft(spacecraft);
             var summary = await scenario.SimulateAsync(Constants.OutputPath, false, false, TimeSpan.FromSeconds(1.0));

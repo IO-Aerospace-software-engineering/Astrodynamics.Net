@@ -26,7 +26,7 @@ namespace IO.Astrodynamics.Body.Spacecraft
         public Clock Clock { get; private set; }
 
         private readonly HashSet<Instrument> _instruments = new();
-        public IReadOnlyCollection<Instrument> Intruments => _instruments;
+        public IReadOnlyCollection<Instrument> Instruments => _instruments;
 
         private readonly HashSet<FuelTank> _fuelTanks = new();
         public IReadOnlyCollection<FuelTank> FuelTanks => _fuelTanks;
@@ -80,7 +80,7 @@ namespace IO.Astrodynamics.Body.Spacecraft
         /// <param name="fieldOfView"></param>
         /// <param name="boresight"></param>
         /// <param name="refVector"></param>
-        /// <param name="orientation"></param>
+        /// <param name="orientation">Expressed as Euler angle</param>
         /// <exception cref="ArgumentException"></exception>
         public void AddCircularInstrument(int naifId, string name, string model, double fieldOfView, in Vector3 boresight, in Vector3 refVector, in Vector3 orientation)
         {
@@ -100,7 +100,7 @@ namespace IO.Astrodynamics.Body.Spacecraft
         /// <param name="crossAngle"></param>
         /// <param name="boresight"></param>
         /// <param name="refVector"></param>
-        /// <param name="orientation"></param>
+        /// <param name="orientation">Expressed as Euler angle</param>
         /// <exception cref="ArgumentException"></exception>
         public void AddRectangularInstrument(int naifId, string name, string model, double fieldOfView, double crossAngle, in Vector3 boresight, in Vector3 refVector,
             in Vector3 orientation)
@@ -121,7 +121,7 @@ namespace IO.Astrodynamics.Body.Spacecraft
         /// <param name="crossAngle"></param>
         /// <param name="boresight"></param>
         /// <param name="refVector"></param>
-        /// <param name="orientation"></param>
+        /// <param name="orientation">Expressed as Euler angle</param>
         /// <exception cref="ArgumentException"></exception>
         public void AddEllipticalInstrument(int naifId, string name, string model, double fieldOfView, double crossAngle, in Vector3 boresight, in Vector3 refVector,
             in Vector3 orientation)

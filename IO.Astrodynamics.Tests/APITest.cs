@@ -324,8 +324,7 @@ public class APITest
         spacecraft.AddFuelTank(fuelTank);
         spacecraft.AddEngine(engine);
         spacecraft.AddPayload(new Payload("payload1", 50.0, "pay01"));
-        spacecraft.AddInstrument(new Instrument(-1794600, "CAM600", "mod1", 1.5, InstrumentShape.Circular,
-            Vector3.VectorZ, Vector3.VectorX, Vector3.VectorX));
+        spacecraft.AddCircularInstrument(-1794600, "CAM600", "mod1", 1.5, Vector3.VectorZ, Vector3.VectorX, Vector3.VectorX);
 
         spacecraft.SetStandbyManeuver(new NadirAttitude(DateTime.MinValue, TimeSpan.Zero,
             spacecraft.Engines.First()));
@@ -450,13 +449,13 @@ public class APITest
         Assert.Equal(Vector3.Zero, stateOrientation[0].AngularVelocity);
         Assert.Equal(0.0, stateOrientation[0].Epoch.SecondsFromJ2000TDB());
         Assert.Equal(Frames.Frame.ICRF, stateOrientation[0].ReferenceFrame);
-        
+
         Assert.Equal(0.78386180166962049, stateOrientation[4].Rotation.W, 9);
         Assert.Equal(new Vector3(0.27435163058436718, 0.35273781075132921, 0.43112399091829129), stateOrientation[4].Rotation.VectorPart);
         Assert.Equal(Vector3.Zero, stateOrientation[4].AngularVelocity);
         Assert.Equal(4.0, stateOrientation[4].Epoch.SecondsFromJ2000TDB());
         Assert.Equal(Frames.Frame.ICRF, stateOrientation[4].ReferenceFrame);
-        
+
         Assert.Equal(0.87358057364767872, stateOrientation[9].Rotation.W, 9);
         Assert.Equal(new Vector3(0.18442256554784328, 0.27178062291261118, 0.359138680277379), stateOrientation[9].Rotation.VectorPart);
         Assert.Equal(Vector3.Zero, stateOrientation[9].AngularVelocity);

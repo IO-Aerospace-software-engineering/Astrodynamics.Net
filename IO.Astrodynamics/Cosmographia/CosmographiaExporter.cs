@@ -164,13 +164,13 @@ public class CosmographiaExporter
         SensorRootObject sensorJson = new SensorRootObject();
         sensorJson.name = $"{scenario.Mission.Name}_{scenario.Name}";
         sensorJson.version = "1.0";
-        sensorJson.items = new SensorItem[scenario.Spacecrafts.Sum(x => x.Intruments.Count)];
+        sensorJson.items = new SensorItem[scenario.Spacecrafts.Sum(x => x.Instruments.Count)];
         int idx = 0;
         foreach (var spacecraft in scenario.Spacecrafts)
         {
             var spcColor = GetSpacecraftColor(spacecraft);
 
-            foreach (var instrument in spacecraft.Intruments)
+            foreach (var instrument in spacecraft.Instruments)
             {
                 sensorJson.items[idx] = new SensorItem();
                 sensorJson.items[idx].center = spacecraft.Name.ToUpper();

@@ -89,8 +89,7 @@ public class ExporterTests
             new KeplerianElements(6800000.0, 0.3, 1.0, 0.0, 0.0, 0.0, TestHelpers.MoonAtJ2000, DateTimeExtension.J2000, Frames.Frame.ICRF));
 
         //Configure and attach an instrument to the spacecraft
-        var instrument = new Instrument(-334100, "camera_hires", "camdeluxe", 0.03, InstrumentShape.Rectangular, Vector3.VectorZ, Vector3.VectorY, Vector3.Zero, 0.048);
-        spacecraft.AddInstrument(instrument);
+        spacecraft.AddRectangularInstrument(-334100, "camera_hires", "camdeluxe", 0.03,0.048, Vector3.VectorZ, Vector3.VectorY, Vector3.Zero );
 
         //Add a fuel tank
         spacecraft.AddFuelTank(new FuelTank("fuelTank1", "fuelTankModel", "456", 2000.0, 2000.0));
@@ -102,11 +101,11 @@ public class ExporterTests
         scenario.AddSpacecraft(spacecraft);
 
         //Configure the first maneuver
-        var initialManeuver = new InstrumentPointingToAttitude(scenario.Window.StartDate.AddMinutes(10.0), TimeSpan.FromHours(1.0), instrument,
+        var initialManeuver = new InstrumentPointingToAttitude(scenario.Window.StartDate.AddMinutes(10.0), TimeSpan.FromHours(1.0), spacecraft.Instruments.First(),
             spacecraft.InitialOrbitalParameters.Observer, spacecraft.Engines.First());
 
         //Configure the second maneuver and link it to the first maneuver
-        initialManeuver.SetNextManeuver(new InstrumentPointingToAttitude(scenario.Window.StartDate.AddHours(2.0), TimeSpan.FromHours(1.0), instrument,
+        initialManeuver.SetNextManeuver(new InstrumentPointingToAttitude(scenario.Window.StartDate.AddHours(2.0), TimeSpan.FromHours(1.0), spacecraft.Instruments.First(),
             spacecraft.InitialOrbitalParameters.Observer, spacecraft.Engines.First()));
 
         //Set the first maneuver in standby
@@ -134,12 +133,11 @@ public class ExporterTests
         scenario.AddSite(site3);
         Spacecraft spacecraft = new Spacecraft(-334, "Spacecraft", 1000.0, 2000.0, new Clock("clockspc1", 256),
             new KeplerianElements(11800000.0, 0.3, 1.0, 0.0, 0.0, 0.0, TestHelpers.EarthAtJ2000, DateTimeExtension.J2000, Frames.Frame.ICRF));
-        var instrument = new Instrument(-334100, "Antenna", "antdeluxe", 0.2, InstrumentShape.Circular, Vector3.VectorZ, Vector3.VectorY, Vector3.Zero);
-        spacecraft.AddInstrument(instrument);
+        spacecraft.AddCircularInstrument(-334100, "Antenna", "antdeluxe", 0.2, Vector3.VectorZ, Vector3.VectorY, Vector3.Zero);
         spacecraft.AddFuelTank(new FuelTank("fuelTank1", "fuelTankModel", "456", 2000.0, 2000.0));
         spacecraft.AddEngine(new Engine("engine1", "engineModel", "1234", 450, 50.0, spacecraft.FuelTanks.First()));
         scenario.AddSpacecraft(spacecraft);
-        var initialManeuver = new InstrumentPointingToAttitude(scenario.Window.StartDate.AddHours(7.25), TimeSpan.FromHours(0.5), instrument, site, spacecraft.Engines.First());
+        var initialManeuver = new InstrumentPointingToAttitude(scenario.Window.StartDate.AddHours(7.25), TimeSpan.FromHours(0.5), spacecraft.Instruments.First(), site, spacecraft.Engines.First());
         spacecraft.SetStandbyManeuver(initialManeuver);
         await scenario.SimulateAsync(Constants.OutputPath, false, false, TimeSpan.FromSeconds(1.0));
 
@@ -180,9 +178,7 @@ public class ExporterTests
         spacecraft1.AddFuelTank(fuelTank1);
         spacecraft1.AddEngine(engine1);
         spacecraft1.AddPayload(new Payload("payload1", 50.0, "pay01"));
-        spacecraft1.AddInstrument(
-            new Instrument(-1790601, "CAM601", "mod1", 10.0 * IO.Astrodynamics.Constants.Deg2Rad,
-                InstrumentShape.Circular, Vector3.VectorZ, Vector3.VectorX, Vector3.VectorX));
+        spacecraft1.AddCircularInstrument(-1790601, "CAM601", "mod1", 10.0 * IO.Astrodynamics.Constants.Deg2Rad, Vector3.VectorZ, Vector3.VectorX, Vector3.VectorX);
         scenario.AddSpacecraft(spacecraft1);
 
         //Create and configure spacecraft2
@@ -195,9 +191,7 @@ public class ExporterTests
         spacecraft2.AddFuelTank(fuelTank2);
         spacecraft2.AddEngine(engine2);
         spacecraft2.AddPayload(new Payload("payload1", 50.0, "pay01"));
-        spacecraft2.AddInstrument(
-            new Instrument(-1791602, "CAM602", "mod1", 10.0 * IO.Astrodynamics.Constants.Deg2Rad,
-                InstrumentShape.Circular, Vector3.VectorY, Vector3.VectorX, Vector3.Zero));
+        spacecraft2.AddCircularInstrument(-1791602, "CAM602", "mod1", 10.0 * IO.Astrodynamics.Constants.Deg2Rad, Vector3.VectorY, Vector3.VectorX, Vector3.Zero);
 
         var planeAlignmentManeuver = new PlaneAlignmentManeuver(DateTime.MinValue, TimeSpan.Zero,
             targetOrbit, spacecraft2.Engines.First());

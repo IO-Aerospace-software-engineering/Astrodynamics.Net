@@ -13,7 +13,7 @@ public class EllipticalInstrument : Instrument
     private const string _kernelFile = "";
     public double CrossAngle { get; }
 
-    public EllipticalInstrument(Spacecraft spacecraft, int naifId, string name, string model, double fieldOfView, double crossAngle, Vector3 boresight, Vector3 refVector,
+    internal EllipticalInstrument(Spacecraft spacecraft, int naifId, string name, string model, double fieldOfView, double crossAngle, Vector3 boresight, Vector3 refVector,
         Vector3 orientation) : base(spacecraft, naifId, name, model, fieldOfView, InstrumentShape.Rectangular, boresight, refVector, orientation)
     {
         ArgumentOutOfRangeException.ThrowIfNegative(crossAngle);

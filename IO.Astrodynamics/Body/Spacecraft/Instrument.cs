@@ -69,7 +69,7 @@ namespace IO.Astrodynamics.Body.Spacecraft
         /// <param name="orientation"></param>
         /// <param name="spacecraft"></param>
         /// <exception cref="ArgumentException"></exception>
-        public Instrument(Spacecraft spacecraft, int naifId, string name, string model, double fieldOfView, InstrumentShape shape, Vector3 boresight, Vector3 refVector,
+        protected Instrument(Spacecraft spacecraft, int naifId, string name, string model, double fieldOfView, InstrumentShape shape, Vector3 boresight, Vector3 refVector,
             Vector3 orientation)
         {
             if (string.IsNullOrEmpty(name))
@@ -137,6 +137,7 @@ namespace IO.Astrodynamics.Body.Spacecraft
                 .Replace("{instrumentid}", NaifId.ToString())
                 .Replace("{framename}", Spacecraft.Name + "_" + Name)
                 .Replace("{spacecraftid}", Spacecraft.NaifId.ToString())
+                .Replace("{spacecraftframe}", Spacecraft.Frame.Name)
                 .Replace("{x}", Orientation.X.ToString(CultureInfo.InvariantCulture))
                 .Replace("{y}", Orientation.Y.ToString(CultureInfo.InvariantCulture))
                 .Replace("{z}", Orientation.Z.ToString(CultureInfo.InvariantCulture));
