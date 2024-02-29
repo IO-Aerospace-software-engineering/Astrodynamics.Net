@@ -69,6 +69,7 @@ namespace IO.Astrodynamics.Tests.Mission
             Astrodynamics.Mission.Mission mission = new Astrodynamics.Mission.Mission("mission02");
             Scenario scenario = new Scenario("scn1", mission, new Window(startPropagator, end));
             scenario.AddAdditionalCelestialBody(TestHelpers.MoonAtJ2000);
+            scenario.AddAdditionalCelestialBody(TestHelpers.Sun);
 
             //Define parking orbit
             StateVector parkingOrbit = new StateVector(
@@ -84,8 +85,7 @@ namespace IO.Astrodynamics.Tests.Mission
 
             //Create and configure spacecraft
             Clock clock = new Clock("clk1", 65536);
-            Spacecraft spacecraft =
-                new Spacecraft(-1783, "DRAGONFLY3", 1000.0, 10000.0, clock, parkingOrbit);
+            Spacecraft spacecraft = new Spacecraft(-1783, "DRAGONFLY3", 1000.0, 10000.0, clock, parkingOrbit);
 
             FuelTank fuelTank = new FuelTank("ft1", "model1", "sn1", 9000.0, 9000.0);
             Engine engine = new Engine("engine1", "model1", "sn1", 450.0, 50.0, fuelTank);
@@ -94,14 +94,10 @@ namespace IO.Astrodynamics.Tests.Mission
             spacecraft.AddPayload(new Payload("payload1", 50.0, "pay01"));
             spacecraft.AddCircularInstrument(-1783601, "CAM601", "mod1", 80.0 * IO.Astrodynamics.Constants.Deg2Rad, Vector3.VectorZ, Vector3.VectorX, Vector3.VectorX);
 
-            var planeAlignmentManeuver = new PlaneAlignmentManeuver(DateTime.MinValue, TimeSpan.Zero,
-                targetOrbit, spacecraft.Engines.First());
-            planeAlignmentManeuver.SetNextManeuver(new ApsidalAlignmentManeuver(DateTime.MinValue,
-                    TimeSpan.Zero, targetOrbit, spacecraft.Engines.First()))
-                .SetNextManeuver(new PhasingManeuver(DateTime.MinValue, TimeSpan.Zero, targetOrbit, 1,
-                    spacecraft.Engines.First()))
-                .SetNextManeuver(new ApogeeHeightManeuver(DateTime.MinValue, TimeSpan.Zero, 15866666.666666666,
-                    spacecraft.Engines.First()))
+            var planeAlignmentManeuver = new PlaneAlignmentManeuver(DateTime.MinValue, TimeSpan.Zero, targetOrbit, spacecraft.Engines.First());
+            planeAlignmentManeuver.SetNextManeuver(new ApsidalAlignmentManeuver(DateTime.MinValue, TimeSpan.Zero, targetOrbit, spacecraft.Engines.First()))
+                .SetNextManeuver(new PhasingManeuver(DateTime.MinValue, TimeSpan.Zero, targetOrbit, 1, spacecraft.Engines.First()))
+                .SetNextManeuver(new ApogeeHeightManeuver(DateTime.MinValue, TimeSpan.Zero, 15866666.666666666, spacecraft.Engines.First()))
                 .SetNextManeuver(new ZenithAttitude(DateTime.MinValue, TimeSpan.FromMinutes(1), engine))
                 .SetNextManeuver(new RetrogradeAttitude(DateTime.MinValue, TimeSpan.FromMinutes(1), engine))
                 .SetNextManeuver(new ProgradeAttitude(DateTime.MinValue, TimeSpan.FromMinutes(1), engine));
@@ -109,50 +105,50 @@ namespace IO.Astrodynamics.Tests.Mission
 
             scenario.AddSpacecraft(spacecraft);
 
-            //Todo check why planeAlignement is always false
+            //Todo check why planeAlignment is always false
             var summary = await scenario.SimulateAsync(Constants.OutputPath, false, false, TimeSpan.FromSeconds(1.0));
             API.Instance.LoadKernels(scenario.SpacecraftDirectory);
             API.Instance.LoadKernels(scenario.SiteDirectory);
             // Read maneuver results
-            var maneuver = spacecraft.StandbyManeuver;
-            Assert.Equal("2021-03-04T00:32:53.8146003 (TDB)", maneuver.ManeuverWindow.StartDate.ToFormattedString());
-            Assert.Equal("2021-03-04T00:33:02.2130194 (TDB)", maneuver.ManeuverWindow.EndDate.ToFormattedString());
-            Assert.Equal("2021-03-04T00:32:53.8146003 (TDB)", maneuver.ThrustWindow.StartDate.ToFormattedString());
-            Assert.Equal("2021-03-04T00:33:02.2130194 (TDB)", maneuver.ThrustWindow.EndDate.ToFormattedString());
-            Assert.Equal(8.3984190999999999, maneuver.ThrustWindow.Length.TotalSeconds, 3);
-            Assert.Equal(new Vector3(-97.1412202651915, 107.90256552680627, -119.98761196522472), ((ImpulseManeuver)maneuver).DeltaV);
+            Maneuver.Maneuver maneuver = planeAlignmentManeuver;
+            Assert.Equal("2021-03-04T00:32:26.4412955 (TDB)", maneuver.ManeuverWindow.StartDate.ToFormattedString());
+            Assert.Equal("2021-03-04T00:32:34.8084343 (TDB)", maneuver.ManeuverWindow.EndDate.ToFormattedString());
+            Assert.Equal("2021-03-04T00:32:26.4412955 (TDB)", maneuver.ThrustWindow.StartDate.ToFormattedString());
+            Assert.Equal("2021-03-04T00:32:34.8084343 (TDB)", maneuver.ThrustWindow.EndDate.ToFormattedString());
+            Assert.Equal(8.3670000000000009, maneuver.ThrustWindow.Length.TotalSeconds, 3);
+            Assert.Equal(new Vector3(-96.78279591853784, 107.4621743531532, -119.5488483724332), ((ImpulseManeuver)maneuver).DeltaV);
 
-            Assert.Equal(419.92095543527711, maneuver.FuelBurned);
-
-            maneuver = maneuver.NextManeuver;
-
-            Assert.Equal("2021-03-04T01:15:39.8407123 (TDB)", maneuver.ManeuverWindow.StartDate.ToFormattedString());
-            Assert.Equal("2021-03-04T01:16:02.1869075 (TDB)", maneuver.ManeuverWindow.EndDate.ToFormattedString());
-            Assert.Equal("2021-03-04T01:15:39.8407123 (TDB)", maneuver.ThrustWindow.StartDate.ToFormattedString());
-            Assert.Equal("2021-03-04T01:16:02.1869075 (TDB)", maneuver.ThrustWindow.EndDate.ToFormattedString());
-            Assert.Equal(22.3461952, maneuver.ThrustWindow.Length.TotalSeconds, 3);
-            Assert.Equal(new Vector3(-462.1414550058744, -166.03947455552907, 234.6077171916677), ((ImpulseManeuver)maneuver).DeltaV);
-            Assert.Equal(1117.3097601570541, maneuver.FuelBurned, 3);
+            Assert.Equal(418.3569435850257, maneuver.FuelBurned);
 
             maneuver = maneuver.NextManeuver;
 
-            Assert.Equal("2021-03-04T01:16:13.2426462 (TDB)", maneuver.ManeuverWindow.StartDate.ToFormattedString());
-            Assert.Equal("2021-03-04T04:59:20.8256783 (TDB)", maneuver.ManeuverWindow.EndDate.ToFormattedString());
-            Assert.Equal("2021-03-04T01:16:13.2426462 (TDB)", maneuver.ThrustWindow.StartDate.ToFormattedString());
-            Assert.Equal("2021-03-04T01:16:22.7849736 (TDB)", maneuver.ThrustWindow.EndDate.ToFormattedString());
-            Assert.Equal(9.5424138999999997, maneuver.ThrustWindow.Length.TotalSeconds, 3);
-            Assert.Equal(new Vector3(-139.49753871704854, 85.72527093628567, 194.88665767803553), ((ImpulseManeuver)maneuver).DeltaV);
-            Assert.Equal(477.11637079604111, maneuver.FuelBurned, 3);
+            Assert.Equal("2021-03-04T01:15:18.5520621 (TDB)", maneuver.ManeuverWindow.StartDate.ToFormattedString());
+            Assert.Equal("2021-03-04T01:15:41.7678997 (TDB)", maneuver.ManeuverWindow.EndDate.ToFormattedString());
+            Assert.Equal("2021-03-04T01:15:18.5520621 (TDB)", maneuver.ThrustWindow.StartDate.ToFormattedString());
+            Assert.Equal("2021-03-04T01:15:41.7678997 (TDB)", maneuver.ThrustWindow.EndDate.ToFormattedString());
+            Assert.Equal(23.216, maneuver.ThrustWindow.Length.TotalSeconds, 3);
+            Assert.Equal(new Vector3(-480.86782901253173, -189.23162389163735, 232.6785007948747), ((ImpulseManeuver)maneuver).DeltaV);
+            Assert.Equal(1160.792, maneuver.FuelBurned, 3);
 
             maneuver = maneuver.NextManeuver;
 
-            Assert.Equal("2021-03-04T05:23:58.7294805 (TDB)", maneuver.ManeuverWindow.StartDate.ToFormattedString());
-            Assert.Equal("2021-03-04T05:24:07.2981393 (TDB)", maneuver.ManeuverWindow.EndDate.ToFormattedString());
-            Assert.Equal("2021-03-04T05:23:58.7294805 (TDB)", maneuver.ThrustWindow.StartDate.ToFormattedString());
-            Assert.Equal("2021-03-04T05:24:07.2981393 (TDB)", maneuver.ThrustWindow.EndDate.ToFormattedString());
-            Assert.Equal(8.5687023999999994, maneuver.ThrustWindow.Length.TotalSeconds, 3);
-            Assert.Equal(new Vector3(134.21948840073748, -81.46563131619929, -183.87722556440008), ((ImpulseManeuver)maneuver).DeltaV);
-            Assert.Equal(428.43294038256437, maneuver.FuelBurned, 3);
+            Assert.Equal("2021-03-04T01:15:53.6495944 (TDB)", maneuver.ManeuverWindow.StartDate.ToFormattedString());
+            Assert.Equal("2021-03-04T04:59:16.6930561 (TDB)", maneuver.ManeuverWindow.EndDate.ToFormattedString());
+            Assert.Equal("2021-03-04T01:15:53.6495944 (TDB)", maneuver.ThrustWindow.StartDate.ToFormattedString());
+            Assert.Equal("2021-03-04T01:16:03.2054735 (TDB)", maneuver.ThrustWindow.EndDate.ToFormattedString());
+            Assert.Equal(9.556, maneuver.ThrustWindow.Length.TotalSeconds, 3);
+            Assert.Equal(new Vector3(-140.48031676408738, 86.1993776765905, 196.15692847302532), ((ImpulseManeuver)maneuver).DeltaV);
+            Assert.Equal(477.794, maneuver.FuelBurned, 3);
+
+            maneuver = maneuver.NextManeuver;
+
+            Assert.Equal("2021-03-04T05:22:15.2711135 (TDB)", maneuver.ManeuverWindow.StartDate.ToFormattedString());
+            Assert.Equal("2021-03-04T05:22:23.8937808 (TDB)", maneuver.ManeuverWindow.EndDate.ToFormattedString());
+            Assert.Equal("2021-03-04T05:22:15.2711135 (TDB)", maneuver.ThrustWindow.StartDate.ToFormattedString());
+            Assert.Equal("2021-03-04T05:22:23.8937808 (TDB)", maneuver.ThrustWindow.EndDate.ToFormattedString());
+            Assert.Equal(8.623, maneuver.ThrustWindow.Length.TotalSeconds, 3);
+            Assert.Equal(new Vector3(132.17464382071327, -86.77032419711468, -186.7460052743688), ((ImpulseManeuver)maneuver).DeltaV);
+            Assert.Equal(431.133, maneuver.FuelBurned, 3);
 
             Assert.Equal(scenario.Window, summary.Window);
             Assert.Single(summary.SpacecraftSummaries);

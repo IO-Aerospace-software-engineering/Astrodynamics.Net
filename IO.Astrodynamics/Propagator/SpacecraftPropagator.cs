@@ -36,16 +36,16 @@ public class SpacecraftPropagator
     /// </summary>
     /// <param name="window">Time window</param>
     /// <param name="spacecraft"></param>
-    /// <param name="celestialBodies">Additional celestial bodies</param>
+    /// <param name="additionalCelestialBodies">Additional celestial bodies</param>
     /// <param name="includeAtmosphericDrag"></param>
     /// <param name="includeSolarRadiationPressure"></param>
     /// <param name="deltaT">Simulation step size</param>
     /// <exception cref="ArgumentNullException"></exception>
-    public SpacecraftPropagator(Window window, Spacecraft spacecraft, IEnumerable<CelestialBody> celestialBodies, bool includeAtmosphericDrag,
+    public SpacecraftPropagator(Window window, Spacecraft spacecraft, IEnumerable<CelestialBody> additionalCelestialBodies, bool includeAtmosphericDrag,
         bool includeSolarRadiationPressure, TimeSpan deltaT)
     {
         Window = window;
-        CelestialBodies = celestialBodies ?? throw new ArgumentNullException(nameof(celestialBodies));
+        CelestialBodies = new[] { spacecraft.InitialOrbitalParameters.Observer as CelestialBody }.Concat(additionalCelestialBodies??Array.Empty<CelestialBody>());
         IncludeAtmosphericDrag = includeAtmosphericDrag;
         IncludeSolarRadiationPressure = includeSolarRadiationPressure;
         DeltaT = deltaT;
@@ -67,7 +67,7 @@ public class SpacecraftPropagator
     private List<ForceBase> InitializeForces(bool includeAtmosphericDrag, bool includeSolarRadiationPressure)
     {
         List<ForceBase> forces = new List<ForceBase>();
-        foreach (var celestialBody in CelestialBodies)
+        foreach (var celestialBody in CelestialBodies.Distinct())
         {
             forces.Add(new GravitationalAcceleration(celestialBody));
         }
