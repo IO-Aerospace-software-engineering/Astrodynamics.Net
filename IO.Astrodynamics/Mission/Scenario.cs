@@ -47,7 +47,7 @@ namespace IO.Astrodynamics.Mission
         }
 
         /// <summary>
-        /// By default the framework use recursively centers of motions up to the root (ex. moon->earth->sun) but with this method you can add another celestial celestialItem to improve propagation accuracy if needed
+        /// By default spacecraft's center of motion is used. This method allows you to add another celestialItem to improve propagation accuracy if needed
         /// </summary>
         /// <param name="celestialBody"></param>
         /// <exception cref="ArgumentNullException"></exception>

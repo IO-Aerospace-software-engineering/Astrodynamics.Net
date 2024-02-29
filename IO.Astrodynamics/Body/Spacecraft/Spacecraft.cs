@@ -20,10 +20,12 @@ namespace IO.Astrodynamics.Body.Spacecraft
         public static readonly Vector3 Up = Vector3.VectorZ;
         public static readonly Vector3 Down = Up.Inverse();
 
+        private readonly HashSet<Maneuver.Maneuver> _executedManeuvers = new HashSet<Maneuver.Maneuver>();
+        public IReadOnlyCollection<Maneuver.Maneuver> ExecutedManeuvers => _executedManeuvers;
         public Maneuver.Maneuver StandbyManeuver { get; private set; }
         public Spacecraft Parent { get; private set; }
         public Spacecraft Child { get; private set; }
-        public Clock Clock { get; private set; }
+        public Clock Clock { get; }
 
         private readonly HashSet<Instrument> _instruments = new();
         public IReadOnlyCollection<Instrument> Instruments => _instruments;
@@ -259,23 +261,12 @@ namespace IO.Astrodynamics.Body.Spacecraft
                 maneuver.MinimumEpoch = minimumEpoch.Value;
             }
 
-            StandbyManeuver = maneuver;
-        }
-
-        public Dictionary<int, Maneuver.Maneuver> GetManeuvers()
-        {
-            Dictionary<int, Maneuver.Maneuver> maneuvers = new Dictionary<int, Maneuver.Maneuver>();
-
-            var maneuver = StandbyManeuver;
-            int order = 0;
-            while (maneuver != null)
+            if (StandbyManeuver != null)
             {
-                maneuvers[order] = maneuver;
-                maneuver = maneuver.NextManeuver;
-                order++;
+                _executedManeuvers.Add(StandbyManeuver);
             }
 
-            return maneuvers;
+            StandbyManeuver = maneuver;
         }
 
         public void SetInitialOrbitalParameters(OrbitalParameters.OrbitalParameters orbitalParameters)
@@ -301,16 +292,15 @@ namespace IO.Astrodynamics.Body.Spacecraft
 
         internal SpacecraftSummary GetSummary()
         {
-            var maneuvers = GetManeuvers();
             double fuel = 0.0;
             Window? maneuverWindow = null;
 
-            if (maneuvers.Count > 0)
+            if (_executedManeuvers.Count > 0)
             {
-                var windows = GetManeuvers().Select(x => x.Value.ManeuverWindow);
+                var windows = _executedManeuvers.Select(x => x.ManeuverWindow);
                 var enumerable = windows as Window[] ?? windows.ToArray();
                 maneuverWindow = enumerable.FirstOrDefault();
-                fuel = GetManeuvers().Sum(x => x.Value.FuelBurned);
+                fuel = _executedManeuvers.Sum(x => x.FuelBurned);
                 foreach (var win in enumerable.Skip(1))
                 {
                     maneuverWindow = maneuverWindow.Value.Merge(win);

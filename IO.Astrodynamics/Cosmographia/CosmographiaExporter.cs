@@ -106,7 +106,7 @@ public class CosmographiaExporter
         observationJson.version = "1.0";
         foreach (var spacecraft in scenario.Spacecrafts)
         {
-            var maneuvers = spacecraft.GetManeuvers().Values.OfType<InstrumentPointingToAttitude>().ToArray();
+            var maneuvers = spacecraft.ExecutedManeuvers.OfType<InstrumentPointingToAttitude>().ToArray();
             var maneuversGroupedByInstruments = maneuvers.GroupBy(x => x.Instrument);
             observationJson.items = new ObservationItems[maneuversGroupedByInstruments.Count()];
             int idx = 0;

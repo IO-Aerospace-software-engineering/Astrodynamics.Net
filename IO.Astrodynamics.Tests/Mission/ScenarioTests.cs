@@ -105,7 +105,6 @@ namespace IO.Astrodynamics.Tests.Mission
 
             scenario.AddSpacecraft(spacecraft);
 
-            //Todo check why planeAlignment is always false
             var summary = await scenario.SimulateAsync(Constants.OutputPath, false, false, TimeSpan.FromSeconds(1.0));
             API.Instance.LoadKernels(scenario.SpacecraftDirectory);
             API.Instance.LoadKernels(scenario.SiteDirectory);
@@ -155,11 +154,11 @@ namespace IO.Astrodynamics.Tests.Mission
             var maneuverWindow = summary.SpacecraftSummaries.First().ManeuverWindow;
             if (maneuverWindow != null)
             {
-                Assert.Equal(new DateTime(2021, 3, 4, 0, 32, 53, 814, DateTimeKind.Unspecified), maneuverWindow.Value.StartDate, TimeSpan.FromMilliseconds(1));
-                Assert.Equal(new DateTime(2021, 3, 4, 5, 27, 13, 014, DateTimeKind.Unspecified), maneuverWindow.Value.EndDate, TimeSpan.FromMilliseconds(1));
+                Assert.Equal(DateTime.Parse("2021-03-04T00:32:26.4412955"), maneuverWindow.Value.StartDate, TimeSpan.FromMilliseconds(1));
+                Assert.Equal(DateTime.Parse("2021-03-04T05:25:24.0138099"), maneuverWindow.Value.EndDate, TimeSpan.FromMilliseconds(1));
             }
 
-            Assert.Equal(2442.7800000000002, summary.SpacecraftSummaries.First().FuelConsumption, 3);
+            Assert.Equal(2488.076, summary.SpacecraftSummaries.First().FuelConsumption, 3);
         }
 
         [Fact]
