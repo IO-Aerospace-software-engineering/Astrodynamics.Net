@@ -59,8 +59,38 @@ namespace IO.Astrodynamics.Tests.Mission
         }
 
         [Fact]
+        public async Task PropagateSite()
+        {
+            Window window = new Window(new DateTime(2000, 1, 1, 12, 0, 0, DateTimeKind.Unspecified), new DateTime(2000, 1, 2, 12, 0, 0, DateTimeKind.Unspecified));
+            Astrodynamics.Mission.Mission mission = new Astrodynamics.Mission.Mission("MissionSite");
+            Scenario scenario = new Scenario("scnSite", mission, window);
+            Site site = new Site(333, "S333", TestHelpers.EarthAtJ2000, new Planetodetic(30 * Astrodynamics.Constants.Deg2Rad, 10 * Astrodynamics.Constants.Deg2Rad, 1000.0));
+            scenario.AddSite(site);
+            
+            //Propagate site
+            await scenario.SimulateAsync(Constants.OutputPath, false, false, TimeSpan.FromSeconds(1.0));
+            API.Instance.LoadKernels(scenario.SiteDirectory);
+            var res = site.GetEphemeris(window, TestHelpers.EarthAtJ2000, Frames.Frame.ICRF, Aberration.None, TimeSpan.FromHours(1));
+            var orbitalParametersEnumerable = res as Astrodynamics.OrbitalParameters.OrbitalParameters[] ?? res.ToArray();
+            Assert.Equal(new Vector3(4054783.0920394, -4799280.902678638, 1100391.2395513842), orbitalParametersEnumerable.ElementAt(0).ToStateVector().Position,TestHelpers.VectorComparer);
+            Assert.Equal(new Vector3(349.9689414487369, 295.67943565441215, 0.00047467276487285595), orbitalParametersEnumerable.ElementAt(0).ToStateVector().Velocity,TestHelpers.VectorComparer);
+            Assert.Equal(DateTimeExtension.J2000, orbitalParametersEnumerable.ElementAt(0).Epoch);
+            Assert.Equal(Frames.Frame.ICRF, orbitalParametersEnumerable.ElementAt(0).Frame);
+            Assert.Equal(TestHelpers.EarthAtJ2000, orbitalParametersEnumerable.ElementAt(0).Observer);
+        
+            Assert.Equal(5675531.4473050004, orbitalParametersEnumerable.ElementAt(5).ToStateVector().Position.X, 6);
+            Assert.Equal(2694837.3700879999, orbitalParametersEnumerable.ElementAt(5).ToStateVector().Position.Y, 6);
+            Assert.Equal(1100644.504743, orbitalParametersEnumerable.ElementAt(5).ToStateVector().Position.Z, 6);
+            Assert.Equal(-196.510785, orbitalParametersEnumerable.ElementAt(5).ToStateVector().Velocity.X, 6);
+            Assert.Equal(413.86626653238068, orbitalParametersEnumerable.ElementAt(5).ToStateVector().Velocity.Y, 6);
+            Assert.Equal(0.00077810438580775993, orbitalParametersEnumerable.ElementAt(5).ToStateVector().Velocity.Z, 6);
+            Assert.Equal(18000.0, orbitalParametersEnumerable.ElementAt(5).Epoch.SecondsFromJ2000TDB());
+            Assert.Equal(Frames.Frame.ICRF, orbitalParametersEnumerable.ElementAt(5).Frame);
+            Assert.Equal(TestHelpers.EarthAtJ2000, orbitalParametersEnumerable.ElementAt(5).Observer);
+        }
+        [Fact]
         [Benchmark]
-        public async Task Propagate()
+        public async Task PropagateSpacecraft()
         {
             DateTime start = DateTimeExtension.CreateUTC(667915269.18539762).ToTDB();
             DateTime startPropagator = DateTimeExtension.CreateUTC(668085555.829810).ToTDB();
@@ -206,51 +236,6 @@ namespace IO.Astrodynamics.Tests.Mission
             Assert.Equal(0.0, summary.SpacecraftSummaries.First().FuelConsumption, 3);
         }
 
-        [Fact]
-        [Benchmark]
-        public async Task PropagateWithSite()
-        {
-            DateTime start = DateTimeExtension.CreateUTC(667915269.18539762).ToTDB();
-            DateTime startPropagator = DateTimeExtension.CreateUTC(668085555.829810).ToTDB();
-            DateTime end = DateTimeExtension.CreateUTC(668174400.000000).ToTDB();
-
-            Astrodynamics.Mission.Mission mission = new Astrodynamics.Mission.Mission("mission102");
-            Scenario scenario = new Scenario("scn100", mission, new Window(startPropagator, end));
-            scenario.AddAdditionalCelestialBody(TestHelpers.MoonAtJ2000);
-            scenario.AddSite(new Site(132, "MySite", TestHelpers.EarthAtJ2000, new Planetodetic(0.5, 0.3, 0.0)));
-
-            //Define parking orbit
-            StateVector parkingOrbit = new StateVector(
-                new Vector3(5056554.1874925727, 4395595.4942363985, 0.0),
-                new Vector3(-3708.6305608890916, 4266.2914313011433, 6736.8538488755494), TestHelpers.EarthAtJ2000,
-                start, Frames.Frame.ICRF);
-
-            //Create and configure spacecraft
-            Clock clock = new Clock("clk1", 65536);
-            Spacecraft spacecraft =
-                new Spacecraft(-1785, "DRAGONFLY32", 1000.0, 10000.0, clock, parkingOrbit);
-
-            FuelTank fuelTank = new FuelTank("ft1", "model1", "sn1", 9000.0, 9000.0);
-            Engine engine = new Engine("engine1", "model1", "sn1", 450.0, 50.0, fuelTank);
-            spacecraft.AddFuelTank(fuelTank);
-            spacecraft.AddEngine(engine);
-            spacecraft.AddPayload(new Payload("payload1", 50.0, "pay01"));
-            spacecraft.AddCircularInstrument(-1785601, "CAM601", "mod1", 80.0 * IO.Astrodynamics.Constants.Deg2Rad, Vector3.VectorZ, Vector3.VectorX, Vector3.VectorX);
-
-            scenario.AddSpacecraft(spacecraft);
-            var summary = await scenario.SimulateAsync(Constants.OutputPath, false, false, TimeSpan.FromSeconds(1.0));
-
-            Assert.Equal(scenario.Window, summary.Window);
-            Assert.Single(summary.SpacecraftSummaries);
-            var maneuverWindow = summary.SpacecraftSummaries.First().ManeuverWindow;
-            if (maneuverWindow != null)
-            {
-                Assert.Equal(new DateTime(2021, 3, 4, 0, 32, 53, 814, DateTimeKind.Unspecified), maneuverWindow.Value.StartDate, TimeSpan.FromMilliseconds(1));
-                Assert.Equal(new DateTime(2021, 3, 4, 5, 27, 13, 014, DateTimeKind.Unspecified), maneuverWindow.Value.EndDate, TimeSpan.FromMilliseconds(1));
-            }
-
-            Assert.Equal(0.0, summary.SpacecraftSummaries.First().FuelConsumption, 3);
-        }
 
         [Fact]
         public void Equality()

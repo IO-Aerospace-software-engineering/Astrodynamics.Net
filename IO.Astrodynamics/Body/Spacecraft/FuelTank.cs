@@ -33,7 +33,7 @@ namespace IO.Astrodynamics.Body.Spacecraft
         {
             if (requiredMass > Quantity)
             {
-                throw new InsuffisantFuelException();
+                throw new InsufficientFuelException();
             }
 
             Quantity -= requiredMass;

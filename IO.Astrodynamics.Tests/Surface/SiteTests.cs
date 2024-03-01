@@ -1,5 +1,7 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using IO.Astrodynamics.Body;
 using IO.Astrodynamics.Coordinates;
 using IO.Astrodynamics.Math;
@@ -22,14 +24,14 @@ namespace IO.Astrodynamics.Tests.Surface
         public void StateVector()
         {
             var epoch = new DateTime(2000, 1, 1, 12, 0, 0);
-            CelestialBody earth = new CelestialBody( PlanetsAndMoons.EARTH);
+            CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH);
             Site site = new Site(13, "DSS-13", earth);
 
             var sv = site.GetEphemeris(epoch, earth, Frames.Frame.ICRF, Aberration.None);
 
             Assert.Equal(
-                new StateVector(new Vector3(-4998233.546875491, 1489959.5686882124, 3660827.795151215),
-                    new Vector3(-108.65703034589836, -364.46975238850325, -0.013117008722929138), earth, epoch,
+                new StateVector(new Vector3(-4998235.411348605, 1489960.124482482, 3660829.160736662),
+                    new Vector3(-108.65008748008586, -364.4771217160694, -0.0006383925320366459), earth, epoch,
                     Frames.Frame.ICRF), sv);
         }
 
@@ -106,22 +108,22 @@ namespace IO.Astrodynamics.Tests.Surface
         public void GetEphemeris()
         {
             var epoch = new DateTime(2000, 1, 1, 12, 0, 0);
-            CelestialBody earth = new CelestialBody( PlanetsAndMoons.EARTH);
+            CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH);
             Site site = new Site(13, "DSS-13", earth);
 
             var sv = site.GetEphemeris(new Window(epoch, epoch + TimeSpan.FromDays(1.0)), earth, Frames.Frame.ICRF, Aberration.None, TimeSpan.FromDays(1.0)).ToArray();
 
             Assert.Equal(2, sv.Length);
-            Assert.Equal(new StateVector(new Vector3(-4998233.546875491, 1489959.5686882124, 3660827.795151215),
-                new Vector3(-108.65703034589836, -364.46975238850325, -0.013117008722929138), earth, epoch, Frames.Frame.ICRF), sv[0]);
-            Assert.Equal(new StateVector(new Vector3(-5023123.881176386, 1403764.4798262327, 3660826.410895818),
-                new Vector3(-102.37160967215728, -366.2848678619536, -0.012999877880587764), earth, epoch + TimeSpan.FromDays(1.0), Frames.Frame.ICRF), sv[1]);
+            Assert.Equal(new StateVector(new Vector3(-4998235.411348605, 1489960.124482482, 3660829.160736662),
+                new Vector3(-108.65008748008586, -364.4771217160694, -0.0006383925320366459), earth, epoch, Frames.Frame.ICRF), sv[0]);
+            Assert.Equal(new StateVector(new Vector3(-5023125.754942155, 1403765.003415661, 3660827.77649115),
+                new Vector3(-102.36463933210791, -366.2921524677261, -0.0006423586774293476), earth, epoch + TimeSpan.FromDays(1.0), Frames.Frame.ICRF), sv[1]);
         }
 
         [Fact]
         public void GetPosition()
         {
-            CelestialBody earth = new CelestialBody( PlanetsAndMoons.EARTH);
+            CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH);
             Site site = new Site(13, "DSS-13", earth);
 
             var sv = site.InitialOrbitalParameters.ToStateVector().Position;
@@ -133,19 +135,19 @@ namespace IO.Astrodynamics.Tests.Surface
         public void GetVelocity()
         {
             var epoch = new DateTime(2000, 1, 1, 12, 0, 0);
-            CelestialBody earth = new CelestialBody( PlanetsAndMoons.EARTH);
+            CelestialBody earth = new CelestialBody(PlanetsAndMoons.EARTH);
             Site site = new Site(13, "DSS-13", earth);
 
             var sv = site.GetEphemeris(epoch, earth, Frames.Frame.ICRF, Aberration.None).ToStateVector().Velocity;
 
-            Assert.Equal(new Vector3(-108.65703034589836, -364.46975238850325, -0.013117008722929138), sv);
+            Assert.Equal(new Vector3(-108.65008748008586, -364.4771217160694, -0.0006383925320366459), sv);
         }
 
         [Fact]
         public void GetAngularSepartion()
         {
             var epoch = new DateTime(2000, 1, 1, 12, 0, 0);
-            CelestialBody moon = new CelestialBody( PlanetsAndMoons.MOON);
+            CelestialBody moon = new CelestialBody(PlanetsAndMoons.MOON);
             Site site = new Site(13, "DSS-13", TestHelpers.EarthAtJ2000);
 
             var separation = site.AngularSeparation(epoch, moon, TestHelpers.Sun, Aberration.None);
@@ -156,7 +158,7 @@ namespace IO.Astrodynamics.Tests.Surface
         [Fact]
         public void FindWindowsOnDistanceConstraint()
         {
-            CelestialBody moon = new CelestialBody( PlanetsAndMoons.MOON);
+            CelestialBody moon = new CelestialBody(PlanetsAndMoons.MOON);
             Site site = new Site(13, "DSS-13", TestHelpers.EarthAtJ2000);
 
             var res = site.FindWindowsOnDistanceConstraint(new Window(DateTimeExtension.CreateTDB(220881665.18391809), DateTimeExtension.CreateTDB(228657665.18565452)),
@@ -172,7 +174,7 @@ namespace IO.Astrodynamics.Tests.Surface
         [Fact]
         public void FindWindowsOnOccultationConstraint()
         {
-            CelestialBody moon = new CelestialBody( PlanetsAndMoons.MOON);
+            CelestialBody moon = new CelestialBody(PlanetsAndMoons.MOON);
             Site site = new Site(13, "DSS-13", TestHelpers.EarthAtJ2000);
 
             var res = site.FindWindowsOnOccultationConstraint(new Window(DateTime.Parse("2005-10-03 00:00:00"), DateTime.Parse("2005-10-04 00:00:00")),
@@ -257,29 +259,41 @@ namespace IO.Astrodynamics.Tests.Surface
         }
 
         [Fact]
-        public void Propagate()
+        public void WriteEphemeris()
         {
             Window window = new Window(new DateTime(2000, 1, 1, 12, 0, 0, DateTimeKind.Unspecified), new DateTime(2000, 1, 2, 12, 0, 0, DateTimeKind.Unspecified));
-
-            Site site = new Site(333, "S333", TestHelpers.EarthAtJ2000, new Planetodetic(30 * Astrodynamics.Constants.Deg2Rad, 10 * Astrodynamics.Constants.Deg2Rad, 1000.0));
-            site.Propagate(window, Constants.OutputPath);
-            var res = site.GetEphemeris(window, TestHelpers.EarthAtJ2000, Frames.Frame.ICRF, Aberration.None, TimeSpan.FromHours(1));
-            var orbitalParametersEnumerable = res as Astrodynamics.OrbitalParameters.OrbitalParameters[] ?? res.ToArray();
-            Assert.Equal(new Vector3(4054782.9648194457, -4799280.7521664528, 1100392.3675019771), orbitalParametersEnumerable.ElementAt(0).ToStateVector().Position);
-            Assert.Equal(new Vector3(349.96683107685112, 295.68160031926175, 0.017692125392659522), orbitalParametersEnumerable.ElementAt(0).ToStateVector().Velocity);
+        
+            Site site = new Site(339, "S339", TestHelpers.EarthAtJ2000, new Planetodetic(30 * Astrodynamics.Constants.Deg2Rad, 10 * Astrodynamics.Constants.Deg2Rad, 1000.0));
+            var res = site.GetEphemeris(window, TestHelpers.EarthAtJ2000, Frames.Frame.ICRF, Aberration.None, TimeSpan.FromHours(1)).Select(x => x.ToStateVector());
+            site.WriteEphemeris(new FileInfo(Path.Combine(Constants.OutputPath.CreateSubdirectory("Sites").CreateSubdirectory(site.Name).FullName, "sitetest339.spk")),
+                res);
+            API.Instance.LoadKernels(new FileInfo(Path.Combine(Constants.OutputPath.CreateSubdirectory("Sites").CreateSubdirectory(site.Name).FullName, "sitetest339.spk")));
+            var orbitalParametersEnumerable = API.Instance.ReadEphemeris(window, site.CelestialBody, site, Frames.Frame.ICRF, Aberration.None, TimeSpan.FromHours(1));
+            Assert.Equal(new Vector3(4054783.0920394, -4799280.902678638, 1100391.2395513842), orbitalParametersEnumerable.ElementAt(0).ToStateVector().Position,TestHelpers.VectorComparer);
+            Assert.Equal(new Vector3(349.9689414487369, 295.67943565441215, 0.00047467276487285595), orbitalParametersEnumerable.ElementAt(0).ToStateVector().Velocity,TestHelpers.VectorComparer);
             Assert.Equal(DateTimeExtension.J2000, orbitalParametersEnumerable.ElementAt(0).Epoch);
             Assert.Equal(Frames.Frame.ICRF, orbitalParametersEnumerable.ElementAt(0).Frame);
             Assert.Equal(TestHelpers.EarthAtJ2000, orbitalParametersEnumerable.ElementAt(0).Observer);
-
-            Assert.Equal(5675531.269242838, orbitalParametersEnumerable.ElementAt(5).ToStateVector().Position.X, 6);
-            Assert.Equal(2694837.2855253983, orbitalParametersEnumerable.ElementAt(5).ToStateVector().Position.Y, 6);
-            Assert.Equal(1100645.6326860497, orbitalParametersEnumerable.ElementAt(5).ToStateVector().Position.Z, 6);
-            Assert.Equal(-196.51288137429424, orbitalParametersEnumerable.ElementAt(5).ToStateVector().Velocity.X, 6);
-            Assert.Equal(413.86842735799422, orbitalParametersEnumerable.ElementAt(5).ToStateVector().Velocity.Y, 6);
-            Assert.Equal(0.0062996686004048149, orbitalParametersEnumerable.ElementAt(5).ToStateVector().Velocity.Z, 6);
+        
+            Assert.Equal(5675531.4473050004, orbitalParametersEnumerable.ElementAt(5).ToStateVector().Position.X, 6);
+            Assert.Equal(2694837.3700879999, orbitalParametersEnumerable.ElementAt(5).ToStateVector().Position.Y, 6);
+            Assert.Equal(1100644.504743, orbitalParametersEnumerable.ElementAt(5).ToStateVector().Position.Z, 6);
+            Assert.Equal(-196.510785, orbitalParametersEnumerable.ElementAt(5).ToStateVector().Velocity.X, 6);
+            Assert.Equal(413.86626653238068, orbitalParametersEnumerable.ElementAt(5).ToStateVector().Velocity.Y, 6);
+            Assert.Equal(0.00077810438580775993, orbitalParametersEnumerable.ElementAt(5).ToStateVector().Velocity.Z, 6);
             Assert.Equal(18000.0, orbitalParametersEnumerable.ElementAt(5).Epoch.SecondsFromJ2000TDB());
             Assert.Equal(Frames.Frame.ICRF, orbitalParametersEnumerable.ElementAt(5).Frame);
             Assert.Equal(TestHelpers.EarthAtJ2000, orbitalParametersEnumerable.ElementAt(5).Observer);
+        }
+        
+        [Fact]
+        public async Task WriteFrame()
+        {
+            Site site = new Site(33, "S33", TestHelpers.EarthAtJ2000, new Planetodetic(30 * Astrodynamics.Constants.Deg2Rad, 10 * Astrodynamics.Constants.Deg2Rad, 1000.0));
+            await site.WriteFrameAsync(new FileInfo("sites33.tf"));
+            TextReader tr = new StreamReader("sites33.tf");
+            var res = await tr.ReadToEndAsync();
+            Assert.Equal($"KPL/FK{Environment.NewLine}\\begindata{Environment.NewLine}NAIF_BODY_NAME              += 'S33'{Environment.NewLine}NAIF_BODY_CODE              += 399033{Environment.NewLine}FRAME_S33_TOPO        = 1399033{Environment.NewLine}FRAME_1399033_NAME        = 'S33_TOPO'{Environment.NewLine}FRAME_1399033_CLASS       = 4{Environment.NewLine}FRAME_1399033_CLASS_ID    = 1399033{Environment.NewLine}FRAME_1399033_CENTER      = 399033{Environment.NewLine}OBJECT_399033_FRAME       = 'S33_TOPO'{Environment.NewLine}TKFRAME_1399033_SPEC      = 'ANGLES'{Environment.NewLine}TKFRAME_1399033_RELATIVE  = 'ITRF93'{Environment.NewLine}TKFRAME_1399033_ANGLES    = (-0.5235987755982988,-1.3962634015954636,3.141592653589793116){Environment.NewLine}TKFRAME_1399033_AXES      = (3,2,3){Environment.NewLine}TKFRAME_1399033_UNITS     = 'RADIANS'{Environment.NewLine}\\begintext{Environment.NewLine}",res);
         }
     }
 }

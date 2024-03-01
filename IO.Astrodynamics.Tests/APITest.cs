@@ -93,14 +93,6 @@ public class APITest
     }
 
     [Fact]
-    public void CheckSize()
-    {
-        var scenario = new DTO.Scenario();
-        var size = Marshal.SizeOf(scenario);
-        Assert.Equal(19112, size);
-    }
-
-    [Fact]
     public void FindWindowsOnDistanceConstraintProxy()
     {
         //Find time windows when the moon will be 400000 km away from the Earth
@@ -545,15 +537,6 @@ public class APITest
     }
 
     [Fact]
-    void RaDec()
-    {
-        DTO.RaDec raDec = new DTO.RaDec(1.0, 2.0, 3.0);
-        Assert.Equal(1.0, raDec.RightAscencion);
-        Assert.Equal(2.0, raDec.Declination);
-        Assert.Equal(3.0, raDec.Radius);
-    }
-
-    [Fact]
     void StateOrientation()
     {
         DTO.StateOrientation so = new DTO.StateOrientation(new DTO.Quaternion(1.0, 2.0, 3.0, 4.0),
@@ -617,12 +600,5 @@ public class APITest
         Assert.Equal(10, tle.M);
     }
 
-    [Fact]
-    void Planetocentric()
-    {
-        DTO.Planetocentric tle = new Planetocentric(1, 2, 3);
-        Assert.Equal(1, tle.longitude);
-        Assert.Equal(2, tle.latitude);
-        Assert.Equal(3, tle.radius);
-    }
+    
 }

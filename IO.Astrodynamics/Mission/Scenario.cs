@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using IO.Astrodynamics.Frames;
 using IO.Astrodynamics.Surface;
 using IO.Astrodynamics.Time;
 
@@ -87,12 +88,21 @@ namespace IO.Astrodynamics.Mission
         /// <param name="includeSolarRadiationPressure"></param>
         /// <param name="propagatorStepSize"></param>
         /// <exception cref="InvalidOperationException"></exception>
-        public async Task<ScenarioSummary> SimulateAsync(DirectoryInfo outputDirectory, bool includeAtmosphericDrag, bool includeSolarRadiationPressure, TimeSpan propagatorStepSize)
+        public async Task<ScenarioSummary> SimulateAsync(DirectoryInfo outputDirectory, bool includeAtmosphericDrag, bool includeSolarRadiationPressure,
+            TimeSpan propagatorStepSize)
         {
             InitializeDirectories(outputDirectory);
 
             try
             {
+                foreach (var site in _sites)
+                {
+                    var siteDirectory = SiteDirectory.CreateSubdirectory(site.Name);
+                    var siteEphemeris = site.GetEphemeris(Window, site.CelestialBody, Frame.ICRF, Aberration.None, propagatorStepSize).Select(x => x.ToStateVector());
+                    await site.WriteFrameAsync(new FileInfo(Path.Combine(siteDirectory.CreateSubdirectory("Frames").FullName, site.Name + ".tf")));
+                    site.WriteEphemeris(new FileInfo(Path.Combine(siteDirectory.CreateSubdirectory("Ephemeris").FullName, site.Name + ".spk")), siteEphemeris);
+                }
+
                 foreach (var spacecraft in _spacecrafts)
                 {
                     var spacecraftDirectory = SpacecraftDirectory.CreateSubdirectory(spacecraft.Name);
@@ -103,7 +113,7 @@ namespace IO.Astrodynamics.Mission
                     await spacecraft.WriteFrameAsync(new FileInfo(Path.Combine(spacecraftDirectory.CreateSubdirectory("Frames").FullName,
                         spacecraft.Name + ".tf")));
 
-                    
+
                     //write instrument frame and kernel 
                     var instrumentDirectory = spacecraftDirectory.CreateSubdirectory("Instruments");
                     foreach (var instrument in spacecraft.Instruments)
@@ -115,11 +125,11 @@ namespace IO.Astrodynamics.Mission
                     //Write clock
                     var clockFile = new FileInfo(Path.Combine(spacecraftDirectory.CreateSubdirectory("Clocks").FullName, spacecraft.Name + ".tsc"));
                     await spacecraft.Clock.WriteAsync(clockFile);
-                    
+
                     //Write Ephemeris
                     API.Instance.WriteEphemeris(new FileInfo(Path.Combine(spacecraftDirectory.CreateSubdirectory("Ephemeris").FullName, spacecraft.Name + ".spk")), spacecraft,
                         res.stateVectors);
-                    
+
                     //Clock is loaded because is needed by orientation writer
                     API.Instance.LoadKernels(clockFile);
                     //Write Orientation
