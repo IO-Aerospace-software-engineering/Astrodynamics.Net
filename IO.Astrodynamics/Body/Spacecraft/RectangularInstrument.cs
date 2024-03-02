@@ -26,7 +26,7 @@ public class RectangularInstrument : Instrument
         var templateData = await sr.ReadToEndAsync();
         var data = templateData
             .Replace("{instrumentid}", NaifId.ToString())
-            .Replace("{framename}", Spacecraft.Name + "_" + Name)
+            .Replace("{framename}", Spacecraft.Name.ToUpper() + "_" + Name.ToUpper())
             .Replace("{spacecraftid}", Spacecraft.NaifId.ToString())
             .Replace("{bx}", Boresight.X.ToString(CultureInfo.InvariantCulture))
             .Replace("{by}", Boresight.Y.ToString(CultureInfo.InvariantCulture))

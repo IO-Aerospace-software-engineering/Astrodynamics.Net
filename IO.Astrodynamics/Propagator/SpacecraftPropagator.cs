@@ -45,7 +45,7 @@ public class SpacecraftPropagator
         bool includeSolarRadiationPressure, TimeSpan deltaT)
     {
         Window = window;
-        CelestialBodies = new[] { spacecraft.InitialOrbitalParameters.Observer as CelestialBody }.Concat(additionalCelestialBodies??Array.Empty<CelestialBody>());
+        CelestialBodies = new[] { spacecraft.InitialOrbitalParameters.Observer as CelestialBody }.Concat(additionalCelestialBodies ?? Array.Empty<CelestialBody>());
         IncludeAtmosphericDrag = includeAtmosphericDrag;
         IncludeSolarRadiationPressure = includeSolarRadiationPressure;
         DeltaT = deltaT;
@@ -85,20 +85,23 @@ public class SpacecraftPropagator
         return forces;
     }
 
-    //Todo optimize by unrolling loop
+    /// <summary>
+    /// Propagate spacecraft
+    /// </summary>
+    /// <returns></returns>
     public (IEnumerable<StateVector>stateVectors, IEnumerable<StateOrientation>stateOrientations) Propagate()
     {
         _stateOrientation[Window.StartDate] = new StateOrientation(Quaternion.Zero, Vector3.Zero, Window.StartDate, Spacecraft.InitialOrbitalParameters.Frame);
-        for (int i = 1; i < _svCacheSize; i++)
+        for (int i = 0; i < _svCacheSize - 1; i++)
         {
-            var prvSv = _svCache[i - 1];
+            var prvSv = _svCache[i];
             if (Spacecraft.StandbyManeuver?.CanExecute(prvSv) == true)
             {
                 var res = Spacecraft.StandbyManeuver.TryExecute(prvSv);
                 _stateOrientation[res.so.Epoch] = res.so;
             }
 
-            Integrator.Integrate(_svCache, i);
+            Integrator.Integrate(_svCache, i + 1);
         }
 
         _stateOrientation[Window.EndDate] = new StateOrientation(_stateOrientation.Last().Value.Rotation, Vector3.Zero, Window.EndDate, Spacecraft.InitialOrbitalParameters.Frame);

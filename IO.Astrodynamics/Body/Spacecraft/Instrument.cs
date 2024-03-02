@@ -130,12 +130,12 @@ namespace IO.Astrodynamics.Body.Spacecraft
             using StreamReader sr = new StreamReader(stream ?? throw new InvalidOperationException());
             var templateData = await sr.ReadToEndAsync();
             var data = templateData
-                .Replace("{spacecraftname}", Spacecraft.Name)
-                .Replace("{instrumentname}", Name)
+                .Replace("{spacecraftname}", Spacecraft.Name.ToUpper())
+                .Replace("{instrumentname}", Name.ToUpper())
                 .Replace("{instrumentid}", NaifId.ToString())
-                .Replace("{framename}", Spacecraft.Name + "_" + Name)
+                .Replace("{framename}", Spacecraft.Name.ToUpper() + "_" + Name.ToUpper())
                 .Replace("{spacecraftid}", Spacecraft.NaifId.ToString())
-                .Replace("{spacecraftframe}", Spacecraft.Frame.Name)
+                .Replace("{spacecraftframe}", Spacecraft.Frame.Name.ToUpper())
                 .Replace("{x}", Orientation.X.ToString(CultureInfo.InvariantCulture))
                 .Replace("{y}", Orientation.Y.ToString(CultureInfo.InvariantCulture))
                 .Replace("{z}", Orientation.Z.ToString(CultureInfo.InvariantCulture));

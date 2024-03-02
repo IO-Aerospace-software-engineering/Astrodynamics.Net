@@ -82,11 +82,11 @@ public class ExporterTests
         Astrodynamics.Mission.Mission mission = new Astrodynamics.Mission.Mission("Cosmographia");
 
         //Create a scenario for the mission
-        Scenario scenario = new Scenario("export2", mission, new Window(DateTimeExtension.J2000.AddYears(21), DateTimeExtension.J2000.AddYears(21).AddDays(1.0)));
+        Scenario scenario = new Scenario("EarthObservation", mission, new Window(DateTimeExtension.J2000.AddYears(21), DateTimeExtension.J2000.AddYears(21).AddDays(1.0)));
 
         //Configure a spacecraft
-        Spacecraft spacecraft = new Spacecraft(-334, "Spacecraft", 1000.0, 2000.0, new Clock("clockspc1", 256),
-            new KeplerianElements(6800000.0, 0.3, 1.0, 0.0, 0.0, 0.0, TestHelpers.MoonAtJ2000, DateTimeExtension.J2000, Frames.Frame.ICRF));
+        Spacecraft spacecraft = new Spacecraft(-334, "EarthExplorer", 1000.0, 2000.0, new Clock("clockspc1", 256),
+            new KeplerianElements(6800000.0, 0.0, 1.0, 0.0, 0.0, 0.0, TestHelpers.EarthAtJ2000, DateTimeExtension.J2000, Frames.Frame.ICRF));
 
         //Configure and attach an instrument to the spacecraft
         spacecraft.AddRectangularInstrument(-334100, "camera_hires", "camdeluxe", 0.03,0.048, Vector3.VectorZ, Vector3.VectorY, Vector3.Zero );
@@ -111,6 +111,7 @@ public class ExporterTests
         //Set the first maneuver in standby
         spacecraft.SetStandbyManeuver(initialManeuver);
 
+        //Todo fix why state orientation during maneuver returns Nan
         //Run the simulation
         await scenario.SimulateAsync(Constants.OutputPath, false, false, TimeSpan.FromSeconds(1.0));
 
