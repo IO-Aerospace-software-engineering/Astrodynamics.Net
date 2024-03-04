@@ -17,7 +17,7 @@ namespace IO.Astrodynamics.Maneuver
         /// <value>
         /// The ThrustWindow instance.
         /// </value>
-        public Window ThrustWindow { get; internal set; }
+        public Window? ThrustWindow { get; internal set; }
 
         /// <summary>
         /// Gets or sets the ManeuverWindow object that represents the window for controlling maneuvering tasks.
@@ -25,7 +25,7 @@ namespace IO.Astrodynamics.Maneuver
         /// <value>
         /// The ManeuverWindow object for controlling maneuvering tasks.
         /// </value>
-        public Window ManeuverWindow { get; internal set; }
+        public Window? ManeuverWindow { get; internal set; }
 
         /// <summary>
         /// Gets the minimum epoch value.

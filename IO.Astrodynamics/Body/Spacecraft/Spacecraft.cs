@@ -297,7 +297,7 @@ namespace IO.Astrodynamics.Body.Spacecraft
 
             if (_executedManeuvers.Count > 0)
             {
-                var windows = _executedManeuvers.Select(x => x.ManeuverWindow);
+                var windows = _executedManeuvers.Select(x => x.ManeuverWindow.Value);
                 var enumerable = windows as Window[] ?? windows.ToArray();
                 maneuverWindow = enumerable.FirstOrDefault();
                 fuel = _executedManeuvers.Sum(x => x.FuelBurned);

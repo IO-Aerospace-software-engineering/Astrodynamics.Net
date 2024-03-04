@@ -24,6 +24,6 @@ public class InstrumentPointingToAttitude : Attitude
     {
         var ephemeris = Target.GetEphemeris(stateVector.Epoch, stateVector.Observer, stateVector.Frame, Aberration.LT);
         var targetVector = ephemeris.ToStateVector().Position - stateVector.Position;
-        return Instrument.GetBoresightInSpacecraftFrame().To(targetVector);
+        return targetVector.To(Instrument.GetBoresightInSpacecraftFrame());
     }
 }

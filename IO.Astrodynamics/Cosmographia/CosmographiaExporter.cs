@@ -145,8 +145,12 @@ public class CosmographiaExporter
                 foreach (var maneuver in maneuverByInstrument)
                 {
                     observationJson.items[idx].geometry.groups[groupIdx] = new ObservationGroup();
-                    observationJson.items[idx].geometry.groups[groupIdx].startTime = maneuver.ManeuverWindow.StartDate.ToFormattedString();
-                    observationJson.items[idx].geometry.groups[groupIdx].endTime = maneuver.ManeuverWindow.EndDate.ToFormattedString();
+                    if (maneuver.ManeuverWindow != null)
+                    {
+                        observationJson.items[idx].geometry.groups[groupIdx].startTime = maneuver.ManeuverWindow.Value.StartDate.ToFormattedString();
+                        observationJson.items[idx].geometry.groups[groupIdx].endTime = maneuver.ManeuverWindow.Value.EndDate.ToFormattedString();
+                    }
+
                     observationJson.items[idx].geometry.groups[groupIdx].obsRate = 0;
                     groupIdx++;
                 }

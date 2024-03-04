@@ -46,10 +46,10 @@ namespace IO.Astrodynamics.Maneuver
             //Compute thrust windows and maneuver windows
             var thrustDuration = ComputeDeltaT(Engine.ISP, Engine.FuelTank.Spacecraft.GetTotalMass() + FuelBurned, Engine.FuelFlow, DeltaV.Magnitude());
             ThrustWindow = new Window(stateVector.Epoch - thrustDuration * 0.666, thrustDuration);
-            ManeuverWindow = new Window(ThrustWindow.StartDate, ManeuverHoldDuration).Merge(ThrustWindow);
+            ManeuverWindow = new Window(ThrustWindow.Value.StartDate, ManeuverHoldDuration).Merge(ThrustWindow.Value);
 
             //Set next maneuver
-            Engine.FuelTank.Spacecraft.SetStandbyManeuver(this.NextManeuver, ManeuverWindow.EndDate);
+            Engine.FuelTank.Spacecraft.SetStandbyManeuver(this.NextManeuver, ManeuverWindow.Value.EndDate);
 
             //return computed state vector and state orientation
             return (stateVector, new StateOrientation(Spacecraft.Front.To(DeltaV), Vector3.Zero, stateVector.Epoch, stateVector.Frame));

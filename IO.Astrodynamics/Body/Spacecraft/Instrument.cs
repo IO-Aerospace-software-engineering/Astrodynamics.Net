@@ -30,7 +30,6 @@ namespace IO.Astrodynamics.Body.Spacecraft
         /// </summary>
         public double FieldOfView { get; }
 
-        
 
         /// <summary>
         /// Shape
@@ -120,7 +119,7 @@ namespace IO.Astrodynamics.Body.Spacecraft
 
         public Vector3 GetBoresightInSpacecraftFrame()
         {
-            Quaternion q = new Quaternion(Orientation.Normalize(), Orientation.Magnitude());
+            Quaternion q = Orientation == Vector3.Zero ? Quaternion.Zero : new Quaternion(Orientation.Normalize(), Orientation.Magnitude());
             return Boresight.Rotate(q);
         }
 

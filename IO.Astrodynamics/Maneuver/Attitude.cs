@@ -30,20 +30,20 @@ public abstract class Attitude : Maneuver
     public override (StateVector sv, StateOrientation so) TryExecute(StateVector stateVector)
     {
         //Compute maneuver window
-        ThrustWindow = new Window(stateVector.Epoch, TimeSpan.Zero);
-        ManeuverWindow = new Window(stateVector.Epoch, ManeuverHoldDuration);
-        
-        //If state vector is outside maneuver windows the next maneuver can be set
-        if (stateVector.Epoch > ManeuverWindow.EndDate)
+        if (!ThrustWindow.HasValue || !ManeuverWindow.HasValue)
         {
-            Engine.FuelTank.Spacecraft.SetStandbyManeuver(this.NextManeuver, ManeuverWindow.EndDate);
+            ThrustWindow = new Window(stateVector.Epoch, TimeSpan.Zero);
+            ManeuverWindow = new Window(stateVector.Epoch, ManeuverHoldDuration);
+        }
+
+        //If state vector is outside maneuver windows the next maneuver can be set
+        if (stateVector.Epoch > ManeuverWindow.Value.EndDate)
+        {
+            Engine.FuelTank.Spacecraft.SetStandbyManeuver(this.NextManeuver, ManeuverWindow.Value.EndDate);
         }
 
         StateOrientation = new StateOrientation(ComputeOrientation(stateVector), Vector3.Zero, stateVector.Epoch, stateVector.Frame);
         
-        //Set next maneuver
-        Engine.FuelTank.Spacecraft.SetStandbyManeuver(this.NextManeuver, ManeuverWindow.EndDate);
-
         //Return state vector and computed state orientation
         return (stateVector, StateOrientation);
     }
