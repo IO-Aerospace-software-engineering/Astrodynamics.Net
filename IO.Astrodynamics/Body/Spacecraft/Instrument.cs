@@ -1,14 +1,15 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Threading.Tasks;
 using IO.Astrodynamics.Frames;
 using IO.Astrodynamics.Math;
 
 namespace IO.Astrodynamics.Body.Spacecraft
 {
-    public class Instrument : INaifObject, IEquatable<Instrument>
+    public abstract class Instrument : INaifObject, IEquatable<Instrument>
     {
-        
-
         /// <summary>
         /// Naif identifier
         /// </summary>
@@ -29,10 +30,6 @@ namespace IO.Astrodynamics.Body.Spacecraft
         /// </summary>
         public double FieldOfView { get; }
 
-        /// <summary>
-        /// Cross angle used for elliptical and rectangular shape
-        /// </summary>
-        public double CrossAngle { get; }
 
         /// <summary>
         /// Shape
@@ -48,11 +45,13 @@ namespace IO.Astrodynamics.Body.Spacecraft
         /// Ref vector in the boresight plane
         /// </summary>
         public Vector3 RefVector { get; }
-        
+
         /// <summary>
         /// Instrument rotation relative to instrument platform. The orientation is expressed in euler angles
         /// </summary>
         public Vector3 Orientation { get; }
+
+        public Spacecraft Spacecraft { get; }
 
         /// <summary>
         /// Instrument constructor
@@ -65,9 +64,10 @@ namespace IO.Astrodynamics.Body.Spacecraft
         /// <param name="boresight"></param>
         /// <param name="refVector"></param>
         /// <param name="orientation"></param>
-        /// <param name="crossAngle"></param>
+        /// <param name="spacecraft"></param>
         /// <exception cref="ArgumentException"></exception>
-        public Instrument(int naifId, string name, string model, double fieldOfView, InstrumentShape shape, Vector3 boresight, Vector3 refVector, Vector3 orientation, double crossAngle = double.NaN)
+        protected Instrument(Spacecraft spacecraft, int naifId, string name, string model, double fieldOfView, InstrumentShape shape, Vector3 boresight, Vector3 refVector,
+            Vector3 orientation)
         {
             if (string.IsNullOrEmpty(name))
             {
@@ -93,7 +93,7 @@ namespace IO.Astrodynamics.Body.Spacecraft
             Boresight = boresight;
             RefVector = refVector;
             Orientation = orientation;
-            CrossAngle = crossAngle;
+            Spacecraft = spacecraft ?? throw new ArgumentNullException(nameof(spacecraft));
             NaifId = naifId;
         }
 
@@ -116,7 +116,34 @@ namespace IO.Astrodynamics.Body.Spacecraft
             if (targetFrame == null) throw new ArgumentNullException(nameof(targetFrame));
             return API.Instance.FindWindowsInFieldOfViewConstraint(searchWindow, observer, this, target, targetFrame, targetShape, aberration, stepSize);
         }
-        
+
+        public Vector3 GetBoresightInSpacecraftFrame()
+        {
+            Quaternion q = Orientation == Vector3.Zero ? Quaternion.Zero : new Quaternion(Orientation.Normalize(), Orientation.Magnitude());
+            return Boresight.Rotate(q);
+        }
+
+        public async Task WriteFrameAsync(FileInfo outputFile)
+        {
+            await using var stream = this.GetType().Assembly.GetManifestResourceStream("IO.Astrodynamics.Templates.InstrumentFrameTemplate.tf");
+            using StreamReader sr = new StreamReader(stream ?? throw new InvalidOperationException());
+            var templateData = await sr.ReadToEndAsync();
+            var data = templateData
+                .Replace("{spacecraftname}", Spacecraft.Name.ToUpper())
+                .Replace("{instrumentname}", Name.ToUpper())
+                .Replace("{instrumentid}", NaifId.ToString())
+                .Replace("{framename}", Spacecraft.Name.ToUpper() + "_" + Name.ToUpper())
+                .Replace("{spacecraftid}", Spacecraft.NaifId.ToString())
+                .Replace("{spacecraftframe}", Spacecraft.Frame.Name.ToUpper())
+                .Replace("{x}", Orientation.X.ToString(CultureInfo.InvariantCulture))
+                .Replace("{y}", Orientation.Y.ToString(CultureInfo.InvariantCulture))
+                .Replace("{z}", Orientation.Z.ToString(CultureInfo.InvariantCulture));
+            await using var sw = new StreamWriter(outputFile.FullName);
+            await sw.WriteAsync(data);
+        }
+
+        public abstract Task WriteKernelAsync(FileInfo outputFile);
+
         public bool Equals(Instrument other)
         {
             if (ReferenceEquals(null, other)) return false;

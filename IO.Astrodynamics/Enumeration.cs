@@ -11,7 +11,7 @@ public static class Enumeration
     {
         var field = value.GetType().GetField(value.ToString());
 
-        return Attribute.GetCustomAttribute(field, typeof(DescriptionAttribute)) is not DescriptionAttribute attribute ? value.ToString() : attribute.Description;
+        return Attribute.GetCustomAttribute(field ?? throw new InvalidOperationException("Value unknown"), typeof(DescriptionAttribute)) is not DescriptionAttribute attribute ? value.ToString() : attribute.Description;
     }
 
     public static T GetValueFromDescription<T>(string description) where T : Enum

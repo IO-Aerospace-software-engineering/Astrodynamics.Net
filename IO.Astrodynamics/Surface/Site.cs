@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 using IO.Astrodynamics.Body;
 using IO.Astrodynamics.Coordinates;
 using IO.Astrodynamics.Frames;
@@ -30,9 +31,8 @@ namespace IO.Astrodynamics.Surface
             return celestialBodies;
         }
 
-        
 
-        public Frame Frame { get; }
+        public SiteFrame Frame { get; }
         public double GM { get; } = 0.0;
         public double Mass { get; } = 0.0;
 
@@ -49,20 +49,20 @@ namespace IO.Astrodynamics.Surface
             CelestialBody = celestialItem;
             Id = id;
             NaifId = celestialItem.NaifId * 1000 + id;
-            Frame = new Frame(name.ToUpper() + "_TOPO");
+
             if (double.IsNaN(planetodetic.Latitude))
             {
-                InitialOrbitalParameters = GetEphemeris(DateTimeExtension.J2000, CelestialBody, CelestialBody.Frame, Aberration.None);
+                InitialOrbitalParameters = API.Instance.ReadEphemeris(DateTimeExtension.J2000, CelestialBody, this, CelestialBody.Frame, Aberration.None);
                 Planetodetic = GetPlanetocentricCoordinates().ToPlanetodetic(CelestialBody.Flattening, CelestialBody.EquatorialRadius);
             }
             else
             {
                 Planetodetic = planetodetic;
-                InitialOrbitalParameters = new StateVector(Planetodetic.ToPlanetocentric(CelestialBody.Flattening, CelestialBody.EquatorialRadius).ToCartesianCoordinates(), Vector3.Zero, CelestialBody,
-                    DateTimeExtension.J2000, CelestialBody.Frame);
+                InitialOrbitalParameters = GetEphemeris(DateTimeExtension.J2000, CelestialBody, CelestialBody.Frame, Aberration.None);
             }
-        }
 
+            Frame = new SiteFrame(name.ToUpper() + "_TOPO", this);
+        }
 
         private Planetocentric GetPlanetocentricCoordinates()
         {
@@ -100,18 +100,25 @@ namespace IO.Astrodynamics.Surface
         public IEnumerable<OrbitalParameters.OrbitalParameters> GetEphemeris(Window searchWindow, ILocalizable observer, Frame frame, Aberration aberration,
             TimeSpan stepSize)
         {
-            return API.Instance.ReadEphemeris(searchWindow, observer, this, frame, aberration, stepSize);
+            var ephemeris = new List<OrbitalParameters.OrbitalParameters>();
+            for (DateTime i = searchWindow.StartDate; i <= searchWindow.EndDate; i += stepSize)
+            {
+                ephemeris.Add(GetEphemeris(i, observer, frame, aberration));
+            }
+
+            return ephemeris;
         }
 
         public OrbitalParameters.OrbitalParameters GetEphemeris(DateTime epoch, ILocalizable observer, Frame frame, Aberration aberration)
         {
-            return API.Instance.ReadEphemeris(epoch, observer, this, frame, aberration);
+            return new StateVector(Planetodetic.ToPlanetocentric(CelestialBody.Flattening, CelestialBody.EquatorialRadius).ToCartesianCoordinates(),
+                Vector3.Zero, CelestialBody, epoch, CelestialBody.Frame).ToFrame(frame);
         }
 
         public double AngularSeparation(DateTime epoch, ILocalizable target1, ILocalizable target2, Aberration aberration)
         {
-            var target1Position = target1.GetEphemeris(epoch, this, Frame.ICRF, aberration).ToStateVector().Position;
-            var target2Position = target2.GetEphemeris(epoch, this, Frame.ICRF, aberration).ToStateVector().Position;
+            var target1Position = target1.GetEphemeris(epoch, this, Frames.Frame.ICRF, aberration).ToStateVector().Position;
+            var target2Position = target2.GetEphemeris(epoch, this, Frames.Frame.ICRF, aberration).ToStateVector().Position;
             return target1Position.Angle(target2Position);
         }
 
@@ -142,14 +149,31 @@ namespace IO.Astrodynamics.Surface
             RelationnalOperator relationalOperator, double value, double adjustValue, Aberration aberration, TimeSpan stepSize, INaifObject illuminationSource,
             string method = "Ellipsoid")
         {
-            return API.Instance.FindWindowsOnIlluminationConstraint(searchWindow, observer, CelestialBody, CelestialBody.Frame, Planetodetic, illuminationType, relationalOperator, value,
+            return API.Instance.FindWindowsOnIlluminationConstraint(searchWindow, observer, CelestialBody, CelestialBody.Frame, Planetodetic, illuminationType, relationalOperator,
+                value,
                 adjustValue,
                 aberration, stepSize, illuminationSource, method);
         }
 
-        public void Propagate(Window window, DirectoryInfo outputDirectoryInfo)
+        public Planetocentric SubObserverPoint(CelestialBody target, DateTime epoch, Aberration aberration)
         {
-            API.Instance.PropagateSite(window, this, outputDirectoryInfo);
+            var position = GetEphemeris(epoch, target, target.Frame, aberration).ToStateVector().Position;
+
+            var lon = System.Math.Atan2(position.Y, position.X);
+
+            var lat = System.Math.Asin(position.Z / position.Magnitude());
+
+            return new Planetocentric(lon, lat, position.Magnitude());
+        }
+
+        public async Task WriteFrameAsync(FileInfo outputFile)
+        {
+            await Frame.WriteAsync(outputFile);
+        }
+
+        public void WriteEphemeris(FileInfo outputFile, IEnumerable<StateVector> stateVectors)
+        {
+            API.Instance.WriteEphemeris(outputFile, this, stateVectors);
         }
 
         public bool Equals(Site other)
@@ -165,17 +189,7 @@ namespace IO.Astrodynamics.Surface
             if (ReferenceEquals(this, obj)) return true;
             return obj.GetType() == this.GetType() && Equals((Site)obj);
         }
-        
-        public Planetocentric SubObserverPoint(CelestialBody target, DateTime epoch, Aberration aberration)
-        {
-            var position = GetEphemeris(epoch, target, target.Frame, aberration).ToStateVector().Position;
 
-            var lon = System.Math.Atan2(position.Y, position.X);
-
-            var lat = System.Math.Asin(position.Z / position.Magnitude());
-
-            return new Planetocentric(lon, lat, position.Magnitude());
-        }
 
         public override int GetHashCode()
         {

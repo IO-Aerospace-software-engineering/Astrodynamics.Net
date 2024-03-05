@@ -1,6 +1,4 @@
-﻿using System;
-using System.Numerics;
-using IO.Astrodynamics.Body;
+﻿using IO.Astrodynamics.Body;
 using IO.Astrodynamics.Body.Spacecraft;
 using IO.Astrodynamics.OrbitalParameters;
 using Vector3 = IO.Astrodynamics.Math.Vector3;
@@ -10,14 +8,12 @@ namespace IO.Astrodynamics.Propagator.Forces;
 public class SolarRadiationPressure : ForceBase
 {
     private readonly CelestialBody _sun = new CelestialBody(10);
-    private readonly Spacecraft _spacecraft;
-    private readonly double _areaMassRatio = 0.0;
+    private readonly double _areaMassRatio;
     private readonly double _term1;
 
     public SolarRadiationPressure(Spacecraft spacecraft)
     {
-        _spacecraft = spacecraft ?? throw new ArgumentNullException(nameof(spacecraft));
-        _areaMassRatio = _spacecraft.SectionalArea / _spacecraft.Mass;
+        _areaMassRatio = spacecraft.SectionalArea / spacecraft.Mass;
         _term1 = Constants.SolarMeanRadiativeLuminosity / (4.0 * System.Math.PI * Constants.C);
     }
 

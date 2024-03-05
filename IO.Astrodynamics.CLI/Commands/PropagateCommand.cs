@@ -1,19 +1,14 @@
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Cocona;
 using IO.Astrodynamics.Body;
 using IO.Astrodynamics.Body.Spacecraft;
 using IO.Astrodynamics.CLI.Commands.Parameters;
 using IO.Astrodynamics.Cosmographia;
-using IO.Astrodynamics.Frames;
 using IO.Astrodynamics.Mission;
-using IO.Astrodynamics.OrbitalParameters;
-using IO.Astrodynamics.Time;
 
 namespace IO.Astrodynamics.CLI.Commands;
 
@@ -64,7 +59,7 @@ public class PropagateCommand
         //Simulate
         var qualifiedOutputDirectory = new DirectoryInfo(outputDirectory);
         Console.WriteLine("Orbit propagation in progress. This operation could take a long time. Duration expected for one orbit 7000km x 7000km on mid range computer with geopotential N=30 = 600ms");
-        await scenario.SimulateWithoutManeuverAsync(qualifiedOutputDirectory, useAtmosphericDrag, useSolarRadiationPressure);
+        await scenario.SimulateAsync(qualifiedOutputDirectory, useAtmosphericDrag, useSolarRadiationPressure,TimeSpan.FromSeconds(1.0));
 
         //Export to cosmographia
         CosmographiaExporter cosmographiaExporter = new CosmographiaExporter();

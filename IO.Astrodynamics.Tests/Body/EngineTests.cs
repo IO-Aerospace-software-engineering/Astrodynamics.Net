@@ -9,7 +9,7 @@ namespace IO.Astrodynamics.Tests.Body
         [Fact]
         public void Create()
         {
-            FuelTank ft = new FuelTank("ft", "ftmodel", "sn0", 1000.0, 100.0);
+            FuelTank ft = new FuelTank( "ft", "ftmodel", "sn0", 1000.0, 100.0);
             Engine engine = new Engine("eng", "model", "sn1", 350.0, 50.0, ft);
             Assert.Equal("eng", engine.Name);
             Assert.Equal("model", engine.Model);

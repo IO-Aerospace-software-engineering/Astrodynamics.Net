@@ -4,13 +4,13 @@
         <id>IO.Astrodynamics</id>
         <authors>Sylvain Guillet</authors>
         <copyright>Sylvain Guillet</copyright>
-        <version>1.10.0</version>
+        <version>2.0.0-alpha</version>
         <title>Astrodynamics framework</title>
         <icon>images\dragonfly-dark-trans.png</icon>
         <readme>docs\README.md</readme>
         <projectUrl>https://github.com/IO-Aerospace-software-engineering/Astrodynamics.Net</projectUrl>
         <license type="expression">LGPL-3.0-or-later</license>
-        <description>This astrodynamics framework provides tools to manipulate orbital parameters, run spacecraft propagation, evaluate impulse maneuvers, generate fuel balance, ...</description>
+        <description>This astrodynamics framework provides tools to manipulate orbital parameters, run spacecraft propagation, evaluate impulsive maneuvers, generate fuel balance, ...</description>
         <dependencies>
             <group targetFramework="net8.0">
                 <dependency id="AutoMapper" version="12.0.1"/>

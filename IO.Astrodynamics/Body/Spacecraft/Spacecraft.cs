@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using IO.Astrodynamics.Frames;
 using IO.Astrodynamics.Math;
 using IO.Astrodynamics.OrbitalParameters;
-using IO.Astrodynamics.Time;
 
 
 namespace IO.Astrodynamics.Body.Spacecraft
@@ -20,13 +19,15 @@ namespace IO.Astrodynamics.Body.Spacecraft
         public static readonly Vector3 Up = Vector3.VectorZ;
         public static readonly Vector3 Down = Up.Inverse();
 
+        private readonly HashSet<Maneuver.Maneuver> _executedManeuvers = new HashSet<Maneuver.Maneuver>();
+        public IReadOnlyCollection<Maneuver.Maneuver> ExecutedManeuvers => _executedManeuvers;
         public Maneuver.Maneuver StandbyManeuver { get; private set; }
         public Spacecraft Parent { get; private set; }
         public Spacecraft Child { get; private set; }
-        public Clock Clock { get; private set; }
+        public Clock Clock { get; }
 
         private readonly HashSet<Instrument> _instruments = new();
-        public IReadOnlyCollection<Instrument> Intruments => _instruments;
+        public IReadOnlyCollection<Instrument> Instruments => _instruments;
 
         private readonly HashSet<FuelTank> _fuelTanks = new();
         public IReadOnlyCollection<FuelTank> FuelTanks => _fuelTanks;
@@ -66,19 +67,67 @@ namespace IO.Astrodynamics.Body.Spacecraft
             MaximumOperatingMass = maximumOperatingMass;
             Clock = clock ?? throw new ArgumentNullException(nameof(clock));
             Clock.AttachSpacecraft(this);
-            Frame = new SpacecraftFrame($"{name}_SPACECRAFT", naifId, name);
+            Frame = new SpacecraftFrame($"{name}_FRAME", naifId, name);
             SectionalArea = sectionalArea;
             DragCoefficient = dragCoeff;
         }
 
         /// <summary>
-        /// Add instrument to spacecraft
+        /// Add circular instrument to spacecraft
         /// </summary>
-        /// <param name="instrument"></param>
-        public void AddInstrument(Instrument instrument)
+        /// <param name="naifId"></param>
+        /// <param name="name"></param>
+        /// <param name="model"></param>
+        /// <param name="fieldOfView"></param>
+        /// <param name="boresight"></param>
+        /// <param name="refVector"></param>
+        /// <param name="orientation">Expressed as Euler angle</param>
+        /// <exception cref="ArgumentException"></exception>
+        public void AddCircularInstrument(int naifId, string name, string model, double fieldOfView, in Vector3 boresight, in Vector3 refVector, in Vector3 orientation)
         {
-            if (instrument == null) throw new ArgumentNullException(nameof(instrument));
-            if (!_instruments.Add(instrument))
+            if (!_instruments.Add(new CircularInstrument(this, naifId, name, model, fieldOfView, boresight, refVector, orientation)))
+            {
+                throw new ArgumentException("Instrument already added to spacecraft");
+            }
+        }
+
+        /// <summary>
+        /// Add rectangular instrument
+        /// </summary>
+        /// <param name="naifId"></param>
+        /// <param name="name"></param>
+        /// <param name="model"></param>
+        /// <param name="fieldOfView"></param>
+        /// <param name="crossAngle"></param>
+        /// <param name="boresight"></param>
+        /// <param name="refVector"></param>
+        /// <param name="orientation">Expressed as Euler angle</param>
+        /// <exception cref="ArgumentException"></exception>
+        public void AddRectangularInstrument(int naifId, string name, string model, double fieldOfView, double crossAngle, in Vector3 boresight, in Vector3 refVector,
+            in Vector3 orientation)
+        {
+            if (!_instruments.Add(new RectangularInstrument(this, naifId, name, model, fieldOfView, crossAngle, boresight, refVector, orientation)))
+            {
+                throw new ArgumentException("Instrument already added to spacecraft");
+            }
+        }
+
+        /// <summary>
+        /// Add elliptical instrument
+        /// </summary>
+        /// <param name="naifId"></param>
+        /// <param name="name"></param>
+        /// <param name="model"></param>
+        /// <param name="fieldOfView"></param>
+        /// <param name="crossAngle"></param>
+        /// <param name="boresight"></param>
+        /// <param name="refVector"></param>
+        /// <param name="orientation">Expressed as Euler angle</param>
+        /// <exception cref="ArgumentException"></exception>
+        public void AddEllipticalInstrument(int naifId, string name, string model, double fieldOfView, double crossAngle, in Vector3 boresight, in Vector3 refVector,
+            in Vector3 orientation)
+        {
+            if (!_instruments.Add(new EllipticalInstrument(this, naifId, name, model, fieldOfView, crossAngle, boresight, refVector, orientation)))
             {
                 throw new ArgumentException("Instrument already added to spacecraft");
             }
@@ -117,6 +166,8 @@ namespace IO.Astrodynamics.Body.Spacecraft
             {
                 throw new ArgumentException("Fuel tank already added to spacecraft");
             }
+
+            fuelTank.SetSpacecraft(this);
         }
 
         /// <summary>
@@ -165,7 +216,7 @@ namespace IO.Astrodynamics.Body.Spacecraft
         /// <returns></returns>
         public double GetTotalMass()
         {
-            return DryOperatingMass + FuelTanks.Sum(x => x.InitialQuantity) + Payloads.Sum(x => x.Mass) +
+            return DryOperatingMass + FuelTanks.Sum(x => x.Quantity) + Payloads.Sum(x => x.Mass) +
                    (Child != null ? Child.GetTotalMass() : 0.0);
         }
 
@@ -201,25 +252,20 @@ namespace IO.Astrodynamics.Body.Spacecraft
         /// Put a maneuver in standby
         /// </summary>
         /// <param name="maneuver"></param>
-        public void SetStandbyManeuver(Maneuver.Maneuver maneuver)
+        /// <param name="minimumEpoch"></param>
+        public void SetStandbyManeuver(Maneuver.Maneuver maneuver, DateTime? minimumEpoch = null)
         {
-            StandbyManeuver = maneuver;
-        }
-
-        public Dictionary<int, Maneuver.Maneuver> GetManeuvers()
-        {
-            Dictionary<int, Maneuver.Maneuver> maneuvers = new Dictionary<int, Maneuver.Maneuver>();
-
-            var maneuver = StandbyManeuver;
-            int order = 0;
-            while (maneuver != null)
+            if (minimumEpoch > maneuver?.MinimumEpoch)
             {
-                maneuvers[order] = maneuver;
-                maneuver = maneuver.NextManeuver;
-                order++;
+                maneuver.MinimumEpoch = minimumEpoch.Value;
             }
 
-            return maneuvers;
+            if (StandbyManeuver != null)
+            {
+                _executedManeuvers.Add(StandbyManeuver);
+            }
+
+            StandbyManeuver = maneuver;
         }
 
         public void SetInitialOrbitalParameters(OrbitalParameters.OrbitalParameters orbitalParameters)
@@ -243,25 +289,13 @@ namespace IO.Astrodynamics.Body.Spacecraft
             return referenceFrame.ToFrame(Frame, epoch);
         }
 
+        /// <summary>
+        /// Get spacecraft summary
+        /// </summary>
+        /// <returns></returns>
         internal SpacecraftSummary GetSummary()
         {
-            var maneuvers = GetManeuvers();
-            double fuel = 0.0;
-            Window? maneuverWindow = null;
-
-            if (maneuvers.Count > 0)
-            {
-                var windows = GetManeuvers().Select(x => x.Value.ManeuverWindow);
-                var enumerable = windows as Window[] ?? windows.ToArray();
-                maneuverWindow = enumerable.FirstOrDefault();
-                fuel = GetManeuvers().Sum(x => x.Value.FuelBurned);
-                foreach (var win in enumerable.Skip(1))
-                {
-                    maneuverWindow = maneuverWindow.Value.Merge(win);
-                }
-            }
-
-            return new SpacecraftSummary(this, maneuverWindow, fuel);
+            return new SpacecraftSummary(this, _executedManeuvers);
         }
 
         internal async Task WriteFrameAsync(FileInfo outputFile)

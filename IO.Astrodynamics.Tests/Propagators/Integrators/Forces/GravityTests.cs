@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using System.Numerics;
 using IO.Astrodynamics.Body;
 using IO.Astrodynamics.OrbitalParameters;
 using IO.Astrodynamics.Propagator.Forces;

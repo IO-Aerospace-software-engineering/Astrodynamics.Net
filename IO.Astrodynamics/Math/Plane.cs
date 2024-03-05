@@ -1,6 +1,6 @@
 ﻿namespace IO.Astrodynamics.Math;
 
-public class Plane
+public record struct Plane
 {
     public Vector3 Normal { get; }
     public double Distance { get; }

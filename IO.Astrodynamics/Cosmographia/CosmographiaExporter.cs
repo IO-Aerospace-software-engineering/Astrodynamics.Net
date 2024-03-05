@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using IO.Astrodynamics.Body.Spacecraft;
-using IO.Astrodynamics.Cosmographia.Models;
+using IO.Astrodynamics.Cosmographia.Model;
 using IO.Astrodynamics.Maneuver;
 using IO.Astrodynamics.Mission;
 using IO.Astrodynamics.Time;
@@ -106,11 +106,12 @@ public class CosmographiaExporter
         observationJson.version = "1.0";
         foreach (var spacecraft in scenario.Spacecrafts)
         {
-            var maneuvers = spacecraft.GetManeuvers().Values.OfType<InstrumentPointingToAttitude>().ToArray();
+            var maneuvers = spacecraft.ExecutedManeuvers.OfType<InstrumentPointingToAttitude>().ToArray();
             var maneuversGroupedByInstruments = maneuvers.GroupBy(x => x.Instrument);
-            observationJson.items = new ObservationItems[maneuversGroupedByInstruments.Count()];
+            var maneuverByInstruments = maneuversGroupedByInstruments as IGrouping<Instrument, InstrumentPointingToAttitude>[] ?? maneuversGroupedByInstruments.ToArray();
+            observationJson.items = new ObservationItems[maneuverByInstruments.Count()];
             int idx = 0;
-            foreach (var maneuverByInstrument in maneuversGroupedByInstruments)
+            foreach (var maneuverByInstrument in maneuverByInstruments)
             {
                 observationJson.items[idx] = new ObservationItems();
                 observationJson.items[idx].obsClass = "observation";
@@ -145,8 +146,12 @@ public class CosmographiaExporter
                 foreach (var maneuver in maneuverByInstrument)
                 {
                     observationJson.items[idx].geometry.groups[groupIdx] = new ObservationGroup();
-                    observationJson.items[idx].geometry.groups[groupIdx].startTime = maneuver.ManeuverWindow.StartDate.ToFormattedString();
-                    observationJson.items[idx].geometry.groups[groupIdx].endTime = maneuver.ManeuverWindow.EndDate.ToFormattedString();
+                    if (maneuver.ManeuverWindow != null)
+                    {
+                        observationJson.items[idx].geometry.groups[groupIdx].startTime = maneuver.ManeuverWindow.Value.StartDate.ToFormattedString();
+                        observationJson.items[idx].geometry.groups[groupIdx].endTime = maneuver.ManeuverWindow.Value.EndDate.ToFormattedString();
+                    }
+
                     observationJson.items[idx].geometry.groups[groupIdx].obsRate = 0;
                     groupIdx++;
                 }
@@ -164,13 +169,13 @@ public class CosmographiaExporter
         SensorRootObject sensorJson = new SensorRootObject();
         sensorJson.name = $"{scenario.Mission.Name}_{scenario.Name}";
         sensorJson.version = "1.0";
-        sensorJson.items = new SensorItem[scenario.Spacecrafts.Sum(x => x.Intruments.Count)];
+        sensorJson.items = new SensorItem[scenario.Spacecrafts.Sum(x => x.Instruments.Count)];
         int idx = 0;
         foreach (var spacecraft in scenario.Spacecrafts)
         {
             var spcColor = GetSpacecraftColor(spacecraft);
 
-            foreach (var instrument in spacecraft.Intruments)
+            foreach (var instrument in spacecraft.Instruments)
             {
                 sensorJson.items[idx] = new SensorItem();
                 sensorJson.items[idx].center = spacecraft.Name.ToUpper();
@@ -209,7 +214,7 @@ public class CosmographiaExporter
 
     private async Task ExportSpacecraftsAsync(Scenario scenario, DirectoryInfo outputDirectory)
     {
-        Models.SpacecraftRootObject spacecraftJson = new SpacecraftRootObject();
+        SpacecraftRootObject spacecraftJson = new SpacecraftRootObject();
         spacecraftJson.name = $"{scenario.Mission.Name}_{scenario.Name}";
         spacecraftJson.version = "1.0";
         spacecraftJson.items = new SpacecraftItem[scenario.Spacecrafts.Count];
@@ -277,7 +282,7 @@ public class CosmographiaExporter
     private async Task ExportSpiceKernelsAsync(Scenario scenario, DirectoryInfo outputDirectory)
     {
         var files = outputDirectory.GetFiles("*.*", SearchOption.AllDirectories);
-        Models.SpiceRootObject spiceJson = new SpiceRootObject();
+        SpiceRootObject spiceJson = new SpiceRootObject();
         spiceJson.version = "1.0";
         spiceJson.name = $"{scenario.Mission.Name}_{scenario.Name}";
         spiceJson.spiceKernels = files.Select(x => Path.GetRelativePath(outputDirectory.FullName, x.FullName)).ToArray();
@@ -318,10 +323,5 @@ public class CosmographiaExporter
                 CopyDirectory(subDir, newDestinationDir, true);
             }
         }
-    }
-
-    static IEnumerable<FileInfo> GetFiles(DirectoryInfo directoryInfo, bool recursive)
-    {
-        return directoryInfo.GetFiles("*.*", SearchOption.AllDirectories);
     }
 }

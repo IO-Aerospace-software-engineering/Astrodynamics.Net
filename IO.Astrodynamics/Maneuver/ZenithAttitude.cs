@@ -7,9 +7,14 @@ using IO.Astrodynamics.OrbitalParameters;
 
 namespace IO.Astrodynamics.Maneuver;
 
-public class ZenithAttitude : Maneuver
+public class ZenithAttitude : Attitude
 {
-    public ZenithAttitude(DateTime minimumEpoch, TimeSpan maneuverHoldDuration, params Engine[] engines) : base(minimumEpoch, maneuverHoldDuration, engines)
+    public ZenithAttitude(DateTime minimumEpoch, TimeSpan maneuverHoldDuration, Engine engine) : base(minimumEpoch, maneuverHoldDuration, engine)
     {
+    }
+
+    protected override Quaternion ComputeOrientation(StateVector stateVector)
+    {
+        return Spacecraft.Front.To(stateVector.Position);
     }
 }

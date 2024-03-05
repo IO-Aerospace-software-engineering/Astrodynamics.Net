@@ -7,9 +7,14 @@ using IO.Astrodynamics.OrbitalParameters;
 
 namespace IO.Astrodynamics.Maneuver;
 
-public class RetrogradeAttitude : Maneuver
+public class RetrogradeAttitude : Attitude
 {
-    public RetrogradeAttitude(DateTime minimumEpoch, TimeSpan maneuverHoldDuration, params Engine[] engines) : base(minimumEpoch, maneuverHoldDuration, engines)
+    public RetrogradeAttitude(DateTime minimumEpoch, TimeSpan maneuverHoldDuration, Engine engine) : base(minimumEpoch, maneuverHoldDuration, engine)
     {
+    }
+
+    protected override Quaternion ComputeOrientation(StateVector stateVector)
+    {
+        return Spacecraft.Front.To(stateVector.Velocity.Inverse());
     }
 }

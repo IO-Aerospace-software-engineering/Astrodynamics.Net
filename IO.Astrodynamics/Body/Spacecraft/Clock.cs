@@ -8,9 +8,9 @@ namespace IO.Astrodynamics.Body.Spacecraft
     {
         public Spacecraft Spacecraft { get; private set; }
         public string Name { get; }
-        public double Resolution { get; }
+        public uint Resolution { get; }
 
-        public Clock(string name, double resolution)
+        public Clock(string name, uint resolution)
         {
             if (string.IsNullOrEmpty(name))
             {
@@ -36,7 +36,7 @@ namespace IO.Astrodynamics.Body.Spacecraft
             await using var stream = this.GetType().Assembly.GetManifestResourceStream("IO.Astrodynamics.Templates.ClockTemplate.tsc");
             using StreamReader sr = new StreamReader(stream ?? throw new InvalidOperationException());
             var templateData = await sr.ReadToEndAsync();
-            var data = templateData.Replace("{id}", Spacecraft.NaifId.ToString()).Replace("{resolution}", ((int)System.Math.Round(1.0 / Resolution)).ToString());
+            var data = templateData.Replace("{id}", System.Math.Abs(Spacecraft.NaifId).ToString()).Replace("{resolution}",  Resolution.ToString());
             await using var sw = new StreamWriter(outputFile.FullName);
             await sw.WriteAsync(data);
         }
@@ -45,7 +45,7 @@ namespace IO.Astrodynamics.Body.Spacecraft
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
-            return string.Equals(Name, other.Name, StringComparison.OrdinalIgnoreCase) && System.Math.Abs(Resolution - other.Resolution) < double.Epsilon;
+            return string.Equals(Name, other.Name, StringComparison.OrdinalIgnoreCase) && Resolution == other.Resolution;
         }
 
         public override bool Equals(object obj)

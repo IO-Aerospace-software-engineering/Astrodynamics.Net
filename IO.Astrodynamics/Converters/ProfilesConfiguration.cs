@@ -6,7 +6,6 @@ using IO.Astrodynamics.Math;
 using IO.Astrodynamics.Surface;
 using IO.Astrodynamics.Time;
 using Launch = IO.Astrodynamics.Maneuver.Launch;
-using Planetocentric = IO.Astrodynamics.Coordinates.Planetocentric;
 using Planetodetic = IO.Astrodynamics.Coordinates.Planetodetic;
 using Quaternion = IO.Astrodynamics.Math.Quaternion;
 using Site = IO.Astrodynamics.Surface.Site;
@@ -45,7 +44,6 @@ public class ProfilesConfiguration
             cfg.CreateMap<DTO.Window, Window>().ConstructUsing(x => new Window(DateTimeExtension.CreateTDB(x.Start), DateTimeExtension.CreateTDB(x.End)));
 
             cfg.CreateMap<Planetodetic, DTO.Planetodetic>().ConstructUsing(x => new DTO.Planetodetic(x.Longitude, x.Latitude, x.Altitude));
-            cfg.CreateMap<Planetocentric, DTO.Planetocentric>().ConstructUsing(x => new DTO.Planetocentric(x.Longitude, x.Latitude, x.Radius));
 
             cfg.CreateMap<Site, DTO.Site>()
                 .ConstructUsing(x => new DTO.Site(x.NaifId, x.CelestialBody.NaifId, Mapper.Map<DTO.Planetodetic>(x.Planetodetic), x.Name, string.Empty))

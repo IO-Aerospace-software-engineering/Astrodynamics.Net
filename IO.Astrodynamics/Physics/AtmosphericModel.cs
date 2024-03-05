@@ -2,7 +2,7 @@
 
 namespace IO.Astrodynamics.Physics;
 
-public abstract class AtmosphericModel()
+public abstract class AtmosphericModel
 {
     public abstract double GetTemperature(double altitude);
     public abstract double GetPressure(double altitude);

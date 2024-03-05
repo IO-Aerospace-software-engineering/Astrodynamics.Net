@@ -1,6 +1,5 @@
 // Copyright 2024. Sylvain Guillet (sylvain.guillet@tutamail.com)
 
-using System.Globalization;
 using System.Text;
 using IO.Astrodynamics.CLI.Commands;
 using IO.Astrodynamics.CLI.Commands.Parameters;

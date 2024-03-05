@@ -9,7 +9,7 @@ namespace IO.Astrodynamics.Propagator.Forces;
 public class AtmosphericDrag : ForceBase
 {
     private readonly Spacecraft _spacecraft;
-    private readonly double _areaMassRatio = 0.0;
+    private readonly double _areaMassRatio;
 
     public AtmosphericDrag(Spacecraft spacecraft)
     {

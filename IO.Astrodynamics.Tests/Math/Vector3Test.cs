@@ -96,7 +96,7 @@ public class VectorTests
     {
         Vector3 m1 = new Vector3(1, -1, 0);
         Vector3 m2 = new Vector3(0, 1, 0);
-        double angle = m2.Angle(m1, new Plane(new Vector3(0.0,0.0,10.0),0.0));
+        double angle = m2.Angle(m1, new Plane(new Vector3(0.0, 0.0, 10.0), 0.0));
         Assert.Equal(-2.3561944901923448, angle, 6);
     }
 
@@ -136,7 +136,7 @@ public class VectorTests
         Assert.Equal(0.7071067811865475, q.W);
         Assert.Equal(0.0, q.VectorPart.X);
         Assert.Equal(0.0, q.VectorPart.Y);
-        Assert.Equal(-0.7071067811865475, q.VectorPart.Z);
+        Assert.Equal(0.7071067811865475, q.VectorPart.Z);
     }
 
     [Fact]
@@ -148,6 +148,30 @@ public class VectorTests
         Assert.Equal(0.0, q.W);
         Assert.Equal(0.0, q.VectorPart.X);
         Assert.Equal(1.0, q.VectorPart.Y);
+        Assert.Equal(0.0, q.VectorPart.Z);
+    }
+
+    [Fact]
+    public void To3()
+    {
+        Vector3 m1 = new Vector3(0, 1, 0);
+        Vector3 m2 = new Vector3(0, -0.2, 0.7);
+        var q = m1.To(m2);
+        Assert.Equal(0.60219551314445285, q.W);
+        Assert.Equal(0.79834864811602768, q.VectorPart.X);
+        Assert.Equal(0.0, q.VectorPart.Y);
+        Assert.Equal(0.0, q.VectorPart.Z);
+    }
+    
+    [Fact]
+    public void To4()
+    {
+        Vector3 m1 = new Vector3(-10, 0, 0);
+        Vector3 m2 = new Vector3(10, 0, 0);
+        var q = m1.To(m2);
+        Assert.Equal(0.0, q.W);
+        Assert.Equal(0.0, q.VectorPart.X);
+        Assert.Equal(-1.0, q.VectorPart.Y);
         Assert.Equal(0.0, q.VectorPart.Z);
     }
 

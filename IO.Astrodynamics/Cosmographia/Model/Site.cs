@@ -1,6 +1,6 @@
 // Copyright 2023. Sylvain Guillet (sylvain.guillet@tutamail.com)
 
-namespace IO.Astrodynamics.Cosmographia.Models;
+namespace IO.Astrodynamics.Cosmographia.Model;
 
 public class SiteRootObject
 {

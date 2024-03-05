@@ -45,7 +45,7 @@ public class Helpers
         }
         else
         {
-            localizableObject = new Spacecraft(objectId, $"spc{objectId}", 1.0, 1.0, new Clock($"clk{objectId}", 1 / 65536.0), null);
+            localizableObject = new Spacecraft(objectId, $"spc{objectId}", 1.0, 1.0, new Clock($"clk{objectId}", 65536), null);
         }
 
         return localizableObject;
@@ -60,7 +60,7 @@ public class Helpers
         }
         else
         {
-            celestialItem = new Spacecraft(objectId, "spc", 1.0, 1.0, new Clock("clk", 1 / 65536.0), null);
+            celestialItem = new Spacecraft(objectId, "spc", 1.0, 1.0, new Clock("clk", 65536), null);
         }
 
         return celestialItem;
@@ -113,6 +113,7 @@ public class Helpers
         {
             originalFrame = "j2000";
         }
+
         var inputFrame = new Frame(originalFrame);
         var inputEpoch = Helpers.ConvertDateTimeInput(epoch);
 
@@ -173,11 +174,11 @@ public class Helpers
         return new Window(ConvertDateTimeInput(begin), ConvertDateTimeInput(end));
     }
 
-    internal static Window ConvertWindowInput(EpochParameters begin,EpochParameters end)
+    internal static Window ConvertWindowInput(EpochParameters begin, EpochParameters end)
     {
         return ConvertWindowInput(begin.Epoch, end.Epoch);
     }
-    
+
     internal static Window ConvertWindowInput(WindowParameters windowParameters)
     {
         return ConvertWindowInput(windowParameters.Begin, windowParameters.End);

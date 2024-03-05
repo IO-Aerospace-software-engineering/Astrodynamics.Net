@@ -19,7 +19,7 @@ namespace IO.Astrodynamics.Performance;
 [SkewnessColumn]
 [KurtosisColumn]
 [StatisticalTestColumn]
-[ShortRunJob]
+// [ShortRunJob]
 public class Scenario
 {
     private readonly GeopotentialGravitationalField _geopotential;
@@ -29,7 +29,7 @@ public class Scenario
     private readonly CelestialBody _sun;
     private readonly CelestialBody _moon;
     private readonly VVIntegrator _integrator;
-    private readonly Propagator.Propagator _propagator;
+    private readonly Propagator.SpacecraftPropagator _spacecraftPropagator;
     // IO.Astrodynamics.Tests.Mission.ScenarioTests _scenario = new IO.Astrodynamics.Tests.Mission.ScenarioTests();
 
     public Scenario()
@@ -39,7 +39,7 @@ public class Scenario
         _moon = new CelestialBody(301);
         _sun = new CelestialBody(10);
         _geopotential = new GeopotentialGravitationalField(new StreamReader("Data/SolarSystem/EGM2008_to70_TideFree"));
-        Clock clk = new Clock("My clock", 1.0 / 256.0);
+        Clock clk = new Clock("My clock", 256);
         Spacecraft spc = new Spacecraft(-1001, "MySpacecraft", 100.0, 10000.0, clk,
             new StateVector(new Vector3(6800000.0, 0.0, 0.0), new Vector3(0.0, 7656.2204182967143, 0.0), _earth, DateTimeExtension.J2000, Frames.Frame.ICRF));
         _srp = new SolarRadiationPressure(spc);
@@ -53,11 +53,11 @@ public class Scenario
         _integrator = new VVIntegrator(forces, TimeSpan.FromSeconds(1.0), new StateVector(new Vector3(6800000.0 - Random.Shared.NextDouble(), 0.0, 0.0),
             new Vector3(0.0, 8000.0 - Random.Shared.NextDouble(), 0.0), _earth,
             DateTimeExtension.J2000, Frame.ICRF));
-        _propagator = new Propagator.Propagator(new Window(DateTimeExtension.J2000, DateTimeExtension.J2000 + spc.InitialOrbitalParameters.Period()), spc,
+        _spacecraftPropagator = new Propagator.SpacecraftPropagator(new Window(DateTimeExtension.J2000, DateTimeExtension.J2000 + spc.InitialOrbitalParameters.Period()), spc,
             new[] { _moon, _earth, _sun }, true, true, TimeSpan.FromSeconds(1.0));
     }
 
-    // [Benchmark(Description = "Spacecraft propagator C++")]
+    // [Benchmark(Description = "Spacecraft spacecraftPropagator C++")]
     public void Propagate()
     {
         // _scenario.PropagateWithoutManeuver();
@@ -96,13 +96,13 @@ public class Scenario
         // var res = _integrator.Integrate(sv);
     }
 
-    // [Benchmark(Description = "Propagator per orbit (GeoPotentials // Moon and sun perturbation // Atmospheric drag // Solar radiation) ")]
+    [Benchmark(Description = "SpacecraftPropagator per orbit (GeoPotentials // Moon and sun perturbation // Atmospheric drag // Solar radiation) ")]
     public void Propagator()
     {
-        var res = _propagator.Propagate();
+        var res = _spacecraftPropagator.Propagate();
     }
 
-    [Benchmark(Description = "IO Vector", Baseline = true)]
+    // [Benchmark(Description = "IO Vector", Baseline = true)]
     public void Vector()
     {
         Vector3 vectorA = new Vector3(1.0, 2.0, 3.0);
@@ -169,7 +169,7 @@ public class Scenario
         mag = tot.Magnitude();
     }
 
-    [Benchmark(Description = "Numerics Vector")]
+    // [Benchmark(Description = "Numerics Vector")]
     public void VectorNumerics()
     {
         var vectorA = new Vector<double>([0.0, 1.0, 2.0, 3.0]);

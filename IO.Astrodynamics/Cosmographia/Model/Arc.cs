@@ -2,7 +2,7 @@
 
 using System.Text.Json.Serialization;
 
-namespace IO.Astrodynamics.Cosmographia.Models;
+namespace IO.Astrodynamics.Cosmographia.Model;
 
 public class ArcRootObject
 {

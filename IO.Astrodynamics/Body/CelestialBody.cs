@@ -1,16 +1,10 @@
 using System;
 using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Numerics;
 using IO.Astrodynamics.Coordinates;
 using IO.Astrodynamics.Frames;
-using IO.Astrodynamics.Math;
 using IO.Astrodynamics.OrbitalParameters;
 using IO.Astrodynamics.Physics;
-using IO.Astrodynamics.Propagator.Forces;
 using IO.Astrodynamics.SolarSystemObjects;
-using IO.Astrodynamics.Surface;
 using IO.Astrodynamics.Time;
 using Vector3 = IO.Astrodynamics.Math.Vector3;
 

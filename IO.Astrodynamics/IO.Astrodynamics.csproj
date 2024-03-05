@@ -25,6 +25,11 @@
     </ItemGroup>
 
     <ItemGroup>
+      <EmbeddedResource Include="Templates\InstrumentFrameTemplate.tf" />
+      <EmbeddedResource Include="Templates\InstrumentKernelCircularTemplate.ti" />
+      <EmbeddedResource Include="Templates\InstrumentKernelEllipticalTemplate.ti" />
+      <EmbeddedResource Include="Templates\InstrumentKernelRectangularTemplate.ti" />
+      <EmbeddedResource Include="Templates\SiteFrameTemplate.tf" />
       <None Remove="PDS\V4\Schemas\PDS4_MSN_1K00_1300.xsd" />
       <EmbeddedResource Include="PDS\V4\Schemas\PDS4_MSN_1K00_1300.xsd" />
       <None Remove="PDS\V4\Schemas\PDS4_PDS_1K00.xsd" />
@@ -56,6 +61,10 @@
       <None Remove="Templates\FrameTemplate.tf" />
       <EmbeddedResource Include="Templates\ClockTemplate.tsc" />
       <EmbeddedResource Include="Templates\FrameTemplate.tf" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Remove="Math\VectorExtension.cs" />
     </ItemGroup>
 
 </Project>

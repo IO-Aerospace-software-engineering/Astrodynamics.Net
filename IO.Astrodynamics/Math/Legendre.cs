@@ -1,8 +1,5 @@
 // Copyright 2024. Sylvain Guillet (sylvain.guillet@tutamail.com)
 
-using System;
-
-
 namespace IO.Astrodynamics.Math;
 
 public class LegendreFunctions

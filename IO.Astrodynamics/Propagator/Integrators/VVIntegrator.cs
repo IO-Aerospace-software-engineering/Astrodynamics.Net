@@ -2,8 +2,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Numerics;
 using IO.Astrodynamics.OrbitalParameters;
 using IO.Astrodynamics.Propagator.Forces;
 using Vector3 = IO.Astrodynamics.Math.Vector3;
@@ -37,10 +35,10 @@ public sealed class VVIntegrator : Integrator
         _position = previousElement.Position;
         _velocity = previousElement.Velocity;
 
-        result[idx].Velocity = _velocity + _acceleration * HalfDeltaTs;
-        result[idx].Position = _position + result[idx].Velocity * DeltaTs;
+        result[idx].UpdateVelocity(_velocity + _acceleration * HalfDeltaTs);
+        result[idx].UpdatePosition(_position + result[idx].Velocity * DeltaTs);
         _acceleration = ComputeAcceleration(result[idx]);
 
-        result[idx].Velocity += _acceleration * HalfDeltaTs;
+        result[idx].UpdateVelocity(result[idx].Velocity + _acceleration * HalfDeltaTs);
     }
 }

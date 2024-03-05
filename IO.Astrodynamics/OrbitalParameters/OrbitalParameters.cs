@@ -49,6 +49,30 @@ public abstract class OrbitalParameters : IEquatable<OrbitalParameters>
         Frame = frame ?? throw new ArgumentNullException(nameof(frame));
     }
 
+    protected virtual void ResetCache()
+    {
+        _eccentricVector = null;
+        _specificAngularMomentum = null;
+        _specificOrbitalEnergy = null;
+        _ascendingNodeVector = null;
+        _decendingNodeVector = null;
+        _period = null;
+        _meanMotion = null;
+        _stateVector = null;
+        _equinoctial = null;
+        _perigeevector = null;
+        _apogeeVector = null;
+        _trueLongitude = null;
+        _meanLongitude = null;
+        _isCircular = null;
+        _isParabolic = null;
+        _isHyperbolic = null;
+        _keplerianElements = null;
+        _equatorial = null;
+        _perigeeVelocity = null;
+        _apogeeVelocity = null;
+    }
+
     /// <summary>
     /// Get eccentric vector
     /// </summary>
@@ -140,6 +164,16 @@ public abstract class OrbitalParameters : IEquatable<OrbitalParameters>
     /// </summary>
     /// <returns></returns>
     public abstract double TrueAnomaly();
+
+    /// <summary>
+    /// Return true anomaly at given epoch
+    /// </summary>
+    /// <param name="epoch"></param>
+    /// <returns></returns>
+    public double TrueAnomaly(DateTime epoch)
+    {
+        return AtEpoch(epoch).TrueAnomaly();
+    }
 
     /// <summary>
     /// Get the eccentric anomaly
@@ -246,6 +280,22 @@ public abstract class OrbitalParameters : IEquatable<OrbitalParameters>
         return AtEpoch(epoch).ToStateVector();
     }
 
+    public virtual StateVector ToStateVector(double trueAnomaly)
+    {
+        return ToStateVector(EpochAtMeanAnomaly(TrueAnomalyToMeanAnomaly(trueAnomaly, Eccentricity())));
+    }
+
+    public DateTime EpochAtMeanAnomaly(double meanAnomaly)
+    {
+        var res = meanAnomaly - MeanAnomaly();
+        if (res < 0.0)
+        {
+            res += Constants._2PI;
+        }
+
+        return Epoch + TimeSpan.FromSeconds(res / MeanMotion());
+    }
+
     /// <summary>
     /// Convert to equinoctial
     /// </summary>
@@ -320,6 +370,17 @@ public abstract class OrbitalParameters : IEquatable<OrbitalParameters>
     public double TrueLongitude()
     {
         _trueLongitude ??= (AscendingNode() + ArgumentOfPeriapsis() + TrueAnomaly()) % Constants._2PI;
+        return _trueLongitude.Value;
+    }
+    
+    /// <summary>
+    /// Get the true longitude at given epoch
+    /// </summary>
+    /// <param name="epoch"></param>
+    /// <returns></returns>
+    public double TrueLongitude(DateTime epoch)
+    {
+        _trueLongitude ??= (AscendingNode() + ArgumentOfPeriapsis() + TrueAnomaly(epoch)) % Constants._2PI;
         return _trueLongitude.Value;
     }
 

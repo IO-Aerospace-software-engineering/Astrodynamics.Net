@@ -56,7 +56,7 @@ public abstract class PDSBase<T> where T : class
         }
 
         pdsSettings.ValidationType = ValidationType.Schema;
-        pdsSettings.ValidationEventHandler += (x, e) => errors.Add(e.Message);
+        pdsSettings.ValidationEventHandler += (_, e) => errors.Add(e.Message);
 
         XmlReader pdsArchive = XmlReader.Create(xmlStream, pdsSettings);
 
