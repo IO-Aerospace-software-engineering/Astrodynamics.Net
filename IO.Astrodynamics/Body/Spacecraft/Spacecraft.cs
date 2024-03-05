@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using IO.Astrodynamics.Frames;
 using IO.Astrodynamics.Math;
 using IO.Astrodynamics.OrbitalParameters;
-using IO.Astrodynamics.Time;
 
 
 namespace IO.Astrodynamics.Body.Spacecraft
@@ -68,7 +67,7 @@ namespace IO.Astrodynamics.Body.Spacecraft
             MaximumOperatingMass = maximumOperatingMass;
             Clock = clock ?? throw new ArgumentNullException(nameof(clock));
             Clock.AttachSpacecraft(this);
-            Frame = new SpacecraftFrame($"{name}_SPACECRAFT", naifId, name);
+            Frame = new SpacecraftFrame($"{name}_FRAME", naifId, name);
             SectionalArea = sectionalArea;
             DragCoefficient = dragCoeff;
         }
@@ -112,7 +111,7 @@ namespace IO.Astrodynamics.Body.Spacecraft
                 throw new ArgumentException("Instrument already added to spacecraft");
             }
         }
-        
+
         /// <summary>
         /// Add elliptical instrument
         /// </summary>
@@ -290,24 +289,13 @@ namespace IO.Astrodynamics.Body.Spacecraft
             return referenceFrame.ToFrame(Frame, epoch);
         }
 
+        /// <summary>
+        /// Get spacecraft summary
+        /// </summary>
+        /// <returns></returns>
         internal SpacecraftSummary GetSummary()
         {
-            double fuel = 0.0;
-            Window? maneuverWindow = null;
-
-            if (_executedManeuvers.Count > 0)
-            {
-                var windows = _executedManeuvers.Select(x => x.ManeuverWindow.Value);
-                var enumerable = windows as Window[] ?? windows.ToArray();
-                maneuverWindow = enumerable.FirstOrDefault();
-                fuel = _executedManeuvers.Sum(x => x.FuelBurned);
-                foreach (var win in enumerable.Skip(1))
-                {
-                    maneuverWindow = maneuverWindow.Value.Merge(win);
-                }
-            }
-
-            return new SpacecraftSummary(this, maneuverWindow, fuel);
+            return new SpacecraftSummary(this, _executedManeuvers);
         }
 
         internal async Task WriteFrameAsync(FileInfo outputFile)

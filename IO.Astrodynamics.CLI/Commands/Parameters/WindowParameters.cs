@@ -1,7 +1,5 @@
 // Copyright 2024. Sylvain Guillet (sylvain.guillet@tutamail.com)
 
-using System;
-using System.Text;
 using Cocona;
 
 namespace IO.Astrodynamics.CLI.Commands.Parameters;

@@ -1,7 +1,6 @@
 using System.Text;
 using IO.Astrodynamics.CLI.Commands;
 using IO.Astrodynamics.CLI.Commands.Parameters;
-using IO.Astrodynamics.Time;
 
 namespace IO.Astrodynamics.CLI.Tests;
 

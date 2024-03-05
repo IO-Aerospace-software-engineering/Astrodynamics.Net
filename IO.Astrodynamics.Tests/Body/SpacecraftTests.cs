@@ -1,8 +1,6 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.Net.Sockets;
-using System.Reflection;
 using System.Threading.Tasks;
 using IO.Astrodynamics.Body;
 using IO.Astrodynamics.Body.Spacecraft;

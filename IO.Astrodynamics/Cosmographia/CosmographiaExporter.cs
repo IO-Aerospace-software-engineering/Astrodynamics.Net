@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using IO.Astrodynamics.Body.Spacecraft;
-using IO.Astrodynamics.Cosmographia.Models;
+using IO.Astrodynamics.Cosmographia.Model;
 using IO.Astrodynamics.Maneuver;
 using IO.Astrodynamics.Mission;
 using IO.Astrodynamics.Time;
@@ -108,9 +108,10 @@ public class CosmographiaExporter
         {
             var maneuvers = spacecraft.ExecutedManeuvers.OfType<InstrumentPointingToAttitude>().ToArray();
             var maneuversGroupedByInstruments = maneuvers.GroupBy(x => x.Instrument);
-            observationJson.items = new ObservationItems[maneuversGroupedByInstruments.Count()];
+            var maneuverByInstruments = maneuversGroupedByInstruments as IGrouping<Instrument, InstrumentPointingToAttitude>[] ?? maneuversGroupedByInstruments.ToArray();
+            observationJson.items = new ObservationItems[maneuverByInstruments.Count()];
             int idx = 0;
-            foreach (var maneuverByInstrument in maneuversGroupedByInstruments)
+            foreach (var maneuverByInstrument in maneuverByInstruments)
             {
                 observationJson.items[idx] = new ObservationItems();
                 observationJson.items[idx].obsClass = "observation";
@@ -213,7 +214,7 @@ public class CosmographiaExporter
 
     private async Task ExportSpacecraftsAsync(Scenario scenario, DirectoryInfo outputDirectory)
     {
-        Models.SpacecraftRootObject spacecraftJson = new SpacecraftRootObject();
+        SpacecraftRootObject spacecraftJson = new SpacecraftRootObject();
         spacecraftJson.name = $"{scenario.Mission.Name}_{scenario.Name}";
         spacecraftJson.version = "1.0";
         spacecraftJson.items = new SpacecraftItem[scenario.Spacecrafts.Count];
@@ -281,7 +282,7 @@ public class CosmographiaExporter
     private async Task ExportSpiceKernelsAsync(Scenario scenario, DirectoryInfo outputDirectory)
     {
         var files = outputDirectory.GetFiles("*.*", SearchOption.AllDirectories);
-        Models.SpiceRootObject spiceJson = new SpiceRootObject();
+        SpiceRootObject spiceJson = new SpiceRootObject();
         spiceJson.version = "1.0";
         spiceJson.name = $"{scenario.Mission.Name}_{scenario.Name}";
         spiceJson.spiceKernels = files.Select(x => Path.GetRelativePath(outputDirectory.FullName, x.FullName)).ToArray();
@@ -322,10 +323,5 @@ public class CosmographiaExporter
                 CopyDirectory(subDir, newDestinationDir, true);
             }
         }
-    }
-
-    static IEnumerable<FileInfo> GetFiles(DirectoryInfo directoryInfo, bool recursive)
-    {
-        return directoryInfo.GetFiles("*.*", SearchOption.AllDirectories);
     }
 }

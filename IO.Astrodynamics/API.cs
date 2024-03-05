@@ -118,9 +118,6 @@ public class API
     [DllImport(@"IO.Astrodynamics", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     private static extern TLEElements GetTLEElementsProxy(string line1, string line2, string line3);
 
-    [DllImport(@"IO.Astrodynamics", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-    private static extern void PropagateSiteProxy(DTO.Window window, [In] [Out] ref DTO.Site site);
-
     private static IntPtr Resolver(string libraryName, Assembly assembly, DllImportSearchPath? searchPath)
     {
         var libHandle = IntPtr.Zero;

@@ -1,5 +1,4 @@
 using System;
-using System.Globalization;
 using IO.Astrodynamics.Body;
 using IO.Astrodynamics.Frames;
 using IO.Astrodynamics.Math;
@@ -273,7 +272,7 @@ namespace IO.Astrodynamics.OrbitalParameters
 
         public double[] ToArray()
         {
-            return new[] { Position.X, Position.Y, Position.Z, Velocity.X, Velocity.Y, Velocity.Z };
+            return [Position.X, Position.Y, Position.Z, Velocity.X, Velocity.Y, Velocity.Z];
         }
 
         public StateVector Inverse()

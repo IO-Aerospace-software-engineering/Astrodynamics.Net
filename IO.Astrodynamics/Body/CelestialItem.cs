@@ -4,9 +4,7 @@ using System.Globalization;
 using IO.Astrodynamics.Coordinates;
 using IO.Astrodynamics.Frames;
 using IO.Astrodynamics.Math;
-using IO.Astrodynamics.OrbitalParameters;
 using IO.Astrodynamics.SolarSystemObjects;
-using IO.Astrodynamics.Time;
 using Window = IO.Astrodynamics.Time.Window;
 
 namespace IO.Astrodynamics.Body;
@@ -66,6 +64,7 @@ public abstract class CelestialItem : ILocalizable, IEquatable<CelestialItem>
     /// <summary>
     /// Constructor
     /// </summary>
+    /// <param name="naifId"></param>
     /// <param name="name"></param>
     /// <param name="mass"></param>
     /// <param name="initialOrbitalParameters"></param>

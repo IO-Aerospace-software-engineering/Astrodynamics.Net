@@ -1,7 +1,4 @@
-﻿using System.Numerics;
-using System.Threading.Tasks;
-using IO.Astrodynamics.Body;
-using IO.Astrodynamics.Math;
+﻿using IO.Astrodynamics.Body;
 using IO.Astrodynamics.OrbitalParameters;
 using Vector3 = IO.Astrodynamics.Math.Vector3;
 

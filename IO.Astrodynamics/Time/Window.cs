@@ -1,5 +1,4 @@
 using System;
-using System.Globalization;
 
 namespace IO.Astrodynamics.Time;
 public readonly record struct Window

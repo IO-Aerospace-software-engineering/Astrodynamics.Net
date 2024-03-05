@@ -6,7 +6,6 @@ using IO.Astrodynamics.Math;
 using IO.Astrodynamics.Surface;
 using IO.Astrodynamics.Time;
 using Launch = IO.Astrodynamics.Maneuver.Launch;
-using Planetocentric = IO.Astrodynamics.Coordinates.Planetocentric;
 using Planetodetic = IO.Astrodynamics.Coordinates.Planetodetic;
 using Quaternion = IO.Astrodynamics.Math.Quaternion;
 using Site = IO.Astrodynamics.Surface.Site;

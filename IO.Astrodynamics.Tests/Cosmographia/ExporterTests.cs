@@ -124,7 +124,7 @@ public class ExporterTests
     public async Task ExportWithObservationAndSitePropagation()
     {
         Astrodynamics.Mission.Mission mission = new Astrodynamics.Mission.Mission("Cosmographia");
-        Scenario scenario = new Scenario("export3", mission, new Window(DateTimeExtension.J2000.AddYears(21), DateTimeExtension.J2000.AddYears(21).AddDays(1.0)));
+        Scenario scenario = new Scenario("SiteObservation", mission, new Window(DateTimeExtension.J2000.AddYears(21), DateTimeExtension.J2000.AddYears(21).AddDays(1.0)));
         Site site3 = new Site(14, "DSS-14", TestHelpers.EarthAtJ2000);
         Site site = new Site(34, "DSS-34", TestHelpers.EarthAtJ2000);
         Site site2 = new Site(65, "DSS-65", TestHelpers.EarthAtJ2000);

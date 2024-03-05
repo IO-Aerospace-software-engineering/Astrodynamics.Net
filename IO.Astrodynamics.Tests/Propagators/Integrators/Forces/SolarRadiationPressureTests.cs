@@ -1,7 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Numerics;
-using System.Threading.Tasks;
+﻿using System.IO;
 using IO.Astrodynamics.Body;
 using IO.Astrodynamics.Body.Spacecraft;
 using IO.Astrodynamics.OrbitalParameters;

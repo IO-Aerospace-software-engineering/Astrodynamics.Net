@@ -39,14 +39,14 @@ namespace IO.Astrodynamics.Maneuver
             double e = stateVector.Eccentricity();
 
             double E = 2 * System.Math.Atan((System.Math.Sqrt((1 - e) / (1 + e))) * System.Math.Tan(deltaTrueAnomaly / 2.0));
-            double T1 = stateVector.Period().TotalSeconds;
-            double t = T1 / Constants._2PI * (E - e * System.Math.Sin(E));
+            double t1 = stateVector.Period().TotalSeconds;
+            double t = t1 / Constants._2PI * (E - e * System.Math.Sin(E));
 
-            double T2 = T1 - t / RevolutionNumber;
+            double t2 = t1 - t / RevolutionNumber;
 
             double u = stateVector.Observer.GM;
 
-            double a2 = System.Math.Pow((System.Math.Sqrt(u) * T2 / Constants._2PI), 2.0 / 3.0);
+            double a2 = System.Math.Pow((System.Math.Sqrt(u) * t2 / Constants._2PI), 2.0 / 3.0);
 
             double rp = stateVector.PerigeeVector().Magnitude();
             double ra = 2 * a2 - rp;
@@ -55,7 +55,7 @@ namespace IO.Astrodynamics.Maneuver
 
             double dv = h2 / rp - TargetOrbit.SpecificAngularMomentum().Magnitude() / rp;
 
-            ManeuverHoldDuration = TimeSpan.FromSeconds(T2 * RevolutionNumber * 0.9);
+            ManeuverHoldDuration = TimeSpan.FromSeconds(t2 * RevolutionNumber * 0.9);
             return stateVector.Velocity.Normalize() * dv;
         }
     }

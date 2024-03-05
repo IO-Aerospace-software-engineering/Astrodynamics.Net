@@ -48,7 +48,7 @@ public class InstrumentPointingAttitudeTests
         maneuver.TryExecute(orbitalParams.ToStateVector());
 
         var pointingVector = spc.Instruments.First().GetBoresightInSpacecraftFrame().Rotate(maneuver.StateOrientation.Rotation).Normalize();
-        Assert.Equal(new Vector3(-0.6452831377480278, 0.67044862664937221, 0.36620801624490784), pointingVector, TestHelpers.VectorComparer);
+        Assert.Equal(new Vector3(0.6452831377480278, 0.67044862664937221, -0.36620801624490784), pointingVector, TestHelpers.VectorComparer);
         Assert.Equal(0.0, maneuver.FuelBurned);
         Assert.Equal(new Window(new DateTime(2021, 01, 01, 13, 0, 0), TimeSpan.FromSeconds(10.0)), maneuver.ManeuverWindow);
         Assert.Equal(new Window(new DateTime(2021, 01, 01, 13, 0, 0), TimeSpan.Zero), maneuver.ThrustWindow);

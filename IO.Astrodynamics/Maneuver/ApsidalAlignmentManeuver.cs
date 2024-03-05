@@ -137,31 +137,5 @@ namespace IO.Astrodynamics.Maneuver
         {
             return GetQTrueAnomaly(stateVector) - GetTheta(stateVector);
         }
-
-        private bool IsIntersectsP(StateVector stateVector)
-        {
-            double v = GetPTrueAnomaly(stateVector);
-
-            var trueAnomalyVector = stateVector.ToStateVector(v).Position;
-            if (trueAnomalyVector.Angle(stateVector.Position) < 0.0)
-            {
-                return true;
-            }
-
-            return false;
-        }
-
-        private bool IsIntersectsQ(StateVector stateVector)
-        {
-            double v = GetQTrueAnomaly(stateVector);
-
-            var trueAnomalyVector = stateVector.ToStateVector(v).Position;
-            if (trueAnomalyVector.Angle(stateVector.Position) < 0.0)
-            {
-                return true;
-            }
-
-            return false;
-        }
     }
 }

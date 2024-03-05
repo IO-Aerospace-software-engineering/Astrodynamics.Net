@@ -1,5 +1,3 @@
-using System.Numerics;
-
 namespace IO.Astrodynamics.Math
 {
     public readonly record struct Vector3

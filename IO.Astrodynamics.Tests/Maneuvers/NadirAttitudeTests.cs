@@ -6,7 +6,6 @@ using IO.Astrodynamics.Math;
 using IO.Astrodynamics.OrbitalParameters;
 using IO.Astrodynamics.Time;
 using Xunit;
-using ZenithAttitude = IO.Astrodynamics.Maneuver.ZenithAttitude;
 
 namespace IO.Astrodynamics.Tests.Maneuvers;
 

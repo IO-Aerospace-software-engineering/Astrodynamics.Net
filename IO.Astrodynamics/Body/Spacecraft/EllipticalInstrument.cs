@@ -10,7 +10,6 @@ namespace IO.Astrodynamics.Body.Spacecraft;
 
 public class EllipticalInstrument : Instrument
 {
-    private const string _kernelFile = "";
     public double CrossAngle { get; }
 
     internal EllipticalInstrument(Spacecraft spacecraft, int naifId, string name, string model, double fieldOfView, double crossAngle, Vector3 boresight, Vector3 refVector,

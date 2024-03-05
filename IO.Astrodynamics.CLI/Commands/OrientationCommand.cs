@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Cocona;
-using IO.Astrodynamics.Body;
-using IO.Astrodynamics.Body.Spacecraft;
 using IO.Astrodynamics.CLI.Commands.Parameters;
 using IO.Astrodynamics.Frames;
 using IO.Astrodynamics.OrbitalParameters;

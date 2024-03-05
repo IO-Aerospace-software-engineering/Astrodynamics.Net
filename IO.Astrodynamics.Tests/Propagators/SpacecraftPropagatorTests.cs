@@ -3,7 +3,6 @@
 using System;
 using System.Linq;
 using IO.Astrodynamics.Body.Spacecraft;
-using IO.Astrodynamics.DTO;
 using IO.Astrodynamics.Math;
 using IO.Astrodynamics.Time;
 using Xunit;

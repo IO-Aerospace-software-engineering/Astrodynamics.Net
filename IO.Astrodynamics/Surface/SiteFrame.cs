@@ -3,8 +3,6 @@
 using System;
 using System.Globalization;
 using System.IO;
-using System.Reflection;
-using System.Resources;
 using System.Threading.Tasks;
 using IO.Astrodynamics.Frames;
 

@@ -3,10 +3,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
 using IO.Astrodynamics.Body;
 using IO.Astrodynamics.Body.Spacecraft;
-using IO.Astrodynamics.Frames;
 using IO.Astrodynamics.OrbitalParameters;
 using IO.Astrodynamics.Propagator.Forces;
 using IO.Astrodynamics.Propagator.Integrators;
@@ -44,14 +42,14 @@ public class SpacecraftPropagator
     public SpacecraftPropagator(Window window, Spacecraft spacecraft, IEnumerable<CelestialBody> additionalCelestialBodies, bool includeAtmosphericDrag,
         bool includeSolarRadiationPressure, TimeSpan deltaT)
     {
+        Spacecraft = spacecraft ?? throw new ArgumentNullException(nameof(spacecraft));
         Window = window;
         CelestialBodies = new[] { spacecraft.InitialOrbitalParameters.Observer as CelestialBody }.Concat(additionalCelestialBodies ?? Array.Empty<CelestialBody>());
         IncludeAtmosphericDrag = includeAtmosphericDrag;
         IncludeSolarRadiationPressure = includeSolarRadiationPressure;
         DeltaT = deltaT;
-        Spacecraft = spacecraft ?? throw new ArgumentNullException(nameof(spacecraft));
 
-        var forces = InitializeForces(includeAtmosphericDrag, includeSolarRadiationPressure);
+        var forces = InitializeForces(IncludeAtmosphericDrag, IncludeSolarRadiationPressure);
 
         Integrator = new VVIntegrator(forces, DeltaT, Spacecraft.InitialOrbitalParameters.AtEpoch(Window.StartDate).ToStateVector());
         _svCacheSize = (uint)Window.Length.TotalSeconds / (uint)DeltaT.TotalSeconds;
