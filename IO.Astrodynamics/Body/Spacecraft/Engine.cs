@@ -1,12 +1,11 @@
 using System;
 using IO.Astrodynamics.Math;
+using IO.Astrodynamics.Physics;
 
 namespace IO.Astrodynamics.Body.Spacecraft
 {
     public class Engine : IEquatable<Engine>
     {
-        
-
         public string Name { get; }
         public string Model { get; }
         public double ISP { get; }
@@ -50,7 +49,7 @@ namespace IO.Astrodynamics.Body.Spacecraft
 
         public double Ignite(in Vector3 deltaV)
         {
-            var fuelBurned = Maneuver.Maneuver.ComputeDeltaM(ISP, FuelTank.Spacecraft.GetTotalMass(), deltaV.Magnitude());
+            var fuelBurned = Tsiolkovski.DeltaM(ISP, FuelTank.Spacecraft.GetTotalMass(), deltaV.Magnitude());
             FuelTank.Burn(fuelBurned);
             return fuelBurned;
         }

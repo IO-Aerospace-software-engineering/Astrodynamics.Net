@@ -2,6 +2,7 @@ using System;
 using IO.Astrodynamics.Body.Spacecraft;
 using IO.Astrodynamics.Math;
 using IO.Astrodynamics.OrbitalParameters;
+using IO.Astrodynamics.Physics;
 using IO.Astrodynamics.Time;
 
 namespace IO.Astrodynamics.Maneuver
@@ -43,7 +44,7 @@ namespace IO.Astrodynamics.Maneuver
             stateVector.UpdateVelocity(stateVector.Velocity + DeltaV);
 
             //Compute thrust windows and maneuver windows
-            var thrustDuration = ComputeDeltaT(Engine.ISP, Engine.FuelTank.Spacecraft.GetTotalMass() + FuelBurned, Engine.FuelFlow, DeltaV.Magnitude());
+            var thrustDuration = Tsiolkovski.DeltaT(Engine.ISP, Engine.FuelTank.Spacecraft.GetTotalMass() + FuelBurned, Engine.FuelFlow, DeltaV.Magnitude());
             ThrustWindow = new Window(stateVector.Epoch - thrustDuration * 0.666, thrustDuration);
             ManeuverWindow = new Window(ThrustWindow.Value.StartDate, ManeuverHoldDuration).Merge(ThrustWindow.Value);
 

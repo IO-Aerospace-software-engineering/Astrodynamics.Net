@@ -106,19 +106,6 @@ namespace IO.Astrodynamics.Maneuver
         protected abstract Vector3 Execute(StateVector vector);
         public abstract (StateVector sv, StateOrientation so) TryExecute(StateVector stateVector);
 
-        public static double ComputeDeltaV(double isp, double initialMass, double finalMass)
-        {
-            return isp * Constants.g0 * System.Math.Log(initialMass / finalMass);
-        }
-
-        public static TimeSpan ComputeDeltaT(double isp, double initialMass, double fuelFlow, double deltaV)
-        {
-            return TimeSpan.FromSeconds(initialMass / fuelFlow * (1 - System.Math.Exp(-deltaV / (isp * Constants.g0))));
-        }
-
-        public static double ComputeDeltaM(double isp, double initialMass, double deltaV)
-        {
-            return initialMass * (1 - System.Math.Exp(-deltaV / (isp * Constants.g0)));
-        }
+        
     }
 }
