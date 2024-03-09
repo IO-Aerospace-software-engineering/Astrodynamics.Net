@@ -12,6 +12,7 @@ namespace IO.Astrodynamics.Body.Spacecraft
 {
     public class Spacecraft : CelestialItem, IOrientable
     {
+        //Todo embed propagator
         public static readonly Vector3 Front = Vector3.VectorY;
         public static readonly Vector3 Back = Front.Inverse();
         public static readonly Vector3 Right = Vector3.VectorX;
