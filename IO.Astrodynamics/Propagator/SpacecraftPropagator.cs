@@ -51,7 +51,10 @@ public class SpacecraftPropagator
 
         var forces = InitializeForces(IncludeAtmosphericDrag, IncludeSolarRadiationPressure);
 
+        
         Integrator = new VVIntegrator(forces, DeltaT, Spacecraft.InitialOrbitalParameters.AtEpoch(Window.StartDate).ToStateVector());
+        
+        //Todo add DeltaT at the end to ensure _svCacheSize fill whole window
         _svCacheSize = (uint)Window.Length.TotalSeconds / (uint)DeltaT.TotalSeconds;
         _svCache = new StateVector[_svCacheSize];
         StateVector stateVector = Spacecraft.InitialOrbitalParameters.AtEpoch(Window.StartDate).ToStateVector();
