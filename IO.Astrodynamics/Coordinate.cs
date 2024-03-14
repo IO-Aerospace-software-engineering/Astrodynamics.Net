@@ -16,5 +16,5 @@ public enum Coordinate
     [Description("LONGITUDE")] Longitude,
     [Description("RADIUS")] Radius,
     [Description("RANGE")] Range,
-    [Description("RIGHT ASCENSION")] RightAscenssion
+    [Description("RIGHT ASCENSION")] RightAscension
 }
