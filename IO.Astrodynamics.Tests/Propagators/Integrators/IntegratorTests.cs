@@ -36,7 +36,6 @@ public class IntegratorTests
         forces.Add(new AtmosphericDrag(spc));
         forces.Add(new SolarRadiationPressure(spc));
         VVIntegrator vvIntegrator = new VVIntegrator(forces, TimeSpan.FromSeconds(1.0), spc.InitialOrbitalParameters.ToStateVector());
-        TimeSpan deltaT = TimeSpan.FromSeconds(1.0);
         StateVector[] data = new StateVector[2];
         Array.Fill(data, spc.InitialOrbitalParameters.ToStateVector(), 0, 2);
         vvIntegrator.Integrate(data, 1);

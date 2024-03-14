@@ -1,6 +1,7 @@
 ﻿// Copyright 2023. Sylvain Guillet (sylvain.guillet@tutamail.com)
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -33,6 +34,7 @@ namespace IO.Astrodynamics;
 public class API
 {
     private readonly IMapper _mapper;
+    private readonly List<string> _kernels = [];
 
     /// <summary>
     ///     Instantiate API
@@ -152,6 +154,11 @@ public class API
         }
     }
 
+    public IEnumerable<string> GetLoadedKernels()
+    {
+        return _kernels;
+    }
+
     /// <summary>
     ///     Load kernel at given path
     /// </summary>
@@ -161,12 +168,14 @@ public class API
         if (path == null) throw new ArgumentNullException(nameof(path));
         lock (lockObject)
         {
-            if (path.Exists)
+            bool exists = _kernels.Any(x => path.FullName.Contains(x));
+            if (path.Exists && !exists)
             {
                 if (!LoadKernelsProxy(path.FullName))
                 {
                     throw new InvalidOperationException($"Kernel {path.FullName} can't be loaded. You can have more details on standard output");
                 }
+                _kernels.Add(path.FullName);
             }
         }
     }
@@ -186,6 +195,8 @@ public class API
                 {
                     throw new InvalidOperationException($"Kernel {path.FullName} can't be unloaded. You can have more details on standard output");
                 }
+
+                _kernels.RemoveAll(x=>x.Contains(path.FullName));
             }
         }
     }
@@ -220,7 +231,7 @@ public class API
             var windows = launchDto.Windows.Where(x => x.Start != 0 && x.End != 0).ToArray();
 
             //Build result 
-            List<LaunchWindow> launchWindows = new List<LaunchWindow>();
+            List<LaunchWindow> launchWindows = [];
 
             for (int i = 0; i < windows.Length; i++)
             {
@@ -581,7 +592,7 @@ public class API
         lock (lockObject)
         {
             const int messageSize = 10000;
-            List<OrbitalParameters.OrbitalParameters> orbitalParameters = new List<OrbitalParameters.OrbitalParameters>();
+            List<OrbitalParameters.OrbitalParameters> orbitalParameters = [];
             int occurences = (int)(searchWindow.Length / stepSize / messageSize);
 
 

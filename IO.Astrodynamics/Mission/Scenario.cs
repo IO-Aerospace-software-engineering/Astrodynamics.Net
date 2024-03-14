@@ -105,42 +105,12 @@ namespace IO.Astrodynamics.Mission
 
                 foreach (var spacecraft in _spacecrafts)
                 {
-                    var spacecraftDirectory = SpacecraftDirectory.CreateSubdirectory(spacecraft.Name);
-                    Propagator.SpacecraftPropagator spacecraftPropagator = new Propagator.SpacecraftPropagator(Window, spacecraft, _additionalCelestialBodies,
-                        includeAtmosphericDrag, includeSolarRadiationPressure, propagatorStepSize);
-                    var res = spacecraftPropagator.Propagate();
-                    //Write frame
-                    await spacecraft.WriteFrameAsync(new FileInfo(Path.Combine(spacecraftDirectory.CreateSubdirectory("Frames").FullName,
-                        spacecraft.Name + ".tf")));
-
-
-                    //write instrument frame and kernel 
-                    var instrumentDirectory = spacecraftDirectory.CreateSubdirectory("Instruments");
-                    foreach (var instrument in spacecraft.Instruments)
-                    {
-                        await instrument.WriteFrameAsync(new FileInfo(Path.Combine(instrumentDirectory.FullName, instrument.Name + ".tf")));
-                        await instrument.WriteKernelAsync(new FileInfo(Path.Combine(instrumentDirectory.FullName, instrument.Name + ".ti")));
-                    }
-
-                    //Write clock
-                    var clockFile = new FileInfo(Path.Combine(spacecraftDirectory.CreateSubdirectory("Clocks").FullName, spacecraft.Name + ".tsc"));
-                    await spacecraft.Clock.WriteAsync(clockFile);
-
-                    //Write Ephemeris
-                    API.Instance.WriteEphemeris(new FileInfo(Path.Combine(spacecraftDirectory.CreateSubdirectory("Ephemeris").FullName, spacecraft.Name + ".spk")), spacecraft,
-                        res.stateVectors);
-
-                    //Clock is loaded because is needed by orientation writer
-                    API.Instance.LoadKernels(clockFile);
-                    //Write Orientation
-                    API.Instance.WriteOrientation(new FileInfo(Path.Combine(spacecraftDirectory.CreateSubdirectory("Orientation").FullName, spacecraft.Name + ".ck")), spacecraft,
-                        res.stateOrientations);
+                    await spacecraft.PropagateAsync(Window, _additionalCelestialBodies, includeAtmosphericDrag, includeSolarRadiationPressure, propagatorStepSize,SpacecraftDirectory);
                 }
             }
             finally
             {
                 API.Instance.UnloadKernels(SiteDirectory);
-                API.Instance.UnloadKernels(SpacecraftDirectory);
             }
 
             ScenarioSummary scenarioSummary = new ScenarioSummary(this.Window, SiteDirectory, SpacecraftDirectory);

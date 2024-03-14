@@ -175,6 +175,8 @@ namespace IO.Astrodynamics.Surface
         {
             API.Instance.WriteEphemeris(outputFile, this, stateVectors);
         }
+        
+        
 
         public bool Equals(Site other)
         {

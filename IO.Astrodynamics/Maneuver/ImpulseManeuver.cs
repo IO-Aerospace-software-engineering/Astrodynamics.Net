@@ -54,5 +54,11 @@ namespace IO.Astrodynamics.Maneuver
             //return computed state vector and state orientation
             return (stateVector, new StateOrientation(Spacecraft.Front.To(DeltaV), Vector3.Zero, stateVector.Epoch, stateVector.Frame));
         }
+
+        internal override void Reset()
+        {
+            DeltaV = Vector3.Zero;
+            base.Reset();
+        }
     }
 }
