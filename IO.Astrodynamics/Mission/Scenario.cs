@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using IO.Astrodynamics.Body;
 using IO.Astrodynamics.Frames;
 using IO.Astrodynamics.Surface;
 using IO.Astrodynamics.Time;
@@ -21,11 +22,15 @@ namespace IO.Astrodynamics.Mission
         public IReadOnlyCollection<Body.Spacecraft.Spacecraft> Spacecrafts => _spacecrafts;
         private readonly HashSet<Site> _sites = new();
         public IReadOnlyCollection<Site> Sites => _sites;
+
+        private readonly HashSet<Star> _stars = new();
+        public IReadOnlyCollection<Star> Stars => _stars;
         public DirectoryInfo RootDirectory { get; private set; }
         public DirectoryInfo SpacecraftDirectory { get; private set; }
         public DirectoryInfo SiteDirectory { get; private set; }
+        public DirectoryInfo StarDirectory { get; private set; }
 
-        public bool IsSimulated => RootDirectory?.Exists == true && (SpacecraftDirectory?.Exists == true || SiteDirectory?.Exists == true);
+        public bool IsSimulated => RootDirectory?.Exists == true && (SpacecraftDirectory?.Exists == true || SiteDirectory?.Exists == true || StarDirectory?.Exists == true);
 
         /// <summary>
         /// Constructor
@@ -80,6 +85,12 @@ namespace IO.Astrodynamics.Mission
             _sites.Add(site);
         }
 
+        public void AddStar(Star star)
+        {
+            if (star == null) throw new ArgumentNullException(nameof(star));
+            _stars.Add(star);
+        }
+
         /// <summary>
         /// Propagate this scenario
         /// </summary>
@@ -91,56 +102,58 @@ namespace IO.Astrodynamics.Mission
         public async Task<ScenarioSummary> SimulateAsync(DirectoryInfo outputDirectory, bool includeAtmosphericDrag, bool includeSolarRadiationPressure,
             TimeSpan propagatorStepSize)
         {
-            InitializeDirectories(outputDirectory);
-
-            try
+            if (_spacecrafts.Count == 0 && _sites.Count == 0 && _stars.Count == 0)
             {
+                throw new InvalidOperationException("There is nothing to simulate");
+            }
+
+            InitializeDirectories(outputDirectory);
+            if (_sites.Count > 0)
+            {
+                //step size 1s up to 1000.0s window length
+                //step size variable from 1000.0s up to 60000s window length
+                //step size 60s after 60000s window length
+                var siteStepSize = Window.Length / 1000.0;
+                if (siteStepSize < propagatorStepSize)
+                {
+                    siteStepSize = propagatorStepSize;
+                }
+                else if (siteStepSize > TimeSpan.FromMinutes(1.0))
+                {
+                    siteStepSize = TimeSpan.FromMinutes(1.0);
+                }
+
                 foreach (var site in _sites)
                 {
-                    var siteDirectory = SiteDirectory.CreateSubdirectory(site.Name);
-                    var siteEphemeris = site.GetEphemeris(Window, site.CelestialBody, Frame.ICRF, Aberration.None, propagatorStepSize).Select(x => x.ToStateVector());
-                    await site.WriteFrameAsync(new FileInfo(Path.Combine(siteDirectory.CreateSubdirectory("Frames").FullName, site.Name + ".tf")));
-                    site.WriteEphemeris(new FileInfo(Path.Combine(siteDirectory.CreateSubdirectory("Ephemeris").FullName, site.Name + ".spk")), siteEphemeris);
-                }
-
-                foreach (var spacecraft in _spacecrafts)
-                {
-                    var spacecraftDirectory = SpacecraftDirectory.CreateSubdirectory(spacecraft.Name);
-                    Propagator.SpacecraftPropagator spacecraftPropagator = new Propagator.SpacecraftPropagator(Window, spacecraft, _additionalCelestialBodies,
-                        includeAtmosphericDrag, includeSolarRadiationPressure, propagatorStepSize);
-                    var res = spacecraftPropagator.Propagate();
-                    //Write frame
-                    await spacecraft.WriteFrameAsync(new FileInfo(Path.Combine(spacecraftDirectory.CreateSubdirectory("Frames").FullName,
-                        spacecraft.Name + ".tf")));
-
-
-                    //write instrument frame and kernel 
-                    var instrumentDirectory = spacecraftDirectory.CreateSubdirectory("Instruments");
-                    foreach (var instrument in spacecraft.Instruments)
-                    {
-                        await instrument.WriteFrameAsync(new FileInfo(Path.Combine(instrumentDirectory.FullName, instrument.Name + ".tf")));
-                        await instrument.WriteKernelAsync(new FileInfo(Path.Combine(instrumentDirectory.FullName, instrument.Name + ".ti")));
-                    }
-
-                    //Write clock
-                    var clockFile = new FileInfo(Path.Combine(spacecraftDirectory.CreateSubdirectory("Clocks").FullName, spacecraft.Name + ".tsc"));
-                    await spacecraft.Clock.WriteAsync(clockFile);
-
-                    //Write Ephemeris
-                    API.Instance.WriteEphemeris(new FileInfo(Path.Combine(spacecraftDirectory.CreateSubdirectory("Ephemeris").FullName, spacecraft.Name + ".spk")), spacecraft,
-                        res.stateVectors);
-
-                    //Clock is loaded because is needed by orientation writer
-                    API.Instance.LoadKernels(clockFile);
-                    //Write Orientation
-                    API.Instance.WriteOrientation(new FileInfo(Path.Combine(spacecraftDirectory.CreateSubdirectory("Orientation").FullName, spacecraft.Name + ".ck")), spacecraft,
-                        res.stateOrientations);
+                    await site.PropagateAsync(Window, siteStepSize, SiteDirectory);
                 }
             }
-            finally
+
+            if (_stars.Count > 0)
             {
-                API.Instance.UnloadKernels(SiteDirectory);
-                API.Instance.UnloadKernels(SpacecraftDirectory);
+                //step size 1s up to 1000.0s window length
+                //step size variable from 1000.0s up to 60000s window length
+                //step size 60s after 60000s window length
+                var starStepSize = Window.Length / 1000.0;
+                if (starStepSize < propagatorStepSize)
+                {
+                    starStepSize = propagatorStepSize;
+                }
+                else if (starStepSize > TimeSpan.FromMinutes(1.0))
+                {
+                    starStepSize = TimeSpan.FromMinutes(1.0);
+                }
+
+                foreach (var star in _stars)
+                {
+                    await star.PropagateAsync(Window, starStepSize, StarDirectory);
+                }
+            }
+
+
+            foreach (var spacecraft in _spacecrafts)
+            {
+                await spacecraft.PropagateAsync(Window, _additionalCelestialBodies, includeAtmosphericDrag, includeSolarRadiationPressure, propagatorStepSize, SpacecraftDirectory);
             }
 
             ScenarioSummary scenarioSummary = new ScenarioSummary(this.Window, SiteDirectory, SpacecraftDirectory);
@@ -157,15 +170,13 @@ namespace IO.Astrodynamics.Mission
             RootDirectory = null;
             SpacecraftDirectory = null;
             SiteDirectory = null;
+            StarDirectory = null;
 
-            if (_spacecrafts.Count == 0 && _sites.Count == 0)
-            {
-                throw new InvalidOperationException("There is nothing to simulate");
-            }
 
             RootDirectory = outputDirectory.CreateSubdirectory(Mission.Name).CreateSubdirectory(this.Name);
             SpacecraftDirectory = RootDirectory.CreateSubdirectory("Spacecrafts");
             SiteDirectory = RootDirectory.CreateSubdirectory("Sites");
+            StarDirectory = RootDirectory.CreateSubdirectory("Stars");
         }
 
         public bool Equals(Scenario other)

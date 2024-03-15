@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using IO.Astrodynamics.Body;
 using IO.Astrodynamics.Coordinates;
 using IO.Astrodynamics.Time;
@@ -73,12 +74,12 @@ public class StarTests
     }
 
     [Fact]
-    public void Propagate()
+    public async Task Propagate()
     {
         var epoch = new DateTime(2001, 1, 1);
         var observer = new Barycenter(0);
         var star = new Star(1, "star1", 1E+30, "spec", 2, 0.3792, new Equatorial(1, 1), 0.1, 0.1, 0, 0, 0, 0, epoch);
-        star.Propagate(new Window(epoch, epoch + TimeSpan.FromDays(365 * 4)), TimeSpan.FromDays(365));
+        await star.PropagateAsync(new Window(epoch, epoch + TimeSpan.FromDays(365 * 4)), TimeSpan.FromDays(365),Constants.OutputPath);
         var eph0 = star.GetEphemeris(epoch, observer, Frames.Frame.ICRF, Aberration.None);
         var eph1 = star.GetEphemeris(epoch.Add(TimeSpan.FromDays(365)), observer, Frames.Frame.ICRF, Aberration.None);
         var eph2 = star.GetEphemeris(epoch.Add(TimeSpan.FromDays(365 + 365)), observer, Frames.Frame.ICRF, Aberration.None);

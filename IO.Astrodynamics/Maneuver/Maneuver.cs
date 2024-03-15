@@ -58,7 +58,6 @@ namespace IO.Astrodynamics.Maneuver
         public double FuelBurned { get; internal set; }
 
         protected bool IsInbound { get; set; }
-        protected Vector3 ManeuverPoint { get; set; }
 
 
         protected Maneuver(DateTime minimumEpoch, TimeSpan maneuverHoldDuration, Engine engine)
@@ -106,6 +105,12 @@ namespace IO.Astrodynamics.Maneuver
         protected abstract Vector3 Execute(StateVector vector);
         public abstract (StateVector sv, StateOrientation so) TryExecute(StateVector stateVector);
 
-        
+        internal virtual void Reset()
+        {
+            IsInbound = false;
+            FuelBurned = 0.0;
+            ManeuverWindow = ThrustWindow = null;
+            NextManeuver?.Reset();
+        }
     }
 }

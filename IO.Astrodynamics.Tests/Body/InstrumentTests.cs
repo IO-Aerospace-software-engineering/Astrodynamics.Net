@@ -87,8 +87,7 @@ namespace IO.Astrodynamics.Tests.Body
 
             //Execute scenario
             await scenario.SimulateAsync(root, false, false, TimeSpan.FromSeconds(1.0));
-            API.Instance.LoadKernels(scenario.SpacecraftDirectory);
-            API.Instance.LoadKernels(scenario.SiteDirectory);
+            
             //Find windows when the earth is in field of view of camera 600 
             var res = spacecraft.Instruments.First().FindWindowsInFieldOfViewConstraint(
                 new Window(DateTimeExtension.CreateTDB(676555200.0), DateTimeExtension.CreateTDB(676561646.0)), spacecraft,

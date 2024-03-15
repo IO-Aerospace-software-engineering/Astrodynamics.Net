@@ -316,8 +316,6 @@ public class APITest
         var root = Constants.OutputPath.CreateSubdirectory(scenario.Mission.Name).CreateSubdirectory(scenario.Name);
         await scenario.SimulateAsync(root, false, false, TimeSpan.FromSeconds(1.0));
 
-        API.Instance.LoadKernels(scenario.SpacecraftDirectory);
-        API.Instance.LoadKernels(scenario.SiteDirectory);
         //Read spacecraft orientation
         var res = API.Instance.ReadOrientation(window, spacecraft, TimeSpan.FromSeconds(10.0), Frames.Frame.ICRF,
             TimeSpan.FromSeconds(10.0)).ToArray();

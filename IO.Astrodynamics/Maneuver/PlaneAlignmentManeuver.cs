@@ -75,5 +75,12 @@ namespace IO.Astrodynamics.Maneuver
             //Compute delta V vector
             return rotateVecor * deltaV;
         }
+
+        internal override void Reset()
+        {
+            IsAscendingNode = null;
+            RelativeInclination = 0.0;  
+            base.Reset();
+        }
     }
 }

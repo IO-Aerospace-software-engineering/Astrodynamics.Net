@@ -5,12 +5,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using IO.Astrodynamics.Frames;
 using IO.Astrodynamics.Math;
-using IO.Astrodynamics.OrbitalParameters;
+using IO.Astrodynamics.Propagator;
+using IO.Astrodynamics.Time;
+using StateOrientation = IO.Astrodynamics.OrbitalParameters.StateOrientation;
 
 
 namespace IO.Astrodynamics.Body.Spacecraft
 {
-    public class Spacecraft : CelestialItem, IOrientable
+    public class Spacecraft : CelestialItem, IOrientable, IDisposable
     {
         public static readonly Vector3 Front = Vector3.VectorY;
         public static readonly Vector3 Back = Front.Inverse();
@@ -22,6 +24,7 @@ namespace IO.Astrodynamics.Body.Spacecraft
         private readonly HashSet<Maneuver.Maneuver> _executedManeuvers = new HashSet<Maneuver.Maneuver>();
         public IReadOnlyCollection<Maneuver.Maneuver> ExecutedManeuvers => _executedManeuvers;
         public Maneuver.Maneuver StandbyManeuver { get; private set; }
+        public Maneuver.Maneuver InitialManeuver { get; private set; }
         public Spacecraft Parent { get; private set; }
         public Spacecraft Child { get; private set; }
         public Clock Clock { get; }
@@ -42,6 +45,8 @@ namespace IO.Astrodynamics.Body.Spacecraft
         public Frame Frame { get; }
         public double SectionalArea { get; }
         public double DragCoefficient { get; }
+        public DirectoryInfo PropagationOutput { get; private set; }
+        public bool IsPropagated => PropagationOutput != null;
 
         /// <summary>
         /// Spacecraft constructor
@@ -265,9 +270,19 @@ namespace IO.Astrodynamics.Body.Spacecraft
                 _executedManeuvers.Add(StandbyManeuver);
             }
 
+            if (StandbyManeuver == null)
+            {
+                InitialManeuver = maneuver;
+            }
+
             StandbyManeuver = maneuver;
         }
 
+        /// <summary>
+        /// Set the initial orbital parameter
+        /// </summary>
+        /// <param name="orbitalParameters"></param>
+        /// <exception cref="ArgumentNullException"></exception>
         public void SetInitialOrbitalParameters(OrbitalParameters.OrbitalParameters orbitalParameters)
         {
             if (orbitalParameters == null) throw new ArgumentNullException(nameof(orbitalParameters));
@@ -298,9 +313,102 @@ namespace IO.Astrodynamics.Body.Spacecraft
             return new SpacecraftSummary(this, _executedManeuvers);
         }
 
-        internal async Task WriteFrameAsync(FileInfo outputFile)
+        /// <summary>
+        /// Write frame
+        /// </summary>
+        /// <param name="outputFile"></param>
+        private async Task WriteFrameAsync(FileInfo outputFile)
         {
             await (Frame as SpacecraftFrame)!.WriteAsync(outputFile);
+        }
+
+        /// <summary>
+        /// Propagate spacecraft
+        /// </summary>
+        /// <param name="window"></param>
+        /// <param name="additionalCelestialBodies">Celestial bodies involved as perturbation bodies</param>
+        /// <param name="includeAtmosphericDrag"></param>
+        /// <param name="includeSolarRadiationPressure"></param>
+        /// <param name="propagatorStepSize"></param>
+        /// <param name="outputDirectory"></param>
+        public async Task PropagateAsync(Window window, IEnumerable<CelestialBody> additionalCelestialBodies, bool includeAtmosphericDrag,
+            bool includeSolarRadiationPressure, TimeSpan propagatorStepSize, DirectoryInfo outputDirectory)
+        {
+            ResetPropagation();
+            var propagator = new SpacecraftPropagator(window, this, additionalCelestialBodies, includeAtmosphericDrag, includeSolarRadiationPressure, propagatorStepSize);
+            var res = propagator.Propagate();
+            PropagationOutput = outputDirectory.CreateSubdirectory(Name);
+
+            //Write frame
+            await WriteFrameAsync(new FileInfo(Path.Combine(PropagationOutput.CreateSubdirectory("Frames").FullName, Name + ".tf")));
+
+
+            //write instrument frame and kernel 
+            var instrumentDirectory = PropagationOutput.CreateSubdirectory("Instruments");
+            foreach (var instrument in Instruments)
+            {
+                await instrument.WriteFrameAsync(new FileInfo(Path.Combine(instrumentDirectory.FullName, instrument.Name + ".tf")));
+                await instrument.WriteKernelAsync(new FileInfo(Path.Combine(instrumentDirectory.FullName, instrument.Name + ".ti")));
+            }
+
+            //Write clock
+            var clockFile = new FileInfo(Path.Combine(PropagationOutput.CreateSubdirectory("Clocks").FullName, Name + ".tsc"));
+            await Clock.WriteAsync(clockFile);
+
+            //Write Ephemeris
+            if (API.Instance.WriteEphemeris(new FileInfo(Path.Combine(PropagationOutput.CreateSubdirectory("Ephemeris").FullName, Name + ".spk")), this,
+                    res.stateVectors))
+            {
+                //Clock is loaded because is needed by orientation writer
+                API.Instance.LoadKernels(clockFile);
+                //Write Orientation
+                if (API.Instance.WriteOrientation(new FileInfo(Path.Combine(PropagationOutput.CreateSubdirectory("Orientation").FullName, Name + ".ck")), this,
+                        res.stateOrientations))
+                {
+                    API.Instance.LoadKernels(PropagationOutput);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Reset propagation elements
+        /// </summary>
+        private void ResetPropagation()
+        {
+            if (IsPropagated)
+            {
+                API.Instance.UnloadKernels(PropagationOutput);
+                PropagationOutput.Delete(true);
+                PropagationOutput = null;
+            }
+
+            _executedManeuvers.Clear();
+            foreach (var fuelTank in FuelTanks)
+            {
+                fuelTank.Refuel();
+            }
+
+            InitialManeuver?.Reset();
+            StandbyManeuver = InitialManeuver;
+        }
+
+        private void ReleaseUnmanagedResources()
+        {
+            if (IsPropagated)
+            {
+                API.Instance.UnloadKernels(PropagationOutput);
+            }
+        }
+
+        public void Dispose()
+        {
+            ReleaseUnmanagedResources();
+            GC.SuppressFinalize(this);
+        }
+
+        ~Spacecraft()
+        {
+            ReleaseUnmanagedResources();
         }
     }
 }

@@ -73,5 +73,10 @@ namespace IO.Astrodynamics.Body.Spacecraft
         {
             return !Equals(left, right);
         }
+
+        internal void Refuel()
+        {
+            Quantity = InitialQuantity;
+        }
     }
 }

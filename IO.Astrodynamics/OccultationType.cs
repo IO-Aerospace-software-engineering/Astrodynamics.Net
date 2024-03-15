@@ -10,5 +10,5 @@ public enum OccultationType
     [Description("ANNULAR")] Annular,
     [Description("PARTIAL")] Partial,
     [Description("ANY")] Any,
-    [Description("NONE")] None,
+    [Description("NONE")] None
 }

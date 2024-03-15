@@ -1,12 +1,12 @@
 ﻿// Copyright 2023. Sylvain Guillet (sylvain.guillet@tutamail.com)
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using AutoMapper;
 using IO.Astrodynamics.Converters;
 using IO.Astrodynamics.DTO;
 using IO.Astrodynamics.Body;
@@ -32,14 +32,13 @@ namespace IO.Astrodynamics;
 /// </summary>
 public class API
 {
-    private readonly IMapper _mapper;
+    private readonly List<FileSystemInfo> _kernels = [];
 
     /// <summary>
     ///     Instantiate API
     /// </summary>
     private API()
     {
-        _mapper = ProfilesConfiguration.Instance.Mapper;
         NativeLibrary.SetDllImportResolver(typeof(API).Assembly, Resolver);
     }
 
@@ -152,6 +151,11 @@ public class API
         }
     }
 
+    public IEnumerable<FileSystemInfo> GetLoadedKernels()
+    {
+        return _kernels;
+    }
+
     /// <summary>
     ///     Load kernel at given path
     /// </summary>
@@ -159,14 +163,24 @@ public class API
     public void LoadKernels(FileSystemInfo path)
     {
         if (path == null) throw new ArgumentNullException(nameof(path));
+        if (_kernels.Any(x => x.FullName == path.FullName))
+        {
+            return;
+        }
         lock (lockObject)
         {
+            var existingKernels = _kernels.Where(x => x.FullName.Contains(path.FullName)).ToArray();
+            foreach (var existingKernel in existingKernels)
+            {
+                UnloadKernels(existingKernel);
+            }
             if (path.Exists)
             {
                 if (!LoadKernelsProxy(path.FullName))
                 {
                     throw new InvalidOperationException($"Kernel {path.FullName} can't be loaded. You can have more details on standard output");
                 }
+                _kernels.Add(path);
             }
         }
     }
@@ -186,6 +200,8 @@ public class API
                 {
                     throw new InvalidOperationException($"Kernel {path.FullName} can't be unloaded. You can have more details on standard output");
                 }
+
+                _kernels.RemoveAll(x=>x.FullName.Contains(path.FullName));
             }
         }
     }
@@ -203,8 +219,8 @@ public class API
         lock (lockObject)
         {
             //Convert data
-            Launch launchDto = _mapper.Map<Launch>(launch);
-            launchDto.Window = _mapper.Map<Time.Window, Window>(window);
+            Launch launchDto = launch.Convert();
+            launchDto.Window = window.Convert();
             launchDto.LaunchSite.DirectoryPath = outputDirectory.CreateSubdirectory("Sites").FullName;
             launchDto.RecoverySite.DirectoryPath = outputDirectory.CreateSubdirectory("Sites").FullName;
 
@@ -220,11 +236,11 @@ public class API
             var windows = launchDto.Windows.Where(x => x.Start != 0 && x.End != 0).ToArray();
 
             //Build result 
-            List<LaunchWindow> launchWindows = new List<LaunchWindow>();
+            List<LaunchWindow> launchWindows = [];
 
             for (int i = 0; i < windows.Length; i++)
             {
-                launchWindows.Add(new LaunchWindow(_mapper.Map<Window, Time.Window>(windows[i]),
+                launchWindows.Add(new LaunchWindow(windows[i].Convert(),
                     launchDto.InertialInsertionVelocity[i], launchDto.NonInertialInsertionVelocity[i],
                     launchDto.InertialAzimuth[i], launchDto.NonInertialAzimuth[i]));
             }
@@ -268,9 +284,9 @@ public class API
                 windows[i] = new Window(double.NaN, double.NaN);
             }
 
-            FindWindowsOnDistanceConstraintProxy(_mapper.Map<Window>(searchWindow), observerId, targetId, relationalOperator.GetDescription(), value,
+            FindWindowsOnDistanceConstraintProxy(searchWindow.Convert(), observerId, targetId, relationalOperator.GetDescription(), value,
                 aberration.GetDescription(), stepSize.TotalSeconds, windows);
-            return _mapper.Map<Time.Window[]>(windows.Where(x => !double.IsNaN(x.Start)));
+            return windows.Where(x => !double.IsNaN(x.Start)).Select(x => x.Convert());
         }
     }
 
@@ -308,11 +324,11 @@ public class API
                 windows[i] = new Window(double.NaN, double.NaN);
             }
 
-            FindWindowsOnOccultationConstraintProxy(_mapper.Map<Window>(searchWindow), observer.NaifId, target.NaifId,
+            FindWindowsOnOccultationConstraintProxy(searchWindow.Convert(), observer.NaifId, target.NaifId,
                 targetFrame, targetShape.GetDescription(),
                 frontBody.NaifId, frontFrame, frontShape.GetDescription(), occultationType.GetDescription(),
                 aberration.GetDescription(), stepSize.TotalSeconds, windows);
-            return _mapper.Map<Time.Window[]>(windows.Where(x => !double.IsNaN(x.Start)));
+            return windows.Where(x => !double.IsNaN(x.Start)).Select(x => x.Convert());
         }
     }
 
@@ -349,9 +365,9 @@ public class API
                 windows[i] = new Window(double.NaN, double.NaN);
             }
 
-            FindWindowsOnOccultationConstraintProxy(_mapper.Map<Window>(searchWindow), observerId, targetId, targetFrame, targetShape.GetDescription(),
+            FindWindowsOnOccultationConstraintProxy(searchWindow.Convert(), observerId, targetId, targetFrame, targetShape.GetDescription(),
                 frontBody.NaifId, frontFrame, frontShape.GetDescription(), occultationType.GetDescription(), aberration.GetDescription(), stepSize.TotalSeconds, windows);
-            return _mapper.Map<Time.Window[]>(windows.Where(x => !double.IsNaN(x.Start)));
+            return windows.Where(x => !double.IsNaN(x.Start)).Select(x => x.Convert());
         }
     }
 
@@ -386,11 +402,11 @@ public class API
                 windows[i] = new Window(double.NaN, double.NaN);
             }
 
-            FindWindowsOnCoordinateConstraintProxy(_mapper.Map<Window>(searchWindow), observer.NaifId, target.NaifId,
+            FindWindowsOnCoordinateConstraintProxy(searchWindow.Convert(), observer.NaifId, target.NaifId,
                 frame.Name, coordinateSystem.GetDescription(),
                 coordinate.GetDescription(), relationalOperator.GetDescription(), value, adjustValue,
                 aberration.GetDescription(), stepSize.TotalSeconds, windows);
-            return _mapper.Map<Time.Window[]>(windows.Where(x => !double.IsNaN(x.Start)));
+            return windows.Where(x => !double.IsNaN(x.Start)).Select(x => x.Convert());
         }
     }
 
@@ -424,11 +440,11 @@ public class API
                 windows[i] = new Window(double.NaN, double.NaN);
             }
 
-            FindWindowsOnCoordinateConstraintProxy(_mapper.Map<Window>(searchWindow), observerId, targetId,
+            FindWindowsOnCoordinateConstraintProxy(searchWindow.Convert(), observerId, targetId,
                 frame.Name, coordinateSystem.GetDescription(),
                 coordinate.GetDescription(), relationalOperator.GetDescription(), value, adjustValue,
                 aberration.GetDescription(), stepSize.TotalSeconds, windows);
-            return _mapper.Map<Time.Window[]>(windows.Where(x => !double.IsNaN(x.Start)));
+            return windows.Where(x => !double.IsNaN(x.Start)).Select(x => x.Convert());
         }
     }
 
@@ -468,12 +484,12 @@ public class API
                 windows[i] = new Window(double.NaN, double.NaN);
             }
 
-            FindWindowsOnIlluminationConstraintProxy(_mapper.Map<Window>(searchWindow), observer.NaifId,
+            FindWindowsOnIlluminationConstraintProxy(searchWindow.Convert(), observer.NaifId,
                 illuminationSource.Name, targetBody.NaifId, fixedFrame.Name,
-                _mapper.Map<Planetodetic>(planetodetic),
+                planetodetic.Convert(),
                 illuminationType.GetDescription(), relationalOperator.GetDescription(), value, adjustValue,
                 aberration.GetDescription(), stepSize.TotalSeconds, method, windows);
-            return _mapper.Map<Time.Window[]>(windows.Where(x => !double.IsNaN(x.Start)));
+            return windows.Where(x => !double.IsNaN(x.Start)).Select(x => x.Convert());
         }
     }
 
@@ -492,12 +508,12 @@ public class API
                 windows[i] = new Window(double.NaN, double.NaN);
             }
 
-            FindWindowsOnIlluminationConstraintProxy(_mapper.Map<Window>(searchWindow), observerId,
+            FindWindowsOnIlluminationConstraintProxy(searchWindow.Convert(), observerId,
                 illuminationSourceId.ToString(), targetBodyId, fixedFrame.Name,
-                _mapper.Map<Planetodetic>(planetodetic),
+                planetodetic.Convert(),
                 illuminationType.GetDescription(), relationalOperator.GetDescription(), value, adjustValue,
                 aberration.GetDescription(), stepSize.TotalSeconds, method, windows);
-            return _mapper.Map<Time.Window[]>(windows.Where(x => !double.IsNaN(x.Start)));
+            return windows.Where(x => !double.IsNaN(x.Start)).Select(x => x.Convert());
         }
     }
 
@@ -552,12 +568,12 @@ public class API
                 windows[i] = new Window(double.NaN, double.NaN);
             }
 
-            var searchWindowDto = _mapper.Map<Window>(searchWindow);
+            var searchWindowDto = searchWindow.Convert();
 
             FindWindowsInFieldOfViewConstraintProxy(searchWindowDto, observerId, instrumentId, targetId, targetFrame.Name, targetShape.GetDescription(),
                 aberration.GetDescription(), stepSize.TotalSeconds, windows);
 
-            return _mapper.Map<IEnumerable<Time.Window>>(windows.Where(x => !double.IsNaN(x.Start)).ToArray());
+            return windows.Where(x => !double.IsNaN(x.Start)).Select(x => x.Convert());
         }
     }
 
@@ -581,7 +597,7 @@ public class API
         lock (lockObject)
         {
             const int messageSize = 10000;
-            List<OrbitalParameters.OrbitalParameters> orbitalParameters = new List<OrbitalParameters.OrbitalParameters>();
+            List<OrbitalParameters.OrbitalParameters> orbitalParameters = [];
             int occurences = (int)(searchWindow.Length / stepSize / messageSize);
 
 
@@ -591,12 +607,11 @@ public class API
                 var end = start + messageSize * stepSize > searchWindow.EndDate ? searchWindow.EndDate : (start + messageSize * stepSize) - stepSize;
                 var window = new Time.Window(start, end);
                 var stateVectors = new StateVector[messageSize];
-                ReadEphemerisProxy(_mapper.Map<Window>(window), observer.NaifId, target.NaifId, frame.Name,
+                ReadEphemerisProxy(window.Convert(), observer.NaifId, target.NaifId, frame.Name,
                     aberration.GetDescription(), stepSize.TotalSeconds,
                     stateVectors);
                 orbitalParameters.AddRange(stateVectors.Where(x => !string.IsNullOrEmpty(x.Frame)).Select(x =>
-                    new OrbitalParameters.StateVector(_mapper.Map<Vector3>(x.Position),
-                        _mapper.Map<Vector3>(x.Velocity), observer, DateTimeExtension.CreateTDB(x.Epoch), frame)));
+                    new OrbitalParameters.StateVector(x.Position.Convert(), x.Velocity.Convert(), observer, DateTimeExtension.CreateTDB(x.Epoch), frame)));
             }
 
             return orbitalParameters;
@@ -624,8 +639,7 @@ public class API
             if (frame == null) throw new ArgumentNullException(nameof(frame));
             var stateVector = ReadEphemerisAtGivenEpochProxy(epoch.SecondsFromJ2000TDB(), observer.NaifId,
                 target.NaifId, frame.Name, aberration.GetDescription());
-            return new OrbitalParameters.StateVector(_mapper.Map<Vector3>(stateVector.Position),
-                _mapper.Map<Vector3>(stateVector.Velocity), observer,
+            return new OrbitalParameters.StateVector(stateVector.Position.Convert(), stateVector.Velocity.Convert(), observer,
                 DateTimeExtension.CreateTDB(stateVector.Epoch), frame);
         }
     }
@@ -648,12 +662,11 @@ public class API
         lock (lockObject)
         {
             var stateOrientations = new StateOrientation[10000];
-            ReadOrientationProxy(_mapper.Map<Window>(searchWindow), spacecraft.NaifId, tolerance.TotalSeconds,
+            ReadOrientationProxy(searchWindow.Convert(), spacecraft.NaifId, tolerance.TotalSeconds,
                 referenceFrame.Name, stepSize.TotalSeconds,
                 stateOrientations);
             return stateOrientations.Where(x => x.Frame != null).Select(x => new OrbitalParameters.StateOrientation(
-                _mapper.Map<Quaternion>(x.Rotation), _mapper.Map<Vector3>(x.AngularVelocity),
-                DateTimeExtension.CreateTDB(x.Epoch), referenceFrame));
+                x.Rotation.Convert(), x.AngularVelocity.Convert(), DateTimeExtension.CreateTDB(x.Epoch), referenceFrame));
         }
     }
 
@@ -675,8 +688,7 @@ public class API
             var enumerable = stateVectors as OrbitalParameters.StateVector[] ?? stateVectors.ToArray();
             if (!enumerable.Any())
                 throw new ArgumentException("Value cannot be an empty collection.", nameof(stateVectors));
-            bool res = WriteEphemerisProxy(filePath.FullName, naifObject.NaifId,
-                _mapper.Map<StateVector[]>(stateVectors),
+            bool res = WriteEphemerisProxy(filePath.FullName, naifObject.NaifId, stateVectors.Select(x=>x.Convert()).ToArray(),
                 (uint)enumerable.Length);
             if (res == false)
             {
@@ -698,7 +710,7 @@ public class API
             var enumerable = stateOrientations as OrbitalParameters.StateOrientation[] ?? stateOrientations.ToArray();
             if (!enumerable.Any())
                 throw new ArgumentException("Value cannot be an empty collection.", nameof(stateOrientations));
-            bool res = WriteOrientationProxy(filePath.FullName, naifObject.NaifId, _mapper.Map<StateOrientation[]>(stateOrientations), (uint)enumerable.Length);
+            bool res = WriteOrientationProxy(filePath.FullName, naifObject.NaifId, stateOrientations.Select(x=>x.Convert()).ToArray(), (uint)enumerable.Length);
             if (res == false)
             {
                 throw new InvalidOperationException(
@@ -769,8 +781,7 @@ public class API
         lock (lockObject)
         {
             var res = ConvertTLEToStateVectorProxy(line1, line2, line3, epoch.SecondsFromJ2000TDB());
-            return new OrbitalParameters.StateVector(_mapper.Map<Vector3>(res.Position),
-                _mapper.Map<Vector3>(res.Velocity),
+            return new OrbitalParameters.StateVector(res.Position.Convert(), res.Velocity.Convert(),
                 new Body.CelestialBody(PlanetsAndMoons.EARTH, Frame.ECLIPTIC_J2000, epoch), epoch,
                 new Frame(res.Frame));
         }
