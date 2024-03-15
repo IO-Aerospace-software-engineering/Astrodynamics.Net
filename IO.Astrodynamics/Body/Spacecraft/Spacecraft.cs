@@ -356,13 +356,18 @@ namespace IO.Astrodynamics.Body.Spacecraft
             await Clock.WriteAsync(clockFile);
 
             //Write Ephemeris
-            API.Instance.WriteEphemeris(new FileInfo(Path.Combine(PropagationOutput.CreateSubdirectory("Ephemeris").FullName, Name + ".spk")), this,
-                res.stateVectors);
-
-            //Clock is loaded because is needed by orientation writer
-            API.Instance.LoadKernels(clockFile);
-            //Write Orientation
-            API.Instance.WriteOrientation(new FileInfo(Path.Combine(PropagationOutput.CreateSubdirectory("Orientation").FullName, Name + ".ck")), this, res.stateOrientations);
+            if (API.Instance.WriteEphemeris(new FileInfo(Path.Combine(PropagationOutput.CreateSubdirectory("Ephemeris").FullName, Name + ".spk")), this,
+                    res.stateVectors))
+            {
+                //Clock is loaded because is needed by orientation writer
+                API.Instance.LoadKernels(clockFile);
+                //Write Orientation
+                if (API.Instance.WriteOrientation(new FileInfo(Path.Combine(PropagationOutput.CreateSubdirectory("Orientation").FullName, Name + ".ck")), this,
+                        res.stateOrientations))
+                {
+                    API.Instance.LoadKernels(PropagationOutput);
+                }
+            }
         }
 
         /// <summary>

@@ -66,18 +66,19 @@ namespace IO.Astrodynamics.Tests.Mission
             Scenario scenario = new Scenario("scnSite", mission, window);
             Site site = new Site(333, "S333", TestHelpers.EarthAtJ2000, new Planetodetic(30 * Astrodynamics.Constants.Deg2Rad, 10 * Astrodynamics.Constants.Deg2Rad, 1000.0));
             scenario.AddSite(site);
-            
+
             //Propagate site
             await scenario.SimulateAsync(Constants.OutputPath, false, false, TimeSpan.FromSeconds(1.0));
-            API.Instance.LoadKernels(scenario.SiteDirectory);
             var res = site.GetEphemeris(window, TestHelpers.EarthAtJ2000, Frames.Frame.ICRF, Aberration.None, TimeSpan.FromHours(1));
             var orbitalParametersEnumerable = res as Astrodynamics.OrbitalParameters.OrbitalParameters[] ?? res.ToArray();
-            Assert.Equal(new Vector3(4054783.0920394, -4799280.902678638, 1100391.2395513842), orbitalParametersEnumerable.ElementAt(0).ToStateVector().Position,TestHelpers.VectorComparer);
-            Assert.Equal(new Vector3(349.9689414487369, 295.67943565441215, 0.00047467276487285595), orbitalParametersEnumerable.ElementAt(0).ToStateVector().Velocity,TestHelpers.VectorComparer);
+            Assert.Equal(new Vector3(4054783.0920394, -4799280.902678638, 1100391.2395513842), orbitalParametersEnumerable.ElementAt(0).ToStateVector().Position,
+                TestHelpers.VectorComparer);
+            Assert.Equal(new Vector3(349.9689414487369, 295.67943565441215, 0.00047467276487285595), orbitalParametersEnumerable.ElementAt(0).ToStateVector().Velocity,
+                TestHelpers.VectorComparer);
             Assert.Equal(DateTimeExtension.J2000, orbitalParametersEnumerable.ElementAt(0).Epoch);
             Assert.Equal(Frames.Frame.ICRF, orbitalParametersEnumerable.ElementAt(0).Frame);
             Assert.Equal(TestHelpers.EarthAtJ2000, orbitalParametersEnumerable.ElementAt(0).Observer);
-        
+
             Assert.Equal(5675531.4473050004, orbitalParametersEnumerable.ElementAt(5).ToStateVector().Position.X, 6);
             Assert.Equal(2694837.3700879999, orbitalParametersEnumerable.ElementAt(5).ToStateVector().Position.Y, 6);
             Assert.Equal(1100644.504743, orbitalParametersEnumerable.ElementAt(5).ToStateVector().Position.Z, 6);
@@ -88,6 +89,7 @@ namespace IO.Astrodynamics.Tests.Mission
             Assert.Equal(Frames.Frame.ICRF, orbitalParametersEnumerable.ElementAt(5).Frame);
             Assert.Equal(TestHelpers.EarthAtJ2000, orbitalParametersEnumerable.ElementAt(5).Observer);
         }
+
         [Fact]
         [Benchmark]
         public async Task PropagateSpacecraft()
@@ -136,8 +138,7 @@ namespace IO.Astrodynamics.Tests.Mission
             scenario.AddSpacecraft(spacecraft);
 
             var summary = await scenario.SimulateAsync(Constants.OutputPath, false, false, TimeSpan.FromSeconds(1.0));
-            API.Instance.LoadKernels(scenario.SpacecraftDirectory);
-            API.Instance.LoadKernels(scenario.SiteDirectory);
+
             // Read maneuver results
             Maneuver.Maneuver maneuver = planeAlignmentManeuver;
             Assert.Equal("2021-03-04T00:32:26.4412955 (TDB)", maneuver.ManeuverWindow?.StartDate.ToFormattedString());
@@ -190,7 +191,7 @@ namespace IO.Astrodynamics.Tests.Mission
 
             Assert.Equal(2488.076, summary.SpacecraftSummaries.First().FuelConsumption, 3);
         }
-        
+
         [Fact]
         [Benchmark]
         public async Task MultipleSpacecraftPropagation()
@@ -239,8 +240,6 @@ namespace IO.Astrodynamics.Tests.Mission
             scenario.AddSpacecraft(spacecraft);
 
             var summary1 = await scenario.SimulateAsync(Constants.OutputPath, false, false, TimeSpan.FromSeconds(1.0));
-            API.Instance.LoadKernels(scenario.SpacecraftDirectory);
-            API.Instance.LoadKernels(scenario.SiteDirectory);
             // Read maneuver results
             Maneuver.Maneuver maneuver1 = spacecraft.InitialManeuver;
             Assert.Equal("2021-03-04T00:32:26.4412955 (TDB)", maneuver1.ManeuverWindow?.StartDate.ToFormattedString());
@@ -292,12 +291,10 @@ namespace IO.Astrodynamics.Tests.Mission
             }
 
             Assert.Equal(2488.076, summary1.SpacecraftSummaries.First().FuelConsumption, 3);
-            
+
             API.Instance.UnloadKernels(scenario.SpacecraftDirectory);
             API.Instance.UnloadKernels(scenario.SiteDirectory);
             var summary2 = await scenario.SimulateAsync(Constants.OutputPath, false, false, TimeSpan.FromSeconds(1.0));
-            API.Instance.LoadKernels(scenario.SpacecraftDirectory);
-            API.Instance.LoadKernels(scenario.SiteDirectory);
             // Read maneuver results
             Maneuver.Maneuver maneuver2 = spacecraft.InitialManeuver;
             Assert.Equal("2021-03-04T00:32:26.4412955 (TDB)", maneuver2.ManeuverWindow?.StartDate.ToFormattedString());
@@ -371,8 +368,7 @@ namespace IO.Astrodynamics.Tests.Mission
 
             //Create and configure spacecraft
             Clock clock = new Clock("clk1", 65536);
-            Spacecraft spacecraft =
-                new Spacecraft(-1785, "DRAGONFLY32", 1000.0, 10000.0, clock, parkingOrbit);
+            Spacecraft spacecraft = new Spacecraft(-1785, "DRAGONFLY32", 1000.0, 10000.0, clock, parkingOrbit);
 
             FuelTank fuelTank = new FuelTank("ft1", "model1", "sn1", 9000.0, 9000.0);
             Engine engine = new Engine("engine1", "model1", "sn1", 450.0, 50.0, fuelTank);
@@ -392,8 +388,40 @@ namespace IO.Astrodynamics.Tests.Mission
                 Assert.Equal(new DateTime(2021, 3, 4, 0, 32, 53, 814, DateTimeKind.Unspecified), maneuverWindow.Value.StartDate, TimeSpan.FromMilliseconds(1));
                 Assert.Equal(new DateTime(2021, 3, 4, 5, 27, 13, 014, DateTimeKind.Unspecified), maneuverWindow.Value.EndDate, TimeSpan.FromMilliseconds(1));
             }
-
             Assert.Equal(0.0, summary.SpacecraftSummaries.First().FuelConsumption, 3);
+        }
+
+        [Fact]
+        [Benchmark]
+        public async Task PropagateStar()
+        {
+            var start = new DateTime(2001, 1, 1);
+            var end = start.AddDays(365 * 4);
+            var observer = new Barycenter(0);
+            var star = new Star(2, "star2", 1E+30, "spec", 2, 0.3792, new Equatorial(1, 1), 0.1, 0.1, 0, 0, 0, 0, start);
+
+            Astrodynamics.Mission.Mission mission = new Astrodynamics.Mission.Mission("mission102");
+            Scenario scenario = new Scenario("scn100", mission, new Window(start, end));
+            scenario.AddStar(star);
+
+            var summary = await scenario.SimulateAsync(Constants.OutputPath, false, false, TimeSpan.FromDays(365.0));
+
+            Assert.Equal(scenario.Window, summary.Window);
+
+            var eph0 = star.GetEphemeris(start, observer, Frames.Frame.ICRF, Aberration.None);
+            var eph1 = star.GetEphemeris(start.Add(TimeSpan.FromDays(365)), observer, Frames.Frame.ICRF, Aberration.None);
+            var eph2 = star.GetEphemeris(start.Add(TimeSpan.FromDays(365 + 365)), observer, Frames.Frame.ICRF, Aberration.None);
+            Assert.Equal(1.0, eph0.ToEquatorial().RightAscension, 12);
+            Assert.Equal(1.0, eph0.ToEquatorial().Declination, 12);
+            Assert.Equal(8.1373353929324900E+16, eph0.ToEquatorial().Distance);
+
+            Assert.Equal(1.1, eph1.ToEquatorial().RightAscension, 3);
+            Assert.Equal(1.1, eph1.ToEquatorial().Declination, 3);
+            Assert.Equal(8.1373353929324910E+16, eph1.ToEquatorial().Distance);
+
+            Assert.Equal(1.2, eph2.ToEquatorial().RightAscension, 3);
+            Assert.Equal(1.2, eph2.ToEquatorial().Declination, 3);
+            Assert.Equal(8.1373353929324910E+16, eph2.ToEquatorial().Distance);
         }
 
 

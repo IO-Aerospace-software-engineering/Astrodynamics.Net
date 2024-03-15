@@ -105,7 +105,6 @@ namespace IO.Astrodynamics.Tests.Body
 
             //Execute scenario
             await scenario.SimulateAsync(root, false, false, TimeSpan.FromSeconds(1.0));
-            API.Instance.LoadKernels(scenario.SpacecraftDirectory);
 
             var orientation = spacecraft.GetOrientation(Frames.Frame.ICRF, start);
             Vector3.VectorY.Rotate(orientation.Rotation);

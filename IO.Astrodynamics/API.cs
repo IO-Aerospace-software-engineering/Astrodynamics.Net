@@ -32,7 +32,7 @@ namespace IO.Astrodynamics;
 /// </summary>
 public class API
 {
-    private readonly List<string> _kernels = [];
+    private readonly List<FileSystemInfo> _kernels = [];
 
     /// <summary>
     ///     Instantiate API
@@ -151,7 +151,7 @@ public class API
         }
     }
 
-    public IEnumerable<string> GetLoadedKernels()
+    public IEnumerable<FileSystemInfo> GetLoadedKernels()
     {
         return _kernels;
     }
@@ -163,16 +163,24 @@ public class API
     public void LoadKernels(FileSystemInfo path)
     {
         if (path == null) throw new ArgumentNullException(nameof(path));
+        if (_kernels.Any(x => x.FullName == path.FullName))
+        {
+            return;
+        }
         lock (lockObject)
         {
-            bool exists = _kernels.Any(x => path.FullName.Contains(x));
-            if (path.Exists && !exists)
+            var existingKernels = _kernels.Where(x => x.FullName.Contains(path.FullName)).ToArray();
+            foreach (var existingKernel in existingKernels)
+            {
+                UnloadKernels(existingKernel);
+            }
+            if (path.Exists)
             {
                 if (!LoadKernelsProxy(path.FullName))
                 {
                     throw new InvalidOperationException($"Kernel {path.FullName} can't be loaded. You can have more details on standard output");
                 }
-                _kernels.Add(path.FullName);
+                _kernels.Add(path);
             }
         }
     }
@@ -193,7 +201,7 @@ public class API
                     throw new InvalidOperationException($"Kernel {path.FullName} can't be unloaded. You can have more details on standard output");
                 }
 
-                _kernels.RemoveAll(x=>x.Contains(path.FullName));
+                _kernels.RemoveAll(x=>x.FullName.Contains(path.FullName));
             }
         }
     }
