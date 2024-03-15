@@ -218,7 +218,7 @@ namespace IO.Astrodynamics.Tests.Mission
 
             //Create and configure spacecraft
             Clock clock = new Clock("clk1", 65536);
-            Spacecraft spacecraft = new Spacecraft(-1783, "DRAGONFLY3", 1000.0, 10000.0, clock, parkingOrbit);
+            Spacecraft spacecraft = new Spacecraft(-1783, "DRAGONFLY31", 1000.0, 10000.0, clock, parkingOrbit);
 
             FuelTank fuelTank = new FuelTank("ft1", "model1", "sn1", 9000.0, 9000.0);
             Engine engine = new Engine("engine1", "model1", "sn1", 450.0, 50.0, fuelTank);

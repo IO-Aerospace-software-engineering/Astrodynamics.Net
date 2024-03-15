@@ -93,24 +93,15 @@ namespace IO.Astrodynamics.Mission
         {
             InitializeDirectories(outputDirectory);
 
-            try
+            foreach (var site in _sites)
             {
-                foreach (var site in _sites)
-                {
-                    var siteDirectory = SiteDirectory.CreateSubdirectory(site.Name);
-                    var siteEphemeris = site.GetEphemeris(Window, site.CelestialBody, Frame.ICRF, Aberration.None, propagatorStepSize).Select(x => x.ToStateVector());
-                    await site.WriteFrameAsync(new FileInfo(Path.Combine(siteDirectory.CreateSubdirectory("Frames").FullName, site.Name + ".tf")));
-                    site.WriteEphemeris(new FileInfo(Path.Combine(siteDirectory.CreateSubdirectory("Ephemeris").FullName, site.Name + ".spk")), siteEphemeris);
-                }
-
-                foreach (var spacecraft in _spacecrafts)
-                {
-                    await spacecraft.PropagateAsync(Window, _additionalCelestialBodies, includeAtmosphericDrag, includeSolarRadiationPressure, propagatorStepSize,SpacecraftDirectory);
-                }
+                //Todo optimize propagation step size
+                await site.PropagateAsync(Window, SiteDirectory, propagatorStepSize);
             }
-            finally
+
+            foreach (var spacecraft in _spacecrafts)
             {
-                API.Instance.UnloadKernels(SiteDirectory);
+                await spacecraft.PropagateAsync(Window, _additionalCelestialBodies, includeAtmosphericDrag, includeSolarRadiationPressure, propagatorStepSize, SpacecraftDirectory);
             }
 
             ScenarioSummary scenarioSummary = new ScenarioSummary(this.Window, SiteDirectory, SpacecraftDirectory);

@@ -14,8 +14,6 @@ namespace IO.Astrodynamics.Body.Spacecraft
 {
     public class Spacecraft : CelestialItem, IOrientable, IDisposable
     {
-        
-
         public static readonly Vector3 Front = Vector3.VectorY;
         public static readonly Vector3 Back = Front.Inverse();
         public static readonly Vector3 Right = Vector3.VectorX;
@@ -339,14 +337,14 @@ namespace IO.Astrodynamics.Body.Spacecraft
             ResetPropagation();
             var propagator = new SpacecraftPropagator(window, this, additionalCelestialBodies, includeAtmosphericDrag, includeSolarRadiationPressure, propagatorStepSize);
             var res = propagator.Propagate();
-            var spacecraftDirectory = outputDirectory.CreateSubdirectory(Name);
+            PropagationOutput = outputDirectory.CreateSubdirectory(Name);
 
             //Write frame
-            await WriteFrameAsync(new FileInfo(Path.Combine(spacecraftDirectory.CreateSubdirectory("Frames").FullName, Name + ".tf")));
+            await WriteFrameAsync(new FileInfo(Path.Combine(PropagationOutput.CreateSubdirectory("Frames").FullName, Name + ".tf")));
 
 
             //write instrument frame and kernel 
-            var instrumentDirectory = spacecraftDirectory.CreateSubdirectory("Instruments");
+            var instrumentDirectory = PropagationOutput.CreateSubdirectory("Instruments");
             foreach (var instrument in Instruments)
             {
                 await instrument.WriteFrameAsync(new FileInfo(Path.Combine(instrumentDirectory.FullName, instrument.Name + ".tf")));
@@ -354,17 +352,17 @@ namespace IO.Astrodynamics.Body.Spacecraft
             }
 
             //Write clock
-            var clockFile = new FileInfo(Path.Combine(spacecraftDirectory.CreateSubdirectory("Clocks").FullName, Name + ".tsc"));
+            var clockFile = new FileInfo(Path.Combine(PropagationOutput.CreateSubdirectory("Clocks").FullName, Name + ".tsc"));
             await Clock.WriteAsync(clockFile);
 
             //Write Ephemeris
-            API.Instance.WriteEphemeris(new FileInfo(Path.Combine(spacecraftDirectory.CreateSubdirectory("Ephemeris").FullName, Name + ".spk")), this,
+            API.Instance.WriteEphemeris(new FileInfo(Path.Combine(PropagationOutput.CreateSubdirectory("Ephemeris").FullName, Name + ".spk")), this,
                 res.stateVectors);
 
             //Clock is loaded because is needed by orientation writer
             API.Instance.LoadKernels(clockFile);
             //Write Orientation
-            API.Instance.WriteOrientation(new FileInfo(Path.Combine(spacecraftDirectory.CreateSubdirectory("Orientation").FullName, Name + ".ck")), this, res.stateOrientations);
+            API.Instance.WriteOrientation(new FileInfo(Path.Combine(PropagationOutput.CreateSubdirectory("Orientation").FullName, Name + ".ck")), this, res.stateOrientations);
         }
 
         /// <summary>
@@ -376,6 +374,7 @@ namespace IO.Astrodynamics.Body.Spacecraft
             {
                 API.Instance.UnloadKernels(PropagationOutput);
                 PropagationOutput.Delete(true);
+                PropagationOutput = null;
             }
 
             _executedManeuvers.Clear();
@@ -387,7 +386,7 @@ namespace IO.Astrodynamics.Body.Spacecraft
             InitialManeuver?.Reset();
             StandbyManeuver = InitialManeuver;
         }
-        
+
         private void ReleaseUnmanagedResources()
         {
             if (IsPropagated)
@@ -398,7 +397,6 @@ namespace IO.Astrodynamics.Body.Spacecraft
 
         public void Dispose()
         {
-            API.Instance.UnloadKernels(PropagationOutput);
             ReleaseUnmanagedResources();
             GC.SuppressFinalize(this);
         }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using IO.Astrodynamics.Body;
 using IO.Astrodynamics.Coordinates;
@@ -19,6 +20,8 @@ namespace IO.Astrodynamics.Surface
         public CelestialBody CelestialBody { get; }
         public Planetodetic Planetodetic { get; }
         public OrbitalParameters.OrbitalParameters InitialOrbitalParameters { get; }
+        public DirectoryInfo PropagationOutput { get; private set; }
+        public bool IsPropagated => PropagationOutput != null;
 
         public IEnumerable<ILocalizable> GetCentersOfMotion()
         {
@@ -175,8 +178,34 @@ namespace IO.Astrodynamics.Surface
         {
             API.Instance.WriteEphemeris(outputFile, this, stateVectors);
         }
+
+        /// <summary>
+        /// Propagate site
+        /// </summary>
+        /// <param name="window"></param>
+        /// <param name="sitesDirectory"></param>
+        /// <param name="stepSize"></param>
+        public async Task PropagateAsync(Window window, DirectoryInfo sitesDirectory,TimeSpan stepSize)
+        {
+            ResetPropagation();
+            PropagationOutput = sitesDirectory.CreateSubdirectory(Name);
+            var siteEphemeris = GetEphemeris(window, CelestialBody, Frames.Frame.ICRF, Aberration.None, stepSize).Select(x => x.ToStateVector());
+            await WriteFrameAsync(new FileInfo(Path.Combine(PropagationOutput.CreateSubdirectory("Frames").FullName, Name + ".tf")));
+            WriteEphemeris(new FileInfo(Path.Combine(PropagationOutput.CreateSubdirectory("Ephemeris").FullName, Name + ".spk")), siteEphemeris);
+        }
         
-        
+        /// <summary>
+        /// Reset propagation elements
+        /// </summary>
+        private void ResetPropagation()
+        {
+            if (IsPropagated)
+            {
+                API.Instance.UnloadKernels(PropagationOutput);
+                PropagationOutput.Delete(true);
+                PropagationOutput = null;
+            }
+        }
 
         public bool Equals(Site other)
         {
