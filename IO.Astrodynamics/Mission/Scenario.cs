@@ -125,7 +125,6 @@ namespace IO.Astrodynamics.Mission
 
                 foreach (var site in _sites)
                 {
-                    //Todo optimize propagation step size
                     await site.PropagateAsync(Window, siteStepSize, SiteDirectory);
                 }
             }
@@ -147,7 +146,6 @@ namespace IO.Astrodynamics.Mission
 
                 foreach (var star in _stars)
                 {
-                    //Todo optimize propagation step size
                     await star.PropagateAsync(Window, starStepSize, StarDirectory);
                 }
             }

@@ -54,8 +54,7 @@ public class SpacecraftPropagator
         
         Integrator = new VVIntegrator(forces, DeltaT, Spacecraft.InitialOrbitalParameters.AtEpoch(Window.StartDate).ToStateVector());
         
-        //Todo add DeltaT at the end to ensure _svCacheSize fill whole window
-        _svCacheSize = (uint)Window.Length.TotalSeconds / (uint)DeltaT.TotalSeconds;
+        _svCacheSize = (uint)Window.Length.TotalSeconds / (uint)DeltaT.TotalSeconds+(uint)DeltaT.TotalSeconds;
         _svCache = new StateVector[_svCacheSize];
         StateVector stateVector = Spacecraft.InitialOrbitalParameters.AtEpoch(Window.StartDate).ToStateVector();
         _svCache[0] = stateVector;
