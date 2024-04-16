@@ -6,6 +6,7 @@ using BenchmarkDotNet.Attributes;
 using IO.Astrodynamics.Body;
 using IO.Astrodynamics.Body.Spacecraft;
 using IO.Astrodynamics.Coordinates;
+using IO.Astrodynamics.Cosmographia;
 using IO.Astrodynamics.Maneuver;
 using IO.Astrodynamics.Math;
 using IO.Astrodynamics.Mission;
@@ -388,6 +389,7 @@ namespace IO.Astrodynamics.Tests.Mission
                 Assert.Equal(new DateTime(2021, 3, 4, 0, 32, 53, 814, DateTimeKind.Unspecified), maneuverWindow.Value.StartDate, TimeSpan.FromMilliseconds(1));
                 Assert.Equal(new DateTime(2021, 3, 4, 5, 27, 13, 014, DateTimeKind.Unspecified), maneuverWindow.Value.EndDate, TimeSpan.FromMilliseconds(1));
             }
+
             Assert.Equal(0.0, summary.SpacecraftSummaries.First().FuelConsumption, 3);
         }
 
@@ -454,6 +456,59 @@ namespace IO.Astrodynamics.Tests.Mission
             Scenario scenario = new Scenario("scn1", mission, new Window(startPropagator, end));
             Assert.Throws<ArgumentNullException>(() => scenario.AddSpacecraft(null));
             await Assert.ThrowsAsync<InvalidOperationException>(async () => await scenario.SimulateAsync(new DirectoryInfo("/"), false, false, TimeSpan.FromSeconds(1.0)));
+        }
+
+        [Fact]
+        public async Task UserFeedback()
+        {
+            var frame = Frames.Frame.ICRF;
+            var start = DateTimeExtension.J2000;
+            var end = DateTimeExtension.J2000.AddDays(3);
+            var sun = new CelestialBody(Stars.Sun);
+            var earth = new CelestialBody(PlanetsAndMoons.EARTH, frame, start);
+            var moon = new CelestialBody(PlanetsAndMoons.MOON, frame, start);
+
+            var mass = Astrodynamics.Constants.G * earth.Mass * moon.Mass;
+            var acc = mass / (400_000.0 * 400_000.0);
+            
+            var mass2 = Astrodynamics.Constants.G * earth.Mass;
+            var acc2 = mass2 / (400_000.0 * 400_000.0);
+            Astrodynamics.Mission.Mission mission = new Astrodynamics.Mission.Mission("mission01");
+            Scenario scenario = new Scenario("scn01", mission, new IO.Astrodynamics.Time.Window(start, end));
+            scenario.AddAdditionalCelestialBody(sun);
+            // scenario.AddAdditionalCelestialBody(earth);
+//Define test orbit
+            StateVector testOrbit = moon.GetEphemeris(start, earth, frame, Aberration.None).ToStateVector();
+            Clock clk = new Clock("My clock", 256);
+            Spacecraft spc = new Spacecraft(-1001, "MySpacecraft", 100.0, 10000.0, clk, testOrbit);
+            scenario.AddSpacecraft(spc);
+            var summary = await scenario.SimulateAsync(new DirectoryInfo("Simulation"), false, false, TimeSpan.FromSeconds(1.0));
+
+            var earthEphem = earth.GetEphemeris(new IO.Astrodynamics.Time.Window(start, end), earth, frame, Aberration.None, TimeSpan.FromMinutes(10)).ToArray();
+            var sunEphem = sun.GetEphemeris(new IO.Astrodynamics.Time.Window(start, end), earth, frame, Aberration.None, TimeSpan.FromMinutes(10)).ToArray();
+            var spcEphem = spc.GetEphemeris(new IO.Astrodynamics.Time.Window(start, end), earth, frame, Aberration.None, TimeSpan.FromMinutes(10)).ToArray();
+            var moonEphem = moon.GetEphemeris(new IO.Astrodynamics.Time.Window(start, end), earth, frame, Aberration.None, TimeSpan.FromMinutes(10)).ToArray();
+
+            CosmographiaExporter exporter = new CosmographiaExporter();
+            await exporter.ExportAsync(scenario, new DirectoryInfo("UserFeedback"));
+
+// Mat img = new Mat(1024, 1024, MatType.CV_8UC3);
+// img.SetTo(0);
+// double d = 1000000.0;
+// for (int n = 1; n < earthEphem.Length; n++)
+// {
+//     img.Line(new Point(img.Width / 2, img.Height / 2), new Point(img.Width / 2 + sunEphem[n - 1].ToStateVector().Position.X / d, img.Height / 2 + sunEphem[n - 1].ToStateVector().Position.Y / d), Scalar.Black, 1);
+//     // Earth at center
+//     img.Circle(new Point(img.Width / 2, img.Height / 2), (int)(earth.EquatorialRadius / d) + 1, Scalar.Blue, -1);
+//     // Moon path
+//     img.Circle(new Point(img.Width / 2 + moonEphem[n].ToStateVector().Position.X / d, img.Height / 2 + moonEphem[n].ToStateVector().Position.Y / d), (int)(moon.EquatorialRadius / d), Scalar.Gray, -1);
+//     // Calculated path
+//     img.Circle(new Point(img.Width / 2 + spcEphem[n].ToStateVector().Position.X / d, img.Height / 2 + spcEphem[n].ToStateVector().Position.Y / d), 1, Scalar.OrangeRed, -1);
+//     // Sun orientation
+//     img.Line(new Point(img.Width / 2, img.Height / 2), new Point(img.Width / 2 + sunEphem[n].ToStateVector().Position.X / d, img.Height / 2 + sunEphem[n].ToStateVector().Position.Y / d), Scalar.Yellow, 1);
+//     Cv2.ImShow("sim", img);
+//     Cv2.WaitKey(10);}
+// img.SaveImage("test.png");
         }
     }
 }
