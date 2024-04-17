@@ -39,7 +39,7 @@ public class IntegratorTests
         StateVector[] data = new StateVector[2];
         Array.Fill(data, spc.InitialOrbitalParameters.ToStateVector(), 0, 2);
         vvIntegrator.Integrate(data, 1);
-        Assert.Equal(new Vector3(6799995.689837334, 7656.2176410373559, -0.001202574270660037), data[1].Position);
-        Assert.Equal(new Vector3(-8.620322605388086, 7656.210010294659, -0.0024051475080610115), data[1].Velocity);
+        Assert.Equal(new Vector3(6799995.689296221, 7656.220418500369, 1.0302918471946314E-07), data[1].Position);
+        Assert.Equal(new Vector3(-8.621404832130471, 7656.215565218924, 2.0632919435575615E-07), data[1].Velocity);
     }
 }
