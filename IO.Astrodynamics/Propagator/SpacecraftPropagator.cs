@@ -16,7 +16,6 @@ namespace IO.Astrodynamics.Propagator;
 
 public class SpacecraftPropagator
 {
-    private readonly CelestialBody _originalObserver;
     public Window Window { get; }
     public IEnumerable<CelestialBody> CelestialBodies { get; }
     public bool IncludeAtmosphericDrag { get; }
@@ -43,7 +42,6 @@ public class SpacecraftPropagator
     public SpacecraftPropagator(Window window, Spacecraft spacecraft, IEnumerable<CelestialBody> additionalCelestialBodies, bool includeAtmosphericDrag,
         bool includeSolarRadiationPressure, TimeSpan deltaT)
     {
-        _originalObserver = spacecraft.InitialOrbitalParameters.Observer as CelestialBody;
         Spacecraft = spacecraft ?? throw new ArgumentNullException(nameof(spacecraft));
         Window = window;
         CelestialBodies = new[] { spacecraft.InitialOrbitalParameters.Observer as CelestialBody }.Concat(additionalCelestialBodies ?? Array.Empty<CelestialBody>());
@@ -53,16 +51,16 @@ public class SpacecraftPropagator
 
         var forces = InitializeForces(IncludeAtmosphericDrag, IncludeSolarRadiationPressure);
 
-        var sun = new CelestialBody(10);
-        var initialState = Spacecraft.InitialOrbitalParameters.RelativeTo(sun, Aberration.None).AtEpoch(Window.StartDate).ToStateVector();
-        Integrator = new VVIntegrator(forces, DeltaT, initialState);
-
-        _svCacheSize = (uint)Window.Length.TotalSeconds / (uint)DeltaT.TotalSeconds + (uint)DeltaT.TotalSeconds;
+        
+        Integrator = new VVIntegrator(forces, DeltaT, Spacecraft.InitialOrbitalParameters.AtEpoch(Window.StartDate).ToStateVector());
+        
+        _svCacheSize = (uint)Window.Length.TotalSeconds / (uint)DeltaT.TotalSeconds+(uint)DeltaT.TotalSeconds;
         _svCache = new StateVector[_svCacheSize];
-        _svCache[0] = initialState;
+        StateVector stateVector = Spacecraft.InitialOrbitalParameters.AtEpoch(Window.StartDate).ToStateVector();
+        _svCache[0] = stateVector;
         for (int i = 1; i < _svCacheSize; i++)
         {
-            _svCache[i] = new StateVector(Vector3.Zero, Vector3.Zero, initialState.Observer, Window.StartDate + (i * DeltaT), initialState.Frame);
+            _svCache[i] = new StateVector(Vector3.Zero, Vector3.Zero, stateVector.Observer, Window.StartDate + (i * DeltaT), stateVector.Frame);
         }
     }
 
@@ -108,7 +106,6 @@ public class SpacecraftPropagator
 
         _stateOrientation[Window.EndDate] = new StateOrientation(_stateOrientation.Last().Value.Rotation, Vector3.Zero, Window.EndDate, Spacecraft.InitialOrbitalParameters.Frame);
 
-        //Before return result statevectors must be converted back to original observer
-        return (_svCache.Select(x=>x.RelativeTo(_originalObserver,Aberration.None).ToStateVector()), _stateOrientation.Values);
+        return (_svCache, _stateOrientation.Values);
     }
 }

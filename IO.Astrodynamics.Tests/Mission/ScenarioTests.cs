@@ -463,14 +463,14 @@ namespace IO.Astrodynamics.Tests.Mission
         {
             var frame = Frames.Frame.ICRF;
             var start = DateTimeExtension.J2000;
-            var end = DateTimeExtension.J2000.AddDays(3);
+            var end = DateTimeExtension.J2000.AddDays(30);
             var sun = new CelestialBody(Stars.Sun);
             var earth = new CelestialBody(PlanetsAndMoons.EARTH, frame, start);
             var moon = new CelestialBody(PlanetsAndMoons.MOON, frame, start);
             Astrodynamics.Mission.Mission mission = new Astrodynamics.Mission.Mission("mission01");
             Scenario scenario = new Scenario("scn01", mission, new IO.Astrodynamics.Time.Window(start, end));
             scenario.AddAdditionalCelestialBody(sun);
-            // scenario.AddAdditionalCelestialBody(earth);
+            //scenario.AddAdditionalCelestialBody(earth);
 //Define test orbit
             StateVector testOrbit = moon.GetEphemeris(start, earth, frame, Aberration.None).ToStateVector();
             Clock clk = new Clock("My clock", 256);

@@ -278,9 +278,21 @@ public class CelestialBody : CelestialItem, IOrientable
     /// <returns></returns>
     public Vector3 EvaluateGravitationalAcceleration(OrbitalParameters.OrbitalParameters orbitalParameters)
     {
-        var sv = orbitalParameters.Observer as CelestialBody != this ? orbitalParameters.RelativeTo(this, Aberration.None).ToStateVector() : orbitalParameters.ToStateVector();
+        if (orbitalParameters.Observer as CelestialBody == this)
+        {
+            return GravitationalField.ComputeGravitationalAcceleration(orbitalParameters.ToStateVector());
+        }
 
-        return GravitationalField.ComputeGravitationalAcceleration(sv);
+        //Here that does mean this body acts as perturbing body
+        
+        //we get the position of the orbital object relative to this body
+        var sv = orbitalParameters.RelativeTo(this, Aberration.LT).ToStateVector();
+        
+        //We get the position of the center of motion relative to this body
+        var centerOfMotionSv = orbitalParameters.Observer.GetEphemeris(orbitalParameters.Epoch, this, orbitalParameters.Frame, Aberration.LT).ToStateVector();
+        
+        //This perturbing body already acts in the center of motion, so only the differential force must be applied to the orbiting body
+        return GravitationalField.ComputeGravitationalAcceleration(sv) - GravitationalField.ComputeGravitationalAcceleration(centerOfMotionSv);
     }
 
     /// <summary>
