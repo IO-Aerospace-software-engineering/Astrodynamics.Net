@@ -1,6 +1,7 @@
 // Copyright 2024. Sylvain Guillet (sylvain.guillet@tutamail.com)
 
 using System;
+using IO.Astrodynamics.Body;
 using IO.Astrodynamics.Body.Spacecraft;
 using IO.Astrodynamics.Math;
 using IO.Astrodynamics.OrbitalParameters;
@@ -11,7 +12,7 @@ namespace IO.Astrodynamics.Maneuver;
 public abstract class Attitude : Maneuver
 {
     public StateOrientation StateOrientation { get; private set; }
-    public Attitude(DateTime minimumEpoch, TimeSpan maneuverHoldDuration, Engine engine) : base(minimumEpoch, maneuverHoldDuration, engine)
+    public Attitude(CelestialItem maneuverCenter, DateTime minimumEpoch, TimeSpan maneuverHoldDuration, Engine engine) : base(maneuverCenter, minimumEpoch, maneuverHoldDuration, engine)
     {
     }
 
@@ -42,7 +43,8 @@ public abstract class Attitude : Maneuver
             Engine.FuelTank.Spacecraft.SetStandbyManeuver(this.NextManeuver, ManeuverWindow.Value.EndDate);
         }
 
-        StateOrientation = new StateOrientation(ComputeOrientation(stateVector), Vector3.Zero, stateVector.Epoch, stateVector.Frame);
+        var localSv = stateVector.RelativeTo(ManeuverCenter, Aberration.None).ToStateVector();
+        StateOrientation = new StateOrientation(ComputeOrientation(localSv), Vector3.Zero, stateVector.Epoch, stateVector.Frame);
         
         //Return state vector and computed state orientation
         return (stateVector, StateOrientation);

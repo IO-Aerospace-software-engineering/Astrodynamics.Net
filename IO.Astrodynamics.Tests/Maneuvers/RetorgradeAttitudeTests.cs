@@ -20,7 +20,7 @@ public class RetrogradeAttitudeTests
     {
         FuelTank fuelTank10 = new FuelTank("My fuel tank10", "ft2021","sn0", 4000.0,3000.0);
         Engine eng = new Engine("My engine", "model 1","sn1", 350.0, 50.0, fuelTank10);
-        RetrogradeAttitude attitude = new RetrogradeAttitude(DateTime.MinValue, TimeSpan.FromHours(1.0), eng);
+        RetrogradeAttitude attitude = new RetrogradeAttitude(TestHelpers.EarthAtJ2000,DateTime.MinValue, TimeSpan.FromHours(1.0), eng);
         Assert.Equal(DateTime.MinValue,attitude.MinimumEpoch);
         Assert.Equal(TimeSpan.FromHours(1.0),attitude.ManeuverHoldDuration);
         Assert.NotNull(attitude.Engine);
@@ -34,7 +34,7 @@ public class RetrogradeAttitudeTests
         var spc = new Spacecraft(-666, "GenericSpacecraft", 1000.0, 3000.0, new Clock("GenericClk", 65536), orbitalParams);
         spc.AddFuelTank(new FuelTank("ft", "ftA", "123456", 1000.0, 900.0));
         spc.AddEngine(new Engine("eng", "engmk1", "12345", 450, 50, spc.FuelTanks.First()));
-        RetrogradeAttitude maneuver = new RetrogradeAttitude(DateTime.MinValue, TimeSpan.Zero, spc.Engines.First());
+        RetrogradeAttitude maneuver = new RetrogradeAttitude(TestHelpers.EarthAtJ2000,DateTime.MinValue, TimeSpan.Zero, spc.Engines.First());
         maneuver.TryExecute(orbitalParams.ToStateVector());
 
         Assert.Equal(new StateOrientation(new Quaternion(0.0, -1.0, 0.0, 0.0), Vector3.Zero, DateTimeExtension.J2000, Frames.Frame.ICRF), maneuver.StateOrientation);

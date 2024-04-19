@@ -54,7 +54,7 @@ public class Scenario
             new Vector3(0.0, 8000.0 - Random.Shared.NextDouble(), 0.0), _earth,
             DateTimeExtension.J2000, Frame.ICRF));
         _spacecraftPropagator = new Propagator.SpacecraftPropagator(new Window(DateTimeExtension.J2000, DateTimeExtension.J2000 + spc.InitialOrbitalParameters.Period()), spc,
-            new[] { _moon, _earth, _sun }, true, true, TimeSpan.FromSeconds(1.0));
+            new[] { _moon }, true, true, TimeSpan.FromSeconds(1.0));
     }
 
     // [Benchmark(Description = "Spacecraft spacecraftPropagator C++")]

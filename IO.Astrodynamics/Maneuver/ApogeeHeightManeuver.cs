@@ -1,4 +1,5 @@
 using System;
+using IO.Astrodynamics.Body;
 using IO.Astrodynamics.Body.Spacecraft;
 using IO.Astrodynamics.Math;
 using IO.Astrodynamics.OrbitalParameters;
@@ -10,11 +11,12 @@ namespace IO.Astrodynamics.Maneuver
         public double TargetApogee { get; }
 
         public ApogeeHeightManeuver(DateTime minimumEpoch, TimeSpan maneuverHoldDuration, OrbitalParameters.OrbitalParameters targetOrbit, Engine engine) : this(
-            minimumEpoch, maneuverHoldDuration, targetOrbit.ApogeeVector().Magnitude(), engine)
+            targetOrbit.Observer as CelestialItem, minimumEpoch, maneuverHoldDuration, targetOrbit.ApogeeVector().Magnitude(), engine)
         {
         }
 
-        public ApogeeHeightManeuver(DateTime minimumEpoch, TimeSpan maneuverHoldDuration, double apogeeRadius, Engine engine) : base(minimumEpoch,
+        public ApogeeHeightManeuver(CelestialItem maneuverCenter, DateTime minimumEpoch, TimeSpan maneuverHoldDuration, double apogeeRadius, Engine engine) : base(maneuverCenter,
+            minimumEpoch,
             maneuverHoldDuration, engine)
         {
             TargetApogee = apogeeRadius;

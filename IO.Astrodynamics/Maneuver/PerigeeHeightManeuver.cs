@@ -1,4 +1,5 @@
 using System;
+using IO.Astrodynamics.Body;
 using IO.Astrodynamics.Body.Spacecraft;
 using IO.Astrodynamics.Math;
 using IO.Astrodynamics.OrbitalParameters;
@@ -9,12 +10,12 @@ namespace IO.Astrodynamics.Maneuver
     {
         public double TargetPerigeeHeight { get; } = double.NaN;
 
-        public PerigeeHeightManeuver(DateTime minimumEpoch, TimeSpan maneuverHoldDuration, OrbitalParameters.OrbitalParameters targetOrbit, Engine engine) : this(minimumEpoch,
-            maneuverHoldDuration, targetOrbit.PerigeeVector().Magnitude(), engine)
+        public PerigeeHeightManeuver(DateTime minimumEpoch, TimeSpan maneuverHoldDuration, OrbitalParameters.OrbitalParameters targetOrbit, Engine engine) : this(
+            targetOrbit.Observer as CelestialItem, minimumEpoch, maneuverHoldDuration, targetOrbit.PerigeeVector().Magnitude(), engine)
         {
         }
 
-        public PerigeeHeightManeuver(DateTime minimumEpoch, TimeSpan maneuverHoldDuration, double perigeeRadius, Engine engine) : base(minimumEpoch, maneuverHoldDuration,
+        public PerigeeHeightManeuver(CelestialItem maneuverCenter, DateTime minimumEpoch, TimeSpan maneuverHoldDuration, double perigeeRadius, Engine engine) : base(maneuverCenter, minimumEpoch, maneuverHoldDuration,
             engine)
         {
             TargetPerigeeHeight = perigeeRadius;

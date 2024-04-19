@@ -1,4 +1,5 @@
 using System;
+using IO.Astrodynamics.Body;
 using IO.Astrodynamics.Body.Spacecraft;
 using IO.Astrodynamics.Math;
 using IO.Astrodynamics.OrbitalParameters;
@@ -8,6 +9,7 @@ namespace IO.Astrodynamics.Maneuver
 {
     public abstract class Maneuver
     {
+        public CelestialItem ManeuverCenter { get; }
         /// <summary>
         /// Gets or sets the ThrustWindow instance.
         /// </summary>
@@ -57,11 +59,12 @@ namespace IO.Astrodynamics.Maneuver
         /// </summary>
         public double FuelBurned { get; internal set; }
 
-        protected bool IsInbound { get; set; }
+        private bool IsInbound { get; set; }
 
 
-        protected Maneuver(DateTime minimumEpoch, TimeSpan maneuverHoldDuration, Engine engine)
+        protected Maneuver(CelestialItem maneuverCenter, DateTime minimumEpoch, TimeSpan maneuverHoldDuration, Engine engine)
         {
+            ManeuverCenter = maneuverCenter;
             MinimumEpoch = minimumEpoch;
             ManeuverHoldDuration = maneuverHoldDuration;
             Engine = engine;
@@ -75,22 +78,23 @@ namespace IO.Astrodynamics.Maneuver
 
         public virtual bool CanExecute(StateVector stateVector)
         {
+            var localSv = stateVector.RelativeTo(ManeuverCenter, Aberration.None).ToStateVector();
             //Evaluate Epoch constraint
-            if (stateVector.Epoch < MinimumEpoch)
+            if (localSv.Epoch < MinimumEpoch)
             {
                 return false;
             }
 
             
             //Compute the target point
-            var maneuverPoint = ComputeManeuverPoint(stateVector);
-            if (stateVector.Position == maneuverPoint)
+            var maneuverPoint = ComputeManeuverPoint(localSv);
+            if (localSv.Position == maneuverPoint)
             {
                 return true;
             }
 
             //Check if target point is reached
-            var isInbound = stateVector.Position.Angle(maneuverPoint, stateVector.SpecificAngularMomentum()) > 0.0;
+            var isInbound = localSv.Position.Angle(maneuverPoint, localSv.SpecificAngularMomentum()) > 0.0;
             if (isInbound == IsInbound)
             {
                 return false;

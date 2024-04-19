@@ -307,7 +307,7 @@ public class APITest
         spacecraft.AddPayload(new Payload("payload1", 50.0, "pay01"));
         spacecraft.AddCircularInstrument(-1794600, "CAM600", "mod1", 1.5, Vector3.VectorZ, Vector3.VectorX, Vector3.VectorX);
 
-        spacecraft.SetStandbyManeuver(new NadirAttitude(DateTime.MinValue, TimeSpan.Zero,
+        spacecraft.SetStandbyManeuver(new NadirAttitude(TestHelpers.EarthAtJ2000,DateTime.MinValue, TimeSpan.Zero,
             spacecraft.Engines.First()));
 
         scenario.AddSpacecraft(spacecraft);
@@ -321,13 +321,13 @@ public class APITest
             TimeSpan.FromSeconds(10.0)).ToArray();
 
         //Read results
-        Assert.Equal(0.7071067811865476, res.ElementAt(0).Rotation.W);
-        Assert.Equal(0.0, res.ElementAt(0).Rotation.VectorPart.X);
-        Assert.Equal(0.0, res.ElementAt(0).Rotation.VectorPart.Y);
-        Assert.Equal(0.70710678118654757, res.ElementAt(0).Rotation.VectorPart.Z);
-        Assert.Equal(0.0, res.ElementAt(0).AngularVelocity.X);
-        Assert.Equal(0.0, res.ElementAt(0).AngularVelocity.Y);
-        Assert.Equal(0.0, res.ElementAt(0).AngularVelocity.Z);
+        Assert.Equal(0.70710678118654757, res.ElementAt(0).Rotation.W);
+        Assert.Equal(0.0, res.ElementAt(0).Rotation.VectorPart.X,6);
+        Assert.Equal(0.0, res.ElementAt(0).Rotation.VectorPart.Y,6);
+        Assert.Equal(0.70710678118654746, res.ElementAt(0).Rotation.VectorPart.Z);
+        Assert.Equal(0.0, res.ElementAt(0).AngularVelocity.X,6);
+        Assert.Equal(0.0, res.ElementAt(0).AngularVelocity.Y,6);
+        Assert.Equal(0.0, res.ElementAt(0).AngularVelocity.Z,6);
         Assert.Equal(window.StartDate, res.ElementAt(0).Epoch);
         Assert.Equal(Frames.Frame.ICRF, res.ElementAt(0).ReferenceFrame);
 

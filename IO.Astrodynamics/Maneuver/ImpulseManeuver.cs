@@ -1,4 +1,5 @@
 using System;
+using IO.Astrodynamics.Body;
 using IO.Astrodynamics.Body.Spacecraft;
 using IO.Astrodynamics.Math;
 using IO.Astrodynamics.OrbitalParameters;
@@ -17,11 +18,11 @@ namespace IO.Astrodynamics.Maneuver
 
         public Vector3 DeltaV { get; internal set; }
 
-        protected ImpulseManeuver(DateTime minimumEpoch, TimeSpan maneuverHoldDuration, Engine engine) : base(minimumEpoch, maneuverHoldDuration, engine)
+        protected ImpulseManeuver(CelestialItem maneuverCenter, DateTime minimumEpoch, TimeSpan maneuverHoldDuration, Engine engine) : base(maneuverCenter, minimumEpoch, maneuverHoldDuration, engine)
         {
         }
 
-        protected ImpulseManeuver(DateTime minimumEpoch, TimeSpan maneuverHoldDuration, OrbitalParameters.OrbitalParameters targetOrbit, Engine engine) : this(minimumEpoch,
+        protected ImpulseManeuver(DateTime minimumEpoch, TimeSpan maneuverHoldDuration, OrbitalParameters.OrbitalParameters targetOrbit, Engine engine) : this(targetOrbit.Observer as CelestialItem, minimumEpoch,
             maneuverHoldDuration, engine)
         {
             if (targetOrbit == null)
@@ -34,8 +35,9 @@ namespace IO.Astrodynamics.Maneuver
 
         public override (StateVector sv, StateOrientation so) TryExecute(StateVector stateVector)
         {
+            var localSv = stateVector.RelativeTo(ManeuverCenter, Aberration.None).ToStateVector();
             //Compute the deltaV
-            DeltaV = Execute(stateVector);
+            DeltaV = Execute(localSv);
 
             //Burn required fuel, if not enought fuel an exception will be thrown
             FuelBurned = Engine.Ignite(DeltaV);

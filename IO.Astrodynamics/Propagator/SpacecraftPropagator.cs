@@ -43,18 +43,18 @@ public class SpacecraftPropagator
     public SpacecraftPropagator(Window window, Spacecraft spacecraft, IEnumerable<CelestialBody> additionalCelestialBodies, bool includeAtmosphericDrag,
         bool includeSolarRadiationPressure, TimeSpan deltaT)
     {
+        var sun = new CelestialBody(10);
         _originalObserver = spacecraft.InitialOrbitalParameters.Observer as CelestialBody;
         Spacecraft = spacecraft ?? throw new ArgumentNullException(nameof(spacecraft));
         Window = window;
-        CelestialBodies = new[] { spacecraft.InitialOrbitalParameters.Observer as CelestialBody }.Concat(additionalCelestialBodies ?? Array.Empty<CelestialBody>());
+        CelestialBodies = new[] { spacecraft.InitialOrbitalParameters.Observer as CelestialBody, sun }.Concat(additionalCelestialBodies ?? Array.Empty<CelestialBody>());
         IncludeAtmosphericDrag = includeAtmosphericDrag;
         IncludeSolarRadiationPressure = includeSolarRadiationPressure;
         DeltaT = deltaT;
 
         var forces = InitializeForces(IncludeAtmosphericDrag, IncludeSolarRadiationPressure);
 
-        var sun = new CelestialBody(10);
-        var initialState = Spacecraft.InitialOrbitalParameters.RelativeTo(sun, Aberration.None).AtEpoch(Window.StartDate).ToStateVector();
+        var initialState = Spacecraft.InitialOrbitalParameters.AtEpoch(Window.StartDate).ToStateVector().RelativeTo(sun, Aberration.None).ToStateVector();
         Integrator = new VVIntegrator(forces, DeltaT, initialState);
 
         _svCacheSize = (uint)Window.Length.TotalSeconds / (uint)DeltaT.TotalSeconds + (uint)DeltaT.TotalSeconds;
@@ -108,7 +108,8 @@ public class SpacecraftPropagator
 
         _stateOrientation[Window.EndDate] = new StateOrientation(_stateOrientation.Last().Value.Rotation, Vector3.Zero, Window.EndDate, Spacecraft.InitialOrbitalParameters.Frame);
 
+
         //Before return result statevectors must be converted back to original observer
-        return (_svCache.Select(x=>x.RelativeTo(_originalObserver,Aberration.None).ToStateVector()), _stateOrientation.Values);
+        return (_svCache.Select(x => x.RelativeTo(_originalObserver, Aberration.None).ToStateVector()), _stateOrientation.Values);
     }
 }
