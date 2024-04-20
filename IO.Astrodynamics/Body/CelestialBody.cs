@@ -24,7 +24,6 @@ public class CelestialBody : CelestialItem, IOrientable
     public double J3 { get; }
     public double J4 { get; }
 
-    protected GravitationalField GravitationalField { get; }
 
     protected AtmosphericModel AtmosphericModel { get; }
 
@@ -35,8 +34,7 @@ public class CelestialBody : CelestialItem, IOrientable
     /// <param name="geopotentialModelParameters"></param>
     /// <param name="atmosphericModel"></param>
     public CelestialBody(NaifObject naifObject, GeopotentialModelParameters geopotentialModelParameters = null, AtmosphericModel atmosphericModel = null) : this(naifObject.NaifId,
-        geopotentialModelParameters,
-        atmosphericModel)
+        geopotentialModelParameters, atmosphericModel)
     {
     }
 
@@ -47,8 +45,7 @@ public class CelestialBody : CelestialItem, IOrientable
     /// <param name="geopotentialModelParameters"></param>
     /// <param name="atmosphericModel"></param>
     public CelestialBody(int naifId, GeopotentialModelParameters geopotentialModelParameters = null, AtmosphericModel atmosphericModel = null) : this(naifId, Frame.ECLIPTIC_J2000,
-        DateTimeExtension.J2000,
-        geopotentialModelParameters, atmosphericModel)
+        DateTimeExtension.J2000, geopotentialModelParameters, atmosphericModel)
     {
     }
 
@@ -60,9 +57,8 @@ public class CelestialBody : CelestialItem, IOrientable
     /// <param name="epoch"></param>
     /// <param name="geopotentialModelParameters"></param>
     /// <param name="atmosphericModel"></param>
-    public CelestialBody(NaifObject naifObject, Frame frame, DateTime epoch, GeopotentialModelParameters geopotentialModelParameters = null,
-        AtmosphericModel atmosphericModel = null) : this(naifObject.NaifId,
-        frame, epoch, geopotentialModelParameters, atmosphericModel)
+    public CelestialBody(NaifObject naifObject, Frame frame, DateTime epoch, GeopotentialModelParameters geopotentialModelParameters = null, AtmosphericModel atmosphericModel = null) 
+        : this(naifObject.NaifId, frame, epoch, geopotentialModelParameters, atmosphericModel)
     {
     }
 
@@ -75,7 +71,7 @@ public class CelestialBody : CelestialItem, IOrientable
     /// <param name="geopotentialModelParameters"></param>
     /// <param name="atmosphericModel"></param>
     public CelestialBody(int naifId, Frame frame, DateTime epoch, GeopotentialModelParameters geopotentialModelParameters = null, AtmosphericModel atmosphericModel = null) :
-        base(naifId, frame, epoch)
+        base(naifId, frame, epoch, geopotentialModelParameters)
     {
         PolarRadius = ExtendedInformation.Radii.Z;
         EquatorialRadius = ExtendedInformation.Radii.X;
@@ -94,9 +90,7 @@ public class CelestialBody : CelestialItem, IOrientable
             : new Frame(ExtendedInformation.FrameName);
 
         UpdateSphereOfInfluence();
-        GravitationalField = geopotentialModelParameters != null
-            ? new GeopotentialGravitationalField(geopotentialModelParameters.GeopotentialModelPath, geopotentialModelParameters.GeopotentialDegree)
-            : new GravitationalField();
+
         AtmosphericModel = atmosphericModel;
     }
 
@@ -110,8 +104,7 @@ public class CelestialBody : CelestialItem, IOrientable
     /// <param name="equatorialRadius"></param>
     /// <param name="initialOrbitalParameters"></param>
     protected CelestialBody(int naifId, string name, double mass, double polarRadius = 0.0, double equatorialRadius = 0.0,
-        OrbitalParameters.OrbitalParameters initialOrbitalParameters = null) : base(
-        naifId, name, mass, initialOrbitalParameters)
+        OrbitalParameters.OrbitalParameters initialOrbitalParameters = null) : base(naifId, name, mass, initialOrbitalParameters)
     {
         PolarRadius = polarRadius;
         EquatorialRadius = equatorialRadius;
@@ -271,17 +264,6 @@ public class CelestialBody : CelestialItem, IOrientable
         return HelioSynchronousOrbit(a, eccentricity, epochAtDescendingNode);
     }
 
-    /// <summary>
-    /// Evaluate gravitational acceleration at given position
-    /// </summary>
-    /// <param name="orbitalParameters"></param>
-    /// <returns></returns>
-    public Vector3 EvaluateGravitationalAcceleration(OrbitalParameters.OrbitalParameters orbitalParameters)
-    {
-        var sv = orbitalParameters.Observer as CelestialBody != this ? orbitalParameters.RelativeTo(this, Aberration.None).ToStateVector() : orbitalParameters.ToStateVector();
-
-        return GravitationalField.ComputeGravitationalAcceleration(sv);
-    }
 
     /// <summary>
     /// Get temperature at given altitude

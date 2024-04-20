@@ -18,6 +18,8 @@ public abstract class CelestialItem : ILocalizable, IEquatable<CelestialItem>
     public double Mass { get; }
     public double GM { get; }
 
+    protected GravitationalField GravitationalField { get; }
+
     public OrbitalParameters.OrbitalParameters InitialOrbitalParameters { get; internal set; }
 
     private readonly HashSet<CelestialItem> _satellites = new();
@@ -41,7 +43,8 @@ public abstract class CelestialItem : ILocalizable, IEquatable<CelestialItem>
     /// <param name="naifId">Naif identifier</param>
     /// <param name="frame">Initial orbital parameters frame</param>
     /// <param name="epoch">Epoch</param>
-    protected CelestialItem(int naifId, Frame frame, DateTime epoch)
+    /// <param name="geopotentialModelParameters"></param>
+    protected CelestialItem(int naifId, Frame frame, DateTime epoch, GeopotentialModelParameters geopotentialModelParameters = null)
     {
         ExtendedInformation = API.Instance.GetCelestialBodyInfo(naifId);
 
@@ -53,12 +56,17 @@ public abstract class CelestialItem : ILocalizable, IEquatable<CelestialItem>
 
         Mass = ExtendedInformation.GM / Constants.G;
         GM = ExtendedInformation.GM;
+        GravitationalField = geopotentialModelParameters != null
+            ? new GeopotentialGravitationalField(geopotentialModelParameters.GeopotentialModelPath, geopotentialModelParameters.GeopotentialDegree)
+            : new GravitationalField();
 
         if (NaifId == Stars.Sun.NaifId || NaifId == Barycenters.SOLAR_SYSTEM_BARYCENTER.NaifId) return;
         if (IsPlanet || IsMoon || IsBarycenter)
             InitialOrbitalParameters = GetEphemeris(epoch, new Barycenter(ExtendedInformation.BarycenterOfMotionId), frame, Aberration.None);
 
         (InitialOrbitalParameters?.Observer as CelestialItem)?._satellites.Add(this);
+
+        
     }
 
     /// <summary>
@@ -68,7 +76,7 @@ public abstract class CelestialItem : ILocalizable, IEquatable<CelestialItem>
     /// <param name="name"></param>
     /// <param name="mass"></param>
     /// <param name="initialOrbitalParameters"></param>
-    protected CelestialItem(int naifId, string name, double mass, OrbitalParameters.OrbitalParameters initialOrbitalParameters)
+    protected CelestialItem(int naifId, string name, double mass, OrbitalParameters.OrbitalParameters initialOrbitalParameters, GeopotentialModelParameters geopotentialModelParameters = null)
     {
         if (string.IsNullOrEmpty(name))
         {
@@ -86,6 +94,9 @@ public abstract class CelestialItem : ILocalizable, IEquatable<CelestialItem>
         GM = mass * Constants.G;
         InitialOrbitalParameters = initialOrbitalParameters;
         (InitialOrbitalParameters?.Observer as CelestialBody)?._satellites.Add(this);
+        GravitationalField = geopotentialModelParameters != null
+            ? new GeopotentialGravitationalField(geopotentialModelParameters.GeopotentialModelPath, geopotentialModelParameters.GeopotentialDegree)
+            : new GravitationalField();
     }
 
     internal void AddSatellite(CelestialItem celestialItem)
@@ -154,7 +165,7 @@ public abstract class CelestialItem : ILocalizable, IEquatable<CelestialItem>
         var target2Position = target2.GetEphemeris(epoch, this, Frame.ICRF, aberration).ToStateVector().Position;
         return target1Position.Angle(target2Position);
     }
-    
+
     public double AngularSeparation(DateTime epoch, ILocalizable target1, OrbitalParameters.OrbitalParameters fromPosition, Aberration aberration)
     {
         var target1Position = fromPosition.RelativeTo(target1, aberration).ToStateVector().Position.Inverse();
@@ -218,7 +229,7 @@ public abstract class CelestialItem : ILocalizable, IEquatable<CelestialItem>
 
         return new Planetocentric(lon, lat, position.Magnitude());
     }
-    
+
     public Planetocentric SubObserverPoint(Vector3 position, DateTime epoch, Aberration aberration)
     {
         var lon = System.Math.Atan2(position.Y, position.X);
@@ -227,7 +238,7 @@ public abstract class CelestialItem : ILocalizable, IEquatable<CelestialItem>
 
         return new Planetocentric(lon, lat, position.Magnitude());
     }
-    
+
     public OccultationType? IsOcculted(CelestialItem by, OrbitalParameters.OrbitalParameters from)
     {
         double backSize = this.AngularSize(from.RelativeTo(this, Aberration.LT).ToStateVector().Position.Magnitude());
@@ -235,7 +246,7 @@ public abstract class CelestialItem : ILocalizable, IEquatable<CelestialItem>
         var angularSeparation = this.AngularSeparation(from.Epoch, by, from, Aberration.LT);
         return IsOcculted(angularSeparation, backSize, bySize);
     }
-    
+
     public static OccultationType IsOcculted(double angularSeparation, double backSize, double bySize)
     {
         OccultationType occul = OccultationType.None;
@@ -253,6 +264,18 @@ public abstract class CelestialItem : ILocalizable, IEquatable<CelestialItem>
         }
 
         return occul;
+    }
+    
+    /// <summary>
+    /// Evaluate gravitational acceleration at given position
+    /// </summary>
+    /// <param name="orbitalParameters"></param>
+    /// <returns></returns>
+    public Vector3 EvaluateGravitationalAcceleration(OrbitalParameters.OrbitalParameters orbitalParameters)
+    {
+        var sv = orbitalParameters.Observer as CelestialItem != this ? orbitalParameters.RelativeTo(this, Aberration.None).ToStateVector() : orbitalParameters.ToStateVector();
+
+        return GravitationalField.ComputeGravitationalAcceleration(sv);
     }
 
     public override string ToString()

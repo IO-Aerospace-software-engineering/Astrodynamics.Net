@@ -16,9 +16,9 @@ namespace IO.Astrodynamics.Propagator;
 
 public class SpacecraftPropagator
 {
-    private readonly CelestialBody _originalObserver;
+    private readonly CelestialItem _originalObserver;
     public Window Window { get; }
-    public IEnumerable<CelestialBody> CelestialBodies { get; }
+    public IEnumerable<CelestialItem> CelestialItems { get; }
     public bool IncludeAtmosphericDrag { get; }
     public bool IncludeSolarRadiationPressure { get; }
     public Spacecraft Spacecraft { get; }
@@ -40,21 +40,21 @@ public class SpacecraftPropagator
     /// <param name="includeSolarRadiationPressure"></param>
     /// <param name="deltaT">Simulation step size</param>
     /// <exception cref="ArgumentNullException"></exception>
-    public SpacecraftPropagator(Window window, Spacecraft spacecraft, IEnumerable<CelestialBody> additionalCelestialBodies, bool includeAtmosphericDrag,
+    public SpacecraftPropagator(Window window, Spacecraft spacecraft, IEnumerable<CelestialItem> additionalCelestialBodies, bool includeAtmosphericDrag,
         bool includeSolarRadiationPressure, TimeSpan deltaT)
     {
-        var sun = new CelestialBody(10);
-        _originalObserver = spacecraft.InitialOrbitalParameters.Observer as CelestialBody;
+        var sun = new CelestialBody(10);    
+        _originalObserver = spacecraft.InitialOrbitalParameters.Observer as CelestialItem;
         Spacecraft = spacecraft ?? throw new ArgumentNullException(nameof(spacecraft));
         Window = window;
-        CelestialBodies = new[] { spacecraft.InitialOrbitalParameters.Observer as CelestialBody, sun }.Concat(additionalCelestialBodies ?? Array.Empty<CelestialBody>());
+        CelestialItems = new[] { spacecraft.InitialOrbitalParameters.Observer as CelestialItem, sun }.Concat(additionalCelestialBodies ?? Array.Empty<CelestialItem>());
         IncludeAtmosphericDrag = includeAtmosphericDrag;
         IncludeSolarRadiationPressure = includeSolarRadiationPressure;
         DeltaT = deltaT;
 
         var forces = InitializeForces(IncludeAtmosphericDrag, IncludeSolarRadiationPressure);
 
-        var initialState = Spacecraft.InitialOrbitalParameters.AtEpoch(Window.StartDate).ToStateVector().RelativeTo(sun, Aberration.None).ToStateVector();
+        var initialState = Spacecraft.InitialOrbitalParameters.AtEpoch(Window.StartDate).ToStateVector().RelativeTo(sun, Aberration.LT).ToStateVector();
         Integrator = new VVIntegrator(forces, DeltaT, initialState);
 
         _svCacheSize = (uint)Window.Length.TotalSeconds / (uint)DeltaT.TotalSeconds + (uint)DeltaT.TotalSeconds;
@@ -69,7 +69,7 @@ public class SpacecraftPropagator
     private List<ForceBase> InitializeForces(bool includeAtmosphericDrag, bool includeSolarRadiationPressure)
     {
         List<ForceBase> forces = new List<ForceBase>();
-        foreach (var celestialBody in CelestialBodies.Distinct())
+        foreach (var celestialBody in CelestialItems.Distinct())
         {
             forces.Add(new GravitationalAcceleration(celestialBody));
         }

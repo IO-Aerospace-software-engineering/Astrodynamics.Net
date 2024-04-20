@@ -9,7 +9,7 @@ public class GravitationalField
 {
     public virtual Vector3 ComputeGravitationalAcceleration(StateVector stateVector)
     {
-        CelestialBody centerOfMotion = stateVector.Observer as CelestialBody;
+        CelestialItem centerOfMotion = stateVector.Observer as CelestialItem;
         var position = stateVector.Position;
 
         return position.Normalize() * (-centerOfMotion.GM / System.Math.Pow(position.Magnitude(), 2.0));

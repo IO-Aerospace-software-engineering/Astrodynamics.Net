@@ -9,11 +9,11 @@ namespace IO.Astrodynamics.Propagator.Forces;
 /// </summary>
 public class GravitationalAcceleration : ForceBase
 {
-    public CelestialBody CelestialBody { get; }
+    public CelestialItem CelestialItem { get; }
 
-    public GravitationalAcceleration(CelestialBody celestialBody)
+    public GravitationalAcceleration(CelestialItem celestialItem)
     {
-        CelestialBody = celestialBody;
+        CelestialItem = celestialItem;
     }
 
     /// <summary>
@@ -23,6 +23,6 @@ public class GravitationalAcceleration : ForceBase
     /// <returns></returns>
     public override Vector3 Apply(StateVector stateVector)
     {
-        return CelestialBody.EvaluateGravitationalAcceleration(stateVector);
+        return CelestialItem.EvaluateGravitationalAcceleration(stateVector);
     }
 }

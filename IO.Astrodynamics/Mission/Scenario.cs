@@ -15,8 +15,8 @@ namespace IO.Astrodynamics.Mission
         public string Name { get; }
         public Window Window { get; }
         public Mission Mission { get; }
-        private readonly HashSet<Body.CelestialBody> _additionalCelestialBodies = new();
-        public IReadOnlyCollection<Body.CelestialBody> AdditionalCelstialBodies => _additionalCelestialBodies;
+        private readonly HashSet<Body.CelestialItem> _additionalCelestialBodies = new();
+        public IReadOnlyCollection<Body.CelestialItem> AdditionalCelstialBodies => _additionalCelestialBodies;
 
         private readonly HashSet<Body.Spacecraft.Spacecraft> _spacecrafts = new();
         public IReadOnlyCollection<Body.Spacecraft.Spacecraft> Spacecrafts => _spacecrafts;
@@ -57,7 +57,7 @@ namespace IO.Astrodynamics.Mission
         /// </summary>
         /// <param name="celestialBody"></param>
         /// <exception cref="ArgumentNullException"></exception>
-        public void AddAdditionalCelestialBody(Body.CelestialBody celestialBody)
+        public void AddAdditionalCelestialBody(Body.CelestialItem celestialBody)
         {
             if (celestialBody == null) throw new ArgumentNullException(nameof(celestialBody));
             _additionalCelestialBodies.Add(celestialBody);
