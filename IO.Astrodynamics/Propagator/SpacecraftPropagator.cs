@@ -8,6 +8,7 @@ using IO.Astrodynamics.Body.Spacecraft;
 using IO.Astrodynamics.OrbitalParameters;
 using IO.Astrodynamics.Propagator.Forces;
 using IO.Astrodynamics.Propagator.Integrators;
+using IO.Astrodynamics.SolarSystemObjects;
 using IO.Astrodynamics.Time;
 using Quaternion = IO.Astrodynamics.Math.Quaternion;
 using Vector3 = IO.Astrodynamics.Math.Vector3;
@@ -43,18 +44,18 @@ public class SpacecraftPropagator
     public SpacecraftPropagator(Window window, Spacecraft spacecraft, IEnumerable<CelestialItem> additionalCelestialBodies, bool includeAtmosphericDrag,
         bool includeSolarRadiationPressure, TimeSpan deltaT)
     {
-        var sun = new CelestialBody(10);    
+        var ssb = new Barycenter(Barycenters.SOLAR_SYSTEM_BARYCENTER.NaifId);    
         _originalObserver = spacecraft.InitialOrbitalParameters.Observer as CelestialItem;
         Spacecraft = spacecraft ?? throw new ArgumentNullException(nameof(spacecraft));
         Window = window;
-        CelestialItems = new[] { spacecraft.InitialOrbitalParameters.Observer as CelestialItem, sun }.Concat(additionalCelestialBodies ?? Array.Empty<CelestialItem>());
+        CelestialItems = additionalCelestialBodies ?? Array.Empty<CelestialItem>();
         IncludeAtmosphericDrag = includeAtmosphericDrag;
         IncludeSolarRadiationPressure = includeSolarRadiationPressure;
         DeltaT = deltaT;
 
         var forces = InitializeForces(IncludeAtmosphericDrag, IncludeSolarRadiationPressure);
 
-        var initialState = Spacecraft.InitialOrbitalParameters.AtEpoch(Window.StartDate).ToStateVector().RelativeTo(sun, Aberration.LT).ToStateVector();
+        var initialState = Spacecraft.InitialOrbitalParameters.AtEpoch(Window.StartDate).ToStateVector().RelativeTo(ssb, Aberration.None).ToStateVector();
         Integrator = new VVIntegrator(forces, DeltaT, initialState);
 
         _svCacheSize = (uint)Window.Length.TotalSeconds / (uint)DeltaT.TotalSeconds + (uint)DeltaT.TotalSeconds;

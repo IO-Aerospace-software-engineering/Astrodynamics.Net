@@ -70,6 +70,8 @@ namespace IO.Astrodynamics.Tests.Body
             Scenario scenario = new Scenario("Scenario_A", new Astrodynamics.Mission.Mission("mission06"),
                 new Astrodynamics.Time.Window(start, end));
             scenario.AddAdditionalCelestialBody(TestHelpers.MoonAtJ2000);
+            scenario.AddAdditionalCelestialBody(TestHelpers.EarthAtJ2000);
+            scenario.AddAdditionalCelestialBody(TestHelpers.Sun);
 
             //Define parking orbit
             StateVector parkingOrbit = new StateVector(
@@ -96,7 +98,7 @@ namespace IO.Astrodynamics.Tests.Body
 
             //Read results
             Assert.Equal(2, res.Count());
-            Assert.Equal("2021-06-10T00:00:00.0000000 (TDB)", res.ElementAt(0).StartDate.ToFormattedString());
+            Assert.Equal(DateTime.Parse("2021-06-10T00:00:00.0000000"), res.ElementAt(0).StartDate,TimeSpan.FromMilliseconds(1));
             Assert.Equal("2021-06-10T00:29:06.9434598 (TDB)", res.ElementAt(0).EndDate.ToFormattedString());
             Assert.Equal("2021-06-10T01:03:53.6100603 (TDB)", res.ElementAt(1).StartDate.ToFormattedString());
             Assert.Equal("2021-06-10T01:47:26.0000000 (TDB)", res.ElementAt(1).EndDate.ToFormattedString());

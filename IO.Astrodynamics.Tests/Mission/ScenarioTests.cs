@@ -102,6 +102,8 @@ namespace IO.Astrodynamics.Tests.Mission
             Astrodynamics.Mission.Mission mission = new Astrodynamics.Mission.Mission("mission02");
             Scenario scenario = new Scenario("scn1", mission, new Window(startPropagator, end));
             scenario.AddAdditionalCelestialBody(TestHelpers.MoonAtJ2000);
+            scenario.AddAdditionalCelestialBody(TestHelpers.EarthAtJ2000);
+            scenario.AddAdditionalCelestialBody(TestHelpers.Sun);
 
             //Define parking orbit
             StateVector parkingOrbit = new StateVector(
@@ -203,6 +205,8 @@ namespace IO.Astrodynamics.Tests.Mission
             Astrodynamics.Mission.Mission mission = new Astrodynamics.Mission.Mission("mission02");
             Scenario scenario = new Scenario("scn1", mission, new Window(startPropagator, end));
             scenario.AddAdditionalCelestialBody(TestHelpers.MoonAtJ2000);
+            scenario.AddAdditionalCelestialBody(TestHelpers.EarthAtJ2000);
+            scenario.AddAdditionalCelestialBody(TestHelpers.Sun);
 
             //Define parking orbit
             StateVector parkingOrbit = new StateVector(
@@ -451,24 +455,27 @@ namespace IO.Astrodynamics.Tests.Mission
             Clock clk = new Clock("My clock", 256);
             Spacecraft spc = new Spacecraft(-1001, "MySpacecraft", 100.0, 10000.0, clk, testOrbit);
             scenario.AddSpacecraft(spc);
+            scenario.AddAdditionalCelestialBody(new CelestialBody(10));
             scenario.AddAdditionalCelestialBody(new CelestialBody(399));
             // scenario.AddAdditionalCelestialBody(new CelestialBody(10));
             // scenario.AddAdditionalCelestialBody(new Barycenter(5));
-            // scenario.AddAdditionalCelestialBody(new Barycenter(2));
-            // scenario.AddAdditionalCelestialBody(new Barycenter(4));
-            // scenario.AddAdditionalCelestialBody(new Barycenter(5));
-            // scenario.AddAdditionalCelestialBody(new Barycenter(6));
-            // scenario.AddAdditionalCelestialBody(new Barycenter(7));
-            // scenario.AddAdditionalCelestialBody(new Barycenter(8));
-            var summary = await scenario.SimulateAsync(new DirectoryInfo("Simulation"), false, false, TimeSpan.FromSeconds(10.0));
+            scenario.AddAdditionalCelestialBody(new Barycenter(2));
+            scenario.AddAdditionalCelestialBody(new Barycenter(4));
+            scenario.AddAdditionalCelestialBody(new Barycenter(5));
+            scenario.AddAdditionalCelestialBody(new Barycenter(6));
+            scenario.AddAdditionalCelestialBody(new Barycenter(7));
+            scenario.AddAdditionalCelestialBody(new Barycenter(8));
+            var summary = await scenario.SimulateAsync(new DirectoryInfo("Simulation"), false, false, TimeSpan.FromSeconds(100.0));
 
             var spcSV = spc.GetEphemeris(end, earth, Frames.Frame.ICRF, Aberration.None).ToStateVector();
             var moonSV = moon.GetEphemeris(end, earth, Frames.Frame.ICRF, Aberration.None).ToStateVector();
 
             var delta = spcSV - moonSV;
+            var deltaP = delta.Position.Magnitude();
+            var deltaV = delta.Velocity.Magnitude();
 
-            Assert.True(delta.Position.Magnitude() < 3E+03);
-            Assert.True(delta.Velocity.Magnitude() < 1E-03);
+            Assert.True(deltaP < 3E+03);
+            Assert.True(deltaV < 1E-03);
 
             CosmographiaExporter exporter = new CosmographiaExporter();
             await exporter.ExportAsync(scenario, new DirectoryInfo("UserFeedback"));
