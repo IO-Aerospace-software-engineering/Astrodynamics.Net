@@ -43,12 +43,12 @@ public class Scenario
         Spacecraft spc = new Spacecraft(-1001, "MySpacecraft", 100.0, 10000.0, clk,
             new StateVector(new Vector3(6800000.0, 0.0, 0.0), new Vector3(0.0, 7656.2204182967143, 0.0), _earth, DateTimeExtension.J2000, Frames.Frame.ICRF));
         _srp = new SolarRadiationPressure(spc);
-        _atm = new AtmosphericDrag(spc);
+        _atm = new AtmosphericDrag(spc,_earth);
         List<ForceBase> forces = new List<ForceBase>();
         forces.Add(new GravitationalAcceleration(_sun));
         forces.Add(new GravitationalAcceleration(_moon));
         forces.Add(new GravitationalAcceleration(_earth));
-        forces.Add(new AtmosphericDrag(spc));
+        forces.Add(new AtmosphericDrag(spc,_earth));
         forces.Add(new SolarRadiationPressure(spc));
         _integrator = new VVIntegrator(forces, TimeSpan.FromSeconds(1.0), new StateVector(new Vector3(6800000.0 - Random.Shared.NextDouble(), 0.0, 0.0),
             new Vector3(0.0, 8000.0 - Random.Shared.NextDouble(), 0.0), _earth,

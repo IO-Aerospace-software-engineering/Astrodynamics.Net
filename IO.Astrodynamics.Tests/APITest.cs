@@ -453,7 +453,7 @@ public class APITest
         Assert.Equal(PlanetsAndMoons.EARTH.Name, res.Name);
         Assert.Equal(13000, res.FrameId);
         Assert.Equal("ITRF93", res.FrameName);
-        Assert.Equal(398600435436095.93, res.GM);
+        Assert.Equal(398600435507022.62, res.GM);
         Assert.Equal(6378136.5999999998, res.Radii.X);
         Assert.Equal(6378136.5999999998, res.Radii.Y);
         Assert.Equal(6356751.9000000002, res.Radii.Z);
@@ -473,7 +473,7 @@ public class APITest
         Assert.Equal(PlanetsAndMoons.MOON.Name, res.Name);
         Assert.Equal(31001, res.FrameId);
         Assert.Equal("MOON_ME", res.FrameName);
-        Assert.Equal(4902800066163.7959, res.GM);
+        Assert.Equal(4902800118457.5488, res.GM);
         Assert.Equal(1737400.0, res.Radii.X);
         Assert.Equal(1737400.0, res.Radii.Y);
         Assert.Equal(1737400.0, res.Radii.Z);

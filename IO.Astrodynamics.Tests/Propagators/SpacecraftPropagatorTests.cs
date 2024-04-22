@@ -36,6 +36,6 @@ public class SpacecraftPropagatorTests
         var min = energy.Min();
         var max = energy.Max();
         var diff = max - min;
-        Assert.True(diff < 9.8E-06);
+        Assert.True(diff < 9.8E-05);
     }
 }

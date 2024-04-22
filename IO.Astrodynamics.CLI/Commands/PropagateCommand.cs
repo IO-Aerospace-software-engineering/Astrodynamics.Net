@@ -65,6 +65,7 @@ public class PropagateCommand
         CosmographiaExporter cosmographiaExporter = new CosmographiaExporter();
 
         await cosmographiaExporter.ExportAsync(scenario, qualifiedOutputDirectory);
+        spacecraft.Dispose();
         scenario.RootDirectory.Parent?.Delete(true);
 
         Console.ForegroundColor = ConsoleColor.Green;

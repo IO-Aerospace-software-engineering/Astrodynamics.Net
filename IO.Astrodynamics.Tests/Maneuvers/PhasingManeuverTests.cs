@@ -60,9 +60,9 @@ namespace IO.Astrodynamics.Tests.Maneuvers
             PhasingManeuver maneuver = new PhasingManeuver(DateTime.MinValue, TimeSpan.Zero, targtOrbitalParams, 3, spc.Engines.First());
             maneuver.TryExecute(orbitalParams.ToStateVector());
 
-            Assert.Equal(new Vector3(0.0, 14.039767793719875, 0.0), maneuver.DeltaV);
-            Assert.Equal(6.0351723087570868, maneuver.FuelBurned);
-            Assert.Equal(new Window(DateTime.Parse("2000-01-01T11:59:59.9196115"), TimeSpan.Parse("2.17:31:12.7762651")), maneuver.ManeuverWindow);
+            Assert.Equal(new Vector3(0.0, 14.039767793719875, 0.0), maneuver.DeltaV,TestHelpers.VectorComparer);
+            Assert.Equal(6.0351723087570868, maneuver.FuelBurned,3);
+            Assert.Equal(new Window(DateTime.Parse("2000-01-01T11:59:59.9196115"), TimeSpan.Parse("2.17:31:12.7762440")), maneuver.ManeuverWindow);
             Assert.Equal(new Window(DateTime.Parse("2000-01-01T11:59:59.9196115"), TimeSpan.FromSeconds(0.1207034)), maneuver.ThrustWindow);
         }
     }

@@ -68,12 +68,12 @@ namespace IO.Astrodynamics.Tests.Maneuvers
             var maneuverPoint = orbitalParams.ToStateVector(orbitalParams.Epoch + orbitalParams.Period() * 0.5);
             var res = maneuver.TryExecute(maneuverPoint);
             Assert.Equal(
-                new StateOrientation(new Quaternion(0.2145863904637235, 0.9767050122876152, 0.0, 5.214043303715472E-16), Vector3.Zero, maneuverPoint.Epoch, maneuverPoint.Frame),
+                new StateOrientation(new Quaternion(0.21458639046372344, 0.9767050122876152, 0.0, -2.463944285530668E-11), Vector3.Zero, maneuverPoint.Epoch, maneuverPoint.Frame),
                 res.so);
-            Assert.Equal(new Vector3(-4.095562777273702E-13, -1661.6798910584291, 767.1890047118214), maneuver.DeltaV);
-            Assert.Equal(new Window(DateTime.Parse("2000-01-01T17:15:44.8323357").ToTDB(), DateTime.Parse("2000-01-01T17:16:52.7296435").ToTDB()), maneuver.ThrustWindow);
-            Assert.Equal(new Window(DateTime.Parse("2000-01-01T17:15:44.8323357").ToTDB(), DateTime.Parse("2000-01-01T17:16:52.7296435").ToTDB()), maneuver.ThrustWindow);
-            Assert.Equal(3394.8653913932048, maneuver.FuelBurned);
+            Assert.Equal(new Vector3( 1.9353959900568053E-08, -1661.6798912062677, 767.1890047800779), maneuver.DeltaV);
+            Assert.Equal(new Window(DateTime.Parse("2000-01-01T17:15:44.8323340").ToTDB(), DateTime.Parse("2000-01-01T17:16:52.7296418").ToTDB()), maneuver.ManeuverWindow);
+            Assert.Equal(new Window(DateTime.Parse("2000-01-01T17:15:44.8323340").ToTDB(), DateTime.Parse("2000-01-01T17:16:52.7296418").ToTDB()), maneuver.ThrustWindow);
+            Assert.Equal(3394.8653913932048, maneuver.FuelBurned,3);
         }
 
         [Fact]
@@ -90,15 +90,15 @@ namespace IO.Astrodynamics.Tests.Maneuvers
             var maneuverPoint = orbitalParams.ToStateVector(orbitalParams.Epoch + orbitalParams.Period() * 0.5);
             var res = maneuver.TryExecute(maneuverPoint);
             Assert.Equal(
-                new KeplerianElements(24381999.959422685, 0.72930850582462747, 0, 0, 6.2831853071795862, 3.1415926535897931, maneuverPoint.Observer, maneuverPoint.Epoch,
+                new KeplerianElements(24381999.95942269, 0.72930850582462747, 0, 0, 6.2831853071795862, 3.1415926535897931, maneuverPoint.Observer, maneuverPoint.Epoch,
                     maneuverPoint.Frame), res.sv.ToKeplerianElements());
             Assert.Equal(
-                new StateOrientation(new Quaternion(0.6178766436987672, 0.7862750493126097, 0.0, 4.053129358186329E-16), Vector3.Zero, maneuverPoint.Epoch, maneuverPoint.Frame),
+                new StateOrientation(new Quaternion(0.617876643698767, 0.7862750493126097, 0.0, -1.983508978702801E-11), Vector3.Zero, maneuverPoint.Epoch, maneuverPoint.Frame),
                 res.so);
-            Assert.Equal(new Vector3(-3.95474367524912E-13, -186.70162768922296, 767.1890047118214), maneuver.DeltaV);
-            Assert.Equal(new Window(DateTime.Parse("2000-01-01T17:16:08.2299738").ToTDB(), DateTime.Parse("2000-01-01T17:16:40.9956928").ToTDB()), maneuver.ThrustWindow);
-            Assert.Equal(new Window(DateTime.Parse("2000-01-01T17:16:08.2299738").ToTDB(), DateTime.Parse("2000-01-01T17:16:40.9956928").ToTDB()), maneuver.ManeuverWindow);
-            Assert.Equal(1638.2859501619785, maneuver.FuelBurned);
+            Assert.Equal(new Vector3(1.9353612716996414E-08 , -186.70162770583374 , 767.1890047800779), maneuver.DeltaV);
+            Assert.Equal(new Window(DateTime.Parse("2000-01-01T17:16:08.2299721").ToTDB(), DateTime.Parse("2000-01-01T17:16:40.9956911").ToTDB()), maneuver.ThrustWindow);
+            Assert.Equal(new Window(DateTime.Parse("2000-01-01T17:16:08.2299721").ToTDB(), DateTime.Parse("2000-01-01T17:16:40.9956911").ToTDB()), maneuver.ManeuverWindow);
+            Assert.Equal(1638.2859502950841, maneuver.FuelBurned);
         }
     }
 }

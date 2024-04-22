@@ -44,7 +44,7 @@ public class SpacecraftPropagator
     public SpacecraftPropagator(Window window, Spacecraft spacecraft, IEnumerable<CelestialItem> additionalCelestialBodies, bool includeAtmosphericDrag,
         bool includeSolarRadiationPressure, TimeSpan deltaT)
     {
-        var ssb = new Barycenter(Barycenters.SOLAR_SYSTEM_BARYCENTER.NaifId);    
+        var ssb = new Barycenter(Barycenters.SOLAR_SYSTEM_BARYCENTER.NaifId);
         _originalObserver = spacecraft.InitialOrbitalParameters.Observer as CelestialItem;
         Spacecraft = spacecraft ?? throw new ArgumentNullException(nameof(spacecraft));
         Window = window;
@@ -77,7 +77,10 @@ public class SpacecraftPropagator
 
         if (includeAtmosphericDrag)
         {
-            forces.Add(new AtmosphericDrag(Spacecraft));
+            if (_originalObserver is CelestialBody body)
+            {
+                forces.Add(new AtmosphericDrag(Spacecraft, body));
+            }
         }
 
         if (includeSolarRadiationPressure)

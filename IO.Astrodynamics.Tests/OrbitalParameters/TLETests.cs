@@ -30,7 +30,7 @@ public class TLETests
             "1 25544U 98067A   21020.53488036  .00016717  00000-0  10270-3 0  9054",
             ""));
 
-        Assert.Equal(6803376.2171725659, tle.SemiMajorAxis(), 6);
+        Assert.Equal(6803376.2159598358, tle.SemiMajorAxis(), 6);
         Assert.Equal(4.9299999999999999e-05, tle.Eccentricity(), 6);
         Assert.Equal(0.9013281683026676, tle.Inclination(), 6);
         Assert.Equal(6.1615568022666061, tle.AscendingNode(), 6);

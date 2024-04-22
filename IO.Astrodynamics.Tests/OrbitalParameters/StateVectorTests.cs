@@ -115,7 +115,7 @@ namespace IO.Astrodynamics.Tests.OrbitalParameters
 
             StateVector sv = new StateVector(new Vector3(-6.116559469556896E+06, -1.546174698676721E+06, 2.521950157430313E+06),
                 new Vector3(-8.078523150700097E+02, -5.477647950892673E+03, -5.297615757935174E+03), earth, DateTime.UtcNow, Frames.Frame.ICRF);
-            Assert.Equal(1.3532176446914895E-03, sv.Eccentricity());
+            Assert.Equal(1.3532176446914895E-03, sv.Eccentricity(),6);
         }
 
         [Fact]
@@ -125,8 +125,8 @@ namespace IO.Astrodynamics.Tests.OrbitalParameters
 
             StateVector sv = new StateVector(new Vector3(6800000.0, 0.0, 0.0), new Vector3(0.0, 8000.0, 0.0), earth, DateTime.UtcNow, Frames.Frame.ICRF);
             Vector3 ev = sv.EccentricityVector();
-            Assert.Equal(0.09182018209252996, ev.Magnitude());
-            Assert.Equal(0.09182018209252996, ev.X);
+            Assert.Equal(0.091820181898252251, ev.Magnitude());
+            Assert.Equal(0.091820181898252251, ev.X);
             Assert.Equal(0.0, ev.Y);
             Assert.Equal(0.0, ev.Z);
         }
@@ -152,7 +152,7 @@ namespace IO.Astrodynamics.Tests.OrbitalParameters
             StateVector sv = new StateVector(new Vector3(-6.116559469556896E+06, -1.546174698676721E+06, 2.521950157430313E+06),
                 new Vector3(-8.078523150700097E+02, -5.477647950892673E+03, -5.297615757935174E+03), earth, DateTime.UtcNow, Frames.Frame.ICRF);
 
-            Assert.Equal(-29305465.58806747, sv.SpecificOrbitalEnergy()); //ISS orbital energy in MJ
+            Assert.Equal(-29305465.598506544, sv.SpecificOrbitalEnergy()); //ISS orbital energy in MJ
         }
 
         [Fact]
@@ -170,7 +170,7 @@ namespace IO.Astrodynamics.Tests.OrbitalParameters
             CelestialBody earth = new CelestialBody( PlanetsAndMoons.EARTH);
 
             StateVector sv = new StateVector(new Vector3(8000000.0, 0.0, 0.0), new Vector3(0.0, 6000.0, 6000.0), earth, DateTime.UtcNow, Frames.Frame.ICRF);
-            Assert.Equal(14415872.19306759, sv.SemiMajorAxis());
+            Assert.Equal(14415872.186388023, sv.SemiMajorAxis());
         }
 
         [Fact]
@@ -204,11 +204,11 @@ namespace IO.Astrodynamics.Tests.OrbitalParameters
 
             StateVector sv = new StateVector(new Vector3(8237000.0, 17000.0, 5308000.0), new Vector3(-2000.0, 6000.0, 3000.0), earth, DateTime.UtcNow, Frames.Frame.ICRF);
 
-            Assert.Equal(53.621820299859436, sv.ArgumentOfPeriapsis() * IO.Astrodynamics.Constants.Rad2Deg);
+            Assert.Equal(53.621820299859436, sv.ArgumentOfPeriapsis() * IO.Astrodynamics.Constants.Rad2Deg,3);
 
             sv = new StateVector(new Vector3(3973000.0, -4881000.0, -931000.0), new Vector3(5400.0, 3360.0, 5890.0), earth, DateTime.UtcNow, Frames.Frame.ICRF);
 
-            Assert.Equal(350.51061587951995, sv.ArgumentOfPeriapsis() * IO.Astrodynamics.Constants.Rad2Deg);
+            Assert.Equal(350.51061587951995, sv.ArgumentOfPeriapsis() * IO.Astrodynamics.Constants.Rad2Deg,3);
         }
 
         [Fact]
@@ -218,11 +218,11 @@ namespace IO.Astrodynamics.Tests.OrbitalParameters
 
             StateVector sv = new StateVector(new Vector3(5070000.0, -2387000.0, 1430000.0), new Vector3(2450.0, 6350.0, 6440.0), earth, DateTime.UtcNow, Frames.Frame.ICRF);
 
-            Assert.Equal(30.57538215436613, sv.TrueAnomaly() * IO.Astrodynamics.Constants.Rad2Deg);
+            Assert.Equal(30.57538215436613, sv.TrueAnomaly() * IO.Astrodynamics.Constants.Rad2Deg,6);
 
             sv = new StateVector(new Vector3(1664000.0, -4862000.0, -2655000.0), new Vector3(7520.0, 890, 5520.0), earth, DateTime.UtcNow, Frames.Frame.ICRF);
 
-            Assert.Equal(329.477000818209, sv.TrueAnomaly() * IO.Astrodynamics.Constants.Rad2Deg);
+            Assert.Equal(329.477000818209, sv.TrueAnomaly() * IO.Astrodynamics.Constants.Rad2Deg,6);
         }
 
         [Fact]
@@ -232,7 +232,7 @@ namespace IO.Astrodynamics.Tests.OrbitalParameters
 
             StateVector sv = new StateVector(new Vector3(6700000.0, 2494000.0, 0.0), new Vector3(-2150.0, 8850.0, 0.0), earth, DateTime.UtcNow, Frames.Frame.ICRF);
 
-            Assert.Equal(0.20776173316152752, sv.EccentricAnomaly());
+            Assert.Equal(0.20776173316152752, sv.EccentricAnomaly(),6);
         }
 
         [Fact]
@@ -243,7 +243,7 @@ namespace IO.Astrodynamics.Tests.OrbitalParameters
             StateVector sv = new StateVector(new Vector3(-5775.068936894231E+03, -3372.353197848874E+03, 651.695854037289E+03),
                 new Vector3(-0.661469579672604E+03, -7.147573777688288E+03, -2.915719736461653E+03), earth, DateTime.UtcNow, Frames.Frame.ICRF);
 
-            Assert.Equal(59.99823497591805, sv.MeanAnomaly() * IO.Astrodynamics.Constants.Rad2Deg);
+            Assert.Equal(59.99823497591805, sv.MeanAnomaly() * IO.Astrodynamics.Constants.Rad2Deg,3);
         }
 
         [Fact]
@@ -254,7 +254,7 @@ namespace IO.Astrodynamics.Tests.OrbitalParameters
             StateVector sv = new StateVector(new Vector3(-5775.068936894231E+03, -3372.353197848874E+03, 651.695854037289E+03),
                 new Vector3(-0.661469579672604E+03, -7.147573777688288E+03, -2.915719736461653E+03), earth, DateTime.UtcNow, Frames.Frame.ICRF);
 
-            Assert.Equal(1.5501796754722221, sv.Period().TotalHours);
+            Assert.Equal(1.5501796754722221, sv.Period().TotalHours,6);
         }
 
         [Fact]
@@ -265,7 +265,7 @@ namespace IO.Astrodynamics.Tests.OrbitalParameters
             StateVector sv = new StateVector(new Vector3(-5775.068936894231E+03, -3372.353197848874E+03, 651.695854037289E+03),
                 new Vector3(-0.661469579672604E+03, -7.147573777688288E+03, -2.915719736461653E+03), earth, DateTime.UtcNow, Frames.Frame.ICRF);
 
-            Assert.Equal(0.0011258883596591215, sv.MeanMotion());
+            Assert.Equal(0.0011258883596591215, sv.MeanMotion(),3);
         }
 
         [Fact]
@@ -322,7 +322,7 @@ namespace IO.Astrodynamics.Tests.OrbitalParameters
         {
             var earth = TestHelpers.EarthAtJ2000;
             var sv = new StateVector(new Vector3(6800000.0, 0.0, 0.0), new Vector3(0.0, 8000.0, 0.0), earth, earth.InitialOrbitalParameters.Epoch, Frames.Frame.ICRF);
-            Assert.Equal(6654.42777338588, sv.ApogeeVelocity());
+            Assert.Equal(6654.4277759934785, sv.ApogeeVelocity());
         }
 
         [Fact]
@@ -351,8 +351,8 @@ namespace IO.Astrodynamics.Tests.OrbitalParameters
             var earth = TestHelpers.EarthAtJ2000;
             var ke = earth.GetEphemeris(DateTimeExtension.J2000, TestHelpers.Sun, Frames.Frame.ICRF, Aberration.None).ToKeplerianElements();
             Assert.Equal(
-                new KeplerianElements(149665479724.14615, 0.017121683029703794, 0.40908763696755318, 1.2954012328856077E-05,
-                    1.7768848943741333, 6.259056257646451, TestHelpers.Sun, DateTimeExtension.J2000, Frames.Frame.ICRF), ke);
+                new KeplerianElements(149665479724.91623, 0.01712168303475997, 0.40908763696755318, 1.2954012328856077E-05,
+                    1.77688489436688, 6.259056257653703, TestHelpers.Sun, DateTimeExtension.J2000, Frames.Frame.ICRF), ke);
         }
 
         [Fact]

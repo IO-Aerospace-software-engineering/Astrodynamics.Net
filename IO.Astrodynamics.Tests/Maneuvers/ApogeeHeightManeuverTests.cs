@@ -80,10 +80,10 @@ namespace IO.Astrodynamics.Tests.Maneuvers
             var res = maneuver.TryExecute(orbitalParams);
             Assert.Equal(new StateVector(orbitalParams.Position, orbitalParams.Velocity, orbitalParams.Observer, orbitalParams.Epoch, orbitalParams.Frame), res.sv);
             Assert.Equal(new StateOrientation(Quaternion.Zero, Vector3.Zero, orbitalParams.Epoch, orbitalParams.Frame), res.so);
-            Assert.Equal(new Vector3(0.0, 2424.6084264048732, 0.0), maneuver.DeltaV);
+            Assert.Equal(new Vector3(0.0, 2424.6084273080614, 0.0), maneuver.DeltaV);
             Assert.Equal(new Window(new DateTime(2000, 01, 01, 11, 59, 49, 301, 844), TimeSpan.FromSeconds(16.0632973)), maneuver.ThrustWindow);
             Assert.Equal(new Window(new DateTime(2000, 01, 01, 11, 59, 49, 301, 844), TimeSpan.FromSeconds(16.0632973)), maneuver.ManeuverWindow);
-            Assert.Equal(803.16486684915549, maneuver.FuelBurned);
+            Assert.Equal(803.16486707364015, maneuver.FuelBurned);
         }
         
         [Fact]
@@ -100,10 +100,10 @@ namespace IO.Astrodynamics.Tests.Maneuvers
             var res = maneuver.TryExecute(orbitalParams);
             Assert.Equal(new StateVector(orbitalParams.Position, orbitalParams.Velocity, orbitalParams.Observer, orbitalParams.Epoch, orbitalParams.Frame), res.sv);
             Assert.Equal(new StateOrientation(new Quaternion(0.0,-1.0,0.0,0.0), Vector3.Zero, orbitalParams.Epoch, orbitalParams.Frame), res.so);
-            Assert.Equal(new Vector3(0.0, -1467.1724439917523, 0.0), maneuver.DeltaV);
+            Assert.Equal(new Vector3(0.0, -1467.1724438487042, 0.0), maneuver.DeltaV);
             Assert.Equal(new Window(new DateTime(2000, 01, 01, 11, 59, 52, 841, 699).AddTicks(3), TimeSpan.FromSeconds(10.7481993)), maneuver.ThrustWindow);
             Assert.Equal(new Window(new DateTime(2000, 01, 01, 11, 59, 52, 841, 699).AddTicks(3), TimeSpan.FromSeconds(10.7481993)), maneuver.ManeuverWindow);
-            Assert.Equal(537.40996744477013, maneuver.FuelBurned);
+            Assert.Equal(537.40996740060154, maneuver.FuelBurned);
         }
     }
 }
