@@ -53,10 +53,10 @@ namespace IO.Astrodynamics.Tests.Mission
         {
             Astrodynamics.Mission.Mission mission = new Astrodynamics.Mission.Mission("Mission1");
             Scenario scenario = new Scenario("Scenario", mission, new Window(new DateTime(2021, 1, 1), new DateTime(2021, 1, 2)));
-            scenario.AddAdditionalCelestialBody(TestHelpers.MoonAtJ2000);
+            scenario.AddCelestialItem(TestHelpers.MoonAtJ2000);
             Assert.Single(scenario.AdditionalCelstialBodies);
             Assert.Equal(TestHelpers.MoonAtJ2000, scenario.AdditionalCelstialBodies.First());
-            Assert.Throws<ArgumentNullException>(() => scenario.AddAdditionalCelestialBody(null));
+            Assert.Throws<ArgumentNullException>(() => scenario.AddCelestialItem(null));
         }
 
         [Fact]
@@ -101,9 +101,9 @@ namespace IO.Astrodynamics.Tests.Mission
 
             Astrodynamics.Mission.Mission mission = new Astrodynamics.Mission.Mission("mission02");
             Scenario scenario = new Scenario("scn1", mission, new Window(startPropagator, end));
-            scenario.AddAdditionalCelestialBody(TestHelpers.MoonAtJ2000);
-            scenario.AddAdditionalCelestialBody(TestHelpers.EarthAtJ2000);
-            scenario.AddAdditionalCelestialBody(TestHelpers.Sun);
+            scenario.AddCelestialItem(TestHelpers.MoonAtJ2000);
+            scenario.AddCelestialItem(TestHelpers.EarthAtJ2000);
+            scenario.AddCelestialItem(TestHelpers.Sun);
 
             //Define parking orbit
             StateVector parkingOrbit = new StateVector(
@@ -204,9 +204,9 @@ namespace IO.Astrodynamics.Tests.Mission
 
             Astrodynamics.Mission.Mission mission = new Astrodynamics.Mission.Mission("mission02");
             Scenario scenario = new Scenario("scn1", mission, new Window(startPropagator, end));
-            scenario.AddAdditionalCelestialBody(TestHelpers.MoonAtJ2000);
-            scenario.AddAdditionalCelestialBody(TestHelpers.EarthAtJ2000);
-            scenario.AddAdditionalCelestialBody(TestHelpers.Sun);
+            scenario.AddCelestialItem(TestHelpers.MoonAtJ2000);
+            scenario.AddCelestialItem(TestHelpers.EarthAtJ2000);
+            scenario.AddCelestialItem(TestHelpers.Sun);
 
             //Define parking orbit
             StateVector parkingOrbit = new StateVector(
@@ -361,7 +361,7 @@ namespace IO.Astrodynamics.Tests.Mission
 
             Astrodynamics.Mission.Mission mission = new Astrodynamics.Mission.Mission("mission102");
             Scenario scenario = new Scenario("scn100", mission, new Window(startPropagator, end));
-            scenario.AddAdditionalCelestialBody(TestHelpers.MoonAtJ2000);
+            scenario.AddCelestialItem(TestHelpers.MoonAtJ2000);
 
             //Define parking orbit
             StateVector parkingOrbit = new StateVector(
@@ -469,22 +469,21 @@ namespace IO.Astrodynamics.Tests.Mission
             var earth = new CelestialBody(PlanetsAndMoons.EARTH, frame, start);
             var moon = new CelestialBody(PlanetsAndMoons.MOON, frame, start);
             Astrodynamics.Mission.Mission mission = new Astrodynamics.Mission.Mission("mission01");
-            Scenario scenario = new Scenario("scn01", mission, new IO.Astrodynamics.Time.Window(start, end));
+            Scenario scenario = new Scenario("scn01", mission, new Window(start, end));
 
             StateVector testOrbit = moon.GetEphemeris(start, new CelestialBody(399), frame, Aberration.None).ToStateVector();
             Clock clk = new Clock("My clock", 256);
-            Spacecraft spc = new Spacecraft(-1001, "MySpacecraft", 100.0, 10000.0, clk, testOrbit);
+            Spacecraft spc = new Spacecraft(-1001, "MySpacecraft", 100.0, 10000.0, clk, testOrbit,0.5);
             scenario.AddSpacecraft(spc);
-            scenario.AddAdditionalCelestialBody(new CelestialBody(10));
-            scenario.AddAdditionalCelestialBody(new CelestialBody(399));
-            // scenario.AddAdditionalCelestialBody(new CelestialBody(10));
-            // scenario.AddAdditionalCelestialBody(new Barycenter(5));
-            scenario.AddAdditionalCelestialBody(new Barycenter(2));
-            scenario.AddAdditionalCelestialBody(new Barycenter(4));
-            scenario.AddAdditionalCelestialBody(new Barycenter(5));
-            scenario.AddAdditionalCelestialBody(new Barycenter(6));
-            scenario.AddAdditionalCelestialBody(new Barycenter(7));
-            scenario.AddAdditionalCelestialBody(new Barycenter(8));
+            scenario.AddCelestialItem(new CelestialBody(10));
+            scenario.AddCelestialItem(new CelestialBody(399));
+            scenario.AddCelestialItem(new Barycenter(1));
+            scenario.AddCelestialItem(new Barycenter(2));
+            scenario.AddCelestialItem(new Barycenter(4));
+            scenario.AddCelestialItem(new Barycenter(5));
+            scenario.AddCelestialItem(new Barycenter(6));
+            scenario.AddCelestialItem(new Barycenter(7));
+            scenario.AddCelestialItem(new Barycenter(8));
             var summary = await scenario.SimulateAsync(new DirectoryInfo("Simulation"), false, false, TimeSpan.FromSeconds(100.0));
 
             var spcSV = spc.GetEphemeris(end, earth, Frames.Frame.ICRF, Aberration.None).ToStateVector();
@@ -494,11 +493,8 @@ namespace IO.Astrodynamics.Tests.Mission
             var deltaP = delta.Position.Magnitude();
             var deltaV = delta.Velocity.Magnitude();
 
-            Assert.True(deltaP < 3E+03);
-            Assert.True(deltaV < 1E-03);
-
-            CosmographiaExporter exporter = new CosmographiaExporter();
-            await exporter.ExportAsync(scenario, new DirectoryInfo("UserFeedback"));
+            Assert.True(deltaP < 35);
+            Assert.True(deltaV < 2.7E-04);
         }
     }
 }

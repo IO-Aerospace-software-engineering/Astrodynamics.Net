@@ -49,8 +49,8 @@ public class ExporterTests
         Spacecraft spacecraft = new Spacecraft(-334, "spcWM", 1000.0, 2000.0, new Clock("clockspcWM", 256),
             new KeplerianElements(6800000.0, 0.0, 0.0, 0.0, 0.0, 0.0, TestHelpers.EarthAtJ2000, DateTimeExtension.J2000, Frames.Frame.ICRF));
         scenario.AddSpacecraft(spacecraft);
-        scenario.AddAdditionalCelestialBody(TestHelpers.MoonAtJ2000);
-        scenario.AddAdditionalCelestialBody(TestHelpers.EarthWithAtmAndGeoAtJ2000);
+        scenario.AddCelestialItem(TestHelpers.MoonAtJ2000);
+        scenario.AddCelestialItem(TestHelpers.EarthWithAtmAndGeoAtJ2000);
         
         await scenario.SimulateAsync(Constants.OutputPath, false, false, TimeSpan.FromSeconds(1.0));
 
@@ -155,7 +155,7 @@ public class ExporterTests
 
         Astrodynamics.Mission.Mission mission = new Astrodynamics.Mission.Mission("ReachTarget");
         Scenario scenario = new Scenario("Scenario1", mission, new Window(startPropagator, end));
-        scenario.AddAdditionalCelestialBody(TestHelpers.MoonAtJ2000);
+        scenario.AddCelestialItem(TestHelpers.MoonAtJ2000);
 
         //Define parking orbit
         StateVector parkingOrbit = new StateVector(

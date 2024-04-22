@@ -287,7 +287,7 @@ public class APITest
 
         //Configure scenario
         Scenario scenario = new Scenario("Scenario_B", new Astrodynamics.Mission.Mission("mission10"), window);
-        scenario.AddAdditionalCelestialBody(TestHelpers.MoonAtJ2000);
+        scenario.AddCelestialItem(TestHelpers.MoonAtJ2000);
 
         //Define parking orbit
 

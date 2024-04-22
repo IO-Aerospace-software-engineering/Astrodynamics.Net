@@ -69,9 +69,9 @@ namespace IO.Astrodynamics.Tests.Body
             //Configure scenario
             Scenario scenario = new Scenario("Scenario_A", new Astrodynamics.Mission.Mission("mission06"),
                 new Astrodynamics.Time.Window(start, end));
-            scenario.AddAdditionalCelestialBody(TestHelpers.MoonAtJ2000);
-            scenario.AddAdditionalCelestialBody(TestHelpers.EarthAtJ2000);
-            scenario.AddAdditionalCelestialBody(TestHelpers.Sun);
+            scenario.AddCelestialItem(TestHelpers.MoonAtJ2000);
+            scenario.AddCelestialItem(TestHelpers.EarthAtJ2000);
+            scenario.AddCelestialItem(TestHelpers.Sun);
 
             //Define parking orbit
             StateVector parkingOrbit = new StateVector(
