@@ -9,19 +9,20 @@ namespace IO.Astrodynamics.Propagator.Forces;
 public class AtmosphericDrag : ForceBase
 {
     private readonly Spacecraft _spacecraft;
+    private readonly CelestialBody _celestialBody;
     private readonly double _areaMassRatio;
 
-    public AtmosphericDrag(Spacecraft spacecraft)
+    public AtmosphericDrag(Spacecraft spacecraft, CelestialBody celestialBody)
     {
         _spacecraft = spacecraft ?? throw new ArgumentNullException(nameof(spacecraft));
+        _celestialBody = celestialBody ?? throw new ArgumentNullException(nameof(celestialBody));
         _areaMassRatio = _spacecraft.SectionalArea / _spacecraft.Mass;
     }
 
     public override Vector3 Apply(StateVector stateVector)
     {
-        var celestialBody = stateVector.Observer as CelestialBody;
-        var planetodetic = stateVector.ToPlanetocentric(Aberration.None).ToPlanetodetic(celestialBody!.Flattening, celestialBody.EquatorialRadius);
-        var density = celestialBody.GetAirDensity(planetodetic.Altitude);
+        var planetodetic = stateVector.RelativeTo(_celestialBody,Aberration.None).ToPlanetocentric(Aberration.None).ToPlanetodetic(_celestialBody!.Flattening, _celestialBody.EquatorialRadius);
+        var density = _celestialBody.GetAirDensity(planetodetic.Altitude);
         return stateVector.Velocity * -0.5 * density * _areaMassRatio * _spacecraft.DragCoefficient * stateVector.Velocity.Magnitude();
     }
 }

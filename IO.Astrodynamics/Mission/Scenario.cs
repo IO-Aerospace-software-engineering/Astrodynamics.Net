@@ -15,8 +15,8 @@ namespace IO.Astrodynamics.Mission
         public string Name { get; }
         public Window Window { get; }
         public Mission Mission { get; }
-        private readonly HashSet<Body.CelestialBody> _additionalCelestialBodies = new();
-        public IReadOnlyCollection<Body.CelestialBody> AdditionalCelstialBodies => _additionalCelestialBodies;
+        private readonly HashSet<Body.CelestialItem> _additionalCelestialBodies = new();
+        public IReadOnlyCollection<Body.CelestialItem> AdditionalCelstialBodies => _additionalCelestialBodies;
 
         private readonly HashSet<Body.Spacecraft.Spacecraft> _spacecrafts = new();
         public IReadOnlyCollection<Body.Spacecraft.Spacecraft> Spacecrafts => _spacecrafts;
@@ -53,14 +53,14 @@ namespace IO.Astrodynamics.Mission
         }
 
         /// <summary>
-        /// By default spacecraft's center of motion is used. This method allows you to add another celestialItem to improve propagation accuracy if needed
+        /// Add celestialItem involved in the simulation
         /// </summary>
-        /// <param name="celestialBody"></param>
+        /// <param name="celestialItem"></param>
         /// <exception cref="ArgumentNullException"></exception>
-        public void AddAdditionalCelestialBody(Body.CelestialBody celestialBody)
+        public void AddCelestialItem(Body.CelestialItem celestialItem)
         {
-            if (celestialBody == null) throw new ArgumentNullException(nameof(celestialBody));
-            _additionalCelestialBodies.Add(celestialBody);
+            if (celestialItem == null) throw new ArgumentNullException(nameof(celestialItem));
+            _additionalCelestialBodies.Add(celestialItem);
         }
 
         /// <summary>
@@ -95,8 +95,8 @@ namespace IO.Astrodynamics.Mission
         /// Propagate this scenario
         /// </summary>
         /// <param name="outputDirectory">Output folder used to write files</param>
-        /// <param name="includeAtmosphericDrag"></param>
-        /// <param name="includeSolarRadiationPressure"></param>
+        /// <param name="includeAtmosphericDrag">The drag will be computed relatively to initial spacecraft's center of motion</param>
+        /// <param name="includeSolarRadiationPressure">Radiation pressure will be computed from drag coefficient defined in spacecraft</param>
         /// <param name="propagatorStepSize"></param>
         /// <exception cref="InvalidOperationException"></exception>
         public async Task<ScenarioSummary> SimulateAsync(DirectoryInfo outputDirectory, bool includeAtmosphericDrag, bool includeSolarRadiationPressure,

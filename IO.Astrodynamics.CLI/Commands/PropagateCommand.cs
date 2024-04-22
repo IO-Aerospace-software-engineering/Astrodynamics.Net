@@ -54,7 +54,7 @@ public class PropagateCommand
         //Build scenario
         Scenario scenario = new Scenario($"Scenario{bodyName}", new Mission.Mission($"Mission{bodyName}"), Helpers.ConvertWindowInput(windowParameters));
         scenario.AddSpacecraft(spacecraft);
-        bodies.ForEach((b) => scenario.AddAdditionalCelestialBody(b));
+        bodies.ForEach((b) => scenario.AddCelestialItem(b));
 
         //Simulate
         var qualifiedOutputDirectory = new DirectoryInfo(outputDirectory);
@@ -65,6 +65,7 @@ public class PropagateCommand
         CosmographiaExporter cosmographiaExporter = new CosmographiaExporter();
 
         await cosmographiaExporter.ExportAsync(scenario, qualifiedOutputDirectory);
+        spacecraft.Dispose();
         scenario.RootDirectory.Parent?.Delete(true);
 
         Console.ForegroundColor = ConsoleColor.Green;

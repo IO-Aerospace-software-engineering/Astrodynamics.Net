@@ -58,9 +58,6 @@
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
       <None Remove="Data\SolarSystem\gm_de431.tpc" />
-      <Content Include="Data\SolarSystem\gm_de431.tpc">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
       <None Remove="Data\SolarSystem\latest_leapseconds.tls.pc" />
       <None Remove="Data\SolarSystem\moon_080317.tf" />
       <Content Include="Data\SolarSystem\moon_080317.tf">
@@ -111,6 +108,10 @@
       <None Update="Data\SolarSystem\EGM2008_to70_TideFree">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>
+      <None Remove="Data\SolarSystem\gm_de440.tpc" />
+      <Content Include="Data\SolarSystem\gm_de440.tpc">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
     </ItemGroup>
 
 </Project>

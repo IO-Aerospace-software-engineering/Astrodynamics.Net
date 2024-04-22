@@ -331,7 +331,7 @@ namespace IO.Astrodynamics.Body.Spacecraft
         /// <param name="includeSolarRadiationPressure"></param>
         /// <param name="propagatorStepSize"></param>
         /// <param name="outputDirectory"></param>
-        public async Task PropagateAsync(Window window, IEnumerable<CelestialBody> additionalCelestialBodies, bool includeAtmosphericDrag,
+        public async Task PropagateAsync(Window window, IEnumerable<CelestialItem> additionalCelestialBodies, bool includeAtmosphericDrag,
             bool includeSolarRadiationPressure, TimeSpan propagatorStepSize, DirectoryInfo outputDirectory)
         {
             ResetPropagation();

@@ -22,7 +22,7 @@ namespace IO.Astrodynamics.Tests.Maneuvers
             FuelTank fuelTank10 = new FuelTank("My fuel tank10", "ft2021", "sn0", 4000.0, 3000.0);
             Engine eng = new Engine("My engine", "model 1", "sn1", 350.0, 50.0, fuelTank10);
 
-            PhasingManeuver maneuver = new PhasingManeuver(new DateTime(2021, 01, 01), TimeSpan.FromDays(1.0), 3.0, 2, eng);
+            PhasingManeuver maneuver = new PhasingManeuver(TestHelpers.EarthAtJ2000,new DateTime(2021, 01, 01), TimeSpan.FromDays(1.0), 3.0, 2, eng);
 
             Assert.NotNull(maneuver.Engine);
             Assert.Equal(TimeSpan.FromDays(1.0), maneuver.ManeuverHoldDuration);
@@ -60,9 +60,9 @@ namespace IO.Astrodynamics.Tests.Maneuvers
             PhasingManeuver maneuver = new PhasingManeuver(DateTime.MinValue, TimeSpan.Zero, targtOrbitalParams, 3, spc.Engines.First());
             maneuver.TryExecute(orbitalParams.ToStateVector());
 
-            Assert.Equal(new Vector3(0.0, 14.039767793719875, 0.0), maneuver.DeltaV);
-            Assert.Equal(6.0351723087570868, maneuver.FuelBurned);
-            Assert.Equal(new Window(DateTime.Parse("2000-01-01T11:59:59.9196115"), TimeSpan.Parse("2.17:31:12.7762651")), maneuver.ManeuverWindow);
+            Assert.Equal(new Vector3(0.0, 14.039767793719875, 0.0), maneuver.DeltaV,TestHelpers.VectorComparer);
+            Assert.Equal(6.0351723087570868, maneuver.FuelBurned,3);
+            Assert.Equal(new Window(DateTime.Parse("2000-01-01T11:59:59.9196115"), TimeSpan.Parse("2.17:31:12.7762440")), maneuver.ManeuverWindow);
             Assert.Equal(new Window(DateTime.Parse("2000-01-01T11:59:59.9196115"), TimeSpan.FromSeconds(0.1207034)), maneuver.ThrustWindow);
         }
     }

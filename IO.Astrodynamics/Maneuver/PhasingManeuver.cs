@@ -1,4 +1,5 @@
 using System;
+using IO.Astrodynamics.Body;
 using IO.Astrodynamics.Body.Spacecraft;
 using IO.Astrodynamics.Math;
 using IO.Astrodynamics.OrbitalParameters;
@@ -16,7 +17,7 @@ namespace IO.Astrodynamics.Maneuver
             RevolutionNumber = revolutionNumber;
         }
 
-        public PhasingManeuver(DateTime minimumEpoch, TimeSpan maneuverHoldDuration, double trueLongitude, uint revolutionNumber, Engine engine) : base(minimumEpoch,
+        public PhasingManeuver(CelestialItem maneuverCenter, DateTime minimumEpoch, TimeSpan maneuverHoldDuration, double trueLongitude, uint revolutionNumber, Engine engine) : base(maneuverCenter, minimumEpoch,
             maneuverHoldDuration, engine)
         {
             TargetTrueLongitude = trueLongitude;

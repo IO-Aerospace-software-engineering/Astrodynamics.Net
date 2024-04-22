@@ -79,10 +79,10 @@ namespace IO.Astrodynamics.Tests.Maneuvers
 
             ApsidalAlignmentManeuver maneuver = new ApsidalAlignmentManeuver(DateTime.MinValue, TimeSpan.Zero, targtOrbitalParams, spc.Engines.First());
             var res = maneuver.TryExecute(orbitalParams.ToStateVector(156.5 * Astrodynamics.Constants.Deg2Rad));
-            Assert.Equal(maneuver.DeltaV, new Vector3(-1352.4744532814657, 564.6811826732578, 0.0));
-            Assert.Equal(new Window(DateTime.Parse("2000-01-01T13:55:44.2314101"), TimeSpan.FromSeconds(10.7386318)), maneuver.ManeuverWindow);
-            Assert.Equal(new Window(DateTime.Parse("2000-01-01T13:55:44.2314101"), TimeSpan.FromSeconds(10.7386318)), maneuver.ThrustWindow);
-            Assert.Equal(536.93159217329242, maneuver.FuelBurned);
+            Assert.Equal(maneuver.DeltaV, new Vector3(-1352.4744534060974, 564.6811827253609, 0.0));
+            Assert.Equal(new Window(DateTime.Parse("2000-01-01T13:55:44.2314095"), TimeSpan.FromSeconds(10.7386318)), maneuver.ManeuverWindow);
+            Assert.Equal(new Window(DateTime.Parse("2000-01-01T13:55:44.2314095"), TimeSpan.FromSeconds(10.7386318)), maneuver.ThrustWindow);
+            Assert.Equal(536.93159217329242, maneuver.FuelBurned, 3);
         }
 
         [Fact]
@@ -98,8 +98,8 @@ namespace IO.Astrodynamics.Tests.Maneuvers
             ApsidalAlignmentManeuver maneuver = new ApsidalAlignmentManeuver(DateTime.MinValue, TimeSpan.Zero, targetOrbitalParams, spc.Engines.First());
             var res = maneuver.TryExecute(orbitalParams.ToStateVector(341.77 * Astrodynamics.Constants.Deg2Rad));
             Assert.Equal(maneuver.DeltaV, new Vector3(-1368.8299700588411, 498.1271161206587, 0.0), TestHelpers.VectorComparer);
-            Assert.Equal(new Window(DateTime.Parse("2000-01-01T16:57:15.7421780"), TimeSpan.FromSeconds(10.6831353)), maneuver.ManeuverWindow);
-            Assert.Equal(new Window(DateTime.Parse("2000-01-01T16:57:15.7421780"), TimeSpan.FromSeconds(10.6831353)), maneuver.ThrustWindow);
+            Assert.Equal(new Window(DateTime.Parse("2000-01-01T16:57:15.7421764"), TimeSpan.FromSeconds(10.6831353)), maneuver.ManeuverWindow);
+            Assert.Equal(new Window(DateTime.Parse("2000-01-01T16:57:15.7421764"), TimeSpan.FromSeconds(10.6831353)), maneuver.ThrustWindow);
             Assert.Equal(534.15676829508755, maneuver.FuelBurned, 6);
         }
     }

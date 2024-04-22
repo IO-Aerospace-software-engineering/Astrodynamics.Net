@@ -80,7 +80,7 @@ namespace IO.Astrodynamics.Tests.Body
             //Configure scenario
             Scenario scenario = new Scenario("Scenario_A", new IO.Astrodynamics.Mission.Mission("mission05"),
                 new Window(start, end));
-            scenario.AddAdditionalCelestialBody(TestHelpers.MoonAtJ2000);
+            scenario.AddCelestialItem(TestHelpers.MoonAtJ2000);
 
             //Define parking orbit
 

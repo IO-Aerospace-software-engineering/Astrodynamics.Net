@@ -287,7 +287,7 @@ public class APITest
 
         //Configure scenario
         Scenario scenario = new Scenario("Scenario_B", new Astrodynamics.Mission.Mission("mission10"), window);
-        scenario.AddAdditionalCelestialBody(TestHelpers.MoonAtJ2000);
+        scenario.AddCelestialItem(TestHelpers.MoonAtJ2000);
 
         //Define parking orbit
 
@@ -307,7 +307,7 @@ public class APITest
         spacecraft.AddPayload(new Payload("payload1", 50.0, "pay01"));
         spacecraft.AddCircularInstrument(-1794600, "CAM600", "mod1", 1.5, Vector3.VectorZ, Vector3.VectorX, Vector3.VectorX);
 
-        spacecraft.SetStandbyManeuver(new NadirAttitude(DateTime.MinValue, TimeSpan.Zero,
+        spacecraft.SetStandbyManeuver(new NadirAttitude(TestHelpers.EarthAtJ2000,DateTime.MinValue, TimeSpan.Zero,
             spacecraft.Engines.First()));
 
         scenario.AddSpacecraft(spacecraft);
@@ -321,13 +321,13 @@ public class APITest
             TimeSpan.FromSeconds(10.0)).ToArray();
 
         //Read results
-        Assert.Equal(0.7071067811865476, res.ElementAt(0).Rotation.W);
-        Assert.Equal(0.0, res.ElementAt(0).Rotation.VectorPart.X);
-        Assert.Equal(0.0, res.ElementAt(0).Rotation.VectorPart.Y);
-        Assert.Equal(0.70710678118654757, res.ElementAt(0).Rotation.VectorPart.Z);
-        Assert.Equal(0.0, res.ElementAt(0).AngularVelocity.X);
-        Assert.Equal(0.0, res.ElementAt(0).AngularVelocity.Y);
-        Assert.Equal(0.0, res.ElementAt(0).AngularVelocity.Z);
+        Assert.Equal(0.70710678118654757, res.ElementAt(0).Rotation.W);
+        Assert.Equal(0.0, res.ElementAt(0).Rotation.VectorPart.X,6);
+        Assert.Equal(0.0, res.ElementAt(0).Rotation.VectorPart.Y,6);
+        Assert.Equal(0.70710678118654746, res.ElementAt(0).Rotation.VectorPart.Z);
+        Assert.Equal(0.0, res.ElementAt(0).AngularVelocity.X,6);
+        Assert.Equal(0.0, res.ElementAt(0).AngularVelocity.Y,6);
+        Assert.Equal(0.0, res.ElementAt(0).AngularVelocity.Z,6);
         Assert.Equal(window.StartDate, res.ElementAt(0).Epoch);
         Assert.Equal(Frames.Frame.ICRF, res.ElementAt(0).ReferenceFrame);
 
@@ -453,7 +453,7 @@ public class APITest
         Assert.Equal(PlanetsAndMoons.EARTH.Name, res.Name);
         Assert.Equal(13000, res.FrameId);
         Assert.Equal("ITRF93", res.FrameName);
-        Assert.Equal(398600435436095.93, res.GM);
+        Assert.Equal(398600435507022.62, res.GM);
         Assert.Equal(6378136.5999999998, res.Radii.X);
         Assert.Equal(6378136.5999999998, res.Radii.Y);
         Assert.Equal(6356751.9000000002, res.Radii.Z);
@@ -473,7 +473,7 @@ public class APITest
         Assert.Equal(PlanetsAndMoons.MOON.Name, res.Name);
         Assert.Equal(31001, res.FrameId);
         Assert.Equal("MOON_ME", res.FrameName);
-        Assert.Equal(4902800066163.7959, res.GM);
+        Assert.Equal(4902800118457.5488, res.GM);
         Assert.Equal(1737400.0, res.Radii.X);
         Assert.Equal(1737400.0, res.Radii.Y);
         Assert.Equal(1737400.0, res.Radii.Z);
