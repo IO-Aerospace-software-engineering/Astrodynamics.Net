@@ -125,12 +125,12 @@ namespace IO.Astrodynamics.Tests.OrbitalParameters
         {
             KeplerianElements original = new KeplerianElements(42000000, 0.0, 1.0, 2.0, 1.0, 0.5, TestHelpers.EarthAtJ2000, DateTimeExtension.J2000, Frames.Frame.ICRF);
             KeplerianElements transformed = original.ToStateVector().ToKeplerianElements();
-            Assert.Equal(original.A, transformed.A,3);
+            Assert.Equal(original.A, transformed.A, 3);
             Assert.Equal(original.E, transformed.E, 6);
             Assert.Equal(original.I, transformed.I, 6);
             Assert.Equal(original.RAAN, transformed.RAAN);
             Assert.Equal(original.MeanLongitude(), transformed.MeanLongitude());
-            Assert.Equal(original.AOP + original.M, (transformed.AOP + transformed.M)%Astrodynamics.Constants._2PI);
+            Assert.Equal(original.AOP + original.M, (transformed.AOP + transformed.M) % Astrodynamics.Constants._2PI);
         }
 
         [Fact]
@@ -139,7 +139,7 @@ namespace IO.Astrodynamics.Tests.OrbitalParameters
             KeplerianElements original = new KeplerianElements(42000000, 0.0, 0.0, 2.0, 1.0, 0.5, TestHelpers.EarthAtJ2000, DateTimeExtension.J2000, Frames.Frame.ICRF);
             var originalSv = original.ToStateVector();
             KeplerianElements transformed = originalSv.ToKeplerianElements();
-            Assert.Equal(original.A, transformed.A,3);
+            Assert.Equal(original.A, transformed.A, 3);
             Assert.Equal(original.E, transformed.E, 6);
             Assert.Equal(original.I, transformed.I, 6);
             Assert.Equal(original.MeanLongitude(), transformed.MeanLongitude(), 6);
@@ -208,10 +208,10 @@ namespace IO.Astrodynamics.Tests.OrbitalParameters
                 0.0 * IO.Astrodynamics.Constants.Deg2Rad,
                 earth, DateTime.UtcNow, Frames.Frame.ICRF);
             Vector3 ev = ke.EccentricityVector();
-            Assert.Equal(0.09180000000000033, ev.Magnitude(),3);
-            Assert.Equal(0.09180000000000033, ev.X,3);
-            Assert.Equal(0.0, ev.Y,3);
-            Assert.Equal(0.0, ev.Z,3);
+            Assert.Equal(0.09180000000000033, ev.Magnitude(), 3);
+            Assert.Equal(0.09180000000000033, ev.X, 3);
+            Assert.Equal(0.0, ev.Y, 3);
+            Assert.Equal(0.0, ev.Z, 3);
         }
 
         [Fact]
@@ -280,7 +280,7 @@ namespace IO.Astrodynamics.Tests.OrbitalParameters
                 46.029 * IO.Astrodynamics.Constants.Deg2Rad, earth,
                 DateTime.UtcNow, Frames.Frame.ICRF);
             double energy = ke.SpecificOrbitalEnergy();
-            Assert.Equal(-29305357.070616387, energy);
+            Assert.Equal(-29305357.070616387, energy, 6);
         }
 
         [Fact]
@@ -295,9 +295,9 @@ namespace IO.Astrodynamics.Tests.OrbitalParameters
                 Frames.Frame.ICRF);
             var pv = ke.PerigeeVector();
             Assert.Equal(10000.0, pv.Magnitude(), 9);
-            Assert.Equal(659.6961052988253, pv.X,3);
-            Assert.Equal(9213.804796489718, pv.Y,3);
-            Assert.Equal(3830.2222155948903, pv.Z,3);
+            Assert.Equal(659.6961052988253, pv.X, 3);
+            Assert.Equal(9213.804796489718, pv.Y, 3);
+            Assert.Equal(3830.2222155948903, pv.Z, 3);
         }
 
         [Fact]

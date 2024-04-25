@@ -5,15 +5,19 @@ using System.Runtime.InteropServices;
 namespace IO.Astrodynamics.DTO;
 
 [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
-public readonly struct CelestialBody
+public struct CelestialBody
 {
     public int Id { get; }
     public int CenterOfMotionId { get; }
     public int BarycenterOfMotionId { get; }
-    public string Name { get; }
+
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
+    public string Name;
     public Vector3D Radii { get; }
     public double GM { get; }
-    public string FrameName { get; }
+
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
+    public string FrameName;
     public int FrameId { get; }
     public string Error { get; } = string.Empty;
     public double J2 { get; }
