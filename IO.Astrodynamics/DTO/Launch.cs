@@ -29,7 +29,6 @@ public struct Launch
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 100)]
     public Window[] Windows;
 
-    public string Error { get; } = string.Empty;
 
     public Launch(Site launchSite, Site recoverySite, bool launchByDay, double initialStepSize, StateVector targetOrbit,
         Window window)
@@ -45,10 +44,5 @@ public struct Launch
         InertialInsertionVelocity = default;
         NonInertialAzimuth = default;
         NonInertialInsertionVelocity = default;
-    }
-
-    public bool HasError()
-    {
-        return !string.IsNullOrEmpty(Error);
     }
 }

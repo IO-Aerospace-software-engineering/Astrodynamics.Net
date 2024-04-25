@@ -227,11 +227,6 @@ public class API
             //Execute request
             LaunchProxy(ref launchDto);
 
-            if (launchDto.HasError())
-            {
-                throw new InvalidOperationException($"Operation failed to find launch windows : {launchDto.Error}");
-            }
-
             //Filter result
             var windows = launchDto.Windows.Where(x => x.Start != 0 && x.End != 0).ToArray();
 
