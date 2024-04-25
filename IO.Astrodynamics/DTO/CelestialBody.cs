@@ -7,24 +7,27 @@ namespace IO.Astrodynamics.DTO;
 [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
 public struct CelestialBody
 {
-    public int Id { get; }
-    public int CenterOfMotionId { get; }
-    public int BarycenterOfMotionId { get; }
+    public int Id;
+    public int CenterOfMotionId;
+    public int BarycenterOfMotionId;
 
     [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
     public string Name;
-    public Vector3D Radii { get; }
-    public double GM { get; }
+
+    public Vector3D Radii;
+    public double GM;
 
     [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
     public string FrameName;
-    public int FrameId { get; }
-    public string Error { get; } = string.Empty;
-    public double J2 { get; }
-    public double J3 { get; }
-    public double J4 { get; }
 
-    public CelestialBody(int id, int centerOfMotionId, int barycenterOfMotionId, string name, Vector3D radii, double gm, string frameName, int frameId, double j2, double j3, double j4)
+    public int FrameId;
+    public string Error = string.Empty;
+    public double J2 = 0.0;
+    public double J3 = 0.0;
+    public double J4 = 0.0;
+
+    public CelestialBody(int id, int centerOfMotionId, int barycenterOfMotionId, string name, Vector3D radii, double gm, string frameName, int frameId, double j2, double j3,
+        double j4)
     {
         Id = id;
         CenterOfMotionId = centerOfMotionId;
@@ -37,10 +40,5 @@ public struct CelestialBody
         J3 = j3;
         J4 = j4;
         BarycenterOfMotionId = barycenterOfMotionId;
-    }
-
-    public bool HasError()
-    {
-        return !string.IsNullOrEmpty(Error);
     }
 }

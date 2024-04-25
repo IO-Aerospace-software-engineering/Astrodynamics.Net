@@ -731,14 +731,7 @@ public class API
     {
         lock (lockObject)
         {
-            var res = GetCelestialBodyInfoProxy(naifId);
-            if (res.HasError())
-            {
-                throw new InvalidOperationException(
-                    $"An error occured while reading celestial celestialItem information : {res.Error}");
-            }
-
-            return res;
+           return GetCelestialBodyInfoProxy(naifId);
         }
     }
 
