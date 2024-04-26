@@ -789,10 +789,6 @@ public class API
         lock (lockObject)
         {
             var res = GetTLEElementsProxy(line1, line2, line3);
-            if (res.HasError())
-            {
-                throw new InvalidOperationException($"An error occured during TLE creation : {res.Error}");
-            }
 
             return new TLE(line1, line2, line3, res.BalisticCoefficient, res.DragTerm, res.SecondDerivativeOfMeanMotion,
                 res.A, res.E, res.I, res.O, res.W, res.M,
