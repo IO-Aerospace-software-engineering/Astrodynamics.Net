@@ -45,7 +45,7 @@ public class API
     public static API Instance { get; } = new();
 
     [DllImport(@"IO.Astrodynamics", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
-    private static extern string GetSpiceVersionProxy();
+    private static extern IntPtr GetSpiceVersionProxy();
 
     [DllImport(@"IO.Astrodynamics", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
     private static extern void LaunchProxy([In] [Out] ref Launch launch);
@@ -147,7 +147,10 @@ public class API
     {
         lock (lockObject)
         {
-            return GetSpiceVersionProxy();
+            var strptr = GetSpiceVersionProxy();
+            var str = Marshal.PtrToStringAnsi(strptr);
+            Marshal.FreeHGlobal(strptr);
+            return str;
         }
     }
 
@@ -167,6 +170,7 @@ public class API
         {
             return;
         }
+
         lock (lockObject)
         {
             var existingKernels = _kernels.Where(x => x.FullName.Contains(path.FullName)).ToArray();
@@ -174,12 +178,14 @@ public class API
             {
                 UnloadKernels(existingKernel);
             }
+
             if (path.Exists)
             {
                 if (!LoadKernelsProxy(path.FullName))
                 {
                     throw new InvalidOperationException($"Kernel {path.FullName} can't be loaded. You can have more details on standard output");
                 }
+
                 _kernels.Add(path);
             }
         }
@@ -201,7 +207,7 @@ public class API
                     throw new InvalidOperationException($"Kernel {path.FullName} can't be unloaded. You can have more details on standard output");
                 }
 
-                _kernels.RemoveAll(x=>x.FullName.Contains(path.FullName));
+                _kernels.RemoveAll(x => x.FullName.Contains(path.FullName));
             }
         }
     }
@@ -226,11 +232,6 @@ public class API
 
             //Execute request
             LaunchProxy(ref launchDto);
-
-            if (launchDto.HasError())
-            {
-                throw new InvalidOperationException($"Operation failed to find launch windows : {launchDto.Error}");
-            }
 
             //Filter result
             var windows = launchDto.Windows.Where(x => x.Start != 0 && x.End != 0).ToArray();
@@ -688,7 +689,7 @@ public class API
             var enumerable = stateVectors as OrbitalParameters.StateVector[] ?? stateVectors.ToArray();
             if (!enumerable.Any())
                 throw new ArgumentException("Value cannot be an empty collection.", nameof(stateVectors));
-            bool res = WriteEphemerisProxy(filePath.FullName, naifObject.NaifId, stateVectors.Select(x=>x.Convert()).ToArray(),
+            bool res = WriteEphemerisProxy(filePath.FullName, naifObject.NaifId, stateVectors.Select(x => x.Convert()).ToArray(),
                 (uint)enumerable.Length);
             if (res == false)
             {
@@ -710,7 +711,7 @@ public class API
             var enumerable = stateOrientations as OrbitalParameters.StateOrientation[] ?? stateOrientations.ToArray();
             if (!enumerable.Any())
                 throw new ArgumentException("Value cannot be an empty collection.", nameof(stateOrientations));
-            bool res = WriteOrientationProxy(filePath.FullName, naifObject.NaifId, stateOrientations.Select(x=>x.Convert()).ToArray(), (uint)enumerable.Length);
+            bool res = WriteOrientationProxy(filePath.FullName, naifObject.NaifId, stateOrientations.Select(x => x.Convert()).ToArray(), (uint)enumerable.Length);
             if (res == false)
             {
                 throw new InvalidOperationException(
@@ -730,14 +731,7 @@ public class API
     {
         lock (lockObject)
         {
-            var res = GetCelestialBodyInfoProxy(naifId);
-            if (res.HasError())
-            {
-                throw new InvalidOperationException(
-                    $"An error occured while reading celestial celestialItem information : {res.Error}");
-            }
-
-            return res;
+           return GetCelestialBodyInfoProxy(naifId);
         }
     }
 
@@ -756,10 +750,6 @@ public class API
             if (fromFrame == null) throw new ArgumentNullException(nameof(fromFrame));
             if (toFrame == null) throw new ArgumentNullException(nameof(toFrame));
             var res = TransformFrameProxy(fromFrame.Name, toFrame.Name, epoch.ToTDB().SecondsFromJ2000TDB());
-            if (res.HasError())
-            {
-                throw new InvalidOperationException($"An error occured during frame transformation : {res.Error}");
-            }
 
             return new OrbitalParameters.StateOrientation(
                 new Quaternion(res.Rotation.W, res.Rotation.X, res.Rotation.Y, res.Rotation.Z),
@@ -799,10 +789,6 @@ public class API
         lock (lockObject)
         {
             var res = GetTLEElementsProxy(line1, line2, line3);
-            if (res.HasError())
-            {
-                throw new InvalidOperationException($"An error occured during TLE creation : {res.Error}");
-            }
 
             return new TLE(line1, line2, line3, res.BalisticCoefficient, res.DragTerm, res.SecondDerivativeOfMeanMotion,
                 res.A, res.E, res.I, res.O, res.W, res.M,

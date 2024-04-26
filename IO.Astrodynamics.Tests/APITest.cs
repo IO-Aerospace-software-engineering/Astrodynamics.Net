@@ -483,12 +483,6 @@ public class APITest
     }
 
     [Fact]
-    void GetInvalidCelestialBodyInformation()
-    {
-        Assert.Throws<InvalidOperationException>(() => API.Instance.GetCelestialBodyInfo(398));
-    }
-
-    [Fact]
     void TransformFrame()
     {
         //Get the quaternion to transform

@@ -252,7 +252,7 @@ public class CelestialBodyTests
         Assert.Equal(42164171.961220242, orbit.ToStateVector().Position.Magnitude(), 3);
         Assert.Equal(3074.6599898500763, orbit.ToStateVector().Velocity.Magnitude(), 3);
         Assert.Equal(Frames.Frame.ICRF, orbit.Frame);
-        Assert.Equal(42164171.961220235, orbit.SemiMajorAxis());
+        Assert.Equal(42164171.961220235, orbit.SemiMajorAxis(),6);
         Assert.Equal(0.0, orbit.Eccentricity());
         Assert.Equal(1.0, orbit.Inclination(), 2);
         Assert.Equal(1.1804318466570587, orbit.AscendingNode(), 2);

@@ -17,7 +17,6 @@ public readonly struct TLEElements
     public double W { get; }
     public double O { get; }
     public double M { get; }
-    public string Error { get; } = string.Empty;
 
     public TLEElements(double balisticCoefficient, double secondDerivativeOfMeanMotion, double dragTerm, double epoch, double a, double e, double i, double w, double o, double m)
     {
@@ -31,10 +30,5 @@ public readonly struct TLEElements
         W = w;
         O = o;
         M = m;
-    }
-
-    public bool HasError()
-    {
-        return !string.IsNullOrEmpty(Error);
     }
 }
