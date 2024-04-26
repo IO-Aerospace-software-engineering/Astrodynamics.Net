@@ -750,10 +750,6 @@ public class API
             if (fromFrame == null) throw new ArgumentNullException(nameof(fromFrame));
             if (toFrame == null) throw new ArgumentNullException(nameof(toFrame));
             var res = TransformFrameProxy(fromFrame.Name, toFrame.Name, epoch.ToTDB().SecondsFromJ2000TDB());
-            if (res.HasError())
-            {
-                throw new InvalidOperationException($"An error occured during frame transformation : {res.Error}");
-            }
 
             return new OrbitalParameters.StateOrientation(
                 new Quaternion(res.Rotation.W, res.Rotation.X, res.Rotation.Y, res.Rotation.Z),

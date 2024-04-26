@@ -14,7 +14,6 @@ public struct StateVector
 
     [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
     public string Frame;
-    public string Error { get; } = string.Empty;
 
     public StateVector(int centerOfMotionId, double epoch, string frame, in Vector3D position, in Vector3D velocity)
     {
@@ -23,10 +22,5 @@ public struct StateVector
         Frame = frame;
         Position = position;
         Velocity = velocity;
-    }
-    
-    public bool HasError()
-    {
-        return !string.IsNullOrEmpty(Error);
     }
 }

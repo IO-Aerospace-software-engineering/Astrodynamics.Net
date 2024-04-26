@@ -9,10 +9,4 @@ public readonly struct FrameTransformation
 {
     public Quaternion Rotation { get; }
     public Vector3D AngularVelocity { get; }
-    public string Error { get; }
-
-    public bool HasError()
-    {
-        return !string.IsNullOrEmpty(Error);
-    }
 }
