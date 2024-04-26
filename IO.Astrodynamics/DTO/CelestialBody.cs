@@ -21,7 +21,6 @@ public struct CelestialBody
     public string FrameName;
 
     public int FrameId;
-    public string Error = string.Empty;
     public double J2 = 0.0;
     public double J3 = 0.0;
     public double J4 = 0.0;
