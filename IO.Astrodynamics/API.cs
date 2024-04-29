@@ -592,17 +592,16 @@ public class API
         ILocalizable observer, ILocalizable target, Frame frame,
         Aberration aberration, TimeSpan stepSize)
     {
-        if (observer == null) throw new ArgumentNullException(nameof(observer));
-        if (target == null) throw new ArgumentNullException(nameof(target));
-        if (frame == null) throw new ArgumentNullException(nameof(frame));
+        ArgumentNullException.ThrowIfNull(observer);
+        ArgumentNullException.ThrowIfNull(target);
+        ArgumentNullException.ThrowIfNull(frame);
         lock (lockObject)
         {
             const int messageSize = 10000;
             List<OrbitalParameters.OrbitalParameters> orbitalParameters = [];
-            int occurences = (int)(searchWindow.Length / stepSize / messageSize);
+            int occurrences = (int)(searchWindow.Length / stepSize / messageSize);
 
-
-            for (int i = 0; i <= occurences; i++)
+            for (int i = 0; i <= occurrences; i++)
             {
                 var start = searchWindow.StartDate + i * messageSize * stepSize;
                 var end = start + messageSize * stepSize > searchWindow.EndDate ? searchWindow.EndDate : (start + messageSize * stepSize) - stepSize;
@@ -632,9 +631,9 @@ public class API
     public OrbitalParameters.OrbitalParameters ReadEphemeris(DateTime epoch, ILocalizable observer,
         ILocalizable target, Frame frame, Aberration aberration)
     {
-        if (observer == null) throw new ArgumentNullException(nameof(observer));
-        if (target == null) throw new ArgumentNullException(nameof(target));
-        if (frame == null) throw new ArgumentNullException(nameof(frame));
+        ArgumentNullException.ThrowIfNull(observer);
+        ArgumentNullException.ThrowIfNull(target);
+        ArgumentNullException.ThrowIfNull(frame);
         lock (lockObject)
         {
             if (frame == null) throw new ArgumentNullException(nameof(frame));
