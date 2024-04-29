@@ -731,7 +731,7 @@ public class API
     {
         lock (lockObject)
         {
-           return GetCelestialBodyInfoProxy(naifId);
+            return GetCelestialBodyInfoProxy(naifId);
         }
     }
 
