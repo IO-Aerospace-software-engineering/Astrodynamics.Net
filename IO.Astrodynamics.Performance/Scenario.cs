@@ -19,7 +19,7 @@ namespace IO.Astrodynamics.Performance;
 [SkewnessColumn]
 [KurtosisColumn]
 [StatisticalTestColumn]
-// [ShortRunJob]
+[ShortRunJob]
 public class Scenario
 {
     private readonly GeopotentialGravitationalField _geopotential;
@@ -43,18 +43,18 @@ public class Scenario
         Spacecraft spc = new Spacecraft(-1001, "MySpacecraft", 100.0, 10000.0, clk,
             new StateVector(new Vector3(6800000.0, 0.0, 0.0), new Vector3(0.0, 7656.2204182967143, 0.0), _earth, DateTimeExtension.J2000, Frames.Frame.ICRF));
         _srp = new SolarRadiationPressure(spc);
-        _atm = new AtmosphericDrag(spc,_earth);
+        _atm = new AtmosphericDrag(spc, _earth);
         List<ForceBase> forces = new List<ForceBase>();
         forces.Add(new GravitationalAcceleration(_sun));
         forces.Add(new GravitationalAcceleration(_moon));
         forces.Add(new GravitationalAcceleration(_earth));
-        forces.Add(new AtmosphericDrag(spc,_earth));
+        forces.Add(new AtmosphericDrag(spc, _earth));
         forces.Add(new SolarRadiationPressure(spc));
         _integrator = new VVIntegrator(forces, TimeSpan.FromSeconds(1.0), new StateVector(new Vector3(6800000.0 - Random.Shared.NextDouble(), 0.0, 0.0),
             new Vector3(0.0, 8000.0 - Random.Shared.NextDouble(), 0.0), _earth,
             DateTimeExtension.J2000, Frame.ICRF));
         _spacecraftPropagator = new Propagator.SpacecraftPropagator(new Window(DateTimeExtension.J2000, DateTimeExtension.J2000 + spc.InitialOrbitalParameters.Period()), spc,
-            new[] { _moon }, true, true, TimeSpan.FromSeconds(1.0));
+            new[] { _moon, _earth, _sun }, true, true, TimeSpan.FromSeconds(1.0));
     }
 
     // [Benchmark(Description = "Spacecraft spacecraftPropagator C++")]
