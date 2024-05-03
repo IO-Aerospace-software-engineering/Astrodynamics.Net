@@ -135,7 +135,7 @@ namespace IO.Astrodynamics.OrbitalParameters
             }
 
             var n = AscendingNodeVector();
-            var e = EccentricityVector().Normalize();
+            var e = EccentricityVector();
 
             if (e == Vector3.Zero)
             {
