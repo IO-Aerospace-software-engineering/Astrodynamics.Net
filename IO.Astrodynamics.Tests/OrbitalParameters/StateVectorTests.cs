@@ -354,6 +354,16 @@ namespace IO.Astrodynamics.Tests.OrbitalParameters
                 new KeplerianElements(149665479724.91623, 0.01712168303475997, 0.40908763696755318, 1.2954012328856077E-05,
                     1.77688489436688, 6.259056257653703, TestHelpers.Sun, DateTimeExtension.J2000, Frames.Frame.ICRF), ke);
         }
+        
+        [Fact]
+        public void ToKeplerian2()
+        {
+            var ke =
+                new StateVector(new Vector3(0, 6700000, 0), new Vector3(7900, 0, 0), TestHelpers.EarthAtJ2000, DateTimeExtension.J2000, Frames.Frame.ICRF).ToKeplerianElements();
+            Assert.Equal(
+                new KeplerianElements(149665479724.91623, 0.01712168303475997, 0.40908763696755318, 1.2954012328856077E-05,
+                    1.77688489436688, 6.259056257653703, TestHelpers.Sun, DateTimeExtension.J2000, Frames.Frame.ICRF), ke);
+        }
 
         [Fact]
         public void ToEquatorial()

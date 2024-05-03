@@ -107,7 +107,15 @@ namespace IO.Astrodynamics.OrbitalParameters
 
             Vector3 n = AscendingNodeVector();
 
+            if (n.Magnitude() == 0.0)
+            {
+                _ascendingNode = 0.0;
+                return _ascendingNode.Value;
+            }
+
             var omega = System.Math.Acos(n.X / n.Magnitude());
+
+
             if (n.Y < 0.0)
             {
                 omega = 2 * System.Math.PI - omega;
@@ -127,14 +135,24 @@ namespace IO.Astrodynamics.OrbitalParameters
             }
 
             var n = AscendingNodeVector();
-            var e = EccentricityVector();
+            var e = EccentricityVector().Normalize();
 
             if (e == Vector3.Zero)
             {
                 return 0.0;
             }
-            
-            _argumentOfPeriapsis = System.Math.Acos(System.Math.Clamp((n * e) / (n.Magnitude() * e.Magnitude()),-1.0,1.0));
+
+            if (n == Vector3.Zero)
+            {
+                _argumentOfPeriapsis = System.Math.Atan2(e.Y, e.X);
+                if (Inclination() > Constants.PI2)
+                {
+                    _argumentOfPeriapsis = Constants._2PI - _argumentOfPeriapsis;
+                    return _argumentOfPeriapsis!.Value;
+                }
+            }
+
+            _argumentOfPeriapsis = System.Math.Acos(System.Math.Clamp((n * e) / (n.Magnitude() * e.Magnitude()), -1.0, 1.0));
             if (e.Z < 0.0)
             {
                 _argumentOfPeriapsis = System.Math.PI * 2.0 - _argumentOfPeriapsis;
