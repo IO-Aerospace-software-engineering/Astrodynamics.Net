@@ -15,7 +15,7 @@ using Vector3 = IO.Astrodynamics.Math.Vector3;
 
 namespace IO.Astrodynamics.Propagator;
 
-public class SpacecraftPropagator
+public class SpacecraftPropagator : IPropagator
 {
     private readonly CelestialItem _originalObserver;
     public Window Window { get; }
@@ -58,7 +58,7 @@ public class SpacecraftPropagator
         var initialState = Spacecraft.InitialOrbitalParameters.AtEpoch(Window.StartDate).ToStateVector().RelativeTo(ssb, Aberration.None).ToStateVector();
         Integrator = new VVIntegrator(forces, DeltaT, initialState);
 
-        _svCacheSize = (uint)Window.Length.TotalSeconds / (uint)DeltaT.TotalSeconds + (uint)DeltaT.TotalSeconds;
+        _svCacheSize = (uint)Window.Length.TotalSeconds / (uint)DeltaT.TotalSeconds + 1;
         _svCache = new StateVector[_svCacheSize];
         _svCache[0] = initialState;
         for (int i = 1; i < _svCacheSize; i++)
