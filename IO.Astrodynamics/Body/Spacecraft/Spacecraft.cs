@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using IO.Astrodynamics.Frames;
 using IO.Astrodynamics.Math;
+using IO.Astrodynamics.OrbitalParameters;
 using IO.Astrodynamics.Propagator;
 using IO.Astrodynamics.Time;
 using StateOrientation = IO.Astrodynamics.OrbitalParameters.StateOrientation;
@@ -335,7 +336,16 @@ namespace IO.Astrodynamics.Body.Spacecraft
             bool includeSolarRadiationPressure, TimeSpan propagatorStepSize, DirectoryInfo outputDirectory)
         {
             ResetPropagation();
-            var propagator = new SpacecraftPropagator(window, this, additionalCelestialBodies, includeAtmosphericDrag, includeSolarRadiationPressure, propagatorStepSize);
+            IPropagator propagator;
+            if (this.InitialOrbitalParameters is TLE)
+            {
+                propagator = new TLEPropagator(window, this, propagatorStepSize);
+            }
+            else
+            {
+                propagator = new SpacecraftPropagator(window, this, additionalCelestialBodies, includeAtmosphericDrag, includeSolarRadiationPressure, propagatorStepSize);
+            }
+
             var res = propagator.Propagate();
             PropagationOutput = outputDirectory.CreateSubdirectory(Name);
 
