@@ -362,10 +362,10 @@ namespace IO.Astrodynamics.Tests.OrbitalParameters
                 new StateVector(new Vector3(0, 6700000, 0), new Vector3(7900, 0, 0), TestHelpers.EarthAtJ2000, DateTimeExtension.J2000, Frames.Frame.ICRF);
 
             var keOrigin = svOrigin.ToKeplerianElements();
-                Assert.Equal(new KeplerianElements(7045497.0180164594, 0.049037990809302601, 3.1415926535897931, 0.0,
+            Assert.Equal(new KeplerianElements(7045497.0180164594, 0.049037990809302601, 3.1415926535897931, 0.0,
                 4.7123889803846897, 0.0, TestHelpers.EarthAtJ2000, DateTimeExtension.J2000, Frames.Frame.ICRF), keOrigin);
             var svFinal = keOrigin.ToStateVector();
-            Assert.Equal(svFinal,svOrigin,TestHelpers.StateVectorComparer);
+            Assert.Equal(svFinal, svOrigin, TestHelpers.StateVectorComparer);
         }
 
         [Fact]
@@ -373,7 +373,7 @@ namespace IO.Astrodynamics.Tests.OrbitalParameters
         {
             var moon = TestHelpers.MoonAtJ2000;
             var ra = moon.GetEphemeris(DateTimeExtension.J2000, TestHelpers.EarthAtJ2000, Frames.Frame.ICRF, Aberration.None).ToEquatorial();
-            Assert.Equal(new Equatorial(-0.19024413568211912, 3.8824377884372114, 402448639.8873273), ra);
+            Assert.Equal(new Equatorial(-0.19024413568211912, 3.8824377884372114, 402448639.8873273, DateTimeExtension.J2000), ra);
         }
 
         [Fact]

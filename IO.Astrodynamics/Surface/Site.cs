@@ -104,7 +104,7 @@ namespace IO.Astrodynamics.Surface
 
             var el = System.Math.Asin(position.Z / position.Magnitude());
 
-            return new Horizontal(az, el, position.Magnitude());
+            return new Horizontal(az, el, position.Magnitude(), epoch);
         }
 
         /// <summary>

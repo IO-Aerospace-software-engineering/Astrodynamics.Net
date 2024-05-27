@@ -68,7 +68,7 @@ public class Star : CelestialBody, IDisposable
             ra += Constants._2PI;
         }
 
-        return new Equatorial(dec, ra, Distance);
+        return new Equatorial(dec, ra, Distance, epoch);
     }
 
     public double GetRightAscensionSigma(DateTime epoch)
@@ -123,7 +123,7 @@ public class Star : CelestialBody, IDisposable
             PropagationOutput = null;
         }
     }
-    
+
     private void ReleaseUnmanagedResources()
     {
         if (IsPropagated)
