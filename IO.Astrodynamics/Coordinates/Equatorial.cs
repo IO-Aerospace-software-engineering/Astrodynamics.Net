@@ -10,15 +10,17 @@ namespace IO.Astrodynamics.Coordinates
         public double Declination { get; }
         public double RightAscension { get; }
         public double Distance { get; }
+        public DateTime Epoch { get; }
 
-        public Equatorial(double declination, double rightAscension, double distance)
+        public Equatorial(double declination, double rightAscension, double distance, DateTime epoch)
         {
             Declination = declination;
             RightAscension = rightAscension;
             Distance = distance;
+            Epoch = epoch;
         }
 
-        public Equatorial(double declination, double rightAscension) : this(declination, rightAscension, Double.NaN)
+        public Equatorial(double declination, double rightAscension, DateTime epoch) : this(declination, rightAscension, Double.NaN, epoch)
         {
         }
 
@@ -32,6 +34,7 @@ namespace IO.Astrodynamics.Coordinates
                 RightAscension += Constants._2PI;
 
             Declination = System.Math.Asin(sv.Position.Z / Distance);
+            Epoch = sv.Epoch;
         }
 
         /// <summary>

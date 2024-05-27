@@ -179,7 +179,7 @@ namespace IO.Astrodynamics.Tests.Mission
             Assert.Equal("2021-03-04T08:44:24.8233837 (TDB)", maneuver1.ThrustWindow?.StartDate.ToFormattedString());
             Assert.Equal("2021-03-04T08:44:34.1183180 (TDB)", maneuver1.ThrustWindow?.EndDate.ToFormattedString());
             Assert.Equal(9.2949856999999998, maneuver1.ThrustWindow.Value.Length.TotalSeconds, 3);
-            Assert.Equal(new Vector3(140.54623544686248, -86.32008177793513, -196.3279176030952), ((ImpulseManeuver)maneuver1).DeltaV,TestHelpers.VectorComparer);
+            Assert.Equal(new Vector3(140.54623544686248, -86.32008177793513, -196.3279176030952), ((ImpulseManeuver)maneuver1).DeltaV, TestHelpers.VectorComparer);
             Assert.Equal(464.74671652424558, maneuver1.FuelBurned, 3);
 
             Assert.Equal(scenario.Window, summary.Window);
@@ -281,7 +281,7 @@ namespace IO.Astrodynamics.Tests.Mission
             Assert.Equal("2021-03-04T08:44:24.8233837 (TDB)", maneuver1.ThrustWindow?.StartDate.ToFormattedString());
             Assert.Equal("2021-03-04T08:44:34.1183180 (TDB)", maneuver1.ThrustWindow?.EndDate.ToFormattedString());
             Assert.Equal(9.2949856999999998, maneuver1.ThrustWindow.Value.Length.TotalSeconds, 3);
-            Assert.Equal(new Vector3(140.54623544686248, -86.32008177793513, -196.3279176030952), ((ImpulseManeuver)maneuver1).DeltaV,TestHelpers.VectorComparer);
+            Assert.Equal(new Vector3(140.54623544686248, -86.32008177793513, -196.3279176030952), ((ImpulseManeuver)maneuver1).DeltaV, TestHelpers.VectorComparer);
             Assert.Equal(464.74671652424558, maneuver1.FuelBurned, 3);
 
             Assert.Equal(scenario.Window, summary1.Window);
@@ -300,7 +300,7 @@ namespace IO.Astrodynamics.Tests.Mission
             var summary2 = await scenario.SimulateAsync(Constants.OutputPath, false, false, TimeSpan.FromSeconds(1.0));
             // Read maneuver results
             Maneuver.Maneuver maneuver2 = spacecraft.InitialManeuver;
-             Assert.Equal("2021-03-04T00:34:35.5958041 (TDB)", maneuver2.ManeuverWindow?.StartDate.ToFormattedString());
+            Assert.Equal("2021-03-04T00:34:35.5958041 (TDB)", maneuver2.ManeuverWindow?.StartDate.ToFormattedString());
             Assert.Equal("2021-03-04T00:34:43.7309479 (TDB)", maneuver2.ManeuverWindow?.EndDate.ToFormattedString());
             Assert.Equal("2021-03-04T00:34:35.5958041 (TDB)", maneuver2.ThrustWindow?.StartDate.ToFormattedString());
             Assert.Equal("2021-03-04T00:34:43.7309479 (TDB)", maneuver2.ThrustWindow?.EndDate.ToFormattedString());
@@ -336,7 +336,7 @@ namespace IO.Astrodynamics.Tests.Mission
             Assert.Equal("2021-03-04T08:44:24.8233837 (TDB)", maneuver2.ThrustWindow?.StartDate.ToFormattedString());
             Assert.Equal("2021-03-04T08:44:34.1183180 (TDB)", maneuver2.ThrustWindow?.EndDate.ToFormattedString());
             Assert.Equal(9.2949856999999998, maneuver2.ThrustWindow.Value.Length.TotalSeconds, 3);
-            Assert.Equal(new Vector3(140.54623544686248, -86.32008177793513, -196.3279176030952), ((ImpulseManeuver)maneuver2).DeltaV,TestHelpers.VectorComparer);
+            Assert.Equal(new Vector3(140.54623544686248, -86.32008177793513, -196.3279176030952), ((ImpulseManeuver)maneuver2).DeltaV, TestHelpers.VectorComparer);
             Assert.Equal(464.74671652424558, maneuver2.FuelBurned, 3);
 
             Assert.Equal(scenario.Window, summary2.Window);
@@ -402,7 +402,7 @@ namespace IO.Astrodynamics.Tests.Mission
             var start = new DateTime(2001, 1, 1);
             var end = start.AddDays(365 * 4);
             var observer = new Barycenter(0);
-            var star = new Star(2, "star2", 1E+30, "spec", 2, 0.3792, new Equatorial(1, 1), 0.1, 0.1, 0, 0, 0, 0, start);
+            var star = new Star(2, "star2", 1E+30, "spec", 2, 0.3792, new Equatorial(1, 1, start), 0.1, 0.1, 0, 0, 0, 0, start);
 
             Astrodynamics.Mission.Mission mission = new Astrodynamics.Mission.Mission("mission102");
             Scenario scenario = new Scenario("scn100", mission, new Window(start, end));
@@ -473,7 +473,7 @@ namespace IO.Astrodynamics.Tests.Mission
 
             StateVector testOrbit = moon.GetEphemeris(start, new CelestialBody(399), frame, Aberration.None).ToStateVector();
             Clock clk = new Clock("My clock", 256);
-            Spacecraft spc = new Spacecraft(-1001, "MySpacecraft", 100.0, 10000.0, clk, testOrbit,0.5);
+            Spacecraft spc = new Spacecraft(-1001, "MySpacecraft", 100.0, 10000.0, clk, testOrbit, 0.5);
             scenario.AddSpacecraft(spc);
             scenario.AddCelestialItem(new CelestialBody(10));
             scenario.AddCelestialItem(new CelestialBody(399));
