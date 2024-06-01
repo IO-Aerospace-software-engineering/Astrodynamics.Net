@@ -41,7 +41,7 @@ public class TLEPropagator : IPropagator
             _svCache[i] = Spacecraft.InitialOrbitalParameters.ToStateVector(Window.StartDate.Add(DeltaT * i));
         }
 
-        _stateOrientation[Window.EndDate] = new StateOrientation(Quaternion.Zero, Vector3.Zero, Window.StartDate, Spacecraft.InitialOrbitalParameters.Frame);
+        _stateOrientation[Window.EndDate] = new StateOrientation(Quaternion.Zero, Vector3.Zero, Window.EndDate, Spacecraft.InitialOrbitalParameters.Frame);
         return (_svCache, _stateOrientation.Values);
     }
 }
