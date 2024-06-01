@@ -195,6 +195,39 @@ namespace IO.Astrodynamics.Tests.Mission
         }
 
         [Fact]
+        public async Task PropagateSpacecraftFromTLE()
+        {
+            DateTime start = new DateTime(2023, 03, 01, 12, 0, 0);
+            DateTime end = start.AddDays(1.0);
+
+            Astrodynamics.Mission.Mission mission = new Astrodynamics.Mission.Mission("missionTLE");
+            Scenario scenario = new Scenario("scnTLE", mission, new Window(start, end));
+            scenario.AddCelestialItem(TestHelpers.EarthAtJ2000);
+
+            //Define parking orbit
+            TLE parkingOrbit = TLE.Create("ISS", "1 25544U 98067A   24153.17509025  .00020162  00000+0  35104-3 0  9990",
+                "2 25544  51.6393  34.6631 0005642 260.2910 238.1766 15.50732314456064");
+
+            //Create and configure spacecraft
+            Clock clock = new Clock("clk1", 65536);
+            Spacecraft spacecraft = new Spacecraft(-1787, "DRAGONFLY7", 1000.0, 10000.0, clock, parkingOrbit);
+
+            scenario.AddSpacecraft(spacecraft);
+
+            var summary = await scenario.SimulateAsync(Constants.OutputPath, false, false, TimeSpan.FromSeconds(1.0));
+            var site = new Site(63, "DSS-63", TestHelpers.EarthAtJ2000);
+            var initialSV = spacecraft.GetEphemeris(start, site, Frames.Frame.ICRF, Aberration.None);
+            var endSV = spacecraft.GetEphemeris(end, site, Frames.Frame.ICRF, Aberration.None);
+
+            Assert.Equal(
+                new StateVector(new Vector3(-2194696.277452762, 6520464.634645089, -8851312.715000605), new Vector3(-4855.389207947987, 5010.690350306962, 2785.4343115066577),
+                    site, start, Frames.Frame.ICRF), initialSV);
+            Assert.Equal(
+                new StateVector(new Vector3(-8877878.268430736, 2497878.6999986176, 1044081.578034049), new Vector3(969.7356590081705, -7707.414993293412, 1627.9865491886271),
+                    site, end, Frames.Frame.ICRF), endSV);
+        }
+
+        [Fact]
         [Benchmark]
         public async Task MultipleSpacecraftPropagation()
         {
