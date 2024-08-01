@@ -41,13 +41,13 @@ public class SpacecraftPropagator : IPropagator
     /// <param name="includeSolarRadiationPressure"></param>
     /// <param name="deltaT">Simulation step size</param>
     /// <exception cref="ArgumentNullException"></exception>
-    public SpacecraftPropagator(Window window, Spacecraft spacecraft, IEnumerable<CelestialItem> additionalCelestialBodies, bool includeAtmosphericDrag,
+    public SpacecraftPropagator(in Window window, Spacecraft spacecraft, IEnumerable<CelestialItem> additionalCelestialBodies, bool includeAtmosphericDrag,
         bool includeSolarRadiationPressure, TimeSpan deltaT)
     {
         var ssb = new Barycenter(Barycenters.SOLAR_SYSTEM_BARYCENTER.NaifId);
         _originalObserver = spacecraft.InitialOrbitalParameters.Observer as CelestialItem;
         Spacecraft = spacecraft ?? throw new ArgumentNullException(nameof(spacecraft));
-        Window = window;
+        Window = new Window(window.StartDate.ToTDB(),window.EndDate.ToTDB());
         CelestialItems = additionalCelestialBodies ?? Array.Empty<CelestialItem>();
         IncludeAtmosphericDrag = includeAtmosphericDrag;
         IncludeSolarRadiationPressure = includeSolarRadiationPressure;
@@ -97,7 +97,7 @@ public class SpacecraftPropagator : IPropagator
     /// <returns></returns>
     public (IEnumerable<StateVector>stateVectors, IEnumerable<StateOrientation>stateOrientations) Propagate()
     {
-        _stateOrientation[Window.StartDate] = new StateOrientation(Quaternion.Zero, Vector3.Zero, Window.StartDate, Spacecraft.InitialOrbitalParameters.Frame);
+        _stateOrientation[_svCache.First().Epoch] = new StateOrientation(Quaternion.Zero, Vector3.Zero, _svCache.First().Epoch, Spacecraft.InitialOrbitalParameters.Frame);
         for (int i = 0; i < _svCacheSize - 1; i++)
         {
             var prvSv = _svCache[i];
