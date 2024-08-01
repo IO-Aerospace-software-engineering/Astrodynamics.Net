@@ -537,15 +537,33 @@ public class APITest
     }
 
     [Fact]
-    void UnloadKernelException()
-    {
-        Assert.Throws<ArgumentNullException>(() => API.Instance.UnloadKernels(null));
-    }
-
-    [Fact]
     void LoadKernelException()
     {
         Assert.Throws<ArgumentNullException>(() => API.Instance.LoadKernels(null));
+    }
+
+    [Fact]
+    void UnloadKernels()
+    {
+        API.Instance.LoadKernels(new FileInfo(@"Data/UserDataTest/scn100/Sites/MySite/Ephemeris/MySite.spk"));
+        API.Instance.LoadKernels(new FileInfo(@"Data/UserDataTest/scn100/Spacecrafts/DRAGONFLY32/Ephemeris/DRAGONFLY32.spk"));
+        API.Instance.LoadKernels(new DirectoryInfo(@"Data/UserDataTest/scn100"));
+        API.Instance.UnloadKernels(new FileInfo(@"Data/UserDataTest/scn100/Spacecrafts/DRAGONFLY32/Ephemeris/DRAGONFLY32.spk"));
+        Assert.Equal(2,API.Instance.GetLoadedKernels().Count());
+        Assert.Equal(@"Data\UserDataTest\scn100\Sites\MySite\Ephemeris\MySite.spk",API.Instance.GetLoadedKernels().ElementAt(0).FullName);
+        Assert.Equal(@"Data\UserDataTest\scn100",API.Instance.GetLoadedKernels().ElementAt(1).FullName);
+    }
+    
+    [Fact]
+    void LoadKernels()
+    {
+        API.Instance.LoadKernels(new FileInfo(@"Data/UserDataTest/scn100/Sites/MySite/Ephemeris/MySite.spk"));
+        API.Instance.LoadKernels(new FileInfo(@"Data/UserDataTest/scn100/Spacecrafts/DRAGONFLY32/Ephemeris/DRAGONFLY32.spk"));
+        API.Instance.LoadKernels(new DirectoryInfo(@"Data/UserDataTest/scn100"));
+        
+        Assert.Equal(2,API.Instance.GetLoadedKernels().Count());
+        Assert.Equal(Constants.SolarSystemKernelPath,API.Instance.GetLoadedKernels().ElementAt(0));
+        Assert.Equal(@"scn100",API.Instance.GetLoadedKernels().ElementAt(1).Name);
     }
 
     [Fact]

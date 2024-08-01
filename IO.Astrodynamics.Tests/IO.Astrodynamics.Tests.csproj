@@ -25,10 +25,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Data\" />
-    </ItemGroup>
-
-    <ItemGroup>
       <None Remove="Data\SolarSystem\de440s.bsp" />
       <Content Include="Data\SolarSystem\de440s.bsp">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -111,6 +107,14 @@
       <None Remove="Data\SolarSystem\gm_de440.tpc" />
       <Content Include="Data\SolarSystem\gm_de440.tpc">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <None Remove="Data\UserDataTest\scn100\Spacecrafts\DRAGONFLY32\Ephemeris\DRAGONFLY32.spk" />
+      <Content Include="Data\UserDataTest\scn100\Spacecrafts\DRAGONFLY32\Ephemeris\DRAGONFLY32.spk">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
+      <None Remove="Data\UserDataTest\scn100\Sites\MySite\Ephemeris\MySite.spk" />
+      <Content Include="Data\UserDataTest\scn100\Sites\MySite\Ephemeris\MySite.spk">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
     </ItemGroup>
 
