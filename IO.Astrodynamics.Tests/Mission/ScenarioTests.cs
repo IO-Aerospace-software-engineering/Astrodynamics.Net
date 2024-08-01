@@ -195,6 +195,60 @@ namespace IO.Astrodynamics.Tests.Mission
         }
 
         [Fact]
+        public async Task PropagateSpacecraftWithAttitudeOnly()
+        {
+            DateTime start = new DateTime(2024, 7, 30, 13, 48, 30, DateTimeKind.Utc);
+            DateTime end = new DateTime(2024, 7, 31, 13, 48, 33, DateTimeKind.Utc);
+
+            Astrodynamics.Mission.Mission mission = new Astrodynamics.Mission.Mission("mission02");
+            Scenario scenario = new Scenario("scn1", mission, new Window(start, end));
+            scenario.AddCelestialItem(TestHelpers.EarthAtJ2000);
+
+            //Define parking orbit
+            StateVector parkingOrbit = new StateVector(
+                new Vector3(6800000.0, 0.0, 0.0),
+                new Vector3(0.0, 8000.0, 0.0), TestHelpers.EarthAtJ2000,
+                start, Frames.Frame.ICRF);
+
+            //Create and configure spacecraft
+            Clock clock = new Clock("clk1", 65536);
+            Spacecraft spacecraft = new Spacecraft(-1783, "DRAGONFLY3", 1000.0, 10000.0, clock, parkingOrbit);
+
+            FuelTank fuelTank = new FuelTank("ft1", "model1", "sn1", 9000.0, 9000.0);
+            Engine engine = new Engine("engine1", "model1", "sn1", 450.0, 50.0, fuelTank);
+            spacecraft.AddFuelTank(fuelTank);
+            spacecraft.AddEngine(engine);
+
+            var progradeAttitude = new ProgradeAttitude(TestHelpers.EarthAtJ2000, DateTime.MinValue, TimeSpan.Zero, engine);
+            spacecraft.SetStandbyManeuver(progradeAttitude);
+
+            scenario.AddSpacecraft(spacecraft);
+
+            var summary = await scenario.SimulateAsync(Constants.OutputPath, false, false, TimeSpan.FromSeconds(1.0));
+
+            // Read maneuver results
+            Assert.Equal("2024-07-30T13:49:39.1839998 (TDB)", progradeAttitude.ManeuverWindow?.StartDate.ToFormattedString());
+            Assert.Equal("2024-07-30T13:49:39.1839998 (TDB)", progradeAttitude.ManeuverWindow?.EndDate.ToFormattedString());
+            Assert.Equal("2024-07-30T13:49:39.1839998 (TDB)", progradeAttitude.ThrustWindow?.StartDate.ToFormattedString());
+            Assert.Equal("2024-07-30T13:49:39.1839998 (TDB)", progradeAttitude.ThrustWindow?.EndDate.ToFormattedString());
+            Assert.Equal(0.0, progradeAttitude.ThrustWindow.Value.Length.TotalSeconds, 3);
+
+            Assert.Equal(0.0, progradeAttitude.FuelBurned, 0);
+
+
+            Assert.Equal(scenario.Window, summary.Window);
+            Assert.Single(summary.SpacecraftSummaries);
+            var maneuverWindow = summary.SpacecraftSummaries.First().ManeuverWindow;
+            if (maneuverWindow != null)
+            {
+                Assert.Equal(DateTime.Parse("2024-07-30T13:49:39.1839998"), maneuverWindow.Value.StartDate, TimeSpan.FromMilliseconds(1));
+                Assert.Equal(DateTime.Parse("2024-07-30T13:49:39.1839998"), maneuverWindow.Value.EndDate, TimeSpan.FromMilliseconds(1));
+            }
+
+            Assert.Equal(0.0, summary.SpacecraftSummaries.First().FuelConsumption, 3);
+        }
+
+        [Fact]
         public async Task PropagateSpacecraftFromTLE()
         {
             DateTime start = new DateTime(2023, 03, 01, 12, 0, 0);
@@ -221,10 +275,10 @@ namespace IO.Astrodynamics.Tests.Mission
 
             Assert.Equal(
                 new StateVector(new Vector3(-2194696.277452762, 6520464.634645089, -8851312.715000605), new Vector3(-4855.389207947987, 5010.690350306962, 2785.4343115066577),
-                    site, start, Frames.Frame.ICRF), initialSV);
+                    site, start, Frames.Frame.ICRF), initialSV.ToStateVector(), TestHelpers.StateVectorComparer);
             Assert.Equal(
-                new StateVector(new Vector3(-8877878.268430736, 2497878.6999986176, 1044081.578034049), new Vector3(969.7356590081705, -7707.414993293412, 1627.9865491886271),
-                    site, end, Frames.Frame.ICRF), endSV);
+                new StateVector(new Vector3(-8877878.268430738, 2497878.6999986176, 1044081.578034049), new Vector3(969.7356590081705, -7707.414993293412, 1627.9865491886271),
+                    site, end, Frames.Frame.ICRF), endSV.ToStateVector(), TestHelpers.StateVectorComparer);
         }
 
         [Fact]
