@@ -25,6 +25,7 @@ using Window = IO.Astrodynamics.Time.Window;
 
 namespace IO.Astrodynamics.Tests;
 
+
 public class APITest
 {
     public APITest()
@@ -307,7 +308,7 @@ public class APITest
         spacecraft.AddPayload(new Payload("payload1", 50.0, "pay01"));
         spacecraft.AddCircularInstrument(-1794600, "CAM600", "mod1", 1.5, Vector3.VectorZ, Vector3.VectorX, Vector3.VectorX);
 
-        spacecraft.SetStandbyManeuver(new NadirAttitude(TestHelpers.EarthAtJ2000,DateTime.MinValue, TimeSpan.Zero,
+        spacecraft.SetStandbyManeuver(new NadirAttitude(TestHelpers.EarthAtJ2000, DateTime.MinValue, TimeSpan.Zero,
             spacecraft.Engines.First()));
 
         scenario.AddSpacecraft(spacecraft);
@@ -322,12 +323,12 @@ public class APITest
 
         //Read results
         Assert.Equal(0.70710678118654757, res.ElementAt(0).Rotation.W);
-        Assert.Equal(0.0, res.ElementAt(0).Rotation.VectorPart.X,6);
-        Assert.Equal(0.0, res.ElementAt(0).Rotation.VectorPart.Y,6);
+        Assert.Equal(0.0, res.ElementAt(0).Rotation.VectorPart.X, 6);
+        Assert.Equal(0.0, res.ElementAt(0).Rotation.VectorPart.Y, 6);
         Assert.Equal(0.70710678118654746, res.ElementAt(0).Rotation.VectorPart.Z);
-        Assert.Equal(0.0, res.ElementAt(0).AngularVelocity.X,6);
-        Assert.Equal(0.0, res.ElementAt(0).AngularVelocity.Y,6);
-        Assert.Equal(0.0, res.ElementAt(0).AngularVelocity.Z,6);
+        Assert.Equal(0.0, res.ElementAt(0).AngularVelocity.X, 6);
+        Assert.Equal(0.0, res.ElementAt(0).AngularVelocity.Y, 6);
+        Assert.Equal(0.0, res.ElementAt(0).AngularVelocity.Z, 6);
         Assert.Equal(window.StartDate, res.ElementAt(0).Epoch);
         Assert.Equal(Frames.Frame.ICRF, res.ElementAt(0).ReferenceFrame);
 
@@ -542,28 +543,60 @@ public class APITest
         Assert.Throws<ArgumentNullException>(() => API.Instance.LoadKernels(null));
     }
 
+    private static object lockobj = new Object();
     [Fact]
     void UnloadKernels()
     {
-        API.Instance.LoadKernels(new FileInfo(@"Data/UserDataTest/scn100/Sites/MySite/Ephemeris/MySite.spk"));
-        API.Instance.LoadKernels(new FileInfo(@"Data/UserDataTest/scn100/Spacecrafts/DRAGONFLY32/Ephemeris/DRAGONFLY32.spk"));
-        API.Instance.LoadKernels(new DirectoryInfo(@"Data/UserDataTest/scn100"));
-        API.Instance.UnloadKernels(new FileInfo(@"Data/UserDataTest/scn100/Spacecrafts/DRAGONFLY32/Ephemeris/DRAGONFLY32.spk"));
-        Assert.Equal(2,API.Instance.GetLoadedKernels().Count());
-        Assert.Equal(@"Data\UserDataTest\scn100\Sites\MySite\Ephemeris\MySite.spk",API.Instance.GetLoadedKernels().ElementAt(0).FullName);
-        Assert.Equal(@"Data\UserDataTest\scn100",API.Instance.GetLoadedKernels().ElementAt(1).FullName);
+        lock (lockobj)
+        {
+            API.Instance.LoadKernels(new FileInfo(@"Data/UserDataTest/scn100/Sites/MySite/Ephemeris/MySite.spk"));
+            API.Instance.LoadKernels(new FileInfo(@"Data/UserDataTest/scn100/Spacecrafts/DRAGONFLY32/Ephemeris/DRAGONFLY32.spk"));
+            API.Instance.LoadKernels(new DirectoryInfo(@"Data/UserDataTest/scn100"));
+            API.Instance.UnloadKernels(new FileInfo(@"Data/UserDataTest/scn100/Spacecrafts/DRAGONFLY32/Ephemeris/DRAGONFLY32.spk"));
+            var kernels = API.Instance.GetLoadedKernels().ToArray();
+            Assert.Equal(1, @kernels.Count(x => x.FullName.Contains("scn100")));
+        }
     }
     
     [Fact]
+    void UnloadKernels2()
+    {
+        lock (lockobj)
+        {
+            API.Instance.LoadKernels(new FileInfo(@"Data/UserDataTest/scn100/Spacecrafts/DRAGONFLY32/Clocks/DRAGONFLY32.tsc"));
+            
+            API.Instance.UnloadKernels(new FileInfo(@"Data/UserDataTest/scn100/Spacecrafts/DRAGONFLY32/Clocks/DRAGONFLY32.tsc"));
+            var kernels = API.Instance.GetLoadedKernels().ToArray();
+            Assert.Equal(0, kernels.Count(x => x.FullName.Contains("DRAGONFLY32.tsc")));
+        }
+    }
+
+    [Fact]
     void LoadKernels()
     {
-        API.Instance.LoadKernels(new FileInfo(@"Data/UserDataTest/scn100/Sites/MySite/Ephemeris/MySite.spk"));
-        API.Instance.LoadKernels(new FileInfo(@"Data/UserDataTest/scn100/Spacecrafts/DRAGONFLY32/Ephemeris/DRAGONFLY32.spk"));
-        API.Instance.LoadKernels(new DirectoryInfo(@"Data/UserDataTest/scn100"));
-        
-        Assert.Equal(2,API.Instance.GetLoadedKernels().Count());
-        Assert.Equal(Constants.SolarSystemKernelPath,API.Instance.GetLoadedKernels().ElementAt(0));
-        Assert.Equal(@"scn100",API.Instance.GetLoadedKernels().ElementAt(1).Name);
+        lock (lockobj)
+        {
+            API.Instance.LoadKernels(new FileInfo(@"Data/UserDataTest/scn100/Sites/MySite/Ephemeris/MySite.spk"));
+            API.Instance.LoadKernels(new FileInfo(@"Data/UserDataTest/scn100/Spacecrafts/DRAGONFLY32/Ephemeris/DRAGONFLY32.spk"));
+            API.Instance.LoadKernels(new DirectoryInfo(@"Data/UserDataTest/scn100"));
+
+            var kernels = API.Instance.GetLoadedKernels().ToArray();
+            Assert.Equal(1, @kernels.Count(x => x.FullName.Contains("scn100")));
+        }
+    }
+
+    [Fact]
+    void LoadKernels2()
+    {
+        lock (lockobj)
+        {
+            API.Instance.LoadKernels(new DirectoryInfo(@"Data/UserDataTest/scn100"));
+            API.Instance.LoadKernels(new FileInfo(@"Data/UserDataTest/scn100/Spacecrafts/DRAGONFLY32/Ephemeris/DRAGONFLY32.spk"));
+            API.Instance.LoadKernels(new FileInfo(@"Data/UserDataTest/scn100/Sites/MySite/Ephemeris/MySite.spk"));
+
+            var kernels = API.Instance.GetLoadedKernels().ToArray();
+            Assert.Equal(1, @kernels.Count(x => x.FullName.Contains("scn100")));
+        }
     }
 
     [Fact]
@@ -598,6 +631,4 @@ public class APITest
         Assert.Equal(9, tle.O);
         Assert.Equal(10, tle.M);
     }
-
-    
 }

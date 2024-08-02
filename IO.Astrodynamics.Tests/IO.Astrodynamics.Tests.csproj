@@ -116,6 +116,10 @@
       <Content Include="Data\UserDataTest\scn100\Sites\MySite\Ephemeris\MySite.spk">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
+      <None Remove="Data\UserDataTest\scn100\Spacecrafts\DRAGONFLY32\Clocks\DRAGONFLY32.tsc" />
+      <Content Include="Data\UserDataTest\scn100\Spacecrafts\DRAGONFLY32\Clocks\DRAGONFLY32.tsc">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </Content>
     </ItemGroup>
 
 </Project>
