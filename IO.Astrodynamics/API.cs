@@ -166,13 +166,20 @@ public class API
     public void LoadKernels(FileSystemInfo path)
     {
         if (path == null) throw new ArgumentNullException(nameof(path));
-        if (_kernels.Any(x => x.FullName == path.FullName))
-        {
-            return;
-        }
-
         lock (lockObject)
         {
+            if (_kernels.Any(x => path.FullName.Contains(x.FullName)))
+            {
+                foreach (var kernel in _kernels.Where(x => path.FullName.Contains(x.FullName)).ToArray())
+                {
+                    UnloadKernels(kernel);
+                    LoadKernels(kernel);
+                }
+
+                return;
+            }
+
+
             var existingKernels = _kernels.Where(x => x.FullName.Contains(path.FullName)).ToArray();
             foreach (var existingKernel in existingKernels)
             {
@@ -197,7 +204,7 @@ public class API
     /// <param name="path">Path where kernels are located. This could be a file path or a directory path</param>
     public void UnloadKernels(FileSystemInfo path)
     {
-        if (path == null) throw new ArgumentNullException(nameof(path));
+        if (path == null) return;
         lock (lockObject)
         {
             if (path.Exists)
@@ -207,7 +214,22 @@ public class API
                     throw new InvalidOperationException($"Kernel {path.FullName} can't be unloaded. You can have more details on standard output");
                 }
 
-                _kernels.RemoveAll(x => x.FullName.Contains(path.FullName));
+                _kernels.RemoveAll(x => x.FullName == path.FullName);
+                foreach (var kernel in _kernels.Where(x => x.FullName.Contains(path.FullName)).ToArray())
+                {
+                    UnloadKernels(kernel);
+                }
+            }
+        }
+    }
+
+    public void ClearKernels()
+    {
+        lock (lockObject)
+        {
+            foreach (var kernel in _kernels.ToArray())
+            {
+                UnloadKernels(kernel);
             }
         }
     }
