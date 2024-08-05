@@ -1,3 +1,10 @@
+> [!IMPORTANT]
+> IO.Astrodynamics.Net is still alive, it has been merged with the original repository [IO Astrodynamics](https://github.com/IO-Aerospace-software-engineering/Astrodynamics).
+ 
+
+
+
+
 # IO.Astrodynamics.Net
 ## Presentation
 [![Continous integration](https://github.com/IO-Aerospace-software-engineering/SDK.Net/actions/workflows/ci.yml/badge.svg)](https://github.com/IO-Aerospace-software-engineering/SDK.Net/actions/workflows/ci.yml)
